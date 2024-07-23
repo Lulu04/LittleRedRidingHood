@@ -1,0 +1,58 @@
+object FormMain: TFormMain
+  Left = 516
+  Height = 276
+  Top = 190
+  Width = 371
+  Caption = 'Program name'
+  ClientHeight = 276
+  ClientWidth = 371
+  Color = 2105376
+  DefaultMonitor = dmPrimary
+  OnCloseQuery = FormCloseQuery
+  OnCreate = FormCreate
+  OnDestroy = FormDestroy
+  OnKeyDown = FormKeyDown
+  OnKeyUp = FormKeyUp
+  LCLVersion = '2.2.6.0'
+  WindowState = wsMaximized
+  object OpenGLControl1: TOpenGLControl
+    AnchorSideLeft.Side = asrCenter
+    AnchorSideTop.Side = asrCenter
+    Left = 16
+    Height = 72
+    Top = 72
+    Width = 98
+    Anchors = []
+  end
+  object Panel1: TPanel
+    AnchorSideTop.Control = Owner
+    AnchorSideRight.Control = Owner
+    AnchorSideRight.Side = asrBottom
+    Left = 96
+    Height = 208
+    Top = 0
+    Width = 275
+    Anchors = [akTop, akRight]
+    ClientHeight = 208
+    ClientWidth = 275
+    TabOrder = 1
+    Visible = False
+    object Memo1: TMemo
+      Left = 1
+      Height = 206
+      Top = 1
+      Width = 273
+      Align = alClient
+      Lines.Strings = (
+        'Memo1'
+      )
+      ScrollBars = ssAutoVertical
+      TabOrder = 0
+    end
+  end
+  object Timer1: TTimer
+    OnTimer = Timer1Timer
+    Left = 34
+    Top = 26
+  end
+end

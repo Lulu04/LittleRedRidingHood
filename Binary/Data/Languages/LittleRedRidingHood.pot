@@ -1,0 +1,333 @@
+msgid ""
+msgstr "Content-Type: text/plain; charset=UTF-8"
+
+#: u_resourcestring.saction1
+msgid "ACTION1"
+msgstr ""
+
+#: u_resourcestring.saction2
+msgid "ACTION2"
+msgstr ""
+
+#: u_resourcestring.sadventuremode
+msgid "ADVENTURE MODE"
+msgstr ""
+
+#: u_resourcestring.sagain
+msgid "AGAIN ?!!"
+msgstr ""
+
+#: u_resourcestring.sarcademode
+msgid "ARCADE MODE"
+msgstr ""
+
+#: u_resourcestring.sback
+msgid "BACK"
+msgstr ""
+
+#: u_resourcestring.sbacktomap
+msgid "BACK TO MAP"
+msgstr ""
+
+#: u_resourcestring.sbowexplanation
+msgid "your bow"
+msgstr ""
+
+#: u_resourcestring.sbowupgradehint
+msgctxt "u_resourcestring.sbowupgradehint"
+msgid "increase arrow speed, decrease bow reloading time"
+msgstr ""
+
+#: u_resourcestring.sbuild
+msgid "BUILD"
+msgstr ""
+
+#: u_resourcestring.sbuy
+msgid "BUY"
+msgstr ""
+
+#: u_resourcestring.sbuyequipment
+msgid "buy new equipment in the workshop"
+msgstr ""
+
+#: u_resourcestring.sbuyziplinefirst
+msgid "you need to buy the zip line first!"
+msgstr ""
+
+#: u_resourcestring.scancel
+msgid "CANCEL"
+msgstr ""
+
+#: u_resourcestring.schooseplayer
+msgid "CHOOSE PLAYER"
+msgstr ""
+
+#: u_resourcestring.sclose
+msgid "CLOSE"
+msgstr ""
+
+#: u_resourcestring.scontinue
+msgid "CONTINUE"
+msgstr ""
+
+#: u_resourcestring.scontinuegame
+msgctxt "u_resourcestring.scontinuegame"
+msgid "CONTINUE GAME"
+msgstr ""
+
+#: u_resourcestring.scredits
+msgid "CREDITS"
+msgstr ""
+
+#: u_resourcestring.sdamnacodeddoor
+msgid "I don't have the code to open this door..."
+msgstr ""
+
+#: u_resourcestring.sdecoderhint
+msgid "a decoder to hack digicodes"
+msgstr ""
+
+#: u_resourcestring.sdelete
+msgid "DELETE"
+msgstr ""
+
+#: u_resourcestring.sdevelopment
+msgid "DEVELOPMENT"
+msgstr ""
+
+#: u_resourcestring.selevatorupgradehint
+msgctxt "u_resourcestring.selevatorupgradehint"
+msgid "increase speed"
+msgstr ""
+
+#: u_resourcestring.senteryourname
+msgid "ENTER YOUR NAME"
+msgstr ""
+
+#: u_resourcestring.serase
+msgid "ERASE"
+msgstr ""
+
+#: u_resourcestring.serihavetogo
+msgid "Er, I have to go"
+msgstr ""
+
+#: u_resourcestring.sexit
+msgid "EXIT"
+msgstr ""
+
+#: u_resourcestring.sfirstcompleteforest
+msgid "you must first complete the pine forest!"
+msgstr ""
+
+#: u_resourcestring.sfirstcompletemountainpeaks
+msgctxt "u_resourcestring.sfirstcompletemountainpeaks"
+msgid "you must first complete the mountain peaks!"
+msgstr ""
+
+#: u_resourcestring.sgamepaused
+msgid "paused"
+msgstr ""
+
+#: u_resourcestring.sgetready
+msgid "GET READY"
+msgstr ""
+
+#: u_resourcestring.sgo
+msgid "GO"
+msgstr ""
+
+#: u_resourcestring.sgotoworkshoptoexamintheplan
+msgid "I'll take a look at this plan in the workshop and see what I can do with it. (cough)"
+msgstr ""
+
+#: u_resourcestring.sgraphics
+msgid "GRAPHICS"
+msgstr ""
+
+#: u_resourcestring.shammerexplanation
+msgid "the hammer to protect something"
+msgstr ""
+
+#: u_resourcestring.shammerupgradehint
+msgctxt "u_resourcestring.shammerupgradehint"
+msgid "increase number of uses"
+msgstr ""
+
+#: u_resourcestring.showtochangekey
+msgid "To change keys, click on the desired button then press the desired key"
+msgstr ""
+
+#: u_resourcestring.sihavetohide
+msgid "I hear someone behind the door. quick! I have to hide!"
+msgstr ""
+
+#: u_resourcestring.simproveequipment
+msgid "upgrade your equipment in the workshop"
+msgstr ""
+
+#: u_resourcestring.skeyboard
+msgid "KEYBOARD"
+msgstr ""
+
+#: u_resourcestring.slevel
+msgid "Level"
+msgstr ""
+
+#: u_resourcestring.slevelachieved
+msgid "Level completed"
+msgstr ""
+
+#: u_resourcestring.smakethedecoderbefore
+msgid "Now that I've got the plan, I need to build the decoder to open the door."
+msgstr ""
+
+#: u_resourcestring.smanufacturing
+msgid "manufacturing"
+msgstr ""
+
+#: u_resourcestring.smax
+msgid "MAX"
+msgstr ""
+
+#: u_resourcestring.smusics
+msgid "MUSICS"
+msgstr ""
+
+#: u_resourcestring.smusicvolume
+msgid "MUSIC VOLUME"
+msgstr ""
+
+#: u_resourcestring.snewgame
+msgid "NEW GAME"
+msgstr ""
+
+#: u_resourcestring.snextlevel
+msgid "next level"
+msgstr ""
+
+#: u_resourcestring.snotwaiting
+msgid "I'm not waiting for you, it's going to be long"
+msgstr ""
+
+#: u_resourcestring.sok
+msgid "OK"
+msgstr ""
+
+#: u_resourcestring.soptions
+msgid "OPTIONS"
+msgstr ""
+
+#: u_resourcestring.soutoftime
+msgid "OUT OF TIME"
+msgstr ""
+
+#: u_resourcestring.spause
+msgid "PAUSE"
+msgstr ""
+
+#: u_resourcestring.spressakey
+msgid "PRESS A KEY"
+msgstr ""
+
+#: u_resourcestring.sprice
+msgid "price"
+msgstr ""
+
+#: u_resourcestring.squit
+msgid "QUIT"
+msgstr ""
+
+#: u_resourcestring.sredoalevel
+msgid "you can redo a level to earn the end bonus"
+msgstr ""
+
+#: u_resourcestring.sremaintime
+msgid "remain time"
+msgstr ""
+
+#: u_resourcestring.sresumegame
+msgid "RESUME GAME"
+msgstr ""
+
+#: u_resourcestring.sridinghood
+msgid "Riding Hood"
+msgstr ""
+
+#: u_resourcestring.ssmootharrivalbonus
+msgid "smooth arrival bonus"
+msgstr ""
+
+#: u_resourcestring.ssounds
+msgid "SOUNDS"
+msgstr ""
+
+#: u_resourcestring.ssoundvolume
+msgid "SOUND VOLUME"
+msgstr ""
+
+#: u_resourcestring.sspace
+msgid "SPACE"
+msgstr ""
+
+#: u_resourcestring.sstart
+msgid "START"
+msgstr ""
+
+#: u_resourcestring.sstormcloudexplanation
+msgid "the lightning storm"
+msgstr ""
+
+#: u_resourcestring.sstormcloudupgradehint
+msgctxt "u_resourcestring.sstormcloudupgradehint"
+msgid "increase number of uses"
+msgstr ""
+
+#: u_resourcestring.sthanks
+msgid "Thank you for playing this game!"
+msgstr ""
+
+#: u_resourcestring.sthelittlered
+msgid "The Little Red"
+msgstr ""
+
+#: u_resourcestring.sthenewstoryof
+msgid "the new story of"
+msgstr ""
+
+#: u_resourcestring.sthisplaceisbeautiful
+msgid "This place is beautiful."
+msgstr ""
+
+#: u_resourcestring.stotal
+msgid "TOTAL"
+msgstr ""
+
+#: u_resourcestring.supgrade
+msgid "UPGRADE"
+msgstr ""
+
+#: u_resourcestring.svoicefromthecave
+msgid "Voice from the cave"
+msgstr ""
+
+#: u_resourcestring.swolf
+msgid "Wolf"
+msgstr ""
+
+#: u_resourcestring.swolvehavewalledupcaveentrance
+msgid "The wolves have walled up the cave entrance... I've got to find a way in!"
+msgstr ""
+
+#: u_resourcestring.sworkshop
+msgid "Workshop"
+msgstr ""
+
+#: u_resourcestring.syoutakeaplan
+msgid "They look like manufacturing plans. You take one discreetly."
+msgstr ""
+
+#: u_resourcestring.sziplinehint
+msgid "a useful zip-line to cross the mountain peaks"
+msgstr ""
+

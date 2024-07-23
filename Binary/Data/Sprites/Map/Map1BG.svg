@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="746.41315"
+   height="648.53052"
+   viewBox="0 0 210.65438 183.02973"
+   version="1.1"
+   id="svg1"
+   inkscape:version="1.3.2 (091e20ef0f, 2023-11-25)"
+   sodipodi:docname="GameMap.svg"
+   xml:space="preserve"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:dc="http://purl.org/dc/elements/1.1/"><metadata
+     id="metadata585"><rdf:RDF><cc:Work
+         rdf:about=""><dc:format>image/svg+xml</dc:format><dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" /></cc:Work></rdf:RDF></metadata><sodipodi:namedview
+     id="namedview1"
+     pagecolor="#505050"
+     bordercolor="#eeeeee"
+     borderopacity="1"
+     inkscape:showpageshadow="0"
+     inkscape:pageopacity="1"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="px"
+     inkscape:zoom="0.35355339"
+     inkscape:cx="-110.30866"
+     inkscape:cy="384.66609"
+     inkscape:window-width="1366"
+     inkscape:window-height="706"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     units="px" /><defs
+     id="defs1" /><g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(-3.1611423,4.5046596)"><path
+       style="fill:#6ba1d1;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:1.2192;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1"
+       d="m 19.691151,95.913609 c 1.966301,7.668581 21.329198,10.184491 6.689038,17.068211 -7.536051,3.54341 -16.452103,9.4245 -16.4483109,17.9505 0.00417,9.37074 -6.8706029,17.44572 -2.7160299,24.28963 5.0597298,8.335 9.2258488,19.50012 17.6999418,21.16215 9.233623,1.811 19.216553,3.6718 28.032434,0.14545 7.499395,-2.99975 12.93913,-9.60393 21.728375,-6.13872 11.258825,2.27571 7.499117,-8.92878 10.720049,-15.94059 3.838536,-8.3563 20.231432,-3.89885 29.174752,-1.19515 8.81121,2.66376 8.92375,12.0901 18.60922,15.17991 8.34032,2.66069 15.11427,11.89827 24.53545,8.32164 9.35972,-4.11952 19.572,2.69112 29.0528,0.50749 9.9437,-2.29024 23.54192,3.76611 25.9907,-9.08059 2.92123,-9.96012 -0.88557,-20.47369 -3.36028,-30.22405 -7.77944,-13.61042 -17.31494,-10.51722 -16.07059,-16.4619 2.50414,-11.96321 -4.32481,-13.80542 -6.80647,-22.813372 -6.67494,-6.381234 -17.79617,-6.423626 -26.35067,-9.908061 -6.05979,-2.99627 -26.26321,-1.481305 -21.35364,-7.049477 7.61134,-8.63237 2.47274,-17.103127 -2.53161,-22.48931 C 132.81401,55.50013 129.29398,44.371096 125.5552,38.062351 120.41054,29.381344 125.0072,13.22878 111.91327,11.305035 102.47063,11.252523 94.727173,3.8050148 86.354911,0.52451855 74.737573,-1.3493824 62.177061,4.7649508 51.366034,-1.8426796 42.940667,-6.9922094 34.757909,-3.179884 25.423395,-2.6486978 17.261137,-2.1842196 13.876527,5.5170544 7.5397803,11.732667 0.71029678,18.431597 3.9984038,29.975273 3.6644435,39.598201 3.3435928,48.84338 3.6091341,57.066806 11.975744,64.279826 c 4.847447,4.179079 2.572984,22.314723 3.32506,25.247819 0.665204,2.594298 4.390347,6.385964 4.390347,6.385964 z"
+       id="path1"
+       sodipodi:nodetypes="sssssscssscsccsccsssccsssssss"
+       inkscape:export-filename="..\Binary\Data\Sprites\Map\Map1Outline.svg"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96" /></g></svg>

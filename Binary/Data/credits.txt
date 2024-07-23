@@ -1,0 +1,53 @@
+[THANKS]
+
+[DEV]
+
+Game by Lulu, written in FreePascal with Lazarus IDE.
+
+The following libraries are used for its development:
+- OGLCScene to render graphics with OpenGL  https://github.com/Lulu04/OGLCScene
+- ALSound to render sounds and musics  https://github.com/Lulu04/ALSound
+- BGRABitmap to handle fonts, images and svg files.
+
+[GRAPHICS]
+
+character reworked from https://www.freepik.com/free-vector/little-red-riding-hood_984951.htm#query=little%20red%20riding%20hood&position=16&from_view=search&track=ais&uuid=ff0ce799-4a7d-4d3d-a595-d4baf053fdba
+
+cristal reworked from https://opengameart.org/content/crystals-0, by AntumDeluge
+
+parchment reworked from https://opengameart.org/content/epic-collection-parchment by Melissa Krautheim
+
+
+[MUSICS]
+
+On The Islands.ogg,
+ForestInTheNight.ogg,
+PromenonsNous.ogg,
+GuitarAndViolin.ogg,
+CatchyMusic.ogg,
+Success1.ogg,
+suspense1.ogg by Lulu, made with Reason 3.0
+
+
+[SOUNDS]
+
+Fire Crackle and Flames 001 by TheWoodlandNomad -- https://freesound.org/s/363093/ -- License: Creative Commons 0
+quick woosh by florianreichelt -- https://freesound.org/s/683101/ -- License: Creative Commons 0
+Balloon_Inflate_4 by Terhen -- https://freesound.org/s/234211/ -- License: Attribution 3.0
+Balloon Pop by Breviceps -- https://freesound.org/s/458398/ -- License: Creative Commons 0
+14 - Polea.wav by MichaelGillighan -- https://freesound.org/s/429215/ -- License: Creative Commons 0
+Storm cloud made from wind gap indoors 001 190310_1316.wav by klankbeeld -- https://freesound.org/s/463868/ -- License: Attribution 4.0
+ZIP LINE by daveincamas -- https://freesound.org/s/208728/ -- License: Attribution NonCommercial 4.0
+MetalClick by Kenney Vleugels (www.kenney.nl) -- License: Creative Commons 0
+Sea and Seagull, wave by suukadi -- https://freesound.org/s/410323/ -- License: Creative Commons 0
+Wall Bump 1.wav by Osiruswaltz -- https://freesound.org/s/457741/ -- License: Creative Commons 0
+stone_on_stone_ST.wav by wilhelmsqueek -- https://freesound.org/s/347391/ -- License: Creative Commons 0
+Smashing head on wall by pfranzen -- https://freesound.org/s/377157/ -- License: Attribution 4.0
+little girl saying woo hoo by LadyImperatrix -- https://freesound.org/s/620397/ -- License: Creative Commons 0
+grinder on metal.wav by jchiledred -- https://freesound.org/s/445829/ -- License: Attribution 4.0
+Fart 1 by Breviceps -- https://freesound.org/s/445998/ -- License: Creative Commons 0
+Larrun_Mountains_MedWind by nicotep -- https://freesound.org/s/725630/ -- License: Creative Commons 0
+Spaceship compartment door.With pneumatics(8lrs,mltprcssng).wav by newlocknew -- https://freesound.org/s/546922/ -- License: Attribution 4.0
+ALERT.flac by qubodup -- https://freesound.org/s/182724/ -- License: Creative Commons 0
+PutObject by Lulu (with my mouth)
+Beep1.ogg, Beep2.ogg and DecoderScanning.ogg by Lulu with Reason 3.0
