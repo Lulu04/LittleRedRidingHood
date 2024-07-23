@@ -1,7 +1,13 @@
 # LittleRedRidingHood
 Game written in FreePascal with Lazarus IDE, to test and improve OGLCScene and ALSound library.  
-  
+    
 Enjoy!  
+
+## Supported platforms
+Windows 64b (tested on Win10)  
+Windows 32b, 7 and + (tested on Win7 32b)  
+Linux 64b,GTK2 (tested on Ubuntu 22.04 LTS)  
+
 
 ## How to compile
 You must have Lazarus IDE installed on your system with BGRABitmap package.  
