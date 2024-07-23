@@ -340,3 +340,4 @@ msgstr "Ça ressemble à des plans de fabrication. Tu en prends un discrètement
 #: u_resourcestring.sziplinehint
 msgid "a useful zip-line to cross the mountain peaks"
 msgstr "une tyrolienne indispensable pour traverser les Pics Montagneux"
+
