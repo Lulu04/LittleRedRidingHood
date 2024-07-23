@@ -1,3 +1,11 @@
-
+*.lps
+*.res
 /Design
 ideas.txt
+Binary/Atlas.png
+/backup
+/lib
+/Units/backup
+Binary/LittleRedRidingHood.dbg
+Binary/LittleRedRidingHood.exe
+Binary/LittleRedRidingHood
