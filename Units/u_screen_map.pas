@@ -32,6 +32,7 @@ private
   BWorkShop, BPineForest, BMountainPeaks, BVolcano: TImageButton;
   FTargetButtonForFireworkAnim: TImageButton;
   BMainMenu: TUIButton;
+  FFireworkCount: integer;
 
   function CreateImageButton(tex: PTexture): TImageButton;
   function CreateButton(const aCaption: string; tex: PTexture): TUIButton;
@@ -219,55 +220,76 @@ begin
 end;
 
 procedure TScreenMap.ProcessButtonClick(Sender: TSimpleSurfaceWithEffect);
+var pineForestDone, mountainPicDone: boolean;
+  s: string;
+  procedure _ShowPanelChooseGameStep;
+  begin
+    if s <> '' then begin
+      FPanelChooseGameStep.RemoveStartButton;
+      FPanelChooseGameStep.Hint := s;
+    end;
+    FPanelChooseGameStep.Show;
+  end;
+
 begin
   Audio.PlayUIClick;
+  s := '';
+
+  pineForestDone := PlayerInfo.Forest.IsTerminated;
+  mountainPicDone := PlayerInfo.MountainPeak.IsTerminated;
+
+
   if Sender = BMainMenu then begin
     UnableMouseInteractionOnMapObjects(False);
     FScene.RunScreen(ScreenTitle);
     LastGameClicked := gomUnknow;
+    exit;
   end else
   if Sender = BWorkShop then begin
     UnableMouseInteractionOnMapObjects(False);
     FScene.RunScreen(ScreenWorkShop);
     LastGameClicked := gomUnknow;
+    exit;
   end;
+
   if Sender = BPineForest then begin
     UnableMouseInteractionOnMapObjects(False);
     FPanelChooseGameStep := TPanelChooseGameStep.Create(texPineForest, texLRIcon, PlayerInfo.Forest, ScreenGameForest);
-    FPanelChooseGameStep.Show;
+    _ShowPanelChooseGameStep;
     LastGameClicked := gomPineForest;
+    exit;
   end;
-  if Sender = BMountainPeaks then begin    //texZipLinePeaks
+
+  if s = '' then
+    if not pineForestDone then s := sFirstCompleteForest
+      else if not PlayerInfo.MountainPeak.ZipLine.Owned then s := sBuyZipLineFirst;
+
+  if Sender = BMountainPeaks then begin
     UnableMouseInteractionOnMapObjects(False);
     FPanelChooseGameStep := TPanelChooseGameStep.Create(texZipLinePeaks, texLRIcon, PlayerInfo.MountainPeak, ScreenGameZipLine);
-    if not PlayerInfo.MountainPeak.ZipLine.Owned then begin
-      FPanelChooseGameStep.RemoveStartButton;
-      FPanelChooseGameStep.Hint := sBuyZipLineFirst;
-    end;
-    if not PlayerInfo.Forest.IsTerminated then begin
-      FPanelChooseGameStep.RemoveStartButton;
-      FPanelChooseGameStep.Hint := sFirstCompleteForest;
-    end;
-    FPanelChooseGameStep.Show;
+    _ShowPanelChooseGameStep;
     LastGameClicked := gomZipLine;
+    exit;
   end;
+
+  if s = '' then
+    if not mountainPicDone then s := sFirstCompleteMountainPeaks;
+
   if Sender = BVolcano then begin
     UnableMouseInteractionOnMapObjects(False);
-    // check wich screen to start
-    if not PlayerInfo.Volcano.VolcanoEntranceIsDone then begin
+    // check which screen to start
+    if (s = '') and not PlayerInfo.Volcano.VolcanoEntranceIsDone then begin
       FScene.RunScreen(ScreenGameVolcanoEntrance);
       LastGameClicked := gomUnknow;
     end else begin
       { #todo : reprendre ici lorsque le jeu Volcano sera fait }
       FPanelChooseGameStep := TPanelChooseGameStep.Create(texVolcanoMountain, texLRIcon, PlayerInfo.Volcano, ScreenGameVolcanoEntrance);
-      if not PlayerInfo.MountainPeak.IsTerminated then begin
-        FPanelChooseGameStep.RemoveStartButton;
-        FPanelChooseGameStep.Hint := sFirstCompleteMountainPeaks;
-      end;
-      FPanelChooseGameStep.Show;
+      _ShowPanelChooseGameStep;
       LastGameClicked := gomVolcano;
+      exit;
     end;
   end;
+
 end;
 
 procedure TScreenMap.ShowLastGameStepPanel;
@@ -303,6 +325,7 @@ var o, o1: TSprite;
 begin
 FScene.LogInfo('Entering TScreenMap.CreateObjects');
 
+  FFireworkCount := 0;
   FsndSeaWave := Audio.AddSound('sea-and-seagull.ogg');
   FsndSeaWave.Loop := True;
   FsndSeaWave.FadeIn(0.8, 3.0);
@@ -518,6 +541,10 @@ var xx, yy: single;
     pe.SetCoordinate(xx, yy);
     pe.Shoot;
     pe.KillDefered(7);
+    with Audio.AddSound('Fireworks.ogg') do begin
+      ApplyEffect(Audio.Reverb1);
+      PlayThenKill(True);
+    end;
   end;
 
 begin
@@ -529,7 +556,9 @@ begin
       PostMessage(6, 1);
       PostMessage(7, 1.6);
       PostMessage(8, 2.2);
-      PostMessage(1, 2.5);
+      inc(FFireworkCount);
+      if FFireworkCount < 4 then PostMessage(0, 0.5)
+        else PostMessage(1, 2.5);
     end;
     1: begin
       UnableMouseInteractionOnMapObjects(True);

@@ -96,9 +96,8 @@
         <ComponentName Value="FormMain"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <IsVisibleTab Value="True"/>
-        <TopLine Value="12"/>
-        <CursorPos X="44" Y="18"/>
+        <TopLine Value="82"/>
+        <CursorPos X="48" Y="94"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
@@ -174,8 +173,8 @@
         <Filename Value="Units\u_app.pas"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="21"/>
-        <TopLine Value="283"/>
-        <CursorPos Y="300"/>
+        <TopLine Value="789"/>
+        <CursorPos X="3" Y="818"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
       </Unit10>
@@ -183,8 +182,8 @@
         <Filename Value="Units\u_sprite_lrcommon.pas"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="7"/>
-        <TopLine Value="827"/>
-        <CursorPos X="32" Y="842"/>
+        <TopLine Value="625"/>
+        <CursorPos X="37" Y="639"/>
         <UsageCount Value="200"/>
         <Bookmarks Count="1">
           <Item0 X="37" Y="639" ID="2"/>
@@ -318,8 +317,8 @@
         <Filename Value="Units\u_screen_gameforest.pas"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="5"/>
-        <TopLine Value="40"/>
-        <CursorPos X="7" Y="57"/>
+        <TopLine Value="188"/>
+        <CursorPos X="15" Y="192"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
       </Unit27>
@@ -418,8 +417,8 @@
         <Filename Value="Units\u_resourcestring.pas"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="1"/>
-        <TopLine Value="97"/>
-        <CursorPos X="68" Y="119"/>
+        <TopLine Value="86"/>
+        <CursorPos Y="99"/>
         <UsageCount Value="201"/>
         <Loaded Value="True"/>
       </Unit39>
@@ -434,8 +433,8 @@
         <Filename Value="Units\u_screen_map.pas"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="14"/>
-        <TopLine Value="109"/>
-        <CursorPos X="55" Y="119"/>
+        <TopLine Value="541"/>
+        <CursorPos X="50" Y="558"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
       </Unit41>
@@ -452,8 +451,8 @@
         <Filename Value="Units\u_audio.pas"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="2"/>
-        <TopLine Value="193"/>
-        <CursorPos X="38" Y="217"/>
+        <TopLine Value="209"/>
+        <CursorPos X="44" Y="213"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
       </Unit43>
@@ -462,8 +461,8 @@
         <UnitName Value="ALSound"/>
         <EditorIndex Value="4"/>
         <WindowIndex Value="1"/>
-        <TopLine Value="3591"/>
-        <CursorPos X="3" Y="3593"/>
+        <TopLine Value="3802"/>
+        <CursorPos X="21" Y="3812"/>
         <UsageCount Value="100"/>
         <Loaded Value="True"/>
       </Unit44>
@@ -551,9 +550,10 @@
       <Unit55>
         <Filename Value="Units\u_screen_gamevolcanoentrance.pas"/>
         <IsPartOfProject Value="True"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="9"/>
-        <TopLine Value="756"/>
-        <CursorPos X="18" Y="777"/>
+        <TopLine Value="266"/>
+        <CursorPos Y="280"/>
         <UsageCount Value="200"/>
         <Bookmarks Count="2">
           <Item0 Y="280"/>
@@ -565,8 +565,8 @@
         <Filename Value="Units\u_sprite_lr4dir.pas"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="8"/>
-        <TopLine Value="1444"/>
-        <CursorPos Y="1458"/>
+        <TopLine Value="353"/>
+        <CursorPos Y="366"/>
         <UsageCount Value="200"/>
         <Bookmarks Count="1">
           <Item0 Y="366" ID="3"/>
@@ -579,7 +579,7 @@
         <EditorIndex Value="12"/>
         <TopLine Value="16"/>
         <CursorPos X="26" Y="35"/>
-        <UsageCount Value="133"/>
+        <UsageCount Value="138"/>
         <Loaded Value="True"/>
       </Unit57>
       <Unit58>
@@ -587,7 +587,7 @@
         <WindowIndex Value="1"/>
         <TopLine Value="227"/>
         <CursorPos X="12" Y="245"/>
-        <UsageCount Value="56"/>
+        <UsageCount Value="59"/>
         <Loaded Value="True"/>
       </Unit58>
       <Unit59>
@@ -595,7 +595,7 @@
         <EditorIndex Value="3"/>
         <WindowIndex Value="1"/>
         <CursorPos X="19" Y="4"/>
-        <UsageCount Value="56"/>
+        <UsageCount Value="59"/>
         <Loaded Value="True"/>
       </Unit59>
       <Unit60>
@@ -618,7 +618,7 @@
         <WindowIndex Value="1"/>
         <TopLine Value="96"/>
         <CursorPos X="30" Y="118"/>
-        <UsageCount Value="37"/>
+        <UsageCount Value="40"/>
         <Loaded Value="True"/>
       </Unit62>
       <Unit63>
@@ -627,7 +627,7 @@
         <WindowIndex Value="1"/>
         <TopLine Value="3024"/>
         <CursorPos X="56" Y="3037"/>
-        <UsageCount Value="35"/>
+        <UsageCount Value="38"/>
         <Loaded Value="True"/>
       </Unit63>
       <Unit64>
@@ -636,7 +636,7 @@
         <WindowIndex Value="1"/>
         <TopLine Value="2"/>
         <CursorPos Y="24"/>
-        <UsageCount Value="35"/>
+        <UsageCount Value="38"/>
         <Loaded Value="True"/>
       </Unit64>
       <Unit65>
@@ -645,7 +645,7 @@
         <WindowIndex Value="1"/>
         <TopLine Value="968"/>
         <CursorPos Y="982"/>
-        <UsageCount Value="31"/>
+        <UsageCount Value="34"/>
         <Loaded Value="True"/>
       </Unit65>
       <Unit66>
@@ -654,7 +654,7 @@
         <WindowIndex Value="1"/>
         <TopLine Value="885"/>
         <CursorPos Y="900"/>
-        <UsageCount Value="29"/>
+        <UsageCount Value="32"/>
         <Loaded Value="True"/>
       </Unit66>
       <Unit67>
@@ -662,7 +662,7 @@
         <EditorIndex Value="10"/>
         <TopLine Value="1324"/>
         <CursorPos Y="1331"/>
-        <UsageCount Value="13"/>
+        <UsageCount Value="16"/>
         <Loaded Value="True"/>
       </Unit67>
       <Unit68>
@@ -670,7 +670,7 @@
         <EditorIndex Value="11"/>
         <TopLine Value="2150"/>
         <CursorPos Y="2166"/>
-        <UsageCount Value="12"/>
+        <UsageCount Value="15"/>
         <Loaded Value="True"/>
       </Unit68>
       <Unit69>
@@ -682,124 +682,124 @@
     </Units>
     <JumpHistory Count="30" HistoryIndex="29">
       <Position1>
-        <Filename Value="Units\u_sprite_lrcommon.pas"/>
-        <Caret Line="638" Column="37" TopLine="624"/>
+        <Filename Value="Units\u_screen_map.pas"/>
+        <Caret Line="38" Column="19" TopLine="25"/>
       </Position1>
       <Position2>
-        <Filename Value="Units\u_sprite_lrcommon.pas"/>
-        <Caret Line="637" Column="23" TopLine="624"/>
+        <Filename Value="Units\u_screen_map.pas"/>
+        <Caret Line="255" Column="42" TopLine="234"/>
       </Position2>
       <Position3>
-        <Filename Value="Units\u_sprite_lrcommon.pas"/>
-        <Caret Line="118" Column="25" TopLine="107"/>
+        <Filename Value="Units\u_screen_map.pas"/>
+        <Caret Line="288" Column="21" TopLine="273"/>
       </Position3>
       <Position4>
-        <Filename Value="Units\u_sprite_lrcommon.pas"/>
-        <Caret Line="131" Column="18" TopLine="115"/>
+        <Filename Value="Units\u_screen_gameforest.pas"/>
+        <Caret Line="52" Column="20" TopLine="40"/>
       </Position4>
       <Position5>
-        <Filename Value="Units\u_sprite_lrcommon.pas"/>
-        <Caret Line="666" Column="3" TopLine="664"/>
+        <Filename Value="Units\form_main.pas"/>
+        <Caret Line="28" Column="22" TopLine="12"/>
       </Position5>
       <Position6>
-        <Filename Value="Units\u_sprite_lrcommon.pas"/>
-        <Caret Line="127" Column="15" TopLine="117"/>
+        <Filename Value="Units\u_audio.pas"/>
+        <Caret Line="206" Column="28" TopLine="193"/>
       </Position6>
       <Position7>
-        <Filename Value="Units\u_sprite_lrcommon.pas"/>
-        <Caret Line="634" Column="3" TopLine="632"/>
+        <Filename Value="Units\u_audio.pas"/>
+        <Caret Line="50" Column="13" TopLine="34"/>
       </Position7>
       <Position8>
-        <Filename Value="Units\u_sprite_lrcommon.pas"/>
-        <Caret Line="131" Column="13" TopLine="113"/>
+        <Filename Value="Units\u_audio.pas"/>
+        <Caret Line="214" TopLine="209"/>
       </Position8>
       <Position9>
-        <Filename Value="Units\u_sprite_lrcommon.pas"/>
-        <Caret Line="668" Column="3" TopLine="654"/>
+        <Filename Value="..\ALSound\source\alsound.pas"/>
+        <Caret Line="3598" Column="41" TopLine="3591"/>
       </Position9>
       <Position10>
-        <Filename Value="Units\u_sprite_lr4dir.pas"/>
-        <Caret Line="1458" TopLine="1444"/>
+        <Filename Value="..\ALSound\source\alsound.pas"/>
+        <Caret Line="410" Column="22" TopLine="389"/>
       </Position10>
       <Position11>
-        <Filename Value="Units\u_sprite_lrcommon.pas"/>
-        <Caret Line="667" Column="33" TopLine="654"/>
+        <Filename Value="..\ALSound\source\alsound.pas"/>
+        <Caret Line="5767" Column="3" TopLine="5767"/>
       </Position11>
       <Position12>
-        <Filename Value="Units\u_sprite_lrcommon.pas"/>
-        <Caret Line="131" Column="15" TopLine="117"/>
+        <Filename Value="..\ALSound\source\alsound.pas"/>
+        <Caret Line="634" Column="20" TopLine="611"/>
       </Position12>
       <Position13>
-        <Filename Value="Units\u_sprite_lrcommon.pas"/>
-        <Caret Line="681" Column="2" TopLine="664"/>
+        <Filename Value="..\ALSound\source\alsound.pas"/>
+        <Caret Line="3934" Column="3" TopLine="3932"/>
       </Position13>
       <Position14>
-        <Filename Value="Units\u_sprite_lrcommon.pas"/>
-        <Caret Line="131" Column="13" TopLine="118"/>
+        <Filename Value="..\ALSound\source\alsound.pas"/>
+        <Caret Line="629" Column="22" TopLine="620"/>
       </Position14>
       <Position15>
-        <Filename Value="Units\u_sprite_lrcommon.pas"/>
-        <Caret Line="668" Column="13" TopLine="664"/>
+        <Filename Value="Units\u_common.pas"/>
+        <Caret Line="9" Column="14"/>
       </Position15>
       <Position16>
-        <Filename Value="Units\u_sprite_lrcommon.pas"/>
-        <Caret Line="131" Column="15" TopLine="117"/>
+        <Filename Value="Units\u_screen_map.pas"/>
+        <Caret Line="249" Column="39" TopLine="237"/>
       </Position16>
       <Position17>
-        <Filename Value="Units\u_sprite_lrcommon.pas"/>
-        <Caret Line="666" Column="16" TopLine="664"/>
+        <Filename Value="Units\u_screen_map.pas"/>
+        <Caret Line="42" Column="20" TopLine="25"/>
       </Position17>
       <Position18>
-        <Filename Value="Units\u_sprite_lrcommon.pas"/>
-        <Caret Line="696" Column="10" TopLine="683"/>
+        <Filename Value="Units\u_screen_map.pas"/>
+        <Caret Line="509" Column="22" TopLine="491"/>
       </Position18>
       <Position19>
-        <Filename Value="Units\u_sprite_lrcommon.pas"/>
-        <Caret Line="129" Column="22" TopLine="111"/>
+        <Filename Value="Units\u_screen_map.pas"/>
+        <Caret Line="40" Column="12" TopLine="26"/>
       </Position19>
       <Position20>
-        <Filename Value="Units\u_sprite_lrcommon.pas"/>
-        <Caret Line="661" Column="3" TopLine="659"/>
+        <Filename Value="Units\u_screen_map.pas"/>
+        <Caret Line="314" Column="22" TopLine="303"/>
       </Position20>
       <Position21>
-        <Filename Value="Units\u_sprite_lrcommon.pas"/>
-        <Caret Line="131" Column="18" TopLine="115"/>
+        <Filename Value="Units\u_screen_map.pas"/>
+        <Caret Line="44" Column="12" TopLine="26"/>
       </Position21>
       <Position22>
-        <Filename Value="Units\u_sprite_lrcommon.pas"/>
-        <Caret Line="666" Column="3" TopLine="664"/>
+        <Filename Value="Units\u_screen_map.pas"/>
+        <Caret Line="557" Column="36" TopLine="545"/>
       </Position22>
       <Position23>
-        <Filename Value="Units\u_sprite_lrcommon.pas"/>
-        <Caret Line="127" Column="15" TopLine="117"/>
+        <Filename Value="Units\u_screen_map.pas"/>
+        <Caret Line="43" Column="17" TopLine="21"/>
       </Position23>
       <Position24>
-        <Filename Value="Units\u_sprite_lrcommon.pas"/>
-        <Caret Line="663" Column="97" TopLine="647"/>
+        <Filename Value="Units\u_screen_map.pas"/>
+        <Caret Line="328" Column="3" TopLine="320"/>
       </Position24>
       <Position25>
-        <Filename Value="Units\u_screen_workshop.pas"/>
-        <Caret Line="463" Column="20" TopLine="449"/>
+        <Filename Value="Units\u_screen_map.pas"/>
+        <Caret Line="41" Column="18" TopLine="31"/>
       </Position25>
       <Position26>
-        <Filename Value="Units\u_sprite_lrcommon.pas"/>
-        <Caret Line="180" Column="33" TopLine="165"/>
+        <Filename Value="Units\u_screen_map.pas"/>
+        <Caret Line="306" Column="3" TopLine="302"/>
       </Position26>
       <Position27>
-        <Filename Value="..\OGLCScene\source\OGLCScene.pas"/>
-        <Caret Line="646" Column="28" TopLine="635"/>
+        <Filename Value="Units\u_screen_map.pas"/>
+        <Caret Line="45" Column="12" TopLine="27"/>
       </Position27>
       <Position28>
-        <Filename Value="Units\form_main.pas"/>
-        <Caret Line="106" Column="47" TopLine="88"/>
+        <Filename Value="Units\u_screen_gameforest.pas"/>
+        <Caret Line="192" Column="15" TopLine="188"/>
       </Position28>
       <Position29>
-        <Filename Value="Units\form_main.pas"/>
-        <Caret Line="24" Column="22" TopLine="16"/>
+        <Filename Value="Units\u_sprite_lrcommon.pas"/>
+        <Caret Line="639" Column="37" TopLine="625"/>
       </Position29>
       <Position30>
-        <Filename Value="Units\form_main.pas"/>
-        <Caret Line="75" Column="3" TopLine="73"/>
+        <Filename Value="Units\u_sprite_lr4dir.pas"/>
+        <Caret Line="366" TopLine="353"/>
       </Position30>
     </JumpHistory>
   </ProjectOptions>
