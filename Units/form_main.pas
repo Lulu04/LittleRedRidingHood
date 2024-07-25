@@ -82,7 +82,7 @@ end;
 
 procedure TFormMain.Timer1Timer(Sender: TObject);
 begin
-  Caption := Format('%d FPS %d max texture size  %d objects', [FScene.FPS, FScene.TexMan.MaxTextureWidth, FScene.SurfaceCount]);
+  Caption := Format('scene %dx%d %d FPS %d max texture size  %d objects', [FScene.Width, FScene.Height, FScene.FPS, FScene.TexMan.MaxTextureWidth, FScene.SurfaceCount]);
 end;
 
 procedure TFormMain.LoadCommonData;
