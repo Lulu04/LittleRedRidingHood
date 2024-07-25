@@ -40,12 +40,12 @@ var ScreenGameVolcano: TScreenGameVolcano;
 
 implementation
 
-uses Forms, u_sprite_wolf, u_app;
+uses Forms, u_sprite_wolf, u_app, LCLType;
 
 
 var FAtlas: TOGLCTextureAtlas;
     FFontText: TTexturedFont;
-
+    FLR: TLR4Direction;
 { TScreenGameVolcano }
 
 procedure TScreenGameVolcano.ProcessButtonClick(Sender: TSimpleSurfaceWithEffect);
@@ -82,6 +82,15 @@ begin
   ima := FAtlas.GetPackedImage;
   ima.SaveToFile(Application.Location+'Atlas.png');
   ima.Free;
+
+  // LR 4 direction
+  FLR := TLR4Direction.Create;
+  FLR.SetCoordinate(FScene.Width*0.5, FScene.Height*0.8);
+  FLR.SetWindSpeed(0.5);
+  FLR.SetFaceType(lrfSmile);
+  FLR.IdleRight;
+//  FLR.CallbackPickUpSomethingWhenBendDown := @ProcessCallbackPickUpSomethingWhenBendDown;
+
 end;
 
 procedure TScreenGameVolcano.FreeObjects;
@@ -98,6 +107,26 @@ end;
 procedure TScreenGameVolcano.Update(const aElapsedTime: single);
 begin
   inherited Update(aElapsedTime);
+
+  if FScene.KeyState[KeyAction1] then FLR.State := lr4sJumping
+  else
+  if FScene.KeyState[VK_LEFT] then begin
+    FLR.State := lr4sLeftWalking;
+  end else
+  if FScene.KeyState[VK_RIGHT] then FLR.State := lr4sRightWalking
+  else
+  if FScene.KeyState[VK_UP] and not FScene.KeyState[VK_SHIFT] then FLR.State := lr4sUpWalking
+  else
+  if FScene.KeyState[VK_DOWN] and not FScene.KeyState[VK_SHIFT] then FLR.State := lr4sDownWalking
+  else
+  if FScene.KeyState[VK_P] then FLR.State := lr4sOnLadderUp
+  else
+  if FScene.KeyState[VK_O] then
+    FLR.State := lr4sOnLadderDown
+  else
+  if FScene.KeyState[KeyAction2] then FLR.State := lr4sBendDown
+  else FLR.SetIdlePosition;
+
 end;
 
 end.
