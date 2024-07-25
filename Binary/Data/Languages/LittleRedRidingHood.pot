@@ -258,6 +258,10 @@ msgstr ""
 msgid "smooth arrival bonus"
 msgstr ""
 
+#: u_resourcestring.ssorrynotyetavailable
+msgid "Sorry, this game is not yet available..."
+msgstr ""
+
 #: u_resourcestring.ssounds
 msgid "SOUNDS"
 msgstr ""
