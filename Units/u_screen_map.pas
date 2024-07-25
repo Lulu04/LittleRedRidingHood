@@ -11,10 +11,11 @@ uses
   u_common, u_common_ui;
 
 { WHEN ADDING A NEW GAME: update the following:
-    - procedure ShowLastGameStepPanel;
+    - procedure TScreenMap.ShowLastGameStepPanel;
     - function TScreenMap.CheckIfASubGameWasCompleted
-    - add the new TImageButton in procedure CreateObjects;
+    - add the new TImageButton in procedure TScreenMap.CreateObjects;
     - procedure TScreenMap.UnableMouseInteractionOnMapObjects(aValue: boolean);
+    - procedure TScreenMap.SetIconLRPositionOnMap
 }
 
 type
@@ -39,6 +40,7 @@ private
   procedure ProcessButtonClick(Sender: TSimpleSurfaceWithEffect);
   procedure ShowLastGameStepPanel;
   function CheckIfASubGameWasCompleted: boolean;
+  procedure SetIconLRPositionOnMap;
 public
   procedure CreateObjects; override;
   procedure FreeObjects; override;
@@ -84,7 +86,7 @@ end;
 var FFontText: TTexturedFont;
   texLRIcon, texMapStep, texMapStepChecked,
   texMapCastleFW, texMapCastleOutline,
-  texMap1BG, texMap1FW, texMap1Outline, texLRHome, texPineForest,
+  texMap1FW, texMap1Outline, texLRHome, texPineForest,
   texZipLinePeaks, texZipLinePeaksCableToVolcano,
   texVolcanoMountain,
   texCastle: PTexture;
@@ -317,11 +319,21 @@ begin
   end;
 end;
 
+procedure TScreenMap.SetIconLRPositionOnMap;
+begin
+  if PlayerInfo.MountainPeak.IsTerminated then FIconLR.SetCenterCoordinate(BVolcano.CenterX, BVolcano.CenterY)
+  else
+  if PlayerInfo.Forest.IsTerminated then FIconLR.SetCenterCoordinate(BMountainPeaks.CenterX, BMountainPeaks.CenterY)
+  else FIconLR.SetCenterCoordinate(BPineForest.CenterX, BPineForest.CenterY);
+end;
+
 procedure TScreenMap.CreateObjects;
 var o, o1: TSprite;
   pe: TParticleEmitter;
   sea: TMultiColorRectangle;
   ima: TBGRABitmap;
+  s: String;
+  d, waveCount, i: Integer;
 begin
 FScene.LogInfo('Entering TScreenMap.CreateObjects');
 
@@ -332,14 +344,14 @@ FScene.LogInfo('Entering TScreenMap.CreateObjects');
 
   FAtlas := FScene.CreateAtlas;
   FAtlas.Spacing := 2;
+  AdditionnalScale := 1.0;
 
   texLRIcon := FAtlas.AddFromSVG(SpriteBGFolder+'LR.svg', ScaleW(33), -1);
   texMapStep := FAtlas.AddFromSVG(SpriteMapFolder+'MapStep.svg', ScaleW(21), -1);
   texMapStepChecked := FAtlas.AddFromSVG(SpriteMapFolder+'MapStepChecked.svg', ScaleW(34), -1);
-  // MAP 1
-  texMap1FW := FAtlas.AddFromSVG(SpriteMapFolder+'Map1FW.svg', ScaleW(718), -1);
-  texMap1BG := FAtlas.AddFromSVG(SpriteMapFolder+'Map1BG.svg', ScaleW(772), -1);
-  texMap1Outline := FAtlas.AddFromSVG(SpriteMapFolder+'Map1OutLine.svg', ScaleW(718), -1);
+  // games map
+  texMap1FW := FAtlas.AddFromSVG(SpriteMapFolder+'Map1FW.svg', ScaleW(651), -1);
+  texMap1Outline := FAtlas.AddFromSVG(SpriteMapFolder+'Map1OutLine.svg', ScaleW(651), -1);
   texLRHome := FAtlas.AddFromSVG(SpriteBGFolder+'LRHome.svg', ScaleW(87), -1);
   FAtlas.Add(ParticleFolder+'sphere_particle.png');
   texPineForest := FAtlas.AddFromSVG(SpriteMapFolder+'PineForest.svg', ScaleW(167), -1);
@@ -347,10 +359,10 @@ FScene.LogInfo('Entering TScreenMap.CreateObjects');
   texZipLinePeaks := FAtlas.AddFromSVG(SpriteMapFolder+'ZipLinePeaks.svg', ScaleW(119), -1);
   texZipLinePeaksCableToVolcano := FAtlas.AddFromSVG(SpriteMapFolder+'ZipLinePeaksCableToVolcano.svg', ScaleW(93), -1);
 
-  // MAP 2
-  texMapCastleFW := FAtlas.AddFromSVG(SpriteMapFolder+'MapCastleFW.svg', ScaleW(287), -1);
-  texMapCastleOutline := FAtlas.AddFromSVG(SpriteMapFolder+'MapCastleOutline.svg', ScaleW(287), -1);
-  texCastle := FAtlas.AddFromSVG(SpriteBGFolder+'WolfCastle.svg', Round(FScene.Width/5), -1);
+  // castle island
+  texMapCastleFW := FAtlas.AddFromSVG(SpriteMapFolder+'MapCastleFW.svg', ScaleW(170), -1);
+  texMapCastleOutline := FAtlas.AddFromSVG(SpriteMapFolder+'MapCastleOutline.svg', ScaleW(170), -1);
+  texCastle := FAtlas.AddFromSVG(SpriteBGFolder+'WolfCastle.svg', ScaleW(121), -1);
 
   FFontText := CreateGameFontText(FAtlas);
 
@@ -372,49 +384,46 @@ FScene.LogInfo('Entering TScreenMap.CreateObjects');
  // sky.SetBottomColors(BGRA(13,31,178)); //(BGRA(65,209,99)); //(BGRA(8,242,130));
   FScene.Add(sea, LAYER_BG2);
 
-  // Map 1 BG
+  // LR island
   o := TSprite.Create(texMap1FW, False);
   FScene.Add(o, LAYER_GROUND);
-  o.SetCoordinate(ScaleW(28), ScaleH(24));
+  o.SetCoordinate(ScaleW(36), ScaleH(31));
 
-  o1 := TSprite.Create(texMap1FW, False);   // texMap1BG
+  o1 := TSprite.Create(texMap1FW, False);   // blue BG
   o.AddChild(o1, -3);
   o1.CenterOnParent;
   o1.Opacity.Value := 100;
   o1.TintMode := tmReplaceColor;
-  o1.Scale.Value := PointF(1.1, 1.1);
   o1.Tint.Value := BGRA(107,161,209);
+  o1.Scale.Value := PointF(1.05, 1.04);
 
-  o1 := TSprite.Create(texMap1Outline, False);         //texMap1Outline
-  o.AddChild(o1, -2);
-  o1.CenterOnParent;
-  o1.AddAndPlayScenario('Scale 1.1'#10+
-                        'Opacity 0'#10+
-                        'ScaleChange 0.8 5.0 idcSinusoid'#10+
-                        'OpacityChange 100 5.0 idcLinear'#10+
-                        'Wait 5.0'#10+
-                        'Loop');
-
-  o1 := TSprite.Create(texMap1Outline, False);
-  o.AddChild(o1, -1);
-  o1.CenterOnParent;
-  o1.Opacity.Value := 0;
-  o1.AddAndPlayScenario('Wait 2.5'#10+
-                        'Label HERE'#10+
-                        'Scale 1.1'#10+
-                        'Opacity 0'#10+
-                        'ScaleChange 0.8 5.0 idcSinusoid'#10+
-                        'OpacityChange 100 5.0 idcLinear'#10+
-                        'Wait 5.0'#10+
-                        'Goto HERE');
+  // creates wave around the island
+  s := '';
+  d := 5;
+  waveCount := 2;
+  for i:=1 to waveCount do begin
+    o1 := TSprite.Create(texMap1Outline, False);         //texMap1Outline
+    o.AddChild(o1, -2);
+    o1.CenterOnParent;
+    if i = 1 then s := ''
+      else s := 'Wait '+ FormatFloatWithDot('0.000', d/waveCount*(i-1));
+    o1.AddAndPlayScenario(s+#10+
+                          'Label HERE'#10+
+                          'Scale 1.04'#10+
+                          'Opacity 0'#10+
+                          'ScaleChange 1.0 '+FormatFloatWithDot('0.000', d)+' idcSinusoid'#10+
+                          'OpacityChange 100 '+FormatFloatWithDot('0.000', d)+' idcStartFastEndSlow'#10+
+                          'Wait '+FormatFloatWithDot('0.000', d)+#10+
+                          'Goto HERE');
+  end;
 
 
-  // map castle
+  // castle island
   o := TSprite.Create(texMapCastleFW, False);
   FScene.Add(o, LAYER_GROUND);
-  o.SetCoordinate(ScaleW(727), ScaleH(71));
+  o.SetCoordinate(ScaleW(752), ScaleH(168));
 
-  o1 := TSprite.Create(texMapCastleFW, False);   // texMap1BG
+  o1 := TSprite.Create(texMapCastleFW, False);
   o.AddChild(o1, -3);
   o1.CenterOnParent;
   o1.Opacity.Value := 100;
@@ -422,33 +431,31 @@ FScene.LogInfo('Entering TScreenMap.CreateObjects');
   o1.Tint.Value := BGRA(107,161,209);
   o1.Scale.Value := PointF(1.1, 1.1);
 
-  o1 := TSprite.Create(texMapCastleOutline, False);
-  o.AddChild(o1, -2);
-  o1.CenterOnParent;
-  o1.AddAndPlayScenario('Scale 1.1'#10+
-                        'Opacity 0'#10+
-                        'ScaleChange 1.0 5.0 idcSinusoid'#10+
-                        'OpacityChange 100 5.0 idcLinear'#10+
-                        'Wait 5.0'#10+
-                        'Loop');
+  // creates wave around the castle island
+  s := '';
+  d := 5;
+  waveCount := 2;
+  for i:=1 to waveCount do begin
+    o1 := TSprite.Create(texMapCastleOutline, False);
+    o.AddChild(o1, -2);
+    o1.CenterOnParent;
+    if i = 1 then s := ''
+      else s := 'Wait '+ FormatFloatWithDot('0.000', d/waveCount*(i-1));
+    o1.AddAndPlayScenario(s+#10+
+                          'Label HERE'#10+
+                          'Scale 1.1'#10+
+                          'Opacity 0'#10+
+                          'ScaleChange 1.0 '+FormatFloatWithDot('0.000', d)+' idcSinusoid'#10+
+                          'OpacityChange 100 '+FormatFloatWithDot('0.000', d)+' idcStartFastEndSlow'#10+
+                          'Wait '+FormatFloatWithDot('0.000', d)+#10+
+                          'Goto HERE');
+  end;
 
-  o1 := TSprite.Create(texMapCastleOutline, False);
-  o.AddChild(o1, -1);
-  o1.CenterOnParent;
-  o1.Opacity.Value := 0;
-  o1.AddAndPlayScenario('Wait 2.5'#10+
-                        'Label HERE'#10+
-                        'Scale 1.1'#10+
-                        'Opacity 0'#10+
-                        'ScaleChange 1.0 5.0 idcSinusoid'#10+
-                        'OpacityChange 100 5.0 idcLinear'#10+
-                        'Wait 5.0'#10+
-                        'Goto HERE');
 
 
   // button workshop
   BWorkShop := CreateImageButton(texLRHome);
-  BWorkShop.SetCoordinate(ScaleW(90), ScaleH(488));
+  BWorkShop.SetCoordinate(ScaleW(121), ScaleH(488));
   pe := TParticleEmitter.Create(FScene);
   BWorkShop.AddChild(pe, 1);
   pe.LoadFromFile(ParticleFolder+'LRHomeSmoke.par', FAtlas);
@@ -457,7 +464,7 @@ FScene.LogInfo('Entering TScreenMap.CreateObjects');
 
   // button pine forest
   BPineForest := CreateImageButton(texPineForest);
-  BPineForest.SetCoordinate(ScaleW(38), ScaleH(21));
+  BPineForest.SetCoordinate(ScaleW(60), ScaleH(50));
 
   // button volcano mountain
   BVolcano := CreateImageButton(texVolcanoMountain);
@@ -479,8 +486,7 @@ FScene.LogInfo('Entering TScreenMap.CreateObjects');
   // Wolf castle
   o := TSprite.Create(texCastle, False);
   FScene.Add(o, LAYER_GROUND);
-  o.SetCenterCoordinate(FScene.Width*0.85, FScene.Height*0.3);
-FScene.LogInfo('Wolf castle created', 1);
+  o.SetCoordinate(ScaleW(783), ScaleH(186));
 
   // icon LR
   FIconLR := TSprite.Create(texLRIcon, False);
@@ -488,11 +494,7 @@ FScene.LogInfo('Wolf castle created', 1);
   FIconLR.CenterX := BWorkShop.CenterX;
   FIconLR.BottomY := BWorkShop.BottomY;
   FIconLR.Blink(-1, 0.3, 0.3);
-  if PlayerInfo.MountainPeak.IsTerminated then FIconLR.SetCenterCoordinate(BVolcano.CenterX, BVolcano.CenterY)
-  else
-  if PlayerInfo.Forest.IsTerminated then FIconLR.SetCenterCoordinate(BMountainPeaks.CenterX, BMountainPeaks.CenterY)
-  else FIconLR.SetCenterCoordinate(BPineForest.CenterX, BPineForest.CenterY);
-FScene.LogInfo('FIconLR created', 1);
+  SetIconLRPositionOnMap;
 
   // buttons
   BMainMenu := CreateButton(sBack, NIL);
