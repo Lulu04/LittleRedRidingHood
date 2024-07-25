@@ -85,9 +85,6 @@ end;
 
 
 var FPanelItem: TPanelItems;
-{    FItemBow, FItemElevator, FItemHammer, FItemStormCloud,
-    FItemZipLine,
-    FItemDecoder: TUpgradableItem; }
 
 { TPanelItems }
 

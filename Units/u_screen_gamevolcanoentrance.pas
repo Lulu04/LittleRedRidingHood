@@ -47,7 +47,7 @@ private
 
   FDifficulty: integer;
   procedure ProcessButtonClick(Sender: TSimpleSurfaceWithEffect);
-  procedure ProcessCallbackPickUpSomethingWhenBendDown(aPickUpToTheRight: boolean);
+  procedure ProcessCallbackPickUpSomethingWhenBendDown({%H-}aPickUpToTheRight: boolean);
   procedure OpenDoor;
   procedure CloseDoor;
 public
@@ -456,7 +456,7 @@ begin
     FWolf.DialogAuthorName := sWolf;
 
     BWolfCrate := TImageButton.Create(texWolfCrate);
-    FWolf.SetAsCarryingAnObject(BWolfCrate, 0, 0);
+    FWolf.SetAsCarryingAnObject(BWolfCrate);
     BWolfCrate.MouseInteractionEnabled := False;
     BWolfCrate.OnClick := @ProcessButtonClick;
   end;
