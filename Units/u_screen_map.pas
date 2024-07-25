@@ -352,7 +352,7 @@ FScene.LogInfo('Entering TScreenMap.CreateObjects');
   texMapStepChecked := FAtlas.AddFromSVG(SpriteMapFolder+'MapStepChecked.svg', ScaleW(34), -1);
   // games map
   texMap1FW := FAtlas.AddFromSVG(SpriteMapFolder+'Map1FW.svg', ScaleW(651), -1);
-  texMap1Outline := FAtlas.AddFromSVG(SpriteMapFolder+'Map1OutLine.svg', ScaleW(651), -1);
+  texMap1Outline := FAtlas.AddFromSVG(SpriteMapFolder+'Map1Outline.svg', ScaleW(651), -1);
   texLRHome := FAtlas.AddFromSVG(SpriteBGFolder+'LRHome.svg', ScaleW(87), -1);
   FAtlas.Add(ParticleFolder+'sphere_particle.png');
   texPineForest := FAtlas.AddFromSVG(SpriteMapFolder+'PineForest.svg', ScaleW(167), -1);
