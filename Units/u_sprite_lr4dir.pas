@@ -186,6 +186,7 @@ public // utils to control character during cinematics
   procedure IdleUp;
   procedure IdleDown;
   procedure WalkHorizontallyTo(aX: single; aTargetScreen: TScreenTemplate; aMessageValueWhenFinish: TUserMessageValue; aDelay: single=0);
+  // aY is relative to the feets of LR
   procedure WalkVerticallyTo(aY: single; aTargetScreen: TScreenTemplate; aMessageValueWhenFinish: TUserMessageValue; aDelay: single=0);
 public
   property State: TLR4State read FState write SetState;
@@ -535,13 +536,12 @@ begin
   end else aTargetScreen.PostMessage(aMessageValueWhenFinish, aDelay);
 end;
 
-procedure TLR4Direction.WalkVerticallyTo(aY: single; aTargetScreen: TScreenTemplate;
-  aMessageValueWhenFinish: TUserMessageValue; aDelay: single);
+procedure TLR4Direction.WalkVerticallyTo(aY: single; aTargetScreen: TScreenTemplate; aMessageValueWhenFinish: TUserMessageValue; aDelay: single);
 begin
-  if Y.Value < aY then begin
+  if Y.Value+DeltaYToBottom < aY then begin
     State := lr4sDownWalking;
     CheckVerticalMoveToY(aY, aTargetScreen, aMessageValueWhenFinish, aDelay);
-  end else if Y.Value > aY then begin
+  end else if Y.Value+DeltaYToBottom > aY then begin
     State := lr4sUpWalking;
     CheckVerticalMoveToY(aY, aTargetScreen, aMessageValueWhenFinish, aDelay);
   end else aTargetScreen.PostMessage(aMessageValueWhenFinish, aDelay);
