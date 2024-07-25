@@ -180,6 +180,10 @@ msgstr "améliore tes équipements dans l'atelier"
 msgid "KEYBOARD"
 msgstr "CLAVIER"
 
+#: u_resourcestring.slanguage
+msgid "LANGUAGE"
+msgstr "LANGAGE"
+
 #: u_resourcestring.slevel
 msgid "Level"
 msgstr "Niveau"

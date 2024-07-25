@@ -100,6 +100,7 @@ private
   BClose: TUIButton;
   CursorMusic, CursorSound: TUIScrollBar;
   LabelCursorMusic, LabelCursorSound: TUILabel;
+  ListBoxLanguages: TUIListBox;
   ButtonKeyUp, ButtonKeyDown, ButtonKeyLeft, ButtonKeyRight,
   ButtonKeyAction1, ButtonKeyAction2, ButtonKeyPause: TUIButton;
   LabelKeyUp, LabelKeyDown, LabelKeyLeft, LabelKeyRight,
@@ -114,6 +115,7 @@ private
   procedure UpdateLabelKeys;
   procedure UpdateLabelVolume;
   procedure ProcessPressAKeyDone;
+  procedure ProcessLanguageChange(Sender: TSimpleSurfaceWithEffect);
 protected
   procedure ProcessButtonClick(Sender: TSimpleSurfaceWithEffect); override;
 public
@@ -162,7 +164,7 @@ procedure LoadTitleScreenIcon(aAtlas: TOGLCTextureAtlas; aFontHeight: integer);
 
 
 implementation
-uses u_resourcestring, u_app, u_screen_title, u_screen_map, u_audio;
+uses u_resourcestring, u_app, u_screen_title, u_screen_map, u_audio, i18_utils;
 
 procedure LoadTitleScreenIcon(aAtlas: TOGLCTextureAtlas; aFontHeight: integer);
 begin
@@ -639,8 +641,15 @@ begin
   MouseInteractionEnabled := True;
 end;
 
+procedure TOptionsPanel.ProcessLanguageChange(Sender: TSimpleSurfaceWithEffect);
+begin
+  FSaveGame.Language := AppLang.IndexToLanguageIdentifier(ListBoxLanguages.FirstSelectedIndex);
+  FScene.RunScreen(ScreenTitle);
+end;
+
 constructor TOptionsPanel.Create(aFont: TTexturedFont);
 var title, lab: TUILabel;
+  i, h: integer;
 begin
   inherited Create(Round(FScene.Width*0.7), Round(FScene.Height*0.7), aFont);
 
@@ -663,19 +672,23 @@ begin
   lab.AnchorPosToSurface(title, haLeft, haLeft, 0, vaTop, vaBottom, title.Height);
   lab.MouseInteractionEnabled := False;
 
+  h := lab.Height;
+
   // cursor music volume
   CursorMusic := TUIScrollBar.Create(FScene, uioHorizontal);
   AddChild(CursorMusic, 0);
   CursorMusic.OnChange := @ProcessCursorChange;
-  CursorMusic.BodyShape.SetShapeRoundRect(Width-ScaleW(10)*2, lab.Height, PPIScale(8), PPIScale(8), 2);
+  CursorMusic.BodyShape.SetShapeRoundRect(Width div 2-PPIScale(10)*2, lab.Height, PPIScale(8), PPIScale(8), PPIScale(2));
   CursorMusic.SetParams(80, 0, 125, 25);
-  CursorMusic.AnchorHPosToParent(haCenter, haCenter, 0);
+  CursorMusic.AnchorHPosToParent(haLeft, haLeft, PPIScale(10));
   CursorMusic.AnchorVPosToSurface(lab, vatop, vaBottom, 0);
   LabelCursorMusic := TUILabel.Create(FScene, '', aFont);
   AddChild(LabelCursorMusic, 0);
   FormatLabelKey(LabelCursorMusic);
-  LabelCursorMusic.AnchorPosToSurface(CursorMusic, haCenter, haCenter, 0, vaBottom, vaTop, 0);
+  LabelCursorMusic.AnchorPosToSurface(CursorMusic, haRight, haRight, 0, vaBottom, vaTop, 0);
   LabelCursorMusic.MouseInteractionEnabled := False;
+
+  h := h + CursorMusic.Height;
 
   // label sound volume
   lab := TUILabel.Create(FScene, sSoundVolume, aFont);
@@ -684,19 +697,41 @@ begin
   lab.AnchorPosToSurface(CursorMusic, haLeft, haLeft, 0, vaTop, vaBottom, lab.Height);
   lab.MouseInteractionEnabled := False;
 
+  h := h + lab.Height;
+
   // cursor sound volume
   CursorSound := TUIScrollBar.Create(FScene, uioHorizontal);
   AddChild(CursorSound, 0);
   CursorSound.OnChange := @ProcessCursorChange;
-  CursorSound.BodyShape.SetShapeRoundRect(Width-ScaleW(10)*2, title.Height, PPIScale(8), PPIScale(8), 2);
+  CursorSound.BodyShape.SetShapeRoundRect(Width div 2-PPIScale(10)*2, title.Height, PPIScale(8), PPIScale(8), PPIScale(2));
   CursorSound.SetParams(100, 0, 125, 25);
-  CursorSound.AnchorHPosToParent(haCenter, haCenter, 0);
+  CursorSound.AnchorHPosToParent(haLeft, haLeft, PPIScale(10));
   CursorSound.AnchorVPosToSurface(lab, vatop, vaBottom, 0);
   LabelCursorSound := TUILabel.Create(FScene, '', aFont);
   AddChild(LabelCursorSound, 0);
   FormatLabelKey(LabelCursorSound);
-  LabelCursorSound.AnchorPosToSurface(CursorSound, haCenter, haCenter, 0, vaBottom, vaTop, 0);
+  LabelCursorSound.AnchorPosToSurface(CursorSound, haRight, haRight, 0, vaBottom, vaTop, 0);
   LabelCursorSound.MouseInteractionEnabled := False;
+
+  h := h + CursorSound.Height;
+
+  // label languages
+  lab := TUILabel.Create(FScene, sLanguage, aFont);
+  AddChild(lab, 0);
+  lab.Tint.Value := BGRA(220,220,220);
+  lab.AnchorHPosToParent(haLeft, haCenter, 0);
+  lab.AnchorVPosToSurface(title, vaTop, vaBottom, title.Height);
+  lab.MouseInteractionEnabled := False;
+
+  // ListBoxLanguages
+  ListBoxLanguages := TUIListBox.Create(FScene, aFont);
+  AddChild(ListBoxLanguages, 0);
+  ListBoxLanguages.BodyShape.SetShapeRoundRect(Width div 2-PPIScale(10)*2, h, PPIScale(8), PPIScale(8), PPIScale(2));
+  ListBoxLanguages.AnchorPosToSurface(lab, haLeft, haLeft, 0, vaTop, vaBottom, 0);
+  for i:=0 to Length(SupportedLanguages) div 2-1 do
+    ListBoxLanguages.Add(SupportedLanguages[i*2]);
+  ListBoxLanguages.FirstSelectedIndex := AppLang.LanguageIdentifierToIndex(FSaveGame.Language);
+  ListBoxLanguages.OnSelectionChange := @ProcessLanguageChange;
 
   // label keyboard
   title := TUILabel.Create(FScene, sKeyboard, aFont);

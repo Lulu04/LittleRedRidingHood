@@ -37,9 +37,10 @@ var
 
 implementation
 uses u_screen_title, u_screen_gameforest, BGRABitmap, BGRABitmapTypes,
-  screen_logo, u_app, u_screen_map, u_screen_workshop,
-  u_audio, u_screen_gamemountainpeaks, u_screen_gamevolcanoentrance,
-  u_screen_gamevolcano, DefaultTranslator, LCLTranslator;
+  screen_logo, u_app, u_screen_map, u_screen_workshop, u_audio,
+  u_screen_gamemountainpeaks, u_screen_gamevolcanoentrance,
+  u_screen_gamevolcano, u_resourcestring, DefaultTranslator, LCLTranslator,
+  i18_utils;
 {$R *.lfm}
 
 { TFormMain }
@@ -56,7 +57,7 @@ begin
 
   Application.OnIdle := @ProcessApplicationIdle;
 
-  SetDefaultLang('fr', LanguageFolder);
+  AppLang.RegisterLanguagesSupportedByApp(SupportedLanguages);
 end;
 
 procedure TFormMain.FormDestroy(Sender: TObject);
