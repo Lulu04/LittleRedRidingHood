@@ -104,10 +104,10 @@ begin
   ScreenGameVolcano := TScreenGameVolcano.Create;
   ScreenMap := TScreenMap.Create;
   ScreenWorkShop := TScreenWorkShop.Create;
-  //FScene.RunScreen(ScreenLogo);
+  FScene.RunScreen(ScreenLogo);
 
-FSaveGame.SetCurrentPlayerIndex(0);
-FScene.RunScreen(ScreenMap); // ScreenLogo ScreenTitle  ScreenGameForest ScreenMap  ScreenGameZipLine
+//FSaveGame.SetCurrentPlayerIndex(0);
+//FScene.RunScreen(ScreenMap); // ScreenLogo ScreenTitle  ScreenGameForest ScreenMap  ScreenGameZipLine
 end;
 
 procedure TFormMain.FreeCommonData;
