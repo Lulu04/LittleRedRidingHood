@@ -85,9 +85,9 @@ end;
 
 
 var FPanelItem: TPanelItems;
-    FItemBow, FItemElevator, FItemHammer, FItemStormCloud,
+{    FItemBow, FItemElevator, FItemHammer, FItemStormCloud,
     FItemZipLine,
-    FItemDecoder: TUpgradableItem;
+    FItemDecoder: TUpgradableItem; }
 
 { TPanelItems }
 
@@ -426,22 +426,21 @@ begin
 
   with PlayerInfo.Forest do begin
     // item Bow
-    FItemBow := FPanelItem.AddItem(Bow, texBow);
+    FPanelItem.AddItem(Bow, texBow);
     // item Elevator
-    FItemElevator := FPanelItem.AddItem(Elevator, texElevator);
+    FPanelItem.AddItem(Elevator, texElevator);
     // item Hammer
-    FItemHammer := FPanelItem.AddItem(Hammer, texHammer);
+    FPanelItem.AddItem(Hammer, texHammer);
     // item StormCloud
-    FItemStormCloud := FPanelItem.AddItem(StormCloud, texStormCloud);
+    FPanelItem.AddItem(StormCloud, texStormCloud);
   end;
 
   // item ZipLine
-  with PlayerInfo.MountainPeak do
-    FItemZipLine := FPanelItem.AddItem(ZipLine, texZipLine);
+  with PlayerInfo.MountainPeak do FPanelItem.AddItem(ZipLine, texZipLine);
 
   // item decoder
   if PlayerInfo.Volcano.HaveDecoderPlan or PlayerInfo.Volcano.DigicodeDecoder.Owned then
-    FItemDecoder := FPanelItem.AddItem(PlayerInfo.Volcano.DigicodeDecoder, texDigicodeDecoder);
+    FPanelItem.AddItem(PlayerInfo.Volcano.DigicodeDecoder, texDigicodeDecoder);
 
   CustomizeMousePointer;
 end;
