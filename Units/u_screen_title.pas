@@ -100,7 +100,13 @@ var o: TLRFrontView;
   i, xx: integer;
   yy: single;
   t: PTexture;
+  fontName: string;
 begin
+  {$if defined(Windows)}
+  fontName := 'Comic Sans MS';
+  {$else}
+  fontName := 'Comic Sans MS'; //'Arial';
+  {$endif}
   FAtlas := FScene.CreateAtlas;
   FAtlas.Spacing := 2;
 
@@ -117,10 +123,10 @@ begin
   LoadGround1Texture(FAtlas);
   texPine := FAtlas.AddFromSVG(SpriteBGFolder+'TreePine.svg', ScaleW(100), -1);
 
-  fd.Create('Comic Sans MS', Round(FScene.Height/13), [], BGRA(255,128,64), BGRA(0,0,0), ScaleH(3));
+  fd.Create(fontName, Round(FScene.Height/13), [], BGRA(255,128,64), BGRA(0,0,0), ScaleH(3));
   FFontTitleSmallPart := FAtlas.AddTexturedFont(fd, TitleSmallPartCharSet);
 
-  fd.Create('Comic Sans MS', Round(FScene.Height/7), [], BGRA(255,50,10), BGRA(0,0,0), ScaleH(5));
+  fd.Create(fontName, Round(FScene.Height/7), [], BGRA(255,50,10), BGRA(0,0,0), ScaleH(5));
   FFontTitleBigPart := FAtlas.AddTexturedFont(fd, TitleBigPartCharSet);
 
   FFontText := CreateGameFontText(FAtlas);
