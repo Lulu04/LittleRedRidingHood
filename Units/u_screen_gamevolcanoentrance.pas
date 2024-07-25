@@ -446,16 +446,8 @@ begin
   FLR.SetFaceType(lrfSmile);
   FLR.IdleRight;
   FLR.CallbackPickUpSomethingWhenBendDown := @ProcessCallbackPickUpSomethingWhenBendDown;
- // FLR.TimeMultiplicator := 0.5;
 
   if not PlayerInfo.Volcano.HaveDecoderPlan then begin
-  {  FWolf2 := TWolf.Create(False);
-    FWolf2.SetCoordinate(ScaleW(685), ScaleH(526));
-    FWolf2.Scale.Value := PointF(0.7, 0.7);
-    FWolf2.Atlas := FAtlas;
-    o := TSprite.Create(texWolfCrate, False);
-    FWolf2.SetAsCarryingAnObject(o, 0, 0);  }
-
     FWolf := TWolf.Create(False);
     FScene.RemoveSurfaceFromLayer(FWolf, LAYER_WOLF);
     FScene.Add(FWolf, LAYER_PLAYER);
@@ -520,6 +512,7 @@ begin
       FGameState := gsIdle;
     end;
 
+    // ANIM wolf catch LR
     20: begin
       BPineToHide.MouseInteractionEnabled := False;
       OpenDoor;
@@ -745,26 +738,6 @@ end;
 procedure TScreenGameVolcanoEntrance.Update(const aElapsedTime: single);
 begin
   inherited Update(aElapsedTime);
-
-{      if FScene.KeyState[KeyAction1] then FLR.State := lr4sJumping
-      else
-      if FScene.KeyState[VK_LEFT] then begin
-        FLR.State := lr4sLeftWalking;
-      end else
-      if FScene.KeyState[VK_RIGHT] then FLR.State := lr4sRightWalking
-      else
-      if FScene.KeyState[VK_UP] and not FScene.KeyState[VK_SHIFT] then FLR.State := lr4sUpWalking
-      else
-      if FScene.KeyState[VK_DOWN] and not FScene.KeyState[VK_SHIFT] then FLR.State := lr4sDownWalking
-      else
-      if FScene.KeyState[VK_P] then FLR.State := lr4sOnLadderUp
-      else
-      if FScene.KeyState[VK_O] then
-        FLR.State := lr4sOnLadderDown
-      else
-      if FScene.KeyState[KeyAction2] then FLR.State := lr4sBendDown
-      else FLR.SetIdlePosition;
-      exit;  }
 
   case FGameState of
     gsIdle: begin
