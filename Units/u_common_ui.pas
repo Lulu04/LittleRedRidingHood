@@ -184,7 +184,7 @@ procedure LoadCristalGrayTexture(aAtlas: TOGLCTextureAtlas);
 procedure LoadWatchTexture(aAtlas: TOGLCTextureAtlas);
 
 implementation
-uses u_app, u_common, u_resourcestring, u_audio, Math, Graphics, LCLType;
+uses u_app, u_common, u_resourcestring, Math, Graphics, LCLType;
 
 
 function CreateGameFontText(aAtlas: TOGLCTextureAtlas): TTexturedFont;
@@ -364,7 +364,7 @@ begin
   t.Tint.Value := BGRA(220,220,220);
   equal.AddChild(t);
   t.TexturedFont := UIFontNumber;
-  t.Caption := sTotal;
+  t.Caption := aCaption;
   t.SetCoordinate(-HMargin-t.Width, 0);
   w := HMargin+t.Width;
   FGainLabel := TFreeText.Create(FScene);

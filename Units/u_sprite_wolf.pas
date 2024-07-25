@@ -121,7 +121,7 @@ public
 public // utils to control character during cinematics
   procedure WalkHorizontallyTo(aX: single; aTargetScreen: TScreenTemplate; aMessageValueWhenFinish: TUserMessageValue; aDelay: single=0);
 
-  procedure SetAsCarryingAnObject(aObject: TSimpleSurfaceWithEffect; aX, aY: single);
+  procedure SetAsCarryingAnObject(aObject: TSimpleSurfaceWithEffect);
   property ObjectToCarry: TSimpleSurfaceWithEffect read FObjectToCarry write FObjectToCarry;
   property Atlas: TOGLCTextureAtlas read FAtlas write FAtlas;
 end;
@@ -819,7 +819,7 @@ begin
   end else aTargetScreen.PostMessage(aMessageValueWhenFinish, aDelay);
 end;
 
-procedure TWolf.SetAsCarryingAnObject(aObject: TSimpleSurfaceWithEffect; aX, aY: single);
+procedure TWolf.SetAsCarryingAnObject(aObject: TSimpleSurfaceWithEffect);
 begin
   FObjectToCarry := aObject;
   FObjectToCarry.ApplySymmetryWhenFlip := True;
@@ -1000,7 +1000,6 @@ end;
 
 procedure TWolf.ProcessMessage(UserValue: TUserMessageValue);
 var d: single;
-  pe: TParticleEmitter;
 begin
   case UserValue of
     // STATE IDLE
