@@ -14,7 +14,13 @@ function InGamePausePanelButtonCharSet: string;
 function MapButtonCharset: string;
 function FontNumberCharset: string;
 
+const SupportedLanguages: array[0..3] of string=(
+        'English', 'en',
+        'Français', 'fr'
+      );
+
 resourcestring
+
 sTheNewStoryOf='the new story of';
 sTheLittleRed='The Little Red';
 sRidingHood='Riding Hood';
@@ -45,6 +51,7 @@ sContinue='CONTINUE';
 
 sMusicVolume='MUSIC VOLUME';
 sSoundVolume='SOUND VOLUME';
+sLanguage='LANGUAGE';
 sKeyboard='KEYBOARD';
 sHowToChangeKey='To change keys, click on the desired button then press the desired key';
 sAction1='ACTION1';

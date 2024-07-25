@@ -30,8 +30,10 @@ uses
   function PPIScale(AValue: integer): integer;
   function ScaleW(AValue: integer): integer;
   function ScaleH(AValue: integer): integer;
+
 var
   AdditionnalScale: single=1.0;
+
 type
 
 // type of money used to buy/build/upgrade item in the inventory
@@ -246,6 +248,7 @@ TSaveGame = class(TOGLCSaveDirectory)
 private
   FKeyAction1, FKeyAction2, FKeyDown, FKeyLeft, FKeyUp, FKeyRight: byte;
   FKeyPause: byte;
+  FLanguage: string;
   FPlayers: array of TPlayerInfo;
   FCurrentPlayerIndex: integer;
   FMusicVolume, FSoundVolume: single;
@@ -258,6 +261,7 @@ private
   procedure SetKeyPause(AValue: byte);
   procedure SetKeyUp(AValue: byte);
   procedure SetKeyRight(AValue: byte);
+  procedure SetLanguage(AValue: string);
   procedure SetMusicVolume(AValue: single);
   procedure SetSoundVolume(AValue: single);
 public
@@ -273,6 +277,8 @@ public
   procedure SetCurrentPlayerIndex(aIndex: integer);
   function CurrentPlayer: TPlayerInfo;
 
+  // languages
+  property Language: string read FLanguage write SetLanguage;
   // audio
   property MusicVolume: single read FMusicVolume write SetMusicVolume;
   property SoundVolume: single read FSoundVolume write SetSoundVolume;
@@ -291,7 +297,7 @@ var
   FSaveGame: TSaveGame;
 
 implementation
-uses Forms, u_common, u_resourcestring, LCLType;
+uses Forms, u_common, u_resourcestring, LCLType, i18_utils;
 
 function PPIScale(AValue: integer): integer;
 begin
@@ -965,6 +971,12 @@ begin
   u_common.KeyRight := AVAlue;
 end;
 
+procedure TSaveGame.SetLanguage(AValue: string);
+begin
+  FLanguage := AValue;
+  AppLang.UseLanguage(FLanguage, LanguageFolder);
+end;
+
 procedure TSaveGame.SetMusicVolume(AValue: single);
 begin
   if FMusicVolume = AValue then Exit;
@@ -980,7 +992,7 @@ end;
 constructor TSaveGame.Create;
 begin
   inherited CreateFolder('LuluGame');
-
+  FLanguage := 'en';
 end;
 
 destructor TSaveGame.Destroy;
@@ -999,6 +1011,11 @@ begin
   try
     // players
     SavePlayersTo(t);
+    // language
+    prop.Init('|');
+    prop.Add('USE', FLanguage);
+    t.Add('[LANGUAGE]');
+    t.Add(prop.PackedProperty);
     // audio pref
     prop.Init('|');
     prop.Add('MusicVolume', FMusicVolume);
@@ -1028,7 +1045,9 @@ end;
 procedure TSaveGame.Load;
 var t: TStringList;
   prop: TProperties;
+  s: string;
 begin
+  FScene.LogInfo('Loading saved game');
   t := TStringList.Create;
   try
     try
@@ -1036,6 +1055,11 @@ begin
         t.LoadFromFile(SaveFolder+'LittleRedRidingHood.sav');
 
       LoadPlayersFrom(t);
+
+      prop.SplitFrom(t, '[LANGUAGE]', '|');
+      s := '';
+      prop.StringValueOf('USE', s, 'en');
+      Language := s;
 
       prop.SplitFrom(t, '[AUDIO]', '|');
       prop.SingleValueOf('MusicVolume', FMusicVolume, 0.5);
@@ -1054,6 +1078,9 @@ begin
       u_common.KeyDown := FKeyDown; u_common.KeyAction1 := FKeyAction1; u_common.KeyAction2 := FKeyAction2;
       u_common.KeyPause := FKeyPause;
     except
+      on E: Exception do begin
+        FScene.LogError('raise exception "'+E.Message+'"', 1);
+      end;
     end;
   finally
     t.Free;

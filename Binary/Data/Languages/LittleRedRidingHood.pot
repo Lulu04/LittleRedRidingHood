@@ -170,6 +170,10 @@ msgstr ""
 msgid "KEYBOARD"
 msgstr ""
 
+#: u_resourcestring.slanguage
+msgid "LANGUAGE"
+msgstr ""
+
 #: u_resourcestring.slevel
 msgid "Level"
 msgstr ""
