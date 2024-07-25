@@ -99,6 +99,7 @@ sBuyEquipment='buy new equipment in the workshop';
 sFirstCompleteForest='you must first complete the pine forest!';
 sBuyZipLineFirst='you need to buy the zip line first!';
 sFirstCompleteMountainPeaks='you must first complete the mountain peaks!';
+sSorryNotYetAvailable='Sorry, this game is not yet available...';
 
 SArcadeMode='ARCADE MODE';
 SAdventureMode='ADVENTURE MODE';

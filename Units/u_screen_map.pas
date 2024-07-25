@@ -275,7 +275,8 @@ begin
   end;
 
   if s = '' then
-    if not mountainPicDone then s := sFirstCompleteMountainPeaks;
+    if not mountainPicDone then s := sFirstCompleteMountainPeaks
+else s := sSorryNotYetAvailable;
 
   if Sender = BVolcano then begin
     UnableMouseInteractionOnMapObjects(False);
