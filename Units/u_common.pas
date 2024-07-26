@@ -11,6 +11,8 @@ uses
 
 const
 
+  APP_VERSION = '0.1.0';
+
 // Scene layers
 LAYER_COUNT = 11;
    LAYER_TOP = 0;
