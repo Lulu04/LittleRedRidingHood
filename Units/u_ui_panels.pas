@@ -644,6 +644,7 @@ end;
 procedure TOptionsPanel.ProcessLanguageChange(Sender: TSimpleSurfaceWithEffect);
 begin
   FSaveGame.Language := AppLang.IndexToLanguageIdentifier(ListBoxLanguages.FirstSelectedIndex);
+  FSaveGame.Save;
   FScene.RunScreen(ScreenTitle);
 end;
 
