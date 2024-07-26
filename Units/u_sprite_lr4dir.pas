@@ -139,6 +139,8 @@ public
   property State: TLRBackViewState read FState write SetState;
   property TimeMultiplicator: single read FTimeMultiplicator write FTimeMultiplicator;
   property CallbackDoOnLadderMove: TCallBackLadderMove read FCallbackDoOnLadderMove write FCallbackDoOnLadderMove;
+  // Becomes False when LR is climbing one step on ladder. When the step is reach
+  // the property is set to True.
   property CanMoveOnLadder: boolean read FCanMoveOnLadder;
   end;
 
