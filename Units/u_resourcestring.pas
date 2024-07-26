@@ -111,10 +111,19 @@ sSorryNotYetAvailable='Sorry, this game is not yet available...';
 SArcadeMode='ARCADE MODE';
 SAdventureMode='ADVENTURE MODE';
 
+// help text
+SForestHelpText='UP/DOWN to move' + LineEnding +
+                'ACTION1 : bow' + LineEnding +
+                'ACTION2 : lightning storm';
+SMountainPeakHelpText='LEFT/RIGHT to move' + LineEnding +
+                      'ACTION1 : break';
+SVolcanoEntranceHelpText='Use mouse and click objects on the screen';
+SVolcanoInnerHelpText='LEFT/RIGHT/UP/DOWN to move';
+
 sWolf='Wolf';
-sVoiceFromTheCave='Voice from the cave';
 
 // dialogs volcano entrance
+sVoiceFromTheCave='Voice from the cave';
 sWolveHaveWalledUpCaveEntrance='The wolves have walled up the cave entrance... I''ve got to find a way in!';
 sDamnACodedDoor='I don''t have the code to open this door...';
 sIHaveToHide='I hear someone behind the door. quick! I have to hide!';

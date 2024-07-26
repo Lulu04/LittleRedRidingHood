@@ -125,6 +125,13 @@ msgctxt "u_resourcestring.sfirstcompletemountainpeaks"
 msgid "you must first complete the mountain peaks!"
 msgstr ""
 
+#: u_resourcestring.sforesthelptext
+msgid ""
+"UP/DOWN to move\n"
+"ACTION1 : bow\n"
+"ACTION2 : lightning storm"
+msgstr ""
+
 #: u_resourcestring.sgamepaused
 msgid "paused"
 msgstr ""
@@ -192,6 +199,12 @@ msgstr ""
 
 #: u_resourcestring.smax
 msgid "MAX"
+msgstr ""
+
+#: u_resourcestring.smountainpeakhelptext
+msgid ""
+"LEFT/RIGHT to move\n"
+"ACTION1 : break"
 msgstr ""
 
 #: u_resourcestring.smusics
@@ -317,6 +330,14 @@ msgstr ""
 
 #: u_resourcestring.svoicefromthecave
 msgid "Voice from the cave"
+msgstr ""
+
+#: u_resourcestring.svolcanoentrancehelptext
+msgid "Use mouse and click objects on the screen"
+msgstr ""
+
+#: u_resourcestring.svolcanoinnerhelptext
+msgid "LEFT/RIGHT/UP/DOWN to move"
 msgstr ""
 
 #: u_resourcestring.swolf

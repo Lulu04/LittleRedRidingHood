@@ -135,6 +135,16 @@ msgctxt "u_resourcestring.sfirstcompletemountainpeaks"
 msgid "you must first complete the mountain peaks!"
 msgstr "vous devez d'abord compléter les Pics Montagneux !"
 
+#: u_resourcestring.sforesthelptext
+msgid ""
+"UP/DOWN to move\n"
+"ACTION1 : bow\n"
+"ACTION2 : lightning storm"
+msgstr ""
+"HAUT/BAS pour se déplacer\n"
+"ACTION1 : arc\n"
+"ACTION2 : tempête d'éclairs foudroyants"
+
 #: u_resourcestring.sgamepaused
 msgid "paused"
 msgstr "en pause"
@@ -203,6 +213,14 @@ msgstr "fabrication"
 #: u_resourcestring.smax
 msgid "MAX"
 msgstr "MAX"
+
+#: u_resourcestring.smountainpeakhelptext
+msgid ""
+"LEFT/RIGHT to move\n"
+"ACTION1 : break"
+msgstr ""
+"GAUCHE/DROITE pour se déplacer\n"
+"ACTION1 : frein"
 
 #: u_resourcestring.smusics
 msgid "MUSICS"
@@ -328,6 +346,14 @@ msgstr "AMÉLIORER"
 #: u_resourcestring.svoicefromthecave
 msgid "Voice from the cave"
 msgstr "Voix dans la grotte"
+
+#: u_resourcestring.svolcanoentrancehelptext
+msgid "Use mouse and click objects on the screen"
+msgstr "Utilise la souris et clique les objets à l'écran"
+
+#: u_resourcestring.svolcanoinnerhelptext
+msgid "LEFT/RIGHT/UP/DOWN to move"
+msgstr "GAUCHE/DROITE/HAUT/BAS pour se déplacer"
 
 #: u_resourcestring.swolf
 msgid "Wolf"

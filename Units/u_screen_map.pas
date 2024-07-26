@@ -67,12 +67,13 @@ private
   FLine: TShapeOutline;
   FSteps: array of TImageButton;
   FImage: TUIImage;
-  BStart, BBack: TUIButton;
+  BStart, BBack, BHelpKeys: TUIButton;
   FScreenToRun: TScreenTemplate;
   FGameDescriptor: TGameDescriptor;
   FLRIcon: TSprite;
   FSelectedStepIndex: integer;
   FHint: TUITextArea;
+  FPreviousHintText: string;
   procedure SetHint(AValue: string);
   procedure SetLRIconPosition;
 protected
@@ -84,7 +85,7 @@ public
 end;
 
 var FFontText: TTexturedFont;
-  texLRIcon, texMapStep, texMapStepChecked,
+  texLRIcon, texMapStep, texMapStepChecked, texHelpKeys,
   texMapCastleFW, texMapCastleOutline,
   texMap1FW, texMap1Outline, texLRHome, texPineForest,
   texZipLinePeaks, texZipLinePeaksCableToVolcano,
@@ -126,6 +127,13 @@ begin
     o := TImageButton(Sender);
     FSelectedStepIndex := o.Tag1;
     SetLRIconPosition;
+  end else
+  if Sender = BHelpKeys then begin
+    BHelpKeys.Tag2 := not BHelpKeys.Tag2;
+    if BHelpKeys.Tag2 then begin
+      FPreviousHintText := FHint.Text.Caption;
+      FHint.Text.Caption := FGameDescriptor.HelpText;
+    end else FHint.Text.Caption := FPreviousHintText;
   end;
 end;
 
@@ -194,6 +202,12 @@ begin
   FHint.Text.Align := taTopCenter;
   FHint.Text.TexturedFont := FFontText;
   FHint.SetCoordinate(Width/2-PPIScale(10), PPIScale(10));
+
+  // button help key
+  BHelpKeys := TUIButton.Create(FScene, '', NIL, texHelpKeys);
+  AddChild(BHelpKeys, 0);
+  BHelpKeys.AnchorPosToSurface(FHint, haRight, haLeft, 0, vaTop, vaTop, 0);
+  BHelpKeys.OnClick := @ProcessButtonClick;
 end;
 
 procedure TPanelChooseGameStep.RemoveStartButton;
@@ -350,6 +364,7 @@ FScene.LogInfo('Entering TScreenMap.CreateObjects');
   texLRIcon := FAtlas.AddFromSVG(SpriteBGFolder+'LR.svg', ScaleW(33), -1);
   texMapStep := FAtlas.AddFromSVG(SpriteMapFolder+'MapStep.svg', ScaleW(21), -1);
   texMapStepChecked := FAtlas.AddFromSVG(SpriteMapFolder+'MapStepChecked.svg', ScaleW(34), -1);
+  texHelpKeys := FAtlas.AddFromSVG(SpriteMapFolder+'HelpKeys.svg', PPIScale(32), -1);
   // games map
   texMap1FW := FAtlas.AddFromSVG(SpriteMapFolder+'Map1FW.svg', ScaleW(651), -1);
   texMap1Outline := FAtlas.AddFromSVG(SpriteMapFolder+'Map1Outline.svg', ScaleW(651), -1);
