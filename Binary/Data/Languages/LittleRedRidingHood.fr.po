@@ -58,7 +58,7 @@ msgstr "ACHETER"
 
 #: u_resourcestring.sbuyequipment
 msgid "buy new equipment in the workshop"
-msgstr "achetez des nouveaux équipements dans l'atelier"
+msgstr "achète des nouveaux équipements dans l'atelier"
 
 #: u_resourcestring.sbuyziplinefirst
 msgid "you need to buy the zip line first!"
