@@ -63,6 +63,7 @@ type
 { TPanelChooseGameStep }
 
 TPanelChooseGameStep = class(TCenteredGameUIPanel)
+private class var FHintIndex: integer;
 private
   FLine: TShapeOutline;
   FSteps: array of TImageButton;
@@ -198,7 +199,9 @@ begin
   FHint.BodyShape.SetShapeRectangle(Round(Width/2), Round(Height/2), 0);
   FHint.BodyShape.Fill.Visible := False;
   FHint.BodyShape.Border.Visible := False;
-  FHint.Text.Caption := sImproveEquipment;
+  FHint.Text.Caption := GameHints[FHintIndex];
+  inc(FHintIndex);
+  if FHintIndex > High(GameHints) then FHintIndex := 0;
   FHint.Text.Align := taTopCenter;
   FHint.Text.TexturedFont := FFontText;
   FHint.SetCoordinate(Width/2-PPIScale(10), PPIScale(10));

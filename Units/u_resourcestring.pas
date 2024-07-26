@@ -14,6 +14,8 @@ function InGamePausePanelButtonCharSet: string;
 function MapButtonCharset: string;
 function FontNumberCharset: string;
 
+function GameHints: TStringArray;
+
 const SupportedLanguages: array[0..3] of string=(
         'English', 'en',
         'Français', 'fr'
@@ -166,6 +168,15 @@ end;
 function FontNumberCharset: string;
 begin
   Result := AddToCharset(' 0123456789:.x=', [sLevelAchieved, sTotal, sRemainTime, sSmoothArrivalBonus]);
+end;
+
+function GameHints: TStringArray;
+begin
+  Result := NIL;
+  SetLength(Result, 3);
+  Result[0] := sImproveEquipment;
+  Result[1] := sRedoALevel;
+  Result[2] := sBuyEquipment;
 end;
 
 
