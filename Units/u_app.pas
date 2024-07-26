@@ -77,6 +77,7 @@ private
   FCurrentStep, FStepCount, FStepPlayed: integer;
   FIsTerminated, FFirstTimeTerminated: boolean;
   function GetFirstTimeTerminated: boolean;
+  function GetHelpText: string; virtual; abstract;
 protected
   procedure SaveCommonProperties(var aProp: TProperties);
   procedure LoadCommonProperties(const aProp: TProperties);
@@ -94,6 +95,8 @@ public
   property FirstTimeTerminated: boolean read GetFirstTimeTerminated;
 
   property StepPlayed: integer read FStepPlayed write FStepPlayed;
+  // a short text that describe the keys used to play the game
+  property HelpText: string read GetHelpText;
 end;
 
 // FOREST GAME DESCRIPTOR
@@ -149,6 +152,7 @@ private
   FElevator: TForestElevator;
   FHammer: TForestHammer;
   FStormCloud: TForestStormCloud;
+  function GetHelpText: string; override;
 public
   constructor Create;
   destructor Destroy; override;
@@ -176,6 +180,7 @@ end;
 TMountainPeakDescriptor = class(TGameDescriptor)
 private
   FZipLine: TMountainPeakZipLine;         // [0..1]
+  function GetHelpText: string; override;
 public const
   ZipLineMaxLevel = 1;
   MountainPeaksStepCount = 10;
@@ -202,6 +207,7 @@ private
   FHaveDecoderPlan: boolean;
   FVolcanoEntranceIsDone: boolean;
   FDigicodeDecoder: TDigicodeDecoder;
+  function GetHelpText: string; override;
 private const
   VolcanoStepCount = 10;
   DigicodeDecoderMaxLevel = 1;
@@ -677,6 +683,12 @@ end;
 
 { TVolcanoDescriptor }
 
+function TVolcanoDescriptor.GetHelpText: string;
+begin
+  if not FVolcanoEntranceIsDone then Result := SVolcanoEntranceHelpText
+    else Result := SVolcanoInnerHelpText;
+end;
+
 constructor TVolcanoDescriptor.Create;
 begin
   inherited Create(VolcanoStepCount);
@@ -715,6 +727,11 @@ end;
 
 { TMountainPeakDescriptor }
 
+function TMountainPeakDescriptor.GetHelpText: string;
+begin
+  Result := SMountainPeakHelpText;
+end;
+
 constructor TMountainPeakDescriptor.Create;
 begin
   inherited Create(MountainPeaksStepCount);
@@ -747,6 +764,11 @@ begin
 end;
 
 { TForestDescriptor }
+
+function TForestDescriptor.GetHelpText: string;
+begin
+  Result := SForestHelpText;
+end;
 
 constructor TForestDescriptor.Create;
 begin
