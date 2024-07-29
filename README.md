@@ -18,7 +18,7 @@ Create a directory named "littlered" on your disk and into it do the following:
 - clone the repository [OGLCScene](https://github.com/Lulu04/OGLCScene). If you choose to download the zip, unzip it and rename the obtained directory to "OGLCScene".
 
 The directory structure should be like:  
-`|- saynetes`  
+`|- littlered`  
 `    |- ALSound`  
 `    |- LittleRedRidingHood (if you clone the repository) or LittleRedRidingHood-main (if you download ZIP)`  
 `    |- OGLCScene`  
