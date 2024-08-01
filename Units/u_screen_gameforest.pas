@@ -232,6 +232,9 @@ PlayerInfo.Forest.StormCloudLevel := 3;  }
 
  // FScene.Mouse.SystemMouseCursorVisible := False;
   GameState := gsRunning;
+
+  // show how to play
+  with TDisplayGameHelp.Create(PlayerInfo.Forest.HelpText, FFontText) do ShowModal;
 end;
 
 procedure TScreenGame1.FreeObjects;

@@ -1413,8 +1413,10 @@ begin
   FLvlStep := -1;
   FTimeAccu := 1.0;
 
-
   FScene.BackgroundColor := BGRA(80,40,80);
+
+  // show how to play
+  with TDisplayGameHelp.Create(PlayerInfo.MountainPeak.HelpText, FFontText) do ShowModal;
 end;
 
 procedure TScreenGameZipLine.FreeObjects;
