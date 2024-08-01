@@ -90,7 +90,7 @@ begin
   LoadBallonSound;
   LoadSoundForForestGame;
   sndElevator.Play(True);
-  Audio.PauseMusicTitleMap(3.0);
+  Audio.PauseMusicTitleMap;
   FMusic := Audio.AddMusic('ForestInTheNight.ogg', True);
   FMusic.FadeIn(1.0, 1.0);
 
@@ -244,7 +244,7 @@ begin
   FreeSoundForForestGame;
   FMusic.FadeOutThenKill(1.0);
   FMusic := NIL;
-  Audio.ResumeMusicTitleMap(1.0);
+  Audio.ResumeMusicTitleMap;
 
   for i:=0 to High(FWolfGates) do FWolfGates[i].Free;
   FScene.ClearAllLayer;
