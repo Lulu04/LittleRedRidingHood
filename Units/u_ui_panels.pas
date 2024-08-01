@@ -158,17 +158,106 @@ public
 end;
 
 
+{ TDisplayGameHelp }
+
+TDisplayGameHelp = class(TUIModalPanel)
+private
+  FText: TSprite;
+  FTextArea: TUITextArea;
+public
+  constructor Create(const aText: string);
+  constructor Create(const aText: string; aFont: TTexturedFont);
+  procedure ProcessMessage({%H-}UserValue: TUserMessageValue); override;
+  procedure ShowModal; override;
+end;
+
+
 var
   texTrashCan: PTexture;
 procedure LoadTitleScreenIcon(aAtlas: TOGLCTextureAtlas; aFontHeight: integer);
 
 
 implementation
-uses u_resourcestring, u_app, u_screen_title, u_screen_map, u_audio, i18_utils;
+uses u_resourcestring, u_app, u_screen_title, u_screen_map, u_audio, i18_utils,
+  Math, Controls;
 
 procedure LoadTitleScreenIcon(aAtlas: TOGLCTextureAtlas; aFontHeight: integer);
 begin
   texTrashCan := aAtlas.AddFromSVG(SpriteUIFolder+'TrashCan.svg', -1, Round(aFontHeight*0.7));
+end;
+
+{ TDisplayGameHelp }
+
+constructor TDisplayGameHelp.Create(const aText: string);
+var fd: TFontDescriptor;
+  h: integer;
+  ima: TBGRABitmap;
+  tex: PTexture;
+begin
+  inherited Create(FScene);
+  BodyShape.SetShapeRectangle(20, 20, PPIScale(2));
+  BodyShape.Fill.Visible := False;
+  BodyShape.Border.Visible := False;
+ // FScene.Add(Self, 0);
+  MouseInteractionEnabled := False;
+  ChildClippingEnabled := False;
+  CenterOnScene;
+
+  h := FScene.Height div 20;
+  fd.Create('Arial', h, [], BGRA(255,255,255), BGRA(0,0,0), Max(h*0.1, 1));
+  ima := fd.StringToBitmap(aText, NIL);
+  tex := FScene.TexMan.Add(ima);
+  ima.Free;
+  FText := TSprite.Create(tex, True);
+  AddChild(FText);
+  FText.CenterOnParent;
+end;
+
+constructor TDisplayGameHelp.Create(const aText: string; aFont: TTexturedFont);
+begin
+  inherited Create(FScene);
+  BodyShape.SetShapeRectangle(20, 20, PPIScale(2));
+  BodyShape.Fill.Visible := False;
+  BodyShape.Border.Visible := False;
+  ChildClippingEnabled := False;
+  CenterOnScene;
+
+  FTextArea := TUITextArea.Create(FScene);
+  AddChild(FTextArea);
+  FTextArea.BodyShape.SetShapeRectangle(FScene.Width div 2, FScene.Height div 3, PPIScale(2));
+  FTextArea.BodyShape.Fill.Visible := False;
+  FTextArea.BodyShape.Border.Visible := False;
+  FTextArea.Text.TexturedFont := aFont;
+  FTextArea.Text.Align := taCenterCenter;
+  FTextArea.Text.Tint.Value := BGRA(255,255,255);
+  FTextArea.Text.Caption := aText;
+  FTextArea.CenterOnParent;
+end;
+
+procedure TDisplayGameHelp.ProcessMessage(UserValue: TUserMessageValue);
+begin
+  case UserValue of
+    // wait player release all keys and left mouse button
+    0: begin
+      if FScene.UserPressAKey or FScene.MouseButtonState[mbLeft] then PostMessage(0)
+        else PostMessage(1);
+    end;
+    // check if player press a key or left mouse button
+    1: begin
+      if FScene.UserPressAKey or FScene.MouseButtonState[mbLeft] then begin
+//        Audio.GlobalVolume := 1.0;
+        Hide;
+      end else PostMessage(1);
+    end;
+  end;
+end;
+
+procedure TDisplayGameHelp.ShowModal;
+begin
+  inherited ShowModal;
+  ClearMessageList;
+  PostMessage(0, 1.0);
+//  Audio.GlobalVolume := 0.5;
 end;
 
 { TCreditsPanel }
