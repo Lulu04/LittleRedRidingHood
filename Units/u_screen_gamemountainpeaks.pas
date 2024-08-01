@@ -1216,7 +1216,7 @@ var sky1, sky2: TMultiColorRectangle;
   yy: Single;
   i: Integer;
 begin
-  Audio.PauseMusicTitleMap(3.0);
+  Audio.PauseMusicTitleMap;
   FMusic := Audio.AddMusic('CatchyMusic.ogg', True);
   FMusic.FadeIn(1.0, 1.0);
   FsndZipLine := Audio.AddSound('ZipLine.ogg');
@@ -1426,7 +1426,7 @@ begin
   FsndZipLine.FadeOutThenKill(1.0);
   FsndZipLineBreak.Kill;
   FMusic := NIL;
-  Audio.ResumeMusicTitleMap(1.0);
+  Audio.ResumeMusicTitleMap;
 
   FScene.KillCamera(FCameraForPerspectiveObjects);
 
