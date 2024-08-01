@@ -56,7 +56,8 @@ var ScreenMap: TScreenMap;
 implementation
 uses u_app, u_resourcestring, u_screen_title, u_screen_gameforest,
   u_screen_workshop, u_mousepointer, u_screen_gamemountainpeaks, u_ui_panels,
-  u_screen_gamevolcanoentrance, u_audio, BGRAPath, Forms, Math;
+  u_screen_gamevolcanoentrance, u_audio, u_screen_gamevolcanoinner, BGRAPath, Forms,
+  Math;
 
 type
 
@@ -292,8 +293,7 @@ begin
   end;
 
   if s = '' then
-    if not mountainPicDone then s := sFirstCompleteMountainPeaks
-else s := sSorryNotYetAvailable;
+    if not mountainPicDone then s := sFirstCompleteMountainPeaks;
 
   if Sender = BVolcano then begin
     UnableMouseInteractionOnMapObjects(False);
@@ -302,8 +302,7 @@ else s := sSorryNotYetAvailable;
       FScene.RunScreen(ScreenGameVolcanoEntrance);
       LastGameClicked := gomUnknow;
     end else begin
-      { #todo : reprendre ici lorsque le jeu Volcano sera fait }
-      FPanelChooseGameStep := TPanelChooseGameStep.Create(texVolcanoMountain, texLRIcon, PlayerInfo.Volcano, ScreenGameVolcanoEntrance);
+      FPanelChooseGameStep := TPanelChooseGameStep.Create(texVolcanoMountain, texLRIcon, PlayerInfo.Volcano, ScreenGameVolcanoInner);
       _ShowPanelChooseGameStep;
       LastGameClicked := gomVolcano;
       exit;
