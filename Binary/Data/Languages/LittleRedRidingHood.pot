@@ -337,7 +337,9 @@ msgid "Use mouse and click objects on the screen"
 msgstr ""
 
 #: u_resourcestring.svolcanoinnerhelptext
-msgid "LEFT/RIGHT/UP/DOWN to move"
+msgid ""
+"LEFT/RIGHT/UP/DOWN to move\n"
+"ACTION1 : propulsor"
 msgstr ""
 
 #: u_resourcestring.swolf

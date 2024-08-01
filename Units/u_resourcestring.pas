@@ -120,7 +120,8 @@ SForestHelpText='UP/DOWN to move' + LineEnding +
 SMountainPeakHelpText='LEFT/RIGHT to move' + LineEnding +
                       'ACTION1 : break';
 SVolcanoEntranceHelpText='Use mouse and click objects on the screen';
-SVolcanoInnerHelpText='LEFT/RIGHT/UP/DOWN to move';
+SVolcanoInnerHelpText='LEFT/RIGHT/UP/DOWN to move' + LineEnding +
+                      'ACTION1 : propulsor';
 
 sWolf='Wolf';
 
