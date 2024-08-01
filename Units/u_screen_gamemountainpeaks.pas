@@ -404,7 +404,7 @@ begin
   SetShapeLine(PointF(FScene.Width*0.05, texLRIcon^.FrameHeight*1.1),
                 PointF(FScene.Width*0.4,texLRIcon^.FrameHeight*1.1));
   LineWidth := 2;
-  LineColor := BGRA(15,15,15);
+  LineColor := BGRA(200,200,200);
 
   FLRIcon := TSprite.Create(texLRIcon, False);
   AddChild(FLRIcon, 0);
@@ -1216,7 +1216,7 @@ var sky1, sky2: TMultiColorRectangle;
   yy: Single;
   i: Integer;
 begin
-  Audio.PauseMusicTitleMap(3.0);
+  Audio.PauseMusicTitleMap;
   FMusic := Audio.AddMusic('CatchyMusic.ogg', True);
   FMusic.FadeIn(1.0, 1.0);
   FsndZipLine := Audio.AddSound('ZipLine.ogg');
@@ -1413,8 +1413,10 @@ begin
   FLvlStep := -1;
   FTimeAccu := 1.0;
 
-
   FScene.BackgroundColor := BGRA(80,40,80);
+
+  // show how to play
+  with TDisplayGameHelp.Create(PlayerInfo.MountainPeak.HelpText, FFontText) do ShowModal;
 end;
 
 procedure TScreenGameZipLine.FreeObjects;
@@ -1424,7 +1426,7 @@ begin
   FsndZipLine.FadeOutThenKill(1.0);
   FsndZipLineBreak.Kill;
   FMusic := NIL;
-  Audio.ResumeMusicTitleMap(1.0);
+  Audio.ResumeMusicTitleMap;
 
   FScene.KillCamera(FCameraForPerspectiveObjects);
 

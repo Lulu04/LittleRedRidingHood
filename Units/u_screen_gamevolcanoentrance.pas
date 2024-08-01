@@ -63,7 +63,7 @@ var ScreenGameVolcanoEntrance: TScreenGameVolcanoEntrance;
 
 implementation
 uses Forms, LCLType, u_app, u_sprite_wolf, u_screen_workshop, u_resourcestring,
-  u_screen_map, u_screen_gamevolcano;
+  u_screen_map, u_screen_gamevolcanoinner;
 
 
 var FAtlas: TOGLCTextureAtlas;
@@ -327,7 +327,7 @@ var path: string;
   o: TSprite;
   sky1, sky2: TMultiColorRectangle;
 begin
-  Audio.PauseMusicTitleMap(3.0);
+  Audio.PauseMusicTitleMap;
   FsndWind := Audio.AddSound('larrun_mountains_medwind.ogg');
   FsndWind.Loop := True;
   FsndWind.Volume.Value := 0.8;
@@ -479,11 +479,14 @@ begin
     PostMessage(300);
   end;
   FTimeAccu := 0;
+
+  // show how to play
+  with TDisplayGameHelp.Create(PlayerInfo.Volcano.HelpText, FFontText) do ShowModal;
 end;
 
 procedure TScreenGameVolcanoEntrance.FreeObjects;
 begin
-  Audio.ResumeMusicTitleMap(1.0);
+  Audio.ResumeMusicTitleMap;
   FsndWind.FadeOutThenKill(3.0);
   if FsndAlarm <> NIL then FsndAlarm.FadeOutThenKill(3.0);
 
@@ -730,7 +733,9 @@ begin
       PostMessage(404, 2);
     end;
     404: begin
-      FScene.RunScreen(ScreenGameVolcano);
+      PlayerInfo.Volcano.VolcanoEntranceIsDone := True;
+      FSaveGame.Save;
+      FScene.RunScreen(ScreenGameVolcanoInner);
     end;
   end;//case
 end;

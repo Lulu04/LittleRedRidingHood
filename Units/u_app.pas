@@ -23,6 +23,8 @@ uses
   function SpriteMapFolder: string;
   function SpriteGameMountainPeaksFolder: string;
   function SpriteGameVolcanoEntranceFolder: string;
+  function SpriteGameVolcanoInnerFolder: string;
+  function SpriteGameVolcanoDinoFolder: string;
   function LanguageFolder: string;
 
   function ALSoundLibrariesSubFolder: string;
@@ -209,7 +211,7 @@ private
   FDigicodeDecoder: TDigicodeDecoder;
   function GetHelpText: string; override;
 private const
-  VolcanoStepCount = 10;
+  VolcanoStepCount = 5;
   DigicodeDecoderMaxLevel = 1;
 public
   constructor Create;
@@ -390,6 +392,16 @@ end;
 function SpriteGameVolcanoEntranceFolder: string;
 begin
   Result := SpriteFolder+'VolcanoEntrance'+DirectorySeparator;
+end;
+
+function SpriteGameVolcanoInnerFolder: string;
+begin
+  Result := SpriteFolder+'VolcanoInner'+DirectorySeparator;
+end;
+
+function SpriteGameVolcanoDinoFolder: string;
+begin
+  Result := SpriteFolder+'VolcanoDinno'+DirectorySeparator;
 end;
 
 function LanguageFolder: string;

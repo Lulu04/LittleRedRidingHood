@@ -1,4 +1,4 @@
-unit u_screen_gamevolcano;
+unit u_screen_gamevolcanodino;
 
 {$mode ObjFPC}{$H+}
 
@@ -13,9 +13,9 @@ uses
 
 type
 
-{ TScreenGameVolcano }
+{ TScreenGameVolcanoDino }
 
-TScreenGameVolcano = class(TScreenTemplate)
+TScreenGameVolcanoDino = class(TScreenTemplate)
 private type TGameState=(gsUndefined=0, gsIdle,
                          gsLRLost,
                          gsDecodingDigicode);
@@ -25,7 +25,6 @@ private
   FInGamePausePanel: TInGamePausePanel;
 
   FDifficulty: integer;
-  procedure ProcessButtonClick(Sender: TSimpleSurfaceWithEffect);
   //procedure ProcessCallbackPickUpSomethingWhenBendDown(aPickUpToTheRight: boolean);
 public
   procedure CreateObjects; override;
@@ -36,35 +35,50 @@ public
   property Difficulty: integer write FDifficulty;
 end;
 
-var ScreenGameVolcano: TScreenGameVolcano;
+var ScreenGameVolcanoDino: TScreenGameVolcanoDino;
 
 implementation
 
 uses Forms, u_sprite_wolf, u_app, LCLType;
 
-
-var FAtlas: TOGLCTextureAtlas;
-    FFontText: TTexturedFont;
-    FLR: TLR4Direction;
-{ TScreenGameVolcano }
-
-procedure TScreenGameVolcano.ProcessButtonClick(Sender: TSimpleSurfaceWithEffect);
-begin
+type
+TPillar = class(TSprite)
 
 end;
 
-procedure TScreenGameVolcano.CreateObjects;
+var FAtlas: TOGLCTextureAtlas;
+    texPillar1, texPillar2, texFloor, texCeiling: PTexture;
+    FFontText: TTexturedFont;
+    FLR: TLR4Direction;
+    FPillars: array[0..5] of TSprite;
+
+
+{ TScreenGameVolcanoDino }
+
+procedure TScreenGameVolcanoDino.CreateObjects;
 var path: string;
   ima: TBGRABitmap;
   o: TSprite;
 begin
+  Audio.PauseMusicTitleMap(3.0);
 
   FAtlas := FScene.CreateAtlas;
   FAtlas.Spacing := 1;
 
+  AdditionnalScale := 0.8;
+
   LoadLR4DirTextures(FAtlas);
   LoadWolfTextures(FAtlas);
   //FAtlas.Add(ParticleFolder+'sphere_particle.png');
+
+  AdditionnalScale := 1.0;
+  path := SpriteGameVolcanoDinoFolder;
+  texPillar1 := FAtlas.AddFromSVG(path+'Pillar1.svg', -1, FScene.Height div 2); //ScaleH(714));
+  texPillar2 := FAtlas.AddFromSVG(path+'Pillar2.svg', -1, FScene.Height div 2); //ScaleH(714));
+  texFloor := FAtlas.AddFromSVG(path+'Floor.svg', ScaleH(310), -1);
+  texCeiling := FAtlas.AddFromSVG(path+'Ceiling.svg', ScaleH(310), -1);
+
+
 
   CreateGameFontNumber(FAtlas);
   LoadCoinTexture(FAtlas);
@@ -93,40 +107,20 @@ begin
 
 end;
 
-procedure TScreenGameVolcano.FreeObjects;
+procedure TScreenGameVolcanoDino.FreeObjects;
 begin
   FScene.ClearAllLayer;
   FreeAndNil(FAtlas);
 end;
 
-procedure TScreenGameVolcano.ProcessMessage(UserValue: TUserMessageValue);
+procedure TScreenGameVolcanoDino.ProcessMessage(UserValue: TUserMessageValue);
 begin
   inherited ProcessMessage(UserValue);
 end;
 
-procedure TScreenGameVolcano.Update(const aElapsedTime: single);
+procedure TScreenGameVolcanoDino.Update(const aElapsedTime: single);
 begin
   inherited Update(aElapsedTime);
-
-  if FScene.KeyState[KeyAction1] then FLR.State := lr4sJumping
-  else
-  if FScene.KeyState[VK_LEFT] then begin
-    FLR.State := lr4sLeftWalking;
-  end else
-  if FScene.KeyState[VK_RIGHT] then FLR.State := lr4sRightWalking
-  else
-  if FScene.KeyState[VK_UP] and not FScene.KeyState[VK_SHIFT] then FLR.State := lr4sUpWalking
-  else
-  if FScene.KeyState[VK_DOWN] and not FScene.KeyState[VK_SHIFT] then FLR.State := lr4sDownWalking
-  else
-  if FScene.KeyState[VK_P] then FLR.State := lr4sOnLadderUp
-  else
-  if FScene.KeyState[VK_O] then
-    FLR.State := lr4sOnLadderDown
-  else
-  if FScene.KeyState[KeyAction2] then FLR.State := lr4sBendDown
-  else FLR.SetIdlePosition;
-
 end;
 
 end.

@@ -352,7 +352,11 @@ msgid "Use mouse and click objects on the screen"
 msgstr "Utilise la souris et clique les objets à l'écran"
 
 #: u_resourcestring.svolcanoinnerhelptext
-msgid "LEFT/RIGHT/UP/DOWN to move"
+#, fuzzy
+#| msgid "LEFT/RIGHT/UP/DOWN to move"
+msgid ""
+"LEFT/RIGHT/UP/DOWN to move\n"
+"ACTION1 : propulsor"
 msgstr "GAUCHE/DROITE/HAUT/BAS pour se déplacer"
 
 #: u_resourcestring.swolf
@@ -374,3 +378,4 @@ msgstr "Ça ressemble à des plans de fabrication. Tu en prends un discrètement
 #: u_resourcestring.sziplinehint
 msgid "a useful zip-line to cross the mountain peaks"
 msgstr "une tyrolienne indispensable pour traverser les Pics Montagneux"
+

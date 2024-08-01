@@ -90,7 +90,7 @@ begin
   LoadBallonSound;
   LoadSoundForForestGame;
   sndElevator.Play(True);
-  Audio.PauseMusicTitleMap(3.0);
+  Audio.PauseMusicTitleMap;
   FMusic := Audio.AddMusic('ForestInTheNight.ogg', True);
   FMusic.FadeIn(1.0, 1.0);
 
@@ -232,6 +232,9 @@ PlayerInfo.Forest.StormCloudLevel := 3;  }
 
  // FScene.Mouse.SystemMouseCursorVisible := False;
   GameState := gsRunning;
+
+  // show how to play
+  with TDisplayGameHelp.Create(PlayerInfo.Forest.HelpText, FFontText) do ShowModal;
 end;
 
 procedure TScreenGame1.FreeObjects;
@@ -241,7 +244,7 @@ begin
   FreeSoundForForestGame;
   FMusic.FadeOutThenKill(1.0);
   FMusic := NIL;
-  Audio.ResumeMusicTitleMap(1.0);
+  Audio.ResumeMusicTitleMap;
 
   for i:=0 to High(FWolfGates) do FWolfGates[i].Free;
   FScene.ClearAllLayer;

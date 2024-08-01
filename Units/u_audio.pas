@@ -48,8 +48,8 @@ public
 
   // music for title and map screens
   procedure StartMusicTitleMap;
-  procedure PauseMusicTitleMap(aFadeDuration: single);
-  procedure ResumeMusicTitleMap(aFadeDuration: single);
+  procedure PauseMusicTitleMap(aFadeDuration: single=3.0);
+  procedure ResumeMusicTitleMap(aFadeDuration: single=1.0);
 
   function AddMusic(const aFilenameWithoutPath: string; aLooped: boolean): TALSSound;
   function AddSound(const aFilenameWithoutPath: string): TALSSound;
