@@ -404,7 +404,7 @@ begin
   SetShapeLine(PointF(FScene.Width*0.05, texLRIcon^.FrameHeight*1.1),
                 PointF(FScene.Width*0.4,texLRIcon^.FrameHeight*1.1));
   LineWidth := 2;
-  LineColor := BGRA(15,15,15);
+  LineColor := BGRA(200,200,200);
 
   FLRIcon := TSprite.Create(texLRIcon, False);
   AddChild(FLRIcon, 0);
