@@ -4,6 +4,7 @@ set "EXENAME=LittleRedRidingHood.exe"
 set "BINARYFOLDER=C:\Pascal\LittleRedRidingHood\Binary\"
 set "BINARYFILE=%BINARYFOLDER%%EXENAME%"
 set "LAZARUS_PROJECT=C:\Pascal\LittleRedRidingHood\LittleRedRidingHood.lpi"
+set "PROJECTFOLDER=C:\Pascal\LittleRedRidingHood\"
 
 rem retrieves the app version
 pushd ..\..
@@ -53,6 +54,12 @@ rmdir /s /q "C:\Pascal\LittleRedRidingHood\release_tools\win\LittleRedRidingHood
 rmdir /s /q "C:\Pascal\LittleRedRidingHood\release_tools\win\LittleRedRidingHood_%VERSION%\x86_64-linux"
 rmdir /s /q "C:\Pascal\LittleRedRidingHood\release_tools\win\LittleRedRidingHood_%VERSION%\x86_64-darwin"
 
+rem copie changelog.txt
+copy %PROJECTFOLDER%changelog.txt "C:\Pascal\LittleRedRidingHood\release_tools\win\LittleRedRidingHood_%VERSION%\changelog.txt"
+
+rem copie cheatcodes.txt
+copy %PROJECTFOLDER%cheatcodes.txt "C:\Pascal\LittleRedRidingHood\release_tools\win\LittleRedRidingHood_%VERSION%\cheatcodes.txt"
+
 echo compressing
 tar.exe -a -c -f "..\LittleRedRidingHood_%VERSION%_Windows64_Portable.zip" "LittleRedRidingHood_%VERSION%"
 
@@ -91,6 +98,12 @@ rmdir /s /q "C:\Pascal\LittleRedRidingHood\release_tools\win\LittleRedRidingHood
 rmdir /s /q "C:\Pascal\LittleRedRidingHood\release_tools\win\LittleRedRidingHood_%VERSION%\x86_64-win64"
 rmdir /s /q "C:\Pascal\LittleRedRidingHood\release_tools\win\LittleRedRidingHood_%VERSION%\x86_64-linux"
 rmdir /s /q "C:\Pascal\LittleRedRidingHood\release_tools\win\LittleRedRidingHood_%VERSION%\x86_64-darwin"
+
+rem copie changelog.txt
+copy %PROJECTFOLDER%changelog.txt "C:\Pascal\LittleRedRidingHood\release_tools\win\LittleRedRidingHood_%VERSION%\changelog.txt"
+
+rem copie cheatcodes.txt
+copy %PROJECTFOLDER%cheatcodes.txt "C:\Pascal\LittleRedRidingHood\release_tools\win\LittleRedRidingHood_%VERSION%\cheatcodes.txt"
 
 echo compressing
 tar.exe -a -c -f "..\LittleRedRidingHood_%VERSION%_Windows32_Portable.zip" "LittleRedRidingHood_%VERSION%"
