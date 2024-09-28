@@ -8,13 +8,13 @@ uses
   Classes, SysUtils,
   BGRABitmap, BGRABitmapTypes,
   OGLCScene,
-  u_common, u_common_ui, u_sprite_lrcommon, u_audio, ALSound;
+  u_gamescreentemplate, u_common, u_common_ui, u_sprite_lrcommon, u_audio, ALSound;
 
 type
 
   { TScreenWorkShop }
 
-  TScreenWorkShop = class(TScreenTemplate)
+  TScreenWorkShop = class(TGameScreenTemplate)
   private
     FFireSound: TALSSound;
     FAtlas: TOGLCTextureAtlas;
@@ -42,7 +42,7 @@ var
   texCoin, texSmallCristalGray,
   texBow, texElevator, texHammer, texStormCloud,
   texZipLine,
-  texDigicodeDecoder: PTexture;
+  texDigicodeDecoder, texDorsalThruster: PTexture;
   FItemHeight: integer;
   FFontText: TTexturedFont;
 
@@ -159,6 +159,7 @@ begin
   case FItemDescriptor.ActionToOwnItem of
     atoiBuy: if FItemDescriptor.Owned then s := sNextLevel else s := sPrice;
     atoiBuild: if FItemDescriptor.Owned then s := sNextLevel else s := sManufacturing;
+    atoiFound: s := '';
     else raise exception.Create('forgot to implement');
   end;
 
@@ -277,6 +278,7 @@ begin
   case FItemDescriptor.ActionToOwnItem of
     atoiBuy: if FItemDescriptor.Owned then s := sUpgrade else s := sBuy;
     atoiBuild: if FItemDescriptor.Owned then s := sUpgrade else s := sBuild;
+    atoiFound: s := '';
     else raise exception.Create('forgot to implement');
   end;
   BUpgrade := TUIButton.Create(FScene, s, FFontText, NIL);
@@ -342,8 +344,13 @@ begin
   FAtlas.Spacing := 2;
   texHomeBG := FAtlas.AddFromSVG(SpriteBGFolder+'LRHomeInner.svg', FScene.Width, -1);
   texFireBG := FAtlas.AddFromSVG(SpriteBGFolder+'LRHomeInnerFireBG.svg', Round(FScene.Width*0.1354), -1);
-  FAtlas.Add(ParticleFolder+'Flame.png');
-  FAtlas.Add(ParticleFolder+'sphere_particle.png');
+  with FAtlas.AddFromSVG(ParticleFolder+'Flame.svg', PPIScale(32), -1)^ do
+    Filename := 'Flame.png';
+  //FAtlas.Add(ParticleFolder+'Flame.png');
+  with FAtlas.AddFromSVG(ParticleFolder+'sphere_particle.svg', PPIScale(32), -1)^ do
+    Filename := 'sphere_particle.png';
+  //FAtlas.Add(ParticleFolder+'sphere_particle.png');
+
   FFontText := CreateGameFontText(FAtlas);
 
   CreateGameFontNumber(FAtlas);
@@ -368,6 +375,7 @@ begin
   texStormCloud := FAtlas.AddFromSVG(SpriteCommonFolder+'StormCloud.svg', -1, FItemHeight);
   texZipLine := FAtlas.AddFromSVG(SpriteUIFolder+'ZipLine.svg', -1, FItemHeight);
   texDigicodeDecoder := FAtlas.AddFromSVG(SpriteUIFolder+'DigicodeDecoder.svg', -1, FItemHeight);
+  texDorsalThruster := FAtlas.AddFromSVG(SpriteUIFolder+'DorsalThruster.svg', -1, FItemHeight);
 
   FAtlas.TryToPack;
   FAtlas.Build;
@@ -401,7 +409,7 @@ begin
   home.AddChild(FLR, 0);
   FLR.SetCoordinateByFeet(home.Width*0.88, home.Height*0.985);
   FLR.HideBasket;
-  FLR.SetFlipH(True);
+  FLR.FlipH := True;
   FLR.SetWindSpeed(0.1);
 
   // buttons
@@ -436,8 +444,13 @@ begin
   with PlayerInfo.MountainPeak do FPanelItem.AddItem(ZipLine, texZipLine);
 
   // item decoder
-  if PlayerInfo.Volcano.HaveDecoderPlan or PlayerInfo.Volcano.DigicodeDecoder.Owned then
-    FPanelItem.AddItem(PlayerInfo.Volcano.DigicodeDecoder, texDigicodeDecoder);
+  with PlayerInfo.Volcano do begin
+    // digicode decoder
+    if HaveDecoderPlan or DigicodeDecoder.Owned then
+      FPanelItem.AddItem(DigicodeDecoder, texDigicodeDecoder);
+    // dorsal thruster
+    FPanelItem.AddItem(DorsalThruster, texDorsalThruster);
+  end;
 
   CustomizeMousePointer;
 end;
@@ -449,7 +462,9 @@ begin
 
   FreeMousePointer;
   FScene.ClearAllLayer;
-  FreeAndNil(FAtlas);
+  FAtlas.Free;
+  FAtlas := NIL;
+  ResetSceneCallbacks;
 end;
 
 procedure TScreenWorkShop.ProcessMessage(UserValue: TUserMessageValue);

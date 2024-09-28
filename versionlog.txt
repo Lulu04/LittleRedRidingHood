@@ -1,0 +1,14 @@
+
+version 0.2.0 - sep 28, 2024
+-----------------------------
+>When a new player is created, a cinematic explain the quest of the main character.
+>Added game Volcano, made of three part:
+ - the Volcano entrance: an humorous point'n click game.
+ - Volcano inner: a platformer game where main character must avoid detection by laser beam, guards and switch on the floor.
+ - The thirth part is an humorous race versus Dino.
+>Added cheat code system.
+
+version 0.1.0 - jul 26, 2024
+-----------------------------
+>first release of the game.
+>Pin Forest and Mountain Peaks are fully playable. Items can be upgraded.

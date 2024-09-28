@@ -1,0 +1,43 @@
+E_Coor
+0 0
+E_GlobalOpacity
+255
+E_Direction
+197
+E_Spread
+0
+E_Life
+1,434
+E_LoopMode
+TRUE
+E_Emission
+50
+E_Gravity
+0 0
+E_Type
+0
+P_ParticlesPositionsRelativeToEmitterPosition
+FALSE
+P_Texture
+sphere_particle.png
+32 32
+P_Frame
+0 0
+P_Life
+0,266 0,000
+P_ColorMode
+1
+P_BlendMode
+1
+P_Color
+3 0,00000 255 255 0 31 0,17340 255 51 0 255 1,00000 0 0 255 1
+P_Velocity
+172 3 3 0,00000 -0,02703 0,48768 -0,02703 1,00000 0,02703
+P_AVelocity
+0 0 2 0,00000 0,00000 1,00000 0,00000
+P_Size
+0,99000 0,09000 3 0,00000 0,73171 0,19507 1,43902 1,00000 0,35514
+P_StartAngle
+0 0
+P_Spin
+0 0 2 0,00000 0,02020 1,00000 0,04040

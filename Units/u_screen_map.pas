@@ -8,14 +8,15 @@ uses
   Classes, SysUtils,
   BGRABitmap, BGRABitmapTypes,
   OGLCScene, ALSound,
-  u_common, u_common_ui;
+  u_common, u_common_ui, u_gamescreentemplate, u_utils;
 
-{ WHEN ADDING A NEW GAME: update the following:
-    - procedure TScreenMap.ShowLastGameStepPanel;
-    - function TScreenMap.CheckIfASubGameWasCompleted
+{ WHEN ADDING A NEW GAME: do the following:
+    - update procedure TScreenMap.ShowLastGameStepPanel;
+    - update function TScreenMap.CheckIfASubGameWasCompleted
     - add the new TImageButton in procedure TScreenMap.CreateObjects;
-    - procedure TScreenMap.UnableMouseInteractionOnMapObjects(aValue: boolean);
-    - procedure TScreenMap.SetIconLRPositionOnMap
+    - update procedure TScreenMap.UnableMouseInteractionOnMapObjects(aValue: boolean);
+    - update procedure TScreenMap.SetLRIconPositionOnGameToPlay
+    - add the new cheat codes (if any) in procedure TScreenMap.CreateObjects and handle them in TScreenMap.Update()
 }
 
 type
@@ -25,26 +26,28 @@ TGameOnMap = (gomUnknow, gomPineForest, gomZipLine, gomVolcano);
 
 { TScreenMap }
 
-TScreenMap = class(TScreenTemplate)
+TScreenMap = class(TGameScreenTemplate)
 private
   FsndSeaWave: TALSSound;
-  FAtlas: TOGLCTextureAtlas;
   FIconLR: TSprite;
   BWorkShop, BPineForest, BMountainPeaks, BVolcano: TImageButton;
   FTargetButtonForFireworkAnim: TImageButton;
   BMainMenu: TUIButton;
   FFireworkCount: integer;
+  FInMapPanel: TInMapPanel;
+  FCheatCodeManager: TCheatCodeManager;
 
   function CreateImageButton(tex: PTexture): TImageButton;
   function CreateButton(const aCaption: string; tex: PTexture): TUIButton;
   procedure ProcessButtonClick(Sender: TSimpleSurfaceWithEffect);
   procedure ShowLastGameStepPanel;
   function CheckIfASubGameWasCompleted: boolean;
-  procedure SetIconLRPositionOnMap;
+  procedure SetLRIconPositionOnGameToPlay;
 public
   procedure CreateObjects; override;
   procedure FreeObjects; override;
   procedure ProcessMessage({%H-}UserValue: TUserMessageValue); override;
+  procedure Update(const aElapsedTime: single); override;
 
   // enable disable button on the map
   procedure UnableMouseInteractionOnMapObjects(aValue: boolean);
@@ -56,8 +59,8 @@ var ScreenMap: TScreenMap;
 implementation
 uses u_app, u_resourcestring, u_screen_title, u_screen_gameforest,
   u_screen_workshop, u_mousepointer, u_screen_gamemountainpeaks, u_ui_panels,
-  u_screen_gamevolcanoentrance, u_audio, u_screen_gamevolcanoinner, BGRAPath, Forms,
-  Math;
+  u_screen_gamevolcanoentrance, u_audio, u_screen_gamevolcanoinner,
+  u_screen_gamevolcanodino, BGRAPath, Forms, Math;
 
 type
 
@@ -70,18 +73,20 @@ private
   FSteps: array of TImageButton;
   FImage: TUIImage;
   BStart, BBack, BHelpKeys: TUIButton;
-  FScreenToRun: TScreenTemplate;
+  FTargetScreen: TScreenTemplate;
+  FMessageToSend: TUserMessageValue;
   FGameDescriptor: TGameDescriptor;
   FLRIcon: TSprite;
   FSelectedStepIndex: integer;
   FHint: TUITextArea;
   FPreviousHintText: string;
+  FKeyboardToButton: TButtonsClickableByKeyboard;
   procedure SetHint(AValue: string);
   procedure SetLRIconPosition;
 protected
   procedure ProcessButtonClick(Sender: TSimpleSurfaceWithEffect); override;
 public
-  constructor Create(aTexIcon, aLRIcon: PTexture; aGame: TGameDescriptor; aScreen: TScreenTemplate);
+  constructor Create(aTexIcon, aLRIcon: PTexture; aGame: TGameDescriptor; aMessageToRunScreen: TUserMessageValue);
   procedure RemoveStartButton;
   property Hint: string write SetHint;
 end;
@@ -94,6 +99,7 @@ var FFontText: TTexturedFont;
   texVolcanoMountain,
   texCastle: PTexture;
   FPanelChooseGameStep: TPanelChooseGameStep=NIL;
+  FAtlas: TOGLCTextureAtlas;
 
 
 
@@ -115,22 +121,26 @@ end;
 procedure TPanelChooseGameStep.ProcessButtonClick(Sender: TSimpleSurfaceWithEffect);
 var o: TImageButton;
 begin
-  Audio.PlayUIClick;
   if Sender = BStart then begin
+    Audio.PlayUIClickStart;
     MouseInteractionEnabled := False;
     FGameDescriptor.StepPlayed := FSelectedStepIndex;
-    FScene.RunScreen(FScreenToRun);
+    FTargetScreen.PostMessage(FMessageToSend, 0);
   end else
   if Sender = BBack then begin
+    Audio.PlayUIClick;
     Hide(True);
+    FPanelChooseGameStep := NIL;
     ScreenMap.UnableMouseInteractionOnMapObjects(True);
   end else
   if Sender is TImageButton then begin
+    Audio.PlayUIClick;
     o := TImageButton(Sender);
     FSelectedStepIndex := o.Tag1;
     SetLRIconPosition;
   end else
   if Sender = BHelpKeys then begin
+    Audio.PlayUIClick;
     BHelpKeys.Tag2 := not BHelpKeys.Tag2;
     if BHelpKeys.Tag2 then begin
       FPreviousHintText := FHint.Text.Caption;
@@ -140,14 +150,16 @@ begin
 end;
 
 constructor TPanelChooseGameStep.Create(aTexIcon, aLRIcon: PTexture; aGame: TGameDescriptor;
-  aScreen: TScreenTemplate);
+  aMessageToRunScreen: TUserMessageValue);
 var i, w: integer;
+  A: TUIButtonArray;
 begin
   inherited Create(Round(FScene.Width*0.6), Round(FScene.Height*0.3), FFontText);
   CenterOnScene;
 
   FGameDescriptor := aGame;
-  FScreenToRun := aScreen;
+  FTargetScreen := ScreenMap;
+  FMessageToSend := aMessageToRunScreen;
 
   // icon
   w := Round(Height*0.7);
@@ -187,12 +199,27 @@ begin
   BStart := TUIButton.Create(FScene, sStart, FFont, NIL);
   AddChild(BStart, 0);
   FormatButtonMenu(BStart);
-  BStart.AnchorPosToParent(haRight, haRight, -PPIScale(10), vaBottom, vaBottom, -PPIScale(10));
+  BStart.AnchorPosToParent(haLeft, haCenter, ScaleW(32), vaBottom, vaBottom, -PPIScale(10));
 
   BBack := TUIButton.Create(FScene, sBack, FFont, NIL);
   AddChild(BBack, 0);
   FormatButtonMenu(BBack);
-  BBack.AnchorPosToParent(haLeft, haLeft, PPIScale(10), vaBottom, vaBottom, -PPIScale(10));
+  BBack.AnchorPosToParent(haRight, haCenter, -ScaleW(32), vaBottom, vaBottom, -PPIScale(10));
+
+  // keyboard to button
+  FKeyboardToButton := TButtonsClickableByKeyboard.Create(Self, FAtlas);
+  A := NIL;
+  for i:=0 to High(FSteps) do
+    if FSteps[i].MouseInteractionEnabled then begin
+      SetLength(A, Length(A)+1);
+      A[High(A)] := TUIButton(FSteps[i]);
+    end;
+ { A := NIL;
+  SetLength(A, Length(FSteps));
+  for i:=0 to High(A) do A[i] := TUIButton(FSteps[i]);  }
+  FKeyboardToButton.AddLineOfButtons(A);
+  FKeyboardToButton.AddLineOfButtons([BBack, BStart]);
+  FKeyboardToButton.Select(BStart);
 
   // hint
   FHint := TUITextArea.Create(FScene);
@@ -217,6 +244,10 @@ end;
 procedure TPanelChooseGameStep.RemoveStartButton;
 begin
   BStart.Kill;
+  //FKeyboardToButton.RemoveButton(BStart);
+  FKeyboardToButton.RemoveAllButtons;
+  FKeyboardToButton.AddLineOfButtons([BBack]);
+  FKeyboardToButton.Select(BBack);
 end;
 
 { TScreenMap }
@@ -274,7 +305,7 @@ begin
 
   if Sender = BPineForest then begin
     UnableMouseInteractionOnMapObjects(False);
-    FPanelChooseGameStep := TPanelChooseGameStep.Create(texPineForest, texLRIcon, PlayerInfo.Forest, ScreenGameForest);
+    FPanelChooseGameStep := TPanelChooseGameStep.Create(texPineForest, texLRIcon, PlayerInfo.Forest, 100);
     _ShowPanelChooseGameStep;
     LastGameClicked := gomPineForest;
     exit;
@@ -286,7 +317,7 @@ begin
 
   if Sender = BMountainPeaks then begin
     UnableMouseInteractionOnMapObjects(False);
-    FPanelChooseGameStep := TPanelChooseGameStep.Create(texZipLinePeaks, texLRIcon, PlayerInfo.MountainPeak, ScreenGameZipLine);
+    FPanelChooseGameStep := TPanelChooseGameStep.Create(texZipLinePeaks, texLRIcon, PlayerInfo.MountainPeak, 110);
     _ShowPanelChooseGameStep;
     LastGameClicked := gomZipLine;
     exit;
@@ -302,7 +333,7 @@ begin
       FScene.RunScreen(ScreenGameVolcanoEntrance);
       LastGameClicked := gomUnknow;
     end else begin
-      FPanelChooseGameStep := TPanelChooseGameStep.Create(texVolcanoMountain, texLRIcon, PlayerInfo.Volcano, ScreenGameVolcanoInner);
+      FPanelChooseGameStep := TPanelChooseGameStep.Create(texVolcanoMountain, texLRIcon, PlayerInfo.Volcano, 120);
       _ShowPanelChooseGameStep;
       LastGameClicked := gomVolcano;
       exit;
@@ -336,7 +367,7 @@ begin
   end;
 end;
 
-procedure TScreenMap.SetIconLRPositionOnMap;
+procedure TScreenMap.SetLRIconPositionOnGameToPlay;
 begin
   if PlayerInfo.MountainPeak.IsTerminated then FIconLR.SetCenterCoordinate(BVolcano.CenterX, BVolcano.CenterY)
   else
@@ -352,7 +383,10 @@ var o, o1: TSprite;
   s: String;
   d, waveCount, i: Integer;
 begin
-FScene.LogInfo('Entering TScreenMap.CreateObjects');
+FScene.LogDebug('TScreenMap.CreateObjects BEGIN');
+
+//  LastGameClicked := gomUnknow;
+  FPanelChooseGameStep := NIL;
 
   FFireworkCount := 0;
   FsndSeaWave := Audio.AddSound('sea-and-seagull.ogg');
@@ -367,6 +401,8 @@ FScene.LogInfo('Entering TScreenMap.CreateObjects');
   texMapStep := FAtlas.AddFromSVG(SpriteMapFolder+'MapStep.svg', ScaleW(21), -1);
   texMapStepChecked := FAtlas.AddFromSVG(SpriteMapFolder+'MapStepChecked.svg', ScaleW(34), -1);
   texHelpKeys := FAtlas.AddFromSVG(SpriteMapFolder+'HelpKeys.svg', PPIScale(32), -1);
+  AddBlueArrowToAtlas(FAtlas);
+
   // games map
   texMap1FW := FAtlas.AddFromSVG(SpriteMapFolder+'Map1FW.svg', ScaleW(651), -1);
   texMap1Outline := FAtlas.AddFromSVG(SpriteMapFolder+'Map1Outline.svg', ScaleW(651), -1);
@@ -512,37 +548,44 @@ FScene.LogInfo('Entering TScreenMap.CreateObjects');
   FIconLR.CenterX := BWorkShop.CenterX;
   FIconLR.BottomY := BWorkShop.BottomY;
   FIconLR.Blink(-1, 0.3, 0.3);
-  SetIconLRPositionOnMap;
+  SetLRIconPositionOnGameToPlay;
 
   // buttons
   BMainMenu := CreateButton(sBack, NIL);
   BMainMenu.X.Value := ScaleW(10);
   BMainMenu.BottomY := FScene.Height-ScaleH(10);
 
-FScene.LogInfo('BMainMenu created', 1);
-
   // player items panel
-  TInMapPanel.Create; // not necessary to keep the instance
-
-FScene.LogInfo('TInMapPanel created', 1);
+  FInMapPanel := TInMapPanel.Create;
 
   // check if a sub-game was completed, if yes an animation with firework start
   // else the last game panel is opened
   if not CheckIfASubGameWasCompleted then
     if LastGameClicked <> gomUnknow then ShowLastGameStepPanel;
 
+  // cheat code list
+  FCheatCodeManager.InitDefault;
+  if not PlayerInfo.Forest.IsTerminated then
+    FCheatCodeManager.AddCheatCodeToList(PinForestCheatCode);
+  if not PlayerInfo.MountainPeak.IsTerminated then
+    FCheatCodeManager.AddCheatCodeToList(MountainPeaksCheatCode);
+
   CustomizeMousePointer;
 
-FScene.LogInfo('end of TScreenMap.CreateObjects');
+FScene.LogDebug('TScreenMap.CreateObjects END');
 end;
 
 procedure TScreenMap.FreeObjects;
 begin
+FScene.LogDebug('TScreenMap.FreeObjects BEGIN');
   FsndSeaWave.FadeOutThenKill(3.0);
   FsndSeaWave := NIL;
   FreeMousePointer;
   FScene.ClearAllLayer;
-  FreeAndNil(FAtlas);
+  FAtlas.Free;
+  FAtlas := NIL;
+  ResetSceneCallbacks;
+FScene.LogDebug('TScreenMap.FreeObjects END');
 end;
 
 procedure TScreenMap.ProcessMessage(UserValue: TUserMessageValue);
@@ -562,7 +605,7 @@ var xx, yy: single;
     pe.Shoot;
     pe.KillDefered(7);
     with Audio.AddSound('Fireworks.ogg') do begin
-      ApplyEffect(Audio.Reverb1);
+      ApplyEffect(Audio.FXReverbShort);
       PlayThenKill(True);
     end;
   end;
@@ -602,6 +645,55 @@ begin
       //xx := xx-FTargetButtonForFireworkAnim.Width*0.1;
       //yy := yy+FTargetButtonForFireworkAnim.Height*0.1;
       CreateFirework('FireWork02.par');
+    end;
+
+    // message received from the panel where player choose the game step to play
+    100: FScene.RunScreen(ScreenGameForest);
+    110: FScene.RunScreen(ScreenGameZipLine);
+    120: begin
+      // check if the last step was clicked, if yes start screen volcano dino
+      if PlayerInfo.Volcano.StepPlayed = PlayerInfo.Volcano.StepCount then
+        FScene.RunScreen(ScreenGameVolcanoDino)
+      else
+        FScene.RunScreen(ScreenGameVolcanoInner);
+    end;
+  end;
+end;
+
+procedure TScreenMap.Update(const aElapsedTime: single);
+var s: string;
+  flagCheatCodeApplyed: boolean;
+begin
+  inherited Update(aElapsedTime);
+
+  // check if player enter cheat codes
+  FCheatCodeManager.Update;
+  s := FCheatCodeManager.CheatCodeEntered;
+  if s <> '' then begin
+    flagCheatCodeApplyed := False;
+
+    with PlayerInfo do
+      if (s = PinForestCheatCode) and not Forest.IsTerminated then begin
+        Forest.ApplyCheatCode;
+        flagCheatCodeApplyed := True;
+      end;
+
+    with PlayerInfo do
+      if (s = MountainPeaksCheatCode) and Forest.IsTerminated and not MountainPeak.IsTerminated then begin
+        MountainPeak.ApplyCheatCode;
+        flagCheatCodeApplyed := True;
+      end;
+
+    if flagCheatCodeApplyed then begin
+      if FPanelChooseGameStep <> NIL then FPanelChooseGameStep.Hide(True);
+      FPanelChooseGameStep := NIL;
+      Audio.PlayMusicCheatCodeEntered;
+      FInMapPanel.CoinCounter.Count := PlayerInfo.CoinCount;
+      if FInMapPanel.PurpleCristalCounter <> NIL then
+        FInMapPanel.PurpleCristalCounter.Count := PlayerInfo.PurpleCristalCount;
+      CheckIfASubGameWasCompleted;
+      FSaveGame.Save;
+      SetLRIconPositionOnGameToPlay;
     end;
   end;
 end;

@@ -8,14 +8,14 @@ uses
   Classes, SysUtils,
   BGRABitmap, BGRABitmapTypes,
   OGLCScene,
-  u_common, u_sprite_wolf, u_sprite_gameforest, u_common_ui,
+  u_common, u_sprite_wolf, u_sprite_gameforest, u_common_ui, u_gamescreentemplate,
   u_ui_panels, u_gamebackground, u_audio;
 
 type
 
 { TScreenGame1 }
 
-TScreenGame1 = class(TScreenTemplate)
+TScreenGame1 = class(TGameScreenTemplate)
 private type TGameState=(gsUndefined=0, gsRunning, gsLRLost,
         gsWaitForEscapeDoorToOpen, gsWaitUntilPlatformIsAtTop, gsWaitLRWalksThroughTheDoor,
         gsCreatePanelAddScore, gsAddingScore);
@@ -59,7 +59,7 @@ end;
 
 var ScreenGameForest: TScreenGame1;
 implementation
-uses Forms, Controls, LCLType, u_app, u_screen_map,
+uses Forms, Controls, LCLType, u_app, u_screen_map, u_utils,
   Math;
 
 { TScreenGame1 }
@@ -87,7 +87,7 @@ var ima: TBGRABitmap;
   xx, yy: single;
   i, wolfCount, gameTime, h: integer;
 begin
-  LoadBallonSound;
+  FGameState := gsUndefined;
   LoadSoundForForestGame;
   sndElevator.Play(True);
   Audio.PauseMusicTitleMap;
@@ -112,6 +112,8 @@ begin
 
   // font for button in pause panel
   FFontText := CreateGameFontText(FAtlas);
+  // load arrow for button panels
+  AddBlueArrowToAtlas(FAtlas);
 
   FAtlas.TryToPack;
   FAtlas.Build;
@@ -216,7 +218,7 @@ PlayerInfo.Forest.StormCloudLevel := 3;  }
   FInGamePanel.StartTime;
 
   // pause panel
-  FInGamePausePanel := TInGamePausePanel.Create(FFontText);
+  FInGamePausePanel := TInGamePausePanel.Create(FFontText, FAtlas);
 
   // hammer
   FHammer := NIL;
@@ -231,16 +233,14 @@ PlayerInfo.Forest.StormCloudLevel := 3;  }
     FStormCloud := TStormCloud.Create(FAtlas);
 
  // FScene.Mouse.SystemMouseCursorVisible := False;
-  GameState := gsRunning;
 
-  // show how to play
-  with TDisplayGameHelp.Create(PlayerInfo.Forest.HelpText, FFontText) do ShowModal;
+  PostMessage(50); // (one frame deferred) show how to play and run game
 end;
 
 procedure TScreenGame1.FreeObjects;
 var i: integer;
 begin
-  FreeBallonSound;
+FScene.LogDebug('TScreenGame1.FreeObjects BEGIN');
   FreeSoundForForestGame;
   FMusic.FadeOutThenKill(1.0);
   FMusic := NIL;
@@ -248,8 +248,11 @@ begin
 
   for i:=0 to High(FWolfGates) do FWolfGates[i].Free;
   FScene.ClearAllLayer;
-  FreeAndNil(FAtlas);
+  FAtlas.Free;
+  FAtlas := NIL;
   FEndGameScorePanel := NIL;
+  ResetSceneCallbacks;
+FScene.LogDebug('TScreenGame1.FreeObjects END');
 end;
 
 procedure TScreenGame1.ProcessMessage(UserValue: TUserMessageValue);
@@ -274,6 +277,12 @@ begin
       GameState := gsCreatePanelAddScore;
     end;
 
+    // show how to play
+    50: begin
+      GameState := gsRunning;
+      ShowGameInstructions(PlayerInfo.Forest.HelpText);
+    end;
+
     // re-introduce music after jinggle success
     100: begin
       FMusic.FadeIn(1.0, 1.0);
@@ -290,10 +299,10 @@ begin
     gsRunning: begin
       // move player platform up/down
       if FElevatorEngine.EngineON then begin
-        if FScene.KeyState[KeyUp] and (FPlatformLR.Y.Value > FPlatformLRMinY) then begin
+        if Input.UpPressed and (FPlatformLR.Y.Value > FPlatformLRMinY) then begin
           FPlatformLR.Y.Value := FPlatformLR.Y.Value - FPlatformMoveDeltaY*aElapsedTime;
           FElevatorEngine.SetWheelRotation(-1);
-        end else if FScene.KeyState[KeyDown] and (FPlatformLR.Y.Value < FPlatformLRMaxY) then begin
+        end else if Input.DownPressed and (FPlatformLR.Y.Value < FPlatformLRMaxY) then begin
           FPlatformLR.Y.Value := FPlatformLR.Y.Value + FPlatformMoveDeltaY*aElapsedTime;
           FElevatorEngine.SetWheelRotation(1);
         end else begin
@@ -326,15 +335,15 @@ begin
         exit;
       end;
 
-      // mouse button = shoot arrow
-      if (FScene.MouseButtonState[mbLeft] or FScene.KeyState[KeyAction1]) {and
+      // shoot arrow
+      if Input.Action1Pressed {and
          not FElevatorEngine.Breaked and
          not CheckIfWolfLost} then FLR.ShootArrow;
 
       // storm cloud ?
       if (FStormCloud <> NIL) and
          FStormCloud.CanShoot and
-         (FScene.MouseButtonState[mbRight] or FScene.KeyState[KeyAction2]) and
+         Input.Action2Pressed and
          FInGamePanel.StormCloudAvailable {and
          not FElevatorEngine.Breaked  and
          not CheckIfWolfLost} then begin
@@ -347,7 +356,7 @@ begin
         FWolfGates[i].Update(aElapsedTime);
 
       // check if player pause the game
-      if FScene.KeyState[KeyPause] then begin
+      if Input.PausePressed then begin
         FInGamePausePanel.ShowModal;
       end;
     end;

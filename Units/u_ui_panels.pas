@@ -7,9 +7,40 @@ interface
 uses
   Classes, SysUtils,
   BGRABitmap, BGRABitmapTypes,
-  OGLCScene, u_common;
+  OGLCScene, u_common, u_utils;
 
 type
+
+TUIButtonArray = array of TUIButton;
+
+{ TButtonsClickableByKeyboard }
+
+TButtonsClickableByKeyboard = class(TSprite)
+private
+  FButtons: array of TUIButtonArray;
+  FSelectedRow, FSelectedColumn: integer;
+  FKeyboardEnabled, FDoClick: boolean;
+  FKeyStep: integer;
+  function GetSelectedRow: TUIButtonArray;
+  function GetSelected: TUIButton;
+  procedure MoveArrowToPreviousOnSameRow;
+  procedure MoveArrowToNextOnSameRow;
+  procedure MoveArrowToPreviousRow;
+  procedure MoveArrowToNextRow;
+  procedure ClickSelectedButton;
+public
+  constructor Create(aParent: TSimpleSurfaceWithEffect; aAtlas: TAtlas);
+  procedure Update(const aElapsedTime: single); override;
+  procedure AddLineOfButtons(const aButtons: TUIButtonArray);
+  procedure RemoveButton(aButton: TUIButton);
+  procedure RemoveAllButtons;
+  procedure Select(aButton: TUIButton);
+  // enable/disable the use of the key to move the arrow from button to another
+  // default value is True
+  property KeyboardEnabled: boolean read FKeyboardEnabled write FKeyboardEnabled;
+end;
+
+
 
 { TPanelWithBGDarkness }
 
@@ -18,8 +49,9 @@ private
   FSceneDarkness: TMultiColorRectangle;
   procedure CreateSceneDarkness;
 public
-  constructor Create(aWidth, aHeight: integer); overload;
-  constructor Create(aWidth: integer); overload;
+  constructor CreateAsRect(aWidth, aHeight: integer);
+  constructor CreateAsRoundRect(aWidth, aHeight: integer);
+  constructor CreateAsCircle(aWidth: integer);
   destructor Destroy; override;
   procedure ProcessMessage({%H-}UserValue: TUserMessageValue); override;
   procedure Show; virtual;
@@ -144,17 +176,26 @@ public
   procedure Hide(aFree: boolean); override;
 end;
 
-{ TInGamePausePanel }
 
+{ TInGamePausePanel }
+TCallbackPlayerEnterCheatCode = procedure(const aCheatCode: string) of object;
 TInGamePausePanel = class(TUIModalPanel)
 private
+  FKeyboardToButtons: TButtonsClickableByKeyboard;
   BResumeGame, BBackToMap: TUIButton;
+  FCheatCodeManager: TCheatCodeManager;
+  FOnPlayerEnterCheatCode: TCallbackPlayerEnterCheatCode;
   procedure FormatButton(aButton: TUIButton);
   procedure ProcessButtonClick(Sender: TSimpleSurfaceWithEffect);
 public
-  constructor Create(aFont: TTexturedFont);
+  constructor Create(aFont: TTexturedFont; aAtlas: TOGLCTextureAtlas);
+  procedure Update(const aElapsedTime: single); override;
   procedure ProcessMessage({%H-}UserValue: TUserMessageValue); override;
   procedure ShowModal; override;
+
+public
+  procedure SetCheatCodeList(const aList: TStringArray);
+  property OnPlayerEnterCheatCode: TCallbackPlayerEnterCheatCode read FOnPlayerEnterCheatCode write FOnPlayerEnterCheatCode;
 end;
 
 
@@ -162,13 +203,29 @@ end;
 
 TDisplayGameHelp = class(TUIModalPanel)
 private
+  FFontDescriptor: TFontDescriptor;
   FText: TSprite;
-  FTextArea: TUITextArea;
+  function CreateSpriteFromString(const s: string): TSprite;
 public
   constructor Create(const aText: string);
-  constructor Create(const aText: string; aFont: TTexturedFont);
   procedure ProcessMessage({%H-}UserValue: TUserMessageValue); override;
   procedure ShowModal; override;
+end;
+
+{ TDialogQuestion }
+
+TDialogQuestion = class(TUIModalPanel)
+private
+  FKeyboardToButtons: TButtonsClickableByKeyboard;
+  FTextArea: TUITextArea;
+  FBYes, FBNo: TUIButton;
+  FTargetScreen: TScreenTemplate;
+  FYesUserValue, FNoUserValue: TUserMessageValue;
+  procedure ProcessButtonClick(Sender: TSimpleSurfaceWithEffect);
+public
+  constructor Create(const aText, aYes, aNo: string; aFont: TTexturedFont;
+                     aTargetScreen: TScreenTemplate; aYesUserValue, aNoUserValue: TUserMessageValue;
+                     aAtlas: TOGLCTextureAtlas);
 end;
 
 
@@ -178,77 +235,309 @@ procedure LoadTitleScreenIcon(aAtlas: TOGLCTextureAtlas; aFontHeight: integer);
 
 
 implementation
-uses u_resourcestring, u_app, u_screen_title, u_screen_map, u_audio, i18_utils,
-  Math, Controls;
+uses u_resourcestring, u_app, u_screen_title, u_screen_map, u_audio,
+  i18_utils, Math, Controls, LCLType;
 
 procedure LoadTitleScreenIcon(aAtlas: TOGLCTextureAtlas; aFontHeight: integer);
 begin
   texTrashCan := aAtlas.AddFromSVG(SpriteUIFolder+'TrashCan.svg', -1, Round(aFontHeight*0.7));
 end;
 
-{ TDisplayGameHelp }
+{ TButtonsClickableByKeyboard }
 
-constructor TDisplayGameHelp.Create(const aText: string);
-var fd: TFontDescriptor;
-  h: integer;
-  ima: TBGRABitmap;
-  tex: PTexture;
+function TButtonsClickableByKeyboard.GetSelectedRow: TUIButtonArray;
 begin
-  inherited Create(FScene);
-  BodyShape.SetShapeRectangle(20, 20, PPIScale(2));
-  BodyShape.Fill.Visible := False;
-  BodyShape.Border.Visible := False;
- // FScene.Add(Self, 0);
-  MouseInteractionEnabled := False;
-  ChildClippingEnabled := False;
-  CenterOnScene;
-
-  h := FScene.Height div 20;
-  fd.Create('Arial', h, [], BGRA(255,255,255), BGRA(0,0,0), Max(h*0.1, 1));
-  ima := fd.StringToBitmap(aText, NIL);
-  tex := FScene.TexMan.Add(ima);
-  ima.Free;
-  FText := TSprite.Create(tex, True);
-  AddChild(FText);
-  FText.CenterOnParent;
+  Result := FButtons[FSelectedRow];
 end;
 
-constructor TDisplayGameHelp.Create(const aText: string; aFont: TTexturedFont);
+function TButtonsClickableByKeyboard.GetSelected: TUIButton;
 begin
+  Result := FButtons[FSelectedRow, FSelectedColumn];
+end;
+
+procedure TButtonsClickableByKeyboard.MoveArrowToPreviousOnSameRow;
+begin
+  if FSelectedColumn > 0 then
+    dec(FSelectedColumn);
+end;
+
+procedure TButtonsClickableByKeyboard.MoveArrowToNextOnSameRow;
+begin
+  if FSelectedColumn < High(GetSelectedRow) then
+    inc(FSelectedColumn);
+end;
+
+procedure TButtonsClickableByKeyboard.MoveArrowToPreviousRow;
+begin
+  if FSelectedRow > 0 then begin
+    dec(FSelectedRow);
+    FSelectedColumn := Min(FSelectedColumn, High(GetSelectedRow));
+  end;
+end;
+
+procedure TButtonsClickableByKeyboard.MoveArrowToNextRow;
+begin
+  if FSelectedRow < High(FButtons) then begin
+    inc(FSelectedRow);
+    FSelectedColumn := Min(FSelectedColumn, High(GetSelectedRow));
+  end;
+end;
+
+procedure TButtonsClickableByKeyboard.ClickSelectedButton;
+begin
+  GetSelected.OnClick(GetSelected);
+end;
+
+constructor TButtonsClickableByKeyboard.Create(aParent: TSimpleSurfaceWithEffect; aAtlas: TAtlas);
+begin
+  inherited Create(aAtlas.RetrieveTextureByFileName('_UItexKeyboardToButton_'), False);
+  aParent.AddChild(Self, MaxInt);
+  AddAndPlayScenario('ScaleChange 1.2 0.3 idcLinear'#10+
+                     'Wait 0.3'#10+
+                     'ScaleChange 0.8 0.3 idcLinear'#10+
+                     'Wait 0.3'#10+
+                     'Loop');
+
+  FSelectedRow := -1;
+  FSelectedColumn := -1;
+  FKeyboardEnabled := True;
+end;
+
+procedure TButtonsClickableByKeyboard.Update(const aElapsedTime: single);
+begin
+  inherited Update(aElapsedTime);
+
+  if not FKeyboardEnabled or (Length(FButtons) = 0) then exit;
+  if (FSelectedRow = -1) and (FSelectedColumn = -1) then exit;
+
+  // set the coordinates
+  X.Value := GetSelected.X.Value - Width;
+  CenterY := GetSelected.CenterY;
+
+  //check keyboard to move arrow from button to another
+  case FKeyStep of
+    0:begin // wait user release key
+      if not Input.AButtonIsPressed then FKeyStep := 1;
+    end;
+    1: begin // check if user press a key
+      if Input.LeftPressed then begin
+        MoveArrowToPreviousOnSameRow;
+        FKeyStep := 2;
+      end else
+      if Input.RightPressed then begin
+        MoveArrowToNextOnSameRow;
+        FKeyStep := 2;
+      end else
+      if Input.UpPressed then begin
+        MoveArrowToPreviousRow;
+        FKeyStep := 2;
+      end else
+      if Input.DownPressed then begin
+        MoveArrowToNextRow;
+        FKeyStep := 2;
+      end else
+      if Input.Action1Pressed then begin
+        FDoClick := True;
+        FKeyStep := 2;
+      end;
+    end;
+    2: begin // wait user release key
+      if not Input.AButtonIsPressed then FKeyStep := 3;
+    end;
+    3: begin // if needed do click and reset state
+      if FDoClick then ClickSelectedButton;
+      FDoClick := False;
+      FKeyStep := 0;
+    end;
+  end;
+end;
+
+procedure TButtonsClickableByKeyboard.AddLineOfButtons(const aButtons: TUIButtonArray);
+var i: integer;
+begin
+  if Length(aButtons) = 0 then exit;
+
+  i := Length(FButtons);
+  SetLength(FButtons, i+1);
+  FButtons[i] := Copy(aButtons, 0, Length(aButtons));
+
+  if (FSelectedRow = -1) or (FSelectedColumn = -1) then begin
+    FSelectedRow := 0;
+    FSelectedColumn := 0;
+  end;
+end;
+
+procedure TButtonsClickableByKeyboard.RemoveButton(aButton: TUIButton);
+var i, j: integer;
+begin
+  for i:=0 to High(FButtons) do
+    for j:=0 to High(FButtons[i]) do
+      if FButtons[i,j] = aButton then begin
+        Delete(FButtons[i], j, 1);
+        exit;
+      end;
+end;
+
+procedure TButtonsClickableByKeyboard.RemoveAllButtons;
+begin
+  FButtons := NIL;
+  FSelectedRow := -1;
+  FSelectedColumn := -1;
+end;
+
+procedure TButtonsClickableByKeyboard.Select(aButton: TUIButton);
+var r, c: integer;
+begin
+  if Length(FButtons) = 0 then raise exception.Create('You forgot to call AddLineOfButtons() !');
+  FSelectedRow := -1;
+  FSelectedColumn := -1;
+
+  for r:=0 to High(FButtons) do
+    for c:=0 to High(FButtons[r]) do
+      if FButtons[r,c] = aButton then begin
+        FSelectedRow := r;
+        FSelectedColumn := c;
+        break;
+      end;
+
+  Visible := (FSelectedRow <> -1) and (FSelectedColumn <> -1);
+  if not visible then raise exception.Create('This button is not registered...');
+end;
+
+{ TDialogQuestion }
+
+procedure TDialogQuestion.ProcessButtonClick(Sender: TSimpleSurfaceWithEffect);
+begin
+  FKeyboardToButtons.KeyboardEnabled := False;
+  if Sender = FBYes then FTargetScreen.PostMessage(FYesUserValue)
+    else FTargetScreen.PostMessage(FNoUserValue);
+  Hide(True);
+end;
+
+constructor TDialogQuestion.Create(const aText, aYes, aNo: string;
+  aFont: TTexturedFont; aTargetScreen: TScreenTemplate; aYesUserValue,
+  aNoUserValue: TUserMessageValue; aAtlas: TOGLCTextureAtlas);
+var w, h: integer;
+begin
+  FTargetScreen := aTargetScreen;
+  FYesUserValue := aYesUserValue;
+  FNoUserValue := aNoUserValue;
+
+  w := FScene.Width div 2;
+  h := FScene.Height div 3;
+
   inherited Create(FScene);
-  BodyShape.SetShapeRectangle(20, 20, PPIScale(2));
-  BodyShape.Fill.Visible := False;
+  BodyShape.SetShapeRoundRect(w, h, PPIScale(8), PPIScale(8), PPIScale(2));
+ { BodyShape.Fill.Visible := False;
   BodyShape.Border.Visible := False;
-  ChildClippingEnabled := False;
-  CenterOnScene;
+  ChildClippingEnabled := False; }
+
+  FBYes := TUIButton.Create(FScene, aYes, aFont, NIL);
+  AddChild(FBYes, 0);
+  FBYes._Label.Tint.Value := BGRA(255,255,150);
+  FBYes.BodyShape.Fill.Color := BGRA(0,0,0);
+  FBYes.BodyShape.SetShapeRoundRect(20, 20, PPIScale(8), PPIScale(8), PPIScale(2));
+  FBYes.AnchorPosToParent(haRight, haCenter, -PPIScale(30), vaBottom, vaBottom, -PPIScale(10));
+  FBYes.OnClick := @ProcessButtonClick;
+
+  FBNo := TUIButton.Create(FScene, aNo, aFont, NIL);
+  AddChild(FBNo, 0);
+  FBNo._Label.Tint.Value := BGRA(255,255,150);
+  FBNo.BodyShape.Fill.Color := BGRA(0,0,0);
+  FBNo.BodyShape.SetShapeRoundRect(20, 20, PPIScale(8), PPIScale(8), PPIScale(2));
+  FBNo.AnchorPosToParent(haLeft, haCenter, PPIScale(30), vaBottom, vaBottom, -PPIScale(10));
+  FBNo.OnClick := @ProcessButtonClick;
 
   FTextArea := TUITextArea.Create(FScene);
   AddChild(FTextArea);
-  FTextArea.BodyShape.SetShapeRectangle(FScene.Width div 2, FScene.Height div 3, PPIScale(2));
+  FTextArea.HScrollBarMode := sbmNeverShow;
+  FTextArea.VScrollBarMode := sbmNeverShow;
+  FTextArea.BodyShape.SetShapeRectangle(w-PPIScale(10), h-PPIScale(10)*3, PPIScale(2));
   FTextArea.BodyShape.Fill.Visible := False;
   FTextArea.BodyShape.Border.Visible := False;
   FTextArea.Text.TexturedFont := aFont;
   FTextArea.Text.Align := taCenterCenter;
   FTextArea.Text.Tint.Value := BGRA(255,255,255);
   FTextArea.Text.Caption := aText;
-  FTextArea.CenterOnParent;
+  FTextArea.AnchorPosToParent(haCenter, haCenter, 0, vaTop, vaTop, PPIScale(10));
+  FTextArea.BodyShape.ResizeCurrentShape(FTextArea.Text.DrawingSize.cx, FTextArea.Text.DrawingSize.cy, True);
+
+  FKeyboardToButtons := TButtonsClickableByKeyboard.Create(Self, aAtlas);
+  FKeyboardToButtons.AddLineOfButtons([FBYes, FBNo]);
+  FKeyboardToButtons.Select(FBNo);
+
+  // resize the modal panel
+  BodyShape.ResizeCurrentShape(FTextArea.Width+PPIScale(20), FTextArea.Height+FBYes.Height+PPIScale(30), True);
+  CenterOnScene;
+end;
+
+{ TDisplayGameHelp }
+
+function TDisplayGameHelp.CreateSpriteFromString(const s: string): TSprite;
+var ima: TBGRABitmap;
+  tex: PTexture;
+begin
+  ima := FFontDescriptor.StringToBitmap(s, NIL);
+  tex := FScene.TexMan.Add(ima);
+  ima.Free;
+  Result := TSprite.Create(tex, True);
+end;
+
+constructor TDisplayGameHelp.Create(const aText: string);
+var h, totalHeight, i: integer;
+  A: TStringArray;
+  o: TSprite;
+begin
+  inherited Create(FScene);
+  BodyShape.SetShapeRectangle(20, 20, PPIScale(2));
+  BodyShape.Fill.Visible := False;
+  BodyShape.Border.Visible := False;
+  MouseInteractionEnabled := False;
+  ChildClippingEnabled := False;
+  CenterOnScene;
+
+  A := AdjustLineEnding(aText).Split([#10]);
+  if Length(A) = 0 then exit;
+
+  h := FScene.Height div 25;
+  totalHeight := 0;
+  FFontDescriptor.Create('Arial', h, [], BGRA(220,220,220), BGRA(0,0,0), Max(h*0.1, PPIScale(5)));
+
+  FText := CreateSpriteFromString(A[0]);
+  AddChild(FText);
+  totalHeight := FText.Height;
+  for i:=1 to High(A) do begin
+    o := CreateSpriteFromString(A[i]);
+    FText.AddChild(o, 0);
+    o.CenterX := FText.Width*0.5;
+    o.Y.Value := totalHeight;
+    totalHeight := totalHeight + o.Height;
+  end;
+
+  FText.CenterX := Width*0.5;
+  FText.Y.Value := (Height - totalHeight) * 0.5;
 end;
 
 procedure TDisplayGameHelp.ProcessMessage(UserValue: TUserMessageValue);
 begin
   case UserValue of
-    // wait player release all keys and left mouse button
-    0: begin
+    0: begin  // wait player release all keys and left mouse button
       if FScene.UserPressAKey or FScene.MouseButtonState[mbLeft] then PostMessage(0)
         else PostMessage(1);
     end;
-    // check if player press a key or left mouse button
-    1: begin
-      if FScene.UserPressAKey or FScene.MouseButtonState[mbLeft] then begin
-//        Audio.GlobalVolume := 1.0;
-        Hide;
-      end else PostMessage(1);
+
+    1: begin  // wait player press a key or left mouse button
+      if FScene.UserPressAKey or FScene.MouseButtonState[mbLeft] then PostMessage(2)
+        else PostMessage(1);
     end;
+    2: begin // wait player release all keys and left mouse button
+      if FScene.UserPressAKey or FScene.MouseButtonState[mbLeft] then PostMessage(2)
+        else PostMessage(3);
+    end;
+    3: begin // end of cycle
+//      Audio.GlobalVolume := 1.0;
+      Hide(True);
+   end;
   end;
 end;
 
@@ -256,7 +545,7 @@ procedure TDisplayGameHelp.ShowModal;
 begin
   inherited ShowModal;
   ClearMessageList;
-  PostMessage(0, 1.0);
+  PostMessage(0);
 //  Audio.GlobalVolume := 0.5;
 end;
 
@@ -388,7 +677,20 @@ begin
   FSceneDarkness.Opacity.Value := 0;
 end;
 
-constructor TPanelWithBGDarkness.Create(aWidth, aHeight: integer);
+constructor TPanelWithBGDarkness.CreateAsRect(aWidth, aHeight: integer);
+begin
+  inherited Create(FScene);
+
+  CreateSceneDarkness;
+
+  FScene.Add(Self, LAYER_GAMEUI);
+  MouseInteractionEnabled := False;
+  BodyShape.SetShapeRectangle(aWidth, aHeight, PPIScale(3));
+  BodyShape.Fill.Color := BGRA(30,15,7);
+  Opacity.Value := 0;
+end;
+
+constructor TPanelWithBGDarkness.CreateAsRoundRect(aWidth, aHeight: integer);
 begin
   inherited Create(FScene);
 
@@ -401,7 +703,7 @@ begin
   Opacity.Value := 0;
 end;
 
-constructor TPanelWithBGDarkness.Create(aWidth: integer);
+constructor TPanelWithBGDarkness.CreateAsCircle(aWidth: integer);
 begin
   inherited Create(FScene);
 
@@ -466,17 +768,18 @@ end;
 procedure TInGamePausePanel.ProcessButtonClick(Sender: TSimpleSurfaceWithEffect);
 begin
   Audio.PlayUIClick;
+  FKeyboardToButtons.KeyboardEnabled := False;
   if Sender = BResumeGame then begin
-    Hide;
+    Hide(False);
   end else
   if Sender = BBackToMap then begin
-    Hide;
+    Hide(True);
     FScene.RunScreen(ScreenMap);
   end;
   Audio.GlobalVolume := 1.0;
 end;
 
-constructor TInGamePausePanel.Create(aFont: TTexturedFont);
+constructor TInGamePausePanel.Create(aFont: TTexturedFont; aAtlas: TOGLCTextureAtlas);
 var VMargin, maxWidth: integer;
   title: TUILabel;
 begin
@@ -504,6 +807,29 @@ begin
 
   BodyShape.ResizeCurrentShape(Round(maxWidth*1.5), VMargin*4+aFont.Font.FontHeight*4, True);
   CenterOnScene;
+
+  FKeyboardToButtons := TButtonsClickableByKeyboard.Create(Self, aAtlas);
+  FKeyboardToButtons.AddLineOfButtons([BResumeGame]);
+  FKeyboardToButtons.AddLineOfButtons([BBackToMap]);
+  FKeyboardToButtons.Select(BResumeGame);
+
+  FCheatCodeManager.InitDefault;
+end;
+
+procedure TInGamePausePanel.Update(const aElapsedTime: single);
+var s: string;
+begin
+  inherited Update(aElapsedTime);
+
+  // check if player enter cheat code
+  if FOnPlayerEnterCheatCode = NIL then exit;
+
+  FCheatCodeManager.Update;
+  s := FCheatCodeManager.CheatCodeEntered;
+  if Length(s) <> 0 then begin
+    Audio.PlayMusicCheatCodeEntered;
+    FOnPlayerEnterCheatCode(s);
+  end;
 end;
 
 procedure TInGamePausePanel.ProcessMessage(UserValue: TUserMessageValue);
@@ -511,17 +837,17 @@ begin
   case UserValue of
     // wait player release PAUSE key
     0: begin
-      if FScene.KeyState[KeyPause] then PostMessage(0)
+      if Input.PausePressed then PostMessage(0)
       else begin
-        FScene.KeyPressed[KeyPause]; // reset key state in buffer
+        FScene.KeyPressed[Input.KeyPause]; // reset key state in buffer
         PostMessage(1);
       end;
     end;
     // check if player press PAUSE key
     1: begin
-      if FScene.KeyPressed[KeyPause] then begin
+      if FScene.KeyPressed[Input.KeyPause] then begin
         Audio.GlobalVolume := 1.0;
-        Hide;
+        Hide(False);
       end else PostMessage(1);
     end;
   end;
@@ -533,6 +859,12 @@ begin
   ClearMessageList;
   PostMessage(0, 1.0);
   Audio.GlobalVolume := 0.5;
+  FKeyboardToButtons.KeyboardEnabled := True;
+end;
+
+procedure TInGamePausePanel.SetCheatCodeList(const aList: TStringArray);
+begin
+  FCheatCodeManager.SetCheatCodeList(aList);
 end;
 
 { TPressAKeyPanel }
@@ -688,13 +1020,13 @@ end;
 
 procedure TOptionsPanel.UpdateLabelKeys;
 begin
-  LabelKeyUp.Caption := FScene.KeyToString[KeyUp];
-  LabelKeyDown.Caption := FScene.KeyToString[KeyDown];
-  LabelKeyLeft.Caption := FScene.KeyToString[KeyLeft];
-  LabelKeyRight.Caption := FScene.KeyToString[KeyRight];
-  LabelKeyAction1.Caption := FScene.KeyToString[KeyAction1];
-  LabelKeyAction2.Caption := FScene.KeyToString[KeyAction2];
-  LabelKeyPause.Caption := FScene.KeyToString[KeyPause];
+  LabelKeyUp.Caption := FScene.KeyToString[Input.KeyUp];
+  LabelKeyDown.Caption := FScene.KeyToString[Input.KeyDown];
+  LabelKeyLeft.Caption := FScene.KeyToString[Input.KeyLeft];
+  LabelKeyRight.Caption := FScene.KeyToString[Input.KeyRight];
+  LabelKeyAction1.Caption := FScene.KeyToString[Input.KeyAction1];
+  LabelKeyAction2.Caption := FScene.KeyToString[Input.KeyAction2];
+  LabelKeyPause.Caption := FScene.KeyToString[Input.KeyPause];
 end;
 
 procedure TOptionsPanel.UpdateLabelVolume;
@@ -1044,7 +1376,7 @@ end;
 
 constructor TCenteredGameUIPanel.Create(aWidth, aHeight: integer; aFont: TTexturedFont);
 begin
-  inherited Create(aWidth, aHeight);
+  inherited CreateAsRoundRect(aWidth, aHeight);
   FFont := aFont;
   CenterOnScene;
 end;

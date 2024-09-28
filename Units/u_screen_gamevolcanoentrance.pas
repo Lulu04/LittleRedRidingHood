@@ -8,33 +8,14 @@ uses
   Classes, SysUtils,
   BGRABitmap, BGRABitmapTypes,
   OGLCScene,
-  u_common, u_common_ui,
+  u_common, u_common_ui, u_gamescreentemplate,
   u_ui_panels, u_sprite_lr4dir, u_sprite_lrcommon, u_audio;
 
 type
 
-{ TPanelDecodingDigicode }
-
-TPanelDecodingDigicode = class(TPanelWithBGDarkness)
-private
-  class var texWallBG, texDigicode, texLRArm,
-            texDecoderBody, texDecoderLightOff, texDecoderWheel, texDecoderBeam: PTexture;
-private
-  FDigicode: TSprite;
-  FDecoderBody, FWheel, FLightOnOff, FLight1, FLight2, FLight3, FLight4, FBeam, FLRArm: TSprite;
-  FScanIsDone: boolean;
-  FsndDecoderScanning: TALSSound;
-public
-  class procedure LoadTextures(aAtlas: TOGLCTextureAtlas);
-  constructor Create;
-  procedure Show; override;
-  procedure ProcessMessage(UserValue: TUserMessageValue); override;
-  property ScanIsDone: boolean read FScanIsDone;
-end;
-
 { TScreenGameVolcanoEntrance }
 
-TScreenGameVolcanoEntrance = class(TScreenTemplate)
+TScreenGameVolcanoEntrance = class(TGameScreenTemplate)
 private type TGameState=(gsUndefined=0, gsIdle, gsExaminingDigicode, gsNoiseBehindDoor,
                          gsAfterNoiseBehindDoor, gsLRLost,
                          gsHideBehindTree, gsLRGoesToDigicode, gsDecodingDigicode,
@@ -63,8 +44,20 @@ var ScreenGameVolcanoEntrance: TScreenGameVolcanoEntrance;
 
 implementation
 uses Forms, LCLType, u_app, u_sprite_wolf, u_screen_workshop, u_resourcestring,
-  u_screen_map, u_screen_gamevolcanoinner;
+  u_sprite_def,
+  u_screen_map, u_screen_gamevolcanoinner, u_utils;
 
+type
+
+{ TInGameInventoryPanel }
+
+TInGameInventoryPanel = class(TBaseInGamePanel)
+  procedure AddPlan;
+end;
+
+TManufacturingPlanSprite = class(TSpriteThatGoInInventory)
+  constructor Create;
+end;
 
 var FAtlas: TOGLCTextureAtlas;
   FFontText: TTexturedFont;
@@ -82,6 +75,8 @@ var FAtlas: TOGLCTextureAtlas;
   FPosWolfBehindDoor, FPosLRHidden, FPosPlanCrate, FPosWolfPissing: TPointF;
   FTimeAccu: single;
 
+  FInGameinventory: TInGameInventoryPanel;
+
 // compare function to sort sprite by BottomY values, like in rpg.
 function LayerPlayerSortCompare(Item1, Item2: Pointer): Integer;
 var yBottom1, yBottom2: single;
@@ -91,175 +86,21 @@ begin
   Result := Trunc(yBottom1 - yBottom2);
 end;
 
-{ TPanelDecodingDigicode }
+{ TInGameInventoryPanel }
 
-class procedure TPanelDecodingDigicode.LoadTextures(aAtlas: TOGLCTextureAtlas);
-var path: string;
-  w: single;
+procedure TInGameInventoryPanel.AddPlan;
 begin
-  path := SpriteGameVolcanoEntranceFolder;
-  w := FScene.Width/3;
-  texWallBG := aAtlas.AddFromSVG(path+'PanelDecodeWallBG.svg', Round(w), -1);
-  texDigicode := aAtlas.AddFromSVG(path+'Digicode.svg', Round(w*0.314), -1);
-  texDecoderBody := aAtlas.AddFromSVG(path+'DecoderBody.svg', ScaleW(69), -1);
-  texDecoderLightOff := aAtlas.AddFromSVG(path+'DecoderLightOff.svg', ScaleW(10), -1);
-  texDecoderWheel := aAtlas.AddFromSVG(path+'DecoderWheel.svg', ScaleW(25), -1);
-  texDecoderBeam := aAtlas.AddFromSVG(path+'DecoderBeam.svg', ScaleW(78), -1);
-  texLRArm := aAtlas.AddFromSVG(path+'PanelDecodeLRArm.svg', ScaleW(75), -1);
+  AddItem(TUIManufacturerPlan.Create);
 end;
 
-constructor TPanelDecodingDigicode.Create;
-var o: TSprite;
+{ TManufacturingPlanSprite }
+
+constructor TManufacturingPlanSprite.Create;
+var p1, p2: TPointF;
 begin
-  inherited Create(texWallBG^.FrameWidth);
-  CenterOnScene;
-
-  o := TSprite.Create(texWallBG, False);
-  AddChild(o, 0);
-
-  FDigicode := TSprite.Create(texDigicode, False);
-  AddChild(FDigicode, 1);
-  FDigicode.SetCoordinate(Width*2/7, Height/3);
-
-  FDecoderBody := TSprite.Create(texDecoderBody, False);
-  FDigicode.AddChild(FDecoderBody, 0);
-  FDecoderBody.SetCoordinate(FDigicode.Width*2, FDigicode.Height*3);
-
-  FWheel := TSprite.Create(texDecoderWheel, False);
-  FDecoderBody.AddChild(FWheel, 0);
-  FWheel.SetCoordinate(FDecoderBody.Width*0.168, FDecoderBody.Height*0.061);
-
-  FLightOnOff := TSprite.Create(texDecoderLightOff, False);
-  FDecoderBody.AddChild(FLightOnOff, 0);
-  FLightOnOff.SetCoordinate(FDecoderBody.Width*0.708, FDecoderBody.Height*0.218);
-
-  FLight1 := TSprite.Create(texDecoderLightOff, False);
-  FDecoderBody.AddChild(FLight1, 0);
-  FLight1.SetCoordinate(FDecoderBody.Width*0.074, FDecoderBody.Height*0.598);
-
-  FLight2 := TSprite.Create(texDecoderLightOff, False);
-  FDecoderBody.AddChild(FLight2, 0);
-  FLight2.SetCoordinate(FDecoderBody.Width*0.293, FDecoderBody.Height*0.695);
-
-  FLight3 := TSprite.Create(texDecoderLightOff, False);
-  FDecoderBody.AddChild(FLight3, 0);
-  FLight3.SetCoordinate(FDecoderBody.Width*0.512, FDecoderBody.Height*0.695);
-
-  FLight4 := TSprite.Create(texDecoderLightOff, False);
-  FDecoderBody.AddChild(FLight4, 0);
-  FLight4.SetCoordinate(FDecoderBody.Width*0.731, FDecoderBody.Height*0.598);
-
-  FBeam := TSprite.Create(texDecoderBeam, False);
-  FDecoderBody.AddChild(FBeam, -1);
-  FBeam.RightX := FDecoderBody.Width*0.1;
-  FBeam.CenterY := FDecoderBody.Height*0.5;
-  FBeam.Pivot := PointF(1.0, 0.5);
-  FBeam.Visible := False;
-
-  FLRArm := TSprite.Create(texLRArm, False);
-  FDecoderBody.AddChild(FLRArm, 1);
-  FLRArm.SetCoordinate(FDecoderBody.Width*0.2, FDecoderBody.Height*0.5);
-
-end;
-
-procedure TPanelDecodingDigicode.Show;
-begin
-  inherited Show;
-  PostMessage(50, 1.5);
-end;
-
-procedure TPanelDecodingDigicode.ProcessMessage(UserValue: TUserMessageValue);
-begin
-  inherited ProcessMessage(UserValue);
-  case UserValue of
-    // SCANNING ANIMATION
-    0: begin
-      with Audio.AddSound('Beep1.ogg') do PlayThenKill(True);
-      FLightOnOff.Tint.Value := BGRA(255,227,159);
-      FWheel.Angle.ChangeTo(359, 2, idcStartSlowEndFast);
-      PostMessage(1, 2.0);
-    end;
-    1: begin
-      FsndDecoderScanning := Audio.AddSound('DecoderScanning.ogg');
-      FsndDecoderScanning.Pitch.Value := 0.7;
-      FsndDecoderScanning.Pitch.ChangeTo(1.0, 2.0);
-      FsndDecoderScanning.Volume.Value := 0.5;
-      FsndDecoderScanning.Loop := True;
-      FsndDecoderScanning.Play(True);
-      FWheel.Angle.AddConstant(360*4);
-      FBeam.Visible := True;
-      PostMessage(2, 2.5+Random);
-      PostMessage(20, 0.5); // beam rotation
-    end;
-    2: begin
-      with Audio.AddSound('Beep1.ogg') do PlayThenKill(True);
-      FLight1.Tint.Value := BGRA(115,248,115);
-      PostMessage(3, 1.5+Random);
-    end;
-    3: begin
-      with Audio.AddSound('Beep1.ogg') do PlayThenKill(True);
-      FLight2.Tint.Value := BGRA(115,248,115);
-      PostMessage(4, 1.5+Random);
-    end;
-    4: begin
-      with Audio.AddSound('Beep1.ogg') do PlayThenKill(True);
-      FLight3.Tint.Value := BGRA(115,248,115);
-      PostMessage(5, 1.5+Random);
-    end;
-    5: begin
-      with Audio.AddSound('Beep2.ogg') do PlayThenKill(True);
-      FsndDecoderScanning.Kill;
-      FLight4.Tint.Value := BGRA(115,248,115);
-      FBeam.Opacity.ChangeTo(0, 1);
-      FWheel.Angle.Value := -359;
-      FWheel.Angle.ChangeTo(0, 1, idcStartFastEndSlow);
-      PostMessage(6, 1);
-    end;
-    6: begin
-      FBeam.Visible := False;
-      PostMessage(60);   // LR arm take the decoder
-    end;
-    // beam rotation
-    20:begin
-      if FScanIsDone then exit;
-      FBeam.Angle.ChangeTo(50, 0.75, idcSinusoid);
-      PostMessage(21, 0.75);
-    end;
-    21:begin
-      FBeam.Angle.ChangeTo(-50, 0.75, idcSinusoid);
-      PostMessage(20, 0.75);
-    end;
-
-    // LR ARM APPEAR AND PUT THE DECODER ON THE DIGICODE
-    50: begin
-      FDecoderBody.X.ChangeTo(FDigicode.Width, 1.0, idcSinusoid);
-      FDecoderBody.Y.ChangeTo((FDigicode.Height-FDecoderBody.Height)*0.5, 1.0, idcSinusoid);
-      PostMessage(51, 1.0);
-    end;
-    51: begin
-      with Audio.AddSound('PutObject.ogg') do begin
-        PlayThenKill(True);
-      end;
-      PostMessage(52, 0.5);
-    end;
-    52: begin    //LR arm go away
-      FLRArm.MoveTo(FDigicode.Width*2, FDigicode.Height*3, 1.0, idcSinusoid);
-      PostMessage(0, 0.75);
-    end;
-
-    // LR ARM TAKE THE DECODER
-    60: begin
-      FLRArm.MoveTo(FDecoderBody.Width*0.2, FDecoderBody.Height*0.5, 1.0, idcSinusoid);
-      PostMessage(61, 1.0);
-    end;
-    61: begin
-      FDecoderBody.MoveTo(FDigicode.Width*2, FDigicode.Height*3, 1.0, idcSinusoid);
-      PostMessage(62, 1.0);
-    end;
-    62: begin
-      FScanIsDone := True;
-    end;
-  end;
+  p1 := FLR.GetXY+PointF(0,-FLR.DeltaYToTop);
+  p2 := FInGameinventory.GetXY+PointF(FInGameinventory.Width*0.5, FInGameinventory.Height*0.5);
+  inherited Create(texIconManufacturingPlan, LAYER_GAMEUI, p1, p2);
 end;
 
 { TScreenGameVolcanoEntrance }
@@ -298,8 +139,8 @@ var snd: TALSSound;
 begin
   snd := Audio.AddSound('spaceship-compartment-doorOPEN.ogg');
   snd.Volume.Value := 0.8;
-  snd.ApplyEffect(Audio.Reverb1);
-  snd.SetEffectDryWetVolume(Audio.ReverbLong, 0.6);
+  snd.ApplyEffect(Audio.FXReverbShort);
+  snd.SetEffectDryWetVolume(Audio.FXReverbLong, 0.6);
   snd.PlayThenKill(True);
 
   FDoorLeft.DeformationSpeed.Value := PointF(FScene.Width*0.1, 0);
@@ -313,8 +154,8 @@ var snd: TALSSound;
 begin
   snd := Audio.AddSound('spaceship-compartment-doorCLOSE.ogg');
   snd.Volume.Value := 0.7;
-  snd.ApplyEffect(Audio.Reverb1);
-  snd.SetEffectDryWetVolume(Audio.ReverbLong, 0.6);
+  snd.ApplyEffect(Audio.FXReverbShort);
+  snd.SetEffectDryWetVolume(Audio.FXReverbLong, 0.6);
   snd.PlayThenKill(True);
 
   FDoorLeft.DeformationSpeed.Value := PointF(-FScene.Width*0.1, 0);
@@ -327,6 +168,7 @@ var path: string;
   o: TSprite;
   sky1, sky2: TMultiColorRectangle;
 begin
+  FGameState := gsUndefined;
   Audio.PauseMusicTitleMap;
   FsndWind := Audio.AddSound('larrun_mountains_medwind.ogg');
   FsndWind.Loop := True;
@@ -336,13 +178,14 @@ begin
   FAtlas := FScene.CreateAtlas;
   FAtlas.Spacing := 1;
 
-  LoadLR4DirTextures(FAtlas);
+  LoadLR4DirTextures(FAtlas, False);
   LoadWolfTextures(FAtlas);
   FAtlas.Add(ParticleFolder+'sphere_particle.png');
 
   CreateGameFontNumber(FAtlas);
   LoadCoinTexture(FAtlas);
   LoadWatchTexture(FAtlas);
+  LoadIconManufacturingPlanTexture(FAtlas);
   // font for button in pause panel
   FFontText := CreateGameFontText(FAtlas);
   LoadGameDialogTextures(FAtlas);
@@ -358,7 +201,12 @@ begin
   texDoorLeft := FAtlas.AddFromSVG(path+'DoorLeft.svg', ScaleW(80), -1);
   texDoorRight := FAtlas.AddFromSVG(path+'DoorRight.svg', ScaleW(80), -1);
 
+  FAtlas.AddScaledPPI(ParticleFolder+'Cloud128x128.png');
+
   TPanelDecodingDigicode.LoadTextures(FAtlas);
+
+  // load arrow for button panels
+  AddBlueArrowToAtlas(FAtlas);
 
   FAtlas.TryToPack;
   FAtlas.Build;
@@ -387,6 +235,9 @@ begin
   o := TSprite.Create(texBG, False);
   FScene.Add(o, LAYER_BG2);
   o.SetCoordinate(ScaleW(171), ScaleH(-1));
+
+  // fog
+  CreateFogRightToLeft(FAtlas, True, 30, 20);
 
   // door frame
   FDoorFrame := TSprite.Create(texDoorFrame, False);
@@ -446,6 +297,7 @@ begin
   FLR.SetFaceType(lrfSmile);
   FLR.IdleRight;
   FLR.CallbackPickUpSomethingWhenBendDown := @ProcessCallbackPickUpSomethingWhenBendDown;
+  FLR.TimeMultiplicator := 0.8;
 
   if not PlayerInfo.Volcano.HaveDecoderPlan then begin
     FWolf := TWolf.Create(False);
@@ -454,6 +306,7 @@ begin
     FWolf.SetCoordinate(ScaleW(665), ScaleH(546));
     FWolf.Atlas := FAtlas;
     FWolf.DialogAuthorName := sWolf;
+    FWolf.TimeMultiplicator := 0.8;
 
     BWolfCrate := TImageButton.Create(texWolfCrate);
     FWolf.SetAsCarryingAnObject(BWolfCrate);
@@ -480,8 +333,14 @@ begin
   end;
   FTimeAccu := 0;
 
-  // show how to play
-  with TDisplayGameHelp.Create(PlayerInfo.Volcano.HelpText, FFontText) do ShowModal;
+  // in game inventory panel
+  FInGameinventory := TInGameInventoryPanel.Create;
+  // pause panel
+  FInGamePausePanel := TInGamePausePanel.Create(FFontText, FAtlas);
+
+  // show how to play (one frame deferred)
+  if not (PlayerInfo.Volcano.HaveDecoderPlan and not PlayerInfo.Volcano.DigicodeDecoder.Owned) then
+    PostMessage(5);
 end;
 
 procedure TScreenGameVolcanoEntrance.FreeObjects;
@@ -492,7 +351,9 @@ begin
 
   FScene.Layer[LAYER_PLAYER].OnSortCompare := NIL;
   FScene.ClearAllLayer;
-  FreeAndNil(FAtlas);
+  FAtlas.Free;
+  FAtlas := NIL;
+  ResetSceneCallbacks;
 end;
 
 procedure TScreenGameVolcanoEntrance.ProcessMessage(UserValue: TUserMessageValue);
@@ -506,6 +367,9 @@ begin
     1: begin
       FGameState := gsAfterNoiseBehindDoor;
     end;
+
+    // show how to play
+    5: ShowGameInstructions(PlayerInfo.Volcano.HelpText);
 
     // MESS EXAMINING DIGICODE
     10: begin
@@ -559,11 +423,11 @@ begin
       PostMessage(103, 0.5);
     end;
     103: begin
-      with TInfoPanel.Create(sVoiceFromTheCave, sAgain, FFontText, Self, 104) do
+      with TInfoPanel.Create(sWolfInTheCave, sAgain, FFontText, Self, 104) do
         SetCenterCoordinate(ScaleW(656), ScaleH(365));
     end;
     104: begin
-      with TInfoPanel.Create(sVoiceFromTheCave, sErIHaveToGo, FFontText, Self, 105) do
+      with TInfoPanel.Create(sWolfInTheCave, sErIHaveToGo, FFontText, Self, 105) do
         SetCenterCoordinate(ScaleW(656), ScaleH(365));
     end;
     105: begin
@@ -598,7 +462,7 @@ begin
       PostMessage(113, 1);
     end;
     113: begin
-      with TInfoPanel.Create(sVoiceFromTheCave, sNotWaiting, FFontText, Self, 114) do
+      with TInfoPanel.Create(sWolfInTheCave, sNotWaiting, FFontText, Self, 114) do
         SetCenterCoordinate(ScaleW(656), ScaleH(365));
     end;
     114: begin
@@ -618,7 +482,13 @@ begin
       //PostMessage(203);
     end;
     203: begin
-      TInfoPanel.Create('', sYouTakeAPlan, FFontText, Self, 210, 1);
+      TInfoPanel.Create('', sYouTakeAPlan, FFontText, Self, 204);
+    end;
+    204: begin // anim plan goes into inventory
+      FInGameinventory.AddPlan;
+      Audio.PlayMusicSuccessShort1;
+      TManufacturingPlanSprite.Create;
+      PostMessage(210, 3);
     end;
 
     210: begin   // the wolf fart
@@ -735,6 +605,7 @@ begin
     404: begin
       PlayerInfo.Volcano.VolcanoEntranceIsDone := True;
       FSaveGame.Save;
+      PlayerInfo.Volcano.StepPlayed := 1;
       FScene.RunScreen(ScreenGameVolcanoInner);
     end;
   end;//case
@@ -743,6 +614,11 @@ end;
 procedure TScreenGameVolcanoEntrance.Update(const aElapsedTime: single);
 begin
   inherited Update(aElapsedTime);
+
+  // check if player pause the game
+  if Input.PausePressed then begin
+    FInGamePausePanel.ShowModal;
+  end;
 
   case FGameState of
     gsIdle: begin

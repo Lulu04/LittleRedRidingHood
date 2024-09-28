@@ -6,7 +6,8 @@ interface
 
 uses
   Classes, SysUtils, Controls,
-  OGLCScene, BGRABitmap, BGRABitmapTypes;
+  OGLCScene, BGRABitmap, BGRABitmapTypes,
+  u_common;
 
 type
 
@@ -31,7 +32,11 @@ public
 public
   function GetYTop: single;
   function GetYBottom: single;
-  function CheckCollisionWith(aX, aY, aWidth, aHeight: single): boolean;
+  function GetBodyRect: TRectF;
+
+  function CheckCollisionWith(aX, aY: single): boolean; overload;
+  function CheckCollisionWithLine(aPt1, aPt2: TPointF): boolean;
+  function CheckCollisionWith(aRectF: TRectF): boolean; overload;
   // init in descendent classes
   property DeltaYToTop: single read FDeltaYToTop write FDeltaYToTop;
   property DeltaYToBottom: single read FDeltaYToBottom write FDeltaYToBottom;
@@ -47,14 +52,19 @@ private type TMovingDirection = (mdNone=0, mdLeft, mdRight, mdUp, mdDown,
 private
   FMovingDirection: TMovingDirection;
   FTargetPoint: TPointF;
-  FTargetScreen: TScreenTemplate;
+  FMessageReceiver: TObject;
   FMessageValueWhenFinish: TUserMessageValue;
   FDelay: single;
+  FTimeMultiplicator: single;
+protected
+  procedure SetTimeMultiplicator(AValue: single); virtual;
 public
   procedure Update(const aElapsedTime: single); override;
-  procedure CheckHorizontalMoveToX(aX: single; aTargetScreen: TScreenTemplate; aMessageValueWhenFinish: TUserMessageValue; aDelay: single=0);
-  procedure CheckVerticalMoveToY(aY: single; aTargetScreen: TScreenTemplate; aMessageValueWhenFinish: TUserMessageValue; aDelay: single=0);
-  procedure CheckMoveTo(aX, aY: single; aTargetScreen: TScreenTemplate; aMessageValueWhenFinish: TUserMessageValue; aDelay: single=0);
+  procedure PostMessageToTargetObject(aTarget: TObject; aMessageValue: TUserMessageValue; aDelay: single);
+  procedure CheckHorizontalMoveToX(aX: single; aMessageReceiver: TObject; aMessageValueWhenFinish: TUserMessageValue; aDelay: single=0);
+  procedure CheckVerticalMoveToY(aY: single; aMessageReceiver: TObject; aMessageValueWhenFinish: TUserMessageValue; aDelay: single=0);
+  procedure CheckMoveTo(aX, aY: single; aMessageReceiver: TObject; aMessageValueWhenFinish: TUserMessageValue; aDelay: single=0);
+  property TimeMultiplicator: single read FTimeMultiplicator write SetTimeMultiplicator;
 end;
 
 { TCharacterWithMark }
@@ -62,34 +72,13 @@ end;
 TCharacterWithMark = class(TWalkingCharacter)
 private
   FExclamationMark, FQuestionMark: TSprite;
+  FMarkOffset: TPointF;
 public
   destructor Destroy; override;
   procedure ShowExclamationMark;
   procedure ShowQuestionMark;
   procedure HideMark;
-end;
-
-
-{ TCharacterWithDialogPanel }
-
-TCharacterWithDialogPanel = class(TCharacterWithMark)
-private
-  FDialogAuthorName: string;
-  FPanel: TUITextArea;
-  FDialogTextColor: TBGRAPixel;
-  FDialogOldProcessSceneClick: TOGLCMouseEvent;
-  FDialogTargetScreen: TScreenTemplate;
-  FDialogMessageValueWhenFinish: TUserMessageValue;
-  FDialogDelay: Single;
-  procedure ProcessSceneClick({%H-}Button: TMouseButton; {%H-}Shift: TShiftState; {%H-}aX, {%H-}aY: Integer);
-  procedure Init;
-  procedure CreateLabelAuthor(aTexturedFont: TTexturedFont);
-public
-  procedure ShowDialog(const aText: string; aTexturedFont: TTexturedFont;
-             aTargetScreen: TScreenTemplate; aMessageValueWhenFinish: TUserMessageValue; aDelay: single=0);
-  procedure ShowDialog(const aText: string; aTexturedFont: TTexturedFont; aLifeTime: single=4.0);
-  property DialogTextColor: TBGRAPixel read FDialogTextColor write FDialogTextColor;
-  property DialogAuthorName: string read FDialogAuthorName write FDialogAuthorName;
+  property MarkOffset: TPointF read FMarkOffset write FMarkOffset;
 end;
 
 
@@ -101,14 +90,41 @@ private
   FTargetScreen: TScreenTemplate;
   FMessageValueWhenFinish: TUserMessageValue;
   FDelay: Single;
+  FPanelCanBeClosedByKey: boolean;
+  FStepKeyCheck: integer;
+  procedure PostMessageAndClosePanel;
   procedure ProcessSceneClick({%H-}Button: TMouseButton; {%H-}Shift: TShiftState; {%H-}aX, {%H-}aY: Integer);
-  procedure Init;
+  procedure Init(aBlinkCursorIsVisible: boolean);
   procedure CreateLabelAuthor(const aAuthor: string; aTexturedFont: TTexturedFont);
 public
+  procedure Update(const aElapsedTime: single); override;
   constructor Create(const aAuthor, aText: string; aTexturedFont: TTexturedFont;
-             aTargetScreen: TScreenTemplate; aMessageValueWhenFinish: TUserMessageValue; aDelay: single=0);
-  constructor Create(const aAuthor, aText: string; aTexturedFont: TTexturedFont; aLifeTime: single=4.0);
+             aTargetScreen: TScreenTemplate; aMessageValueWhenFinish: TUserMessageValue; aDelay: single=0;
+             aLayerIndex: integer=LAYER_DIALOG);
+  constructor Create(const aAuthor, aText: string; aTexturedFont: TTexturedFont; aLifeTime: single=4.0;
+                     aLayerIndex: integer=LAYER_DIALOG);
 end;
+
+
+{ TCharacterWithDialogPanel }
+
+TCharacterWithDialogPanel = class(TCharacterWithMark)
+private
+  FDialogAuthorName: string;
+  FDialogTextColor: TBGRAPixel;
+  FPanel: TInfoPanel; //TUITextArea;
+  procedure PlacePanelOnView(aCameraInUse: TOGLCCamera);
+public
+  // the dialog is shifted according to aCameraInUse.LookAt
+  procedure ShowDialog(const aText: string; aTexturedFont: TTexturedFont;
+             aTargetScreen: TScreenTemplate; aMessageValueWhenFinish: TUserMessageValue; aDelay: single=0;
+             aCameraInUse: TOGLCCamera=NIL);
+  procedure ShowDialog(const aText: string; aTexturedFont: TTexturedFont; aLifeTime: single=4.0; aCameraInUse: TOGLCCamera=NIL);
+  property DialogTextColor: TBGRAPixel read FDialogTextColor write FDialogTextColor;
+  property DialogAuthorName: string read FDialogAuthorName write FDialogAuthorName;
+
+end;
+
 
 
 TLRFaceType = (lrfSmile, lrfHappy, lrfNotHappy, lrfWorry, lrfBroken, lrfVomit);
@@ -142,11 +158,12 @@ private
   Hair: TDeformationGrid;
   MouthNotHappy, MouthOpen, MouthSmile,
   WhiteBG: TSprite;
+protected
+  procedure SetFlipH(AValue: boolean); override;
+  procedure SetFlipV(AValue: boolean); override;
 public
   procedure SetFaceType(AValue: TLRFaceType); override;
   constructor Create;
-  procedure SetFlipH(AValue: boolean);
-  procedure SetFlipV(AValue: boolean);
 end;
 
 
@@ -168,12 +185,13 @@ private
   FDress: TLRDress;
   FBasket: TSprite;
   procedure SetDeformationOnHood;
+protected
+  procedure SetFlipH(AValue: boolean); override;
+  procedure SetFlipV(AValue: boolean); override;
 public
   Face: TLRFace;
   RightArm, LeftArm, RightLeg, LeftLeg: TSprite;
   constructor Create;
-  procedure SetFlipH(AValue: boolean);
-  procedure SetFlipV(AValue: boolean);
   procedure HideBasket;
   procedure SetWindSpeed(AValue: single);
   procedure MoveArmsAsWinner;
@@ -188,7 +206,7 @@ procedure LoadCharacterMarkTextures(aAtlas: TOGLCTextureAtlas);
 procedure LoadGameDialogTextures(aAtlas: TOGLCTextureAtlas);
 
 implementation
-uses u_app, u_common;
+uses u_app, u_utils, Math;
 
 var
   // texture for dialog
@@ -254,20 +272,31 @@ end;
 
 { TInfoPanel }
 
-procedure TInfoPanel.ProcessSceneClick(Button: TMouseButton; Shift: TShiftState; aX, aY: Integer);
+procedure TInfoPanel.PostMessageAndClosePanel;
 begin
-  FScene.Mouse.OnClickOnScene := FOldProcessSceneClick;
+  if FScene.Mouse.OnClickOnScene = @ProcessSceneClick then
+    FScene.Mouse.OnClickOnScene := FOldProcessSceneClick;
+
   FTargetScreen.PostMessage(FMessageValueWhenFinish, FDelay);
   Kill;
 end;
 
-procedure TInfoPanel.Init;
+procedure TInfoPanel.ProcessSceneClick(Button: TMouseButton; Shift: TShiftState; aX, aY: Integer);
+begin
+  PostMessageAndClosePanel;
+end;
+
+procedure TInfoPanel.Init(aBlinkCursorIsVisible: boolean);
+var h: integer;
 begin
   MouseInteractionEnabled := False;
   ChildClippingEnabled := False;
   Text.Align := taCenterCenter;
   //Text.Tint.Value := FDialogTextColor;
-  BodyShape.ResizeCurrentShape(Text.DrawingSize.cx+PPIScale(10)*2, Text.DrawingSize.cy+PPIScale(10*2), True);
+  if aBlinkCursorIsVisible then h := texGameDialogDownArrow^.FrameHeight
+    else h := 0;
+
+  BodyShape.ResizeCurrentShape(Text.DrawingSize.cx+PPIScale(10)*2, Text.DrawingSize.cy+PPIScale(10*2)+h, True);
   CenterOnScene;
 end;
 
@@ -280,18 +309,48 @@ begin
   o.Caption := aAuthor;
   o.X.Value := PPIScale(5);
   o.BottomY := 0;
+  o.Tint.Value := BGRAWhite;
+end;
+
+procedure TInfoPanel.Update(const aElapsedTime: single);
+begin
+  inherited Update(aElapsedTime);
+
+  // check if user press an action key
+  if FPanelCanBeClosedByKey then begin
+    case FStepKeyCheck of
+      0: begin // wait user release the two action keys
+        if Input.Action1Pressed or Input.Action2Pressed then exit;
+        FStepKeyCheck := 1;
+      end;
+      1: begin // wait user press at least one action key
+        if Input.Action1Pressed or Input.Action2Pressed then FStepKeyCheck := 2;
+      end;
+      2: begin // wait user release the two action keys
+        if Input.Action1Pressed or Input.Action2Pressed then exit;
+        PostMessageAndClosePanel;
+        FPanelCanBeClosedByKey := False;
+      end;
+    end;
+  end;
 end;
 
 constructor TInfoPanel.Create(const aAuthor, aText: string; aTexturedFont: TTexturedFont; aTargetScreen: TScreenTemplate;
-  aMessageValueWhenFinish: TUserMessageValue; aDelay: single);
+  aMessageValueWhenFinish: TUserMessageValue; aDelay: single; aLayerIndex: integer);
 var o: TSprite;
+    w: integer;
 begin
   inherited Create(FScene);
-  FScene.Add(Self, LAYER_DIALOG);
-  BodyShape.SetShapeRoundRect(Round(FScene.Width*0.3), 50, PPIScale(8), PPIScale(8), PPIScale(3));
+  VScrollBarMode := sbmNeverShow;
+  HScrollBarMode := sbmNeverShow;
+  FScene.Add(Self, aLayerIndex);
+  if Length(aText) >= 200 then w := Round(FScene.Width*0.5)
+  else if Length(aText) >= 100 then w := Round(FScene.Width*0.4)
+  else w := Round(FScene.Width*0.3);
+  BodyShape.SetShapeRoundRect(w, 50, PPIScale(8), PPIScale(8), PPIScale(3));
   Text.TexturedFont := aTexturedFont;
   Text.Caption := aText;
-  Init;
+  Init(True);
 
   o := TSprite.Create(texGameDialogDownArrow, False);
   AddChild(o, 0);
@@ -305,109 +364,74 @@ begin
   FOldProcessSceneClick := FScene.Mouse.OnClickOnScene;
   FScene.Mouse.OnClickOnScene := @ProcessSceneClick;
 
+  FPanelCanBeClosedByKey := True;
+  FStepKeyCheck := 0;
+
   FTargetScreen := aTargetScreen;
   FMessageValueWhenFinish := aMessageValueWhenFinish;
   FDelay := aDelay;
 end;
 
-constructor TInfoPanel.Create(const aAuthor, aText: string; aTexturedFont: TTexturedFont; aLifeTime: single);
+constructor TInfoPanel.Create(const aAuthor, aText: string; aTexturedFont: TTexturedFont; aLifeTime: single;
+  aLayerIndex: integer);
 begin
   Inherited Create(FScene);
-  FScene.Add(Self, LAYER_DIALOG);
+  FScene.Add(Self, aLayerIndex);
   BodyShape.SetShapeRoundRect(Round(FScene.Width*0.3), 50, PPIScale(8), PPIScale(8), PPIScale(3));
   Text.TexturedFont := aTexturedFont;
   Text.Align := taCenterCenter;
   Text.Caption := aText;
-  Init;
+  Init(False);
 
   CreateLabelAuthor(aAuthor, aTexturedFont);
 
   KillDefered(aLifeTime);
+  FPanelCanBeClosedByKey := False;
 end;
 
 { TCharacterWithDialogPanel }
 
-procedure TCharacterWithDialogPanel.ProcessSceneClick(Button: TMouseButton; Shift: TShiftState; aX, aY: Integer);
-begin
-  FScene.Mouse.OnClickOnScene := FDialogOldProcessSceneClick;
-  FDialogTargetScreen.PostMessage(FDialogMessageValueWhenFinish, FDialogDelay);
-  if FPanel <> NIL then FPanel.Kill;
-  FPanel := NIL;
-end;
-
-procedure TCharacterWithDialogPanel.Init;
+procedure TCharacterWithDialogPanel.PlacePanelOnView(aCameraInUse: TOGLCCamera);
 var p: TPointF;
     w, h: single;
+    rView, rPanel: TRectF;
 begin
-  FPanel.MouseInteractionEnabled := False;
-  FPanel.ChildClippingEnabled := False;
-  FPanel.Text.Align := taCenterCenter;
-  FPanel.Text.Tint.Value := FDialogTextColor;
-  FPanel.BodyShape.ResizeCurrentShape(FPanel.Text.DrawingSize.cx+PPIScale(10)*2, FPanel.Text.DrawingSize.cy+PPIScale(10*2), True);
-  w := FPanel.Width * 0.5;
-  h := FPanel. Height * 0.5;
+  rView := GetViewRect(aCameraInUse);
 
-  p := PointF(X.Value, GetYTop - h*2);
-  if p.x - w < 0 then p.x := w else
-  if p.x + w > FScene.Width then p.x := FScene.Width - w else
-  if p.y - h < 0 then p.y := h else
-  if p.y + h > FScene.Height then p.y := FScene.Height - w;
-  FPanel.SetCenterCoordinate(p);
-end;
+  w := FPanel.Width;
+  h := FPanel. Height;
+  p := PointF(X.Value-w*0.5, GetYTop - h - PPIScale(20));
 
-procedure TCharacterWithDialogPanel.CreateLabelAuthor(aTexturedFont: TTexturedFont);
-var o: TFreeText;
-begin
-  o := TFreeText.Create(FScene);
-  FPanel.AddChild(o, 0);
-  o.TexturedFont := aTexturedFont;
-  o.Caption := FDialogAuthorName;
-  o.X.Value := PPIScale(5);
-  o.BottomY := 0;
+  p.x := EnsureRange(p.x, rView.Left, rView.Right-w);
+  p.y := EnsureRange(p.y, rView.Top, rView.Bottom-h);
+
+  // message panel overlapps the character body ?
+  rPanel := RectF(p.x, p.y, p.x+w, p.y+h);
+  if FScene.Collision.RectFRectF(GetBodyRect, rPanel) then begin
+    // the panel overlapps the character -> we shift it to the left or to the right
+    if p.x > rView.Left+rView.Width*0.5 then p.x := GetBodyRect.Left-w
+      else p.x := GetBodyRect.Right;
+  end;
+  //FPanel.SetCoordinate(p);
+  FPanel.SetCoordinate(Trunc(p.x), Trunc(p.y)); // truncate to avoid artifact on characters
 end;
 
 procedure TCharacterWithDialogPanel.ShowDialog(const aText: string; aTexturedFont: TTexturedFont;
-  aTargetScreen: TScreenTemplate; aMessageValueWhenFinish: TUserMessageValue; aDelay: single);
-var o: TSprite;
+  aTargetScreen: TScreenTemplate; aMessageValueWhenFinish: TUserMessageValue; aDelay: single;
+  aCameraInUse: TOGLCCamera);
 begin
-  if FPanel <> NIL then FPanel.Kill;
-  FPanel := TUITextArea.Create(FScene);
-  FScene.Add(FPanel, LAYER_DIALOG);
-  FPanel.BodyShape.SetShapeRoundRect(Round(FScene.Width*0.3), 50, PPIScale(8), PPIScale(8), PPIScale(3));
-  FPanel.Text.TexturedFont := aTexturedFont;
-  FPanel.Text.Caption := aText;
-  Init;
-  CreateLabelAuthor(aTexturedFont);
-
-  o := TSprite.Create(texGameDialogDownArrow, False);
-  FPanel.AddChild(o, 0);
-  o.Blink(-1, 0.4, 0.4);
-  o.RightX := FPanel.Width - o.Width*0.5;
-  o.BottomY := FPanel.Height - o.Height*0.5;
-
-  FDialogOldProcessSceneClick := FScene.Mouse.OnClickOnScene;
-  FScene.Mouse.OnClickOnScene := @ProcessSceneClick;
-
-  FDialogTargetScreen := aTargetScreen;
-  FDialogMessageValueWhenFinish := aMessageValueWhenFinish;
-  FDialogDelay := aDelay;
+  //if FPanel <> NIL then FPanel.Kill;
+  FPanel := TInfoPanel.Create(FDialogAuthorName, aText, aTexturedFont,
+                              aTargetScreen, aMessageValueWhenFinish, aDelay);
+  PlacePanelOnView(aCameraInUse);
 end;
 
 procedure TCharacterWithDialogPanel.ShowDialog(const aText: string;
-  aTexturedFont: TTexturedFont; aLifeTime: single);
+  aTexturedFont: TTexturedFont; aLifeTime: single; aCameraInUse: TOGLCCamera);
 begin
   if FPanel <> NIL then FPanel.Kill;
-  FPanel := TUITextArea.Create(FScene);
-  FScene.Add(FPanel, LAYER_DIALOG);
-  FPanel.BodyShape.SetShapeRoundRect(Round(FScene.Width*0.3), 50, PPIScale(8), PPIScale(8), PPIScale(3));
-  FPanel.Text.TexturedFont := aTexturedFont;
-  FPanel.Text.Align := taCenterCenter;
-  FPanel.Text.Caption := aText;
-  Init;
-  CreateLabelAuthor(aTexturedFont);
-
-  FPanel.KillDefered(aLifeTime);
-  FPanel := NIL;
+  FPanel := TInfoPanel.Create(FDialogAuthorName, aText, aTexturedFont, aLifeTime);
+  PlacePanelOnView(aCameraInUse);
 end;
 
 { TCharacterWithMark }
@@ -420,31 +444,26 @@ end;
 
 procedure TCharacterWithMark.ShowExclamationMark;
 begin
-  if FExclamationMark <> NIL then exit;
-  if FQuestionMark <> NIL then FQuestionMark.Kill;
-  FQuestionMark := NIL;
+  HideMark;
 
   FExclamationMark := TSprite.Create(texExclamationMark, False);
   //FScene.Add(FExclamationMark, LAYER_DIALOG);
   //FExclamationMark.BindToSprite(Self, -FExclamationMark.Width*0.5, DeltaYToTop);
-  AddChild(FExclamationMark, 0);
-
-  FExclamationMark.X.Value := -FExclamationMark.Width*0.5;
-  FExclamationMark.Y.Value := -DeltaYToTop - FExclamationMark.Height;
+  AddChild(FExclamationMark, 100);
+  FExclamationMark.X.Value := Trunc(-FExclamationMark.Width*0.5 + FMarkOffset.x);
+  FExclamationMark.Y.Value := Trunc(-DeltaYToTop - FExclamationMark.Height + FMarkOffset.y);
 end;
 
 procedure TCharacterWithMark.ShowQuestionMark;
 begin
-  if FQuestionMark <> NIL then exit;
-  if FExclamationMark <> NIL then FExclamationMark.Kill;
-  FExclamationMark := NIL;
+  HideMark;
 
   FQuestionMark := TSprite.Create(texQuestionMark, False);
   //FScene.Add(FQuestionMark, LAYER_DIALOG);
   //FQuestionMark.BindToSprite(Self, -FQuestionMark.Width*0.5, DeltaYToTop);
-  AddChild(FQuestionMark, 0);
-  FQuestionMark.X.Value := -FQuestionMark.Width*0.5;
-  FQuestionMark.Y.Value := -DeltaYToTop - FQuestionMark.Height;
+  AddChild(FQuestionMark, 100);
+  FQuestionMark.X.Value := -FQuestionMark.Width*0.5 + FMarkOffset.x;
+  FQuestionMark.Y.Value := -DeltaYToTop - FQuestionMark.Height + FMarkOffset.y;
 end;
 
 procedure TCharacterWithMark.HideMark;
@@ -456,6 +475,19 @@ begin
 end;
 
 { TWalkingCharacter }
+
+procedure TWalkingCharacter.PostMessageToTargetObject(aTarget: TObject;
+  aMessageValue: TUserMessageValue; aDelay: single);
+begin
+  if aTarget is TScreenTemplate then
+    TScreenTemplate(aTarget).PostMessage(aMessageValue, aDelay)
+  else TSimpleSurfaceWithEffect(aTarget).PostMessage(aMessageValue, aDelay);
+end;
+
+procedure TWalkingCharacter.SetTimeMultiplicator(AValue: single);
+begin
+  FTimeMultiplicator := AValue;
+end;
 
 procedure TWalkingCharacter.Update(const aElapsedTime: single);
 begin
@@ -469,35 +501,36 @@ begin
   end;
   if FMovingDirection in [mdRight, mdRightDown, mdRightUp] then begin
     if X.Value >= FTargetPoint.x then begin
-       X.Value := FTargetPoint.x;
-       Speed.X.Value := 0;
+      X.Value := FTargetPoint.x;
+      Speed.X.Value := 0;
     end;
   end;
   if FMovingDirection in [mdUp, mdLeftUp, mdRightUp] then begin
     if Y.Value <= FTargetPoint.y then begin
-       Y.Value := FTargetPoint.y;
-       Speed.Y.Value := 0;
+      Y.Value := FTargetPoint.y;
+      Speed.Y.Value := 0;
     end;
   end;
   if FMovingDirection in [mdDown, mdLeftDown, mdRightDown] then begin
     if Y.Value >= FTargetPoint.y then begin
-       Y.Value := FTargetPoint.y;
-       Speed.Y.Value := 0;
+      Y.Value := FTargetPoint.y;
+      Speed.Y.Value := 0;
     end;
   end;
 
   // end of move ?
-  if (Speed.X.Value = 0) and (Speed.Y.Value = 0) and (FMovingDirection <> mdNone) then begin
+  if (FMovingDirection <> mdNone) and (Speed.X.Value = 0) and (Speed.Y.Value = 0) then begin
     FMovingDirection := mdNone;
-    FTargetScreen.PostMessage(FMessageValueWhenFinish, FDelay);
+    PostMessageToTargetObject(FMessageReceiver, FMessageValueWhenFinish, FDelay);
   end;
 end;
 
-procedure TWalkingCharacter.CheckHorizontalMoveToX(aX: single; aTargetScreen: TScreenTemplate; aMessageValueWhenFinish: TUserMessageValue; aDelay: single);
+procedure TWalkingCharacter.CheckHorizontalMoveToX(aX: single; aMessageReceiver: TObject;
+  aMessageValueWhenFinish: TUserMessageValue; aDelay: single);
 begin
   if X.Value = aX then begin
     FMovingDirection := mdNone;
-    PostMessage(aMessageValueWhenFinish, aDelay);
+    PostMessageToTargetObject(aMessageReceiver, aMessageValueWhenFinish, aDelay);
     Speed.X.Value := 0;
     exit;
   end;
@@ -505,17 +538,18 @@ begin
     else FMovingDirection := mdRight;
 
   FTargetPoint.x := aX;
-  FTargetScreen := aTargetScreen;
+  FMessageReceiver := aMessageReceiver;
   FMessageValueWhenFinish := aMessageValueWhenFinish;
   FDelay := aDelay;
 end;
 
-procedure TWalkingCharacter.CheckVerticalMoveToY(aY: single; aTargetScreen: TScreenTemplate; aMessageValueWhenFinish: TUserMessageValue; aDelay: single);
+procedure TWalkingCharacter.CheckVerticalMoveToY(aY: single; aMessageReceiver: TObject;
+  aMessageValueWhenFinish: TUserMessageValue; aDelay: single);
 begin
   aY := aY - FDeltaYToBottom;
   if Y.Value = aY then begin
     FMovingDirection := mdNone;
-    PostMessage(aMessageValueWhenFinish, aDelay);
+    PostMessageToTargetObject(aMessageReceiver, aMessageValueWhenFinish, aDelay);
     Speed.Y.Value := 0;
     exit;
   end;
@@ -523,25 +557,26 @@ begin
     else FMovingDirection := mdDown;
 
   FTargetPoint.y := aY;
-  FTargetScreen := aTargetScreen;
+  FMessageReceiver := aMessageReceiver;
   FMessageValueWhenFinish := aMessageValueWhenFinish;
   FDelay := aDelay;
 end;
 
-procedure TWalkingCharacter.CheckMoveTo(aX, aY: single; aTargetScreen: TScreenTemplate; aMessageValueWhenFinish: TUserMessageValue; aDelay: single);
+procedure TWalkingCharacter.CheckMoveTo(aX, aY: single; aMessageReceiver: TObject;
+  aMessageValueWhenFinish: TUserMessageValue; aDelay: single);
 begin
   if (X.Value = aX) and (Y.Value = aY) then begin
     FMovingDirection := mdNone;
-    PostMessage(aMessageValueWhenFinish, aDelay);
+    PostMessageToTargetObject(aMessageReceiver, aMessageValueWhenFinish, aDelay);
     Speed.Value := PointF(0, 0);
     exit;
   end;
   if X.Value = aX then begin
-    CheckVerticalMoveToY(aY, aTargetScreen, aMessageValueWhenFinish, aDelay);
+    CheckVerticalMoveToY(aY, aMessageReceiver, aMessageValueWhenFinish, aDelay);
     exit;
   end;
   if Y.Value = aY then begin
-    CheckHorizontalMoveToX(aX, aTargetScreen, aMessageValueWhenFinish, aDelay);
+    CheckHorizontalMoveToX(aX, aMessageReceiver, aMessageValueWhenFinish, aDelay);
     exit;
   end;
 
@@ -552,12 +587,20 @@ begin
     if Y.Value > aY then FMovingDirection := mdRightUp else FMovingDirection := mdRightDown;
 
   FTargetPoint := PointF(aX, aY);
-  FTargetScreen := aTargetScreen;
+  FMessageReceiver := aMessageReceiver;
   FMessageValueWhenFinish := aMessageValueWhenFinish;
   FDelay := aDelay;
 end;
 
 { TBaseComplexContainer }
+
+function TBaseComplexContainer.GetBodyRect: TRectF;
+begin
+  Result.Left := X.Value - FBodyWidth*0.5;
+  Result.Top := GetYTop;
+  Result.Right := Result.Left + FBodyWidth;
+  Result.Bottom := GetYBottom;
+end;
 
 function TBaseComplexContainer.CreateChildSprite(aTex: PTexture; aZOrder: integer): TSprite;
 begin
@@ -590,14 +633,34 @@ begin
   Result := Y.Value + FDeltaYToBottom;
 end;
 
-function TBaseComplexContainer.CheckCollisionWith(aX, aY, aWidth, aHeight: single): boolean;
+function TBaseComplexContainer.CheckCollisionWith(aX, aY: single): boolean;
+var r: TRectF;
+begin
+  r.Left := X.Value - BodyWidth * 0.5;
+  r.Top := GetYTop;
+  r.Width := BodyWidth;
+  r.Height := BodyHeight;
+  Result := FScene.Collision.PointRectF(PointF(aX,aY), r);
+end;
+
+function TBaseComplexContainer.CheckCollisionWithLine(aPt1, aPt2: TPointF): boolean;
+var r: TRectF;
+begin
+  r.Left := X.Value - BodyWidth * 0.5;
+  r.Top := GetYTop;
+  r.Width := BodyWidth;
+  r.Height := BodyHeight;
+  Result := FScene.Collision.LineRectF(aPt1, aPt2, r);
+end;
+
+function TBaseComplexContainer.CheckCollisionWith(aRectF: TRectF): boolean;
 var xx, yy, w, h: single;
 begin
-  xx := X.Value;
-  yy := Y.Value;
-  w := BodyWidth * 0.5;
-  h := BodyHeight * 0.5;
-  Result := not((aX > xx+w) or (aX+aWidth < xx-w) or (aY > yy+h) or (aY+aHeight < yy-h));
+  w := BodyWidth;
+  h := BodyHeight;
+  xx := X.Value - w*0.5;
+  yy := GetYTop;
+  Result := FScene.Collision.RectFRectF(aRectF, RectF(xx, yy, xx+w, yy+h));
 end;
 
 { TBaseComplexSprite }
@@ -797,6 +860,7 @@ end;
 
 procedure TLRFrontView.SetFlipH(AValue: boolean);
 begin
+  inherited SetFlipH(AValue);
   FHood.FlipH := AValue;
   Face.SetFlipH(AValue);
   FDress.FlipH := AValue;
@@ -809,6 +873,7 @@ end;
 
 procedure TLRFrontView.SetFlipV(AValue: boolean);
 begin
+  inherited SetFlipV(AValue);
   FHood.FlipV := AValue;
   Face.SetFlipV(AValue);
   FDress.FlipV := AValue;
@@ -887,6 +952,7 @@ end;
 constructor TLRFace.Create;
 begin
   inherited Create(texLRFace);
+  Frame := 1;
 
   // white background behind the face
   WhiteBG := CreateChildSprite(texLRFaceBGWhite, -2);
@@ -895,10 +961,12 @@ begin
   // left eye
   LeftEye := CreateChildPolar(texLRFaceEye, -1);
   LeftEye.Polar.Center.Value := PointF(Width*0.30, Height*0.54);
+  LeftEye.Update(0.1);
 
   // right eye
   RightEye := CreateChildPolar(texLRFaceEye, -1);
   RightEye.Polar.Center.Value := PointF(Width*0.77, Height*0.50);
+  RightEye.Update(0.1);
 
   FEyeMaxDistance := LeftEye.Width*0.30;
 
@@ -933,7 +1001,7 @@ end;
 
 procedure TLRFace.SetFlipH(AValue: boolean);
 begin
-  FlipH := AValue;
+  inherited SetFlipH(AValue);
   LeftEye.FlipH := AValue;
   RightEye.FlipH := AValue;
   Hair.FlipH := AValue;
@@ -946,7 +1014,7 @@ end;
 
 procedure TLRFace.SetFlipV(AValue: boolean);
 begin
-  FlipV := AValue;
+  inherited SetFlipV(AValue);
   LeftEye.FlipV := AValue;
   RightEye.FlipV := AValue;
   Hair.FlipV := AValue;

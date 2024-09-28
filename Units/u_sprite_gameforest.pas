@@ -227,7 +227,7 @@ TLRArrow = class(TSprite)
 end;
 
 TLRForestState = (wsUndefined=0,
-            ssReadyToPullBowString, ssPullingBowString, ssReadyToShoot, ssRestAfterShoot,
+            ssReadyToPullBowString, ssPullingBowString, ssBowReadyToShoot, ssBowRestAfterShoot,
             lrsWalking,
             lrsWinner, lrsLoser,
             lrsWalkToTheLeft,
@@ -236,7 +236,7 @@ TLRForestState = (wsUndefined=0,
 
 TLRWithBow = class(TSpriteContainer)
 private
-  FArrow: TLRArrow;  FArrowWoosh: TALSSound;
+  FArrow: TLRArrow;  FsndArrowWoosh: TALSSound;
   FArrowRearmTimeMultiplicator: single;
   FDeltaYFromGround, FWinJumpCount: integer;
   FState: TLRForestState;
@@ -244,6 +244,9 @@ private
   procedure CreateArrow;
   procedure HideBowAndKillArrow;
   procedure SetState(AValue: TLRForestState);
+protected
+  procedure SetFlipH(AValue: boolean); override;
+  procedure SetFlipV(AValue: boolean); override;
 public
   Dress: TLRDress;
   Face: TLRFace;
@@ -263,8 +266,6 @@ public
   destructor Destroy; override;
   procedure Update(const aElapsedTime: single); override;
   procedure ProcessMessage({%H-}UserValue: TUserMessageValue); override;
-  procedure SetFlipH(AValue: boolean);
-  procedure SetFlipV(AValue: boolean);
 
   procedure LookAtLeft(aValue: boolean);
   procedure ShootArrow;
@@ -333,6 +334,7 @@ begin
   sndPulley.Loop := True;
   sndPulley.Tone.Value := 0.15;
   sndPulley.Pitch.Value := 0.8;
+  sndPulley.Pan.Value := -0.5;
 
   sndElevator := Audio.AddSound('EngineLoop.ogg');
   sndElevator.Loop := True;
@@ -526,7 +528,7 @@ var path: TOGLCPath;
   p: TPointF;
 begin
   path := NIL;
-  if (State in [ssPullingBowString,ssReadyToShoot]) then begin
+  if (State in [ssPullingBowString,ssBowReadyToShoot]) then begin
     // create a path from top of the bow, passing by right hand and terminate to bottom of the bow
     SetLength(path, 3);
     path[0] := PointF(Bow.Width*0.06, Bow.Height*0.05);
@@ -548,7 +550,7 @@ constructor TLRWithBow.Create;
 begin
   inherited Create(FScene);
 
-  FArrowWoosh := Audio.AddSound('quick-woosh.ogg');
+  FsndArrowWoosh := Audio.AddSound('quick-woosh.ogg');
 
   FArrowRearmTimeMultiplicator := 1.0;
 
@@ -628,8 +630,8 @@ end;
 
 destructor TLRWithBow.Destroy;
 begin
-  FArrowWoosh.Kill;
-  FArrowWoosh := NIL;
+  FsndArrowWoosh.Kill;
+  FsndArrowWoosh := NIL;
   inherited Destroy;
 end;
 
@@ -659,36 +661,36 @@ begin
       PostMessage(501, 1*FArrowRearmTimeMultiplicator);
     end;
     501: begin
-      FState := ssReadyToShoot;
+      FState := ssBowReadyToShoot;
     end;
 
     // Shoot an arrow
     510: begin
-      if FState <> ssReadyToShoot then exit;
+      if FState <> ssBowReadyToShoot then exit;
       // moves the arrow from child of Bow to Scene
       FArrow.MoveFromChildToScene(LAYER_ARROW);
       FArrow.Shoot;
       FArrow := NIL;
-      FArrowWoosh.Play(True);
-      FState := ssRestAfterShoot;
+      FsndArrowWoosh.Play(True);
+      FState := ssBowRestAfterShoot;
       Dress.Angle.ChangeTo(-2, 0.01);
       PostMessage(511, 0.2);
     end;
     511: begin
-      if FState <> ssRestAfterShoot then exit;
+      if FState <> ssBowRestAfterShoot then exit;
       Dress.Angle.ChangeTo(0, 0.5, idcSinusoid);
       RightArm.Angle.ChangeTo(30, 1*FArrowRearmTimeMultiplicator, idcSinusoid);
       RightArm.X.ChangeTo(FRightArmMinX+FRightArmMaxX*0.2, 1*FArrowRearmTimeMultiplicator, idcSinusoid);
       PostMessage(512, 2*FArrowRearmTimeMultiplicator);
     end;
     512: begin
-      if FState <> ssRestAfterShoot then exit;
+      if FState <> ssBowRestAfterShoot then exit;
       RightArm.Angle.ChangeTo(0, 1*FArrowRearmTimeMultiplicator, idcSinusoid);
       RightArm.X.ChangeTo(FRightArmMaxX, 1*FArrowRearmTimeMultiplicator, idcSinusoid);
       PostMessage(513, 1*FArrowRearmTimeMultiplicator);
     end;
     513: begin
-      if FState <> ssRestAfterShoot then exit;
+      if FState <> ssBowRestAfterShoot then exit;
       FState := ssReadyToPullBowString;
       PostMessage(500);
     end;
@@ -721,11 +723,11 @@ end;
 
 procedure TLRWithBow.SetFlipH(AValue: boolean);
 begin
-  FlipH := AValue;
+  inherited SetFlipH(AValue);
   Hood.FlipH := AValue;
   RightCloak.FlipH := AValue;
   LeftCloak.FlipH := AValue;
-  Face.SetFlipH(AValue);
+  Face.FlipH := AValue;
   RightArm.FlipH := AValue;
   LeftArm.FlipH := AValue;
   RightLeg.FlipH := AValue;
@@ -734,11 +736,11 @@ end;
 
 procedure TLRWithBow.SetFlipV(AValue: boolean);
 begin
-  FlipV := AValue;
+  inherited SetFlipV(AValue);
   Hood.FlipV := AValue;
   RightCloak.FlipV := AValue;
   LeftCloak.FlipV := AValue;
-  Face.SetFlipV(AValue);
+  Face.FlipV := AValue;
   RightArm.FlipV := AValue;
   LeftArm.FlipV := AValue;
   RightLeg.FlipV := AValue;
@@ -752,7 +754,7 @@ end;
 
 procedure TLRWithBow.ShootArrow;
 begin
-  if State = ssReadyToShoot then
+  if State = ssBowReadyToShoot then
     PostMessage(510);
 end;
 
@@ -1131,7 +1133,7 @@ begin
     for i:=0 to FScene.Layer[LAYER_WOLF].SurfaceCount-1 do
       with FScene.Layer[LAYER_WOLF] do
         if Surface[i] is TWolf and (TWolf(Surface[i]).State = wsWalking) and
-        TWolf(Surface[i]).CheckCollisionWith(xx, yy, w, h) then begin
+        TWolf(Surface[i]).CheckCollisionWith(RectF(xx, yy, xx+w, yy+h)) then begin
           if FInGamePanel.RemainHammer > 0 then begin
             FInGamePanel.DecHammerCount;
             Hit;
@@ -1182,7 +1184,7 @@ begin
       h := Paf.Height;
       for i:=0 to FScene.Layer[LAYER_WOLF].SurfaceCount-1 do
         with FScene.Layer[LAYER_WOLF] do
-          if Surface[i] is TWolf and TWolf(Surface[i]).CheckCollisionWith(xx, yy, w, h) then
+          if Surface[i] is TWolf and TWolf(Surface[i]).CheckCollisionWith(RectF(xx, yy, xx+w, yy+h)) then
             TWolf(Surface[i]).State := wsFalling;
     end;
     105: begin

@@ -17,6 +17,7 @@ uses
   function SpriteLR4DirRightFolder: string;
   function SpriteLR4DirFrontFolder: string;
   function SpriteLR4DirBackFolder: string;
+  function SpriteGranMaFolder: string;
   function SpriteCommonFolder: string;
   function SpriteUIFolder: string;
   function SpriteBGFolder: string;
@@ -25,6 +26,8 @@ uses
   function SpriteGameVolcanoEntranceFolder: string;
   function SpriteGameVolcanoInnerFolder: string;
   function SpriteGameVolcanoDinoFolder: string;
+  function SpriteDinoFolder: string;
+  function SpriteIntroductionFolder: string;
   function LanguageFolder: string;
 
   function ALSoundLibrariesSubFolder: string;
@@ -36,6 +39,18 @@ uses
 var
   AdditionnalScale: single=1.0;
 
+const  // cheat code must have less than 50 characters
+  // Cheat code to sets the mini-game Pine Forest as finished, all related items to their max level and +5000 coins
+  // to use on the map screen
+  PinForestCheatCode = 'nofearinforest';
+  // Cheat code to sets the mini-game Peaks Mountains as finished, +50 purple cristals and +5000 coins
+  // to use on the map screen.
+  MountainPeaksCheatCode = 'pumpkincrash';
+  // Cheat code for Volcano Inner part, LR is not detectable by laser, guards and switchs
+  // to use while pause panel is visible. Invincibility disappears when the game is restarted.
+  VolcanoInnerCheatCode = 'noeyeinvolcano';
+
+
 type
 
 // type of money used to buy/build/upgrade item in the inventory
@@ -46,7 +61,7 @@ TMoneyDescriptor = record
 end;
 ArrayOfMoneyDescriptor = array of TMoneyDescriptor;
 
-TActionToOwnItem = (atoiBuy, atoiBuild);
+TActionToOwnItem = (atoiBuy, atoiBuild, atoiFound);
 
 { TUpgradableItemDescriptor }
 
@@ -90,6 +105,7 @@ public
   procedure LoadFromString(const s: string); virtual; abstract;
 
   procedure IncCurrentStep;
+  // 1 based
   property CurrentStep: integer read FCurrentStep;
   property StepCount: integer read FStepCount;
   // become True when player win all step in this sub-game
@@ -160,6 +176,8 @@ public
   destructor Destroy; override;
   function SaveToString: string; override;
   procedure LoadFromString(const s: string); override;
+  // force this mini game to be finished and all related items to full level + 5000 coins
+  procedure ApplyCheatCode;
   property Bow: TForestBow read FBow;
   property Elevator: TForestElevator read FElevator;
   property Hammer: TForestHammer read FHammer;
@@ -191,6 +209,8 @@ public
   destructor Destroy; override;
   function SaveToString: string; override;
   procedure LoadFromString(const s: string); override;
+  // sets the mini-game Peaks Mountains as finished, buy the zipline, +50 purple cristals and +5000 coins
+  procedure ApplyCheatCode;
   property ZipLine: TMountainPeakZipLine read FZipLine;
 end;
 
@@ -202,17 +222,29 @@ TDigicodeDecoder = class(TUpgradableItemDescriptor)
   function PriceForNextLevel: ArrayOfMoneyDescriptor; override;
 end;
 
+{ TDorsalThruster }
+
+TDorsalThruster = class(TUpgradableItemDescriptor)
+  function NextLevelExplanation: string; override;
+  function PriceForNextLevel: ArrayOfMoneyDescriptor; override;
+end;
+
 { TVolcanoDescriptor }
 
 TVolcanoDescriptor = class(TGameDescriptor)
 private
-  FHaveDecoderPlan: boolean;
-  FVolcanoEntranceIsDone: boolean;
+  FHaveDecoderPlan, FHaveGreenSDCard: boolean;
+  FVolcanoEntranceIsDone,
+  FVolcanoInnerIsDone,
+  FVolcanoDinoIsDone,
+  FAnimDinoOpenCageAndDoorAlreadySeen: boolean;
   FDigicodeDecoder: TDigicodeDecoder;
+  FDorsalThruster: TDorsalThruster;
   function GetHelpText: string; override;
 private const
-  VolcanoStepCount = 5;
+  VolcanoInnerStepCount = 6;  // 1..5=inner, 6=dino
   DigicodeDecoderMaxLevel = 1;
+  DorsalThrusterMaxLevel = 1;
 public
   constructor Create;
   destructor Destroy; override;
@@ -220,8 +252,13 @@ public
   procedure LoadFromString(const s: string); override;
 public // special volcano item
   property DigicodeDecoder: TDigicodeDecoder read FDigicodeDecoder;
+  property DorsalThruster: TDorsalThruster read FDorsalThruster;
   property HaveDecoderPlan: boolean read FHaveDecoderPlan write FHaveDecoderPlan;
+  property HaveGreenSDCard: boolean read FHaveGreenSDCard write FHaveGreenSDCard;
+  property AnimDinoOpenCageAndDoorAlreadySeen: boolean read FAnimDinoOpenCageAndDoorAlreadySeen write FAnimDinoOpenCageAndDoorAlreadySeen;
   property VolcanoEntranceIsDone: boolean read FVolcanoEntranceIsDone write FVolcanoEntranceIsDone;
+  property VolcanoInnerIsDone: boolean read FVolcanoInnerIsDone write FVolcanoInnerIsDone;
+  property VolcanoDinoIsDone: boolean read FVolcanoDinoIsDone write FVolcanoDinoIsDone;
 end;
 
 
@@ -305,7 +342,7 @@ var
   FSaveGame: TSaveGame;
 
 implementation
-uses Forms, u_common, u_resourcestring, LCLType, i18_utils;
+uses Forms, u_common, u_resourcestring, u_utils, LCLType, i18_utils;
 
 function PPIScale(AValue: integer): integer;
 begin
@@ -369,6 +406,11 @@ begin
   Result := SpriteLR4DirFolder+'BackView'+DirectorySeparator;
 end;
 
+function SpriteGranMaFolder: string;
+begin
+  Result := SpriteFolder+'GranMa'+DirectorySeparator;
+end;
+
 function SpriteCommonFolder: string;
 begin
   Result := SpriteFolder+'Common'+DirectorySeparator;
@@ -401,7 +443,17 @@ end;
 
 function SpriteGameVolcanoDinoFolder: string;
 begin
-  Result := SpriteFolder+'VolcanoDinno'+DirectorySeparator;
+  Result := SpriteFolder+'VolcanoDino'+DirectorySeparator;
+end;
+
+function SpriteDinoFolder: string;
+begin
+  Result := SpriteFolder+'Dino'+DirectorySeparator;
+end;
+
+function SpriteIntroductionFolder: string;
+begin
+  Result := SpriteFolder+'Introduction'+DirectorySeparator;
 end;
 
 function LanguageFolder: string;
@@ -417,6 +469,18 @@ end;
 function ALSoundLibrariesSubFolder: string;
 begin
   Result := FScene.App.ALSoundLibrariesSubFolder;
+end;
+
+{ TDorsalThruster }
+
+function TDorsalThruster.NextLevelExplanation: string;
+begin
+  Result := sDorsalThrusterHint;
+end;
+
+function TDorsalThruster.PriceForNextLevel: ArrayOfMoneyDescriptor;
+begin
+  Result := NIL;
 end;
 
 { TDigicodeDecoder }
@@ -458,7 +522,6 @@ begin
   Result[0].MoneyType := mtCoin;
   case Level of
     0: Result[0].Count := 1000;
-    1: Result[0].Count := 300;
     else Result[0].Count := 0;
   end;
 end;
@@ -618,12 +681,12 @@ end;
 function TForestBow.ArrowRearmTimeMultiplicator: single;
 begin
   case Level of
-    1: Result := 0.8;
-    2: Result := 0.725;
-    3: Result := 0.65;
-    4: Result := 0.475;
-    5: Result := 0.3;
-    6: Result := 0.225;
+    1: Result := 0.7; //0.8;
+    2: Result := 0.65; //0.725;
+    3: Result := 0.475; //0.65;
+    4: Result := 0.3; //0.475;
+    5: Result := 0.225; //0.3;
+    6: Result := 0.2; //0.225;
     else Result := 1.0;
   end;
 end;
@@ -631,12 +694,12 @@ end;
 function TForestBow.ArrowSpeed: single;
 begin
   case Level of
-    1: Result := 1.1*FScene.Width/3;
-    2: Result := 1.5*FScene.Width/3;
-    3: Result := 2*FScene.Width/3;
-    4: Result := 2.5*FScene.Width/3;
-    5: Result := 3*FScene.Width/3;
-    6: Result := 3.5*FScene.Width/3;
+    1: Result := 1.5*FScene.Width/3; //1.1*FScene.Width/3;
+    2: Result := 2*FScene.Width/3; //1.5*FScene.Width/3;
+    3: Result := 2.5*FScene.Width/3; //2*FScene.Width/3;
+    4: Result := 3*FScene.Width/3; //2.5*FScene.Width/3;
+    5: Result := 3.5*FScene.Width/3; //3*FScene.Width/3;
+    6: Result := 4.0*FScene.Width/3; //3.5*FScene.Width/3;
     else Result := FScene.Width/3;
   end;
 end;
@@ -654,6 +717,8 @@ var A: ArrayOfMoneyDescriptor;
   i: integer;
 begin
   A := PriceForNextLevel;
+  if Length(A) = 0 then exit(False);
+
   Result := True;
   for i:=0 to High(A) do begin
     case A[i].MoneyType of
@@ -698,18 +763,26 @@ end;
 function TVolcanoDescriptor.GetHelpText: string;
 begin
   if not FVolcanoEntranceIsDone then Result := SVolcanoEntranceHelpText
-    else Result := SVolcanoInnerHelpText;
+  else if not FVolcanoInnerIsDone then begin
+    Result := SVolcanoInnerHelpText;
+    if StepPlayed in [2..VolcanoInnerStepCount-2] then
+      Result := sDontBeSpotted + LineEnding + Result;
+  end else Result := SVolcanoDinoHelpText;
 end;
 
 constructor TVolcanoDescriptor.Create;
 begin
-  inherited Create(VolcanoStepCount);
+  inherited Create(VolcanoInnerStepCount);
   FDigicodeDecoder := TDigicodeDecoder.Create(DigicodeDecoderMaxLevel, atoiBuild);
+  FDorsalThruster := TDorsalThruster.Create(DorsalThrusterMaxLevel, atoiFound);
 end;
 
 destructor TVolcanoDescriptor.Destroy;
 begin
-  FreeAndNil(FDigicodeDecoder);
+  FDigicodeDecoder.Free;
+  FDigicodeDecoder := NIL;
+  FDorsalThruster.Free;
+  FDorsalThruster := NIL;
   inherited Destroy;
 end;
 
@@ -721,6 +794,11 @@ begin
   prop.Add('HaveDecoderPlan', FHaveDecoderPlan);
   prop.Add('DigicodeDecoderLevel', FDigicodeDecoder.Level);
   prop.Add('VolcanoEntranceIsDone', FVolcanoEntranceIsDone);
+  prop.Add('HaveGreenSDCard', FHaveGreenSDCard);
+  prop.Add('DorsalThrusterLevel', FDorsalThruster.Level);
+  prop.Add('VolcanoInnerIsDone', FVolcanoInnerIsDone);
+  prop.Add('AnimDinoOpenCageAndDoorAlreadySeen', FAnimDinoOpenCageAndDoorAlreadySeen);
+  prop.Add('VolcanoDinoIsDone', FVolcanoDinoIsDone);
   Result := prop.PackedProperty;
 end;
 
@@ -735,6 +813,12 @@ begin
   prop.ByteValueOf('DigicodeDecoderLevel', vi, 0);
   FDigicodeDecoder.Level := vi;
   prop.BooleanValueOf('VolcanoEntranceIsDone', FVolcanoEntranceIsDone, False);
+  prop.BooleanValueOf('HaveGreenSDCard', FHaveGreenSDCard, False);
+  prop.ByteValueOf('DorsalThrusterLevel', vi, 0);
+  FDorsalThruster.Level := vi;
+  prop.BooleanValueOf('VolcanoInnerIsDone', FVolcanoInnerIsDone, False);
+  prop.BooleanValueOf('VolcanoDinoIsDone', FVolcanoDinoIsDone, False);
+  prop.BooleanValueOf('AnimDinoOpenCageAndDoorAlreadySeen', FAnimDinoOpenCageAndDoorAlreadySeen, False);
 end;
 
 { TMountainPeakDescriptor }
@@ -752,7 +836,8 @@ end;
 
 destructor TMountainPeakDescriptor.Destroy;
 begin
-  FreeAndNil(FZipLine);
+  FZipLine.Free;
+  FZipLine := NIL;
   inherited Destroy;
 end;
 
@@ -775,6 +860,19 @@ begin
   prop.ByteValueOf('ZipLineLevel', vb, 0); FZipLine.Level := vb;
 end;
 
+procedure TMountainPeakDescriptor.ApplyCheatCode;
+begin
+  if IsTerminated then exit;
+
+  FZipLine.Level := ZipLineMaxLevel;
+  Playerinfo.CoinCount := Playerinfo.CoinCount + 5000;
+  Playerinfo.PurpleCristalCount := Playerinfo.PurpleCristalCount + 50;
+
+  FCurrentStep := FStepCount + 1;
+  FIsTerminated := True;
+  FFirstTimeTerminated := True;
+end;
+
 { TForestDescriptor }
 
 function TForestDescriptor.GetHelpText: string;
@@ -795,10 +893,14 @@ end;
 
 destructor TForestDescriptor.Destroy;
 begin
-  FreeAndNil(FBow);
-  FreeAndNil(FElevator);
-  FreeAndNil(FHammer);
-  FreeAndNil(FStormCloud);
+  FBow.Free;
+  FBow := NIL;
+  FElevator.Free;
+  FElevator := NIL;
+  FHammer.Free;
+  FHammer := NIL;
+  FStormCloud.Free;
+  FStormCloud := NIL;
   inherited Destroy;
 end;
 
@@ -825,6 +927,21 @@ begin
   prop.ByteValueOf('BowLevel', vb, 1); FBow.Level := vb;
   prop.ByteValueOf('HammerLevel', vb, 0); FHammer.Level := vb;
   prop.ByteValueOf('StormCloudLevel', vb, 0); FStormCloud.Level := vb;
+end;
+
+procedure TForestDescriptor.ApplyCheatCode;
+begin
+  if IsTerminated then exit;
+
+  FBow.Level := BowMaxLevel;
+  FElevator.Level := ElevatorMaxLevel;
+  FHammer.Level := HammerMaxLevel;
+  FStormCloud.Level := StormCloudMaxLevel;
+  Playerinfo.CoinCount := Playerinfo.CoinCount + 5000;
+
+  FCurrentStep := FStepCount + 1;
+  FIsTerminated := True;
+  FFirstTimeTerminated := True;
 end;
 
 { TGameDescriptor }
@@ -875,9 +992,12 @@ end;
 
 destructor TPlayerInfo.Destroy;
 begin
-  FreeAndNil(FForest);
-  FreeAndNil(FMountainPeak);
-  FreeAndNil(FVolcano);
+  FForest.Free;
+  FForest := NIL;
+  FMountainPeak.Free;
+  FMountainPeak := NIL;
+  FVolcano.Free;
+  FVolcano := NIL;
   inherited Destroy;
 end;
 
@@ -954,7 +1074,7 @@ begin
   if FKeyAction1 = AValue then Exit;
   FKeyAction1 := AValue;
   Save;
-  u_common.KeyAction1 := AVAlue;
+  Input.KeyAction1 := AVAlue;
 end;
 
 procedure TSaveGame.SetKeyAction2(AValue: byte);
@@ -962,7 +1082,7 @@ begin
   if FKeyAction2 = AValue then Exit;
   FKeyAction2 := AValue;
   Save;
-  u_common.KeyAction2 := AVAlue;
+  Input.KeyAction2 := AVAlue;
 end;
 
 procedure TSaveGame.SetKeyDown(AValue: byte);
@@ -970,7 +1090,7 @@ begin
   if FKeyDown = AValue then Exit;
   FKeyDown := AValue;
   Save;
-  u_common.KeyDown := AVAlue;
+  Input.KeyDown := AVAlue;
 end;
 
 procedure TSaveGame.SetKeyLeft(AValue: byte);
@@ -978,7 +1098,7 @@ begin
   if FKeyLeft = AValue then Exit;
   FKeyLeft := AValue;
   Save;
-  u_common.KeyLeft := AVAlue;
+  Input.KeyLeft := AVAlue;
 end;
 
 procedure TSaveGame.SetKeyPause(AValue: byte);
@@ -986,7 +1106,7 @@ begin
   if FKeyPause = AValue then Exit;
   FKeyPause := AValue;
   Save;
-  u_common.KeyPause := AValue;
+  Input.KeyPause := AValue;
 end;
 
 procedure TSaveGame.SetKeyUp(AValue: byte);
@@ -994,7 +1114,7 @@ begin
   if FKeyUp = AValue then Exit;
   FKeyUp := AValue;
   Save;
-  u_common.KeyUp := AVAlue;
+  Input.KeyUp := AVAlue;
 end;
 
 procedure TSaveGame.SetKeyRight(AValue: byte);
@@ -1002,7 +1122,7 @@ begin
   if FKeyRight = AValue then Exit;
   FKeyRight := AValue;
   Save;
-  u_common.KeyRight := AVAlue;
+  Input.KeyRight := AVAlue;
 end;
 
 procedure TSaveGame.SetLanguage(AValue: string);
@@ -1108,9 +1228,13 @@ begin
       prop.ByteValueOf('KeyAction2', FKeyAction2, VK_LSHIFT);
       prop.ByteValueOf('KeyPause', FKeyPause, VK_ESCAPE);
 
-      u_common.KeyLeft := FKeyLeft; u_common.KeyRight := FKeyRight; u_common.KeyUp := FKeyUp;
-      u_common.KeyDown := FKeyDown; u_common.KeyAction1 := FKeyAction1; u_common.KeyAction2 := FKeyAction2;
-      u_common.KeyPause := FKeyPause;
+      Input.KeyLeft := FKeyLeft;
+      Input.KeyRight := FKeyRight;
+      Input.KeyUp := FKeyUp;
+      Input.KeyDown := FKeyDown;
+      Input.KeyAction1 := FKeyAction1;
+      Input.KeyAction2 := FKeyAction2;
+      Input.KeyPause := FKeyPause;
     except
       on E: Exception do begin
         FScene.LogError('raise exception "'+E.Message+'"', 1);

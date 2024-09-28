@@ -8,7 +8,7 @@ uses
   Classes, SysUtils,
   BGRABitmap, BGRABitmapTypes,
   OGLCScene,
-  u_common, u_common_ui, u_sprite_lrcommon,
+  u_common, u_common_ui, u_sprite_lrcommon, u_gamescreentemplate,
   u_ui_panels, u_audio;
 
 
@@ -20,7 +20,7 @@ type
 
 { TScreenGameZipLine }
 
-TScreenGameZipLine = class(TScreenTemplate)
+TScreenGameZipLine = class(TGameScreenTemplate)
 private type TGameState=(gsUndefined=0, gsGetReady, gsRunning,
                          gsLRHurtAWall, gsWaitUntilAnimHurtAWallIsDone,
                          gsOutOfTime, gsWaitUntilAnimOutOfTimeIsDone,
@@ -36,7 +36,6 @@ private
   FLeftMountainCenter, FRightMountainCenter: TPointF;
 
   FFontDescriptor: TFontDescriptor;
-  FGetReady: TSprite;
 
   FCameraForPerspectiveObjects: TOGLCCamera;
 
@@ -57,7 +56,9 @@ var ScreenGameZipLine: TScreenGameZipLine;
 
 implementation
 
-uses u_app, u_resourcestring, u_screen_map, Forms, Math, ALSound;
+uses u_app, u_resourcestring, u_screen_map, u_sprite_def, u_utils, Forms, Math,
+  ALSound;
+
 type //L=left R=right Z=random side ZZ=random object/obstacle at random side
 TLevelObject = (LObj, RObj, ZObj, LObs,  RObs, ZObs, ZZ);
 TLevelStep = record
@@ -134,8 +135,7 @@ var texLRDress, texLRCloak, texLRLeftArm, texLRRightArm, texLRLeg, texLROutch,
   texBGMountainLeft, texBGMountainRight,
   texScrollingPlatform1, texScrollingPlatformDown, texScrollingCloud,
   texWarningSignal, texWall, texWallBreak,
-  texPlatformCoin10, texPlatformCoin100,
-  texLRIcon: PTexture;
+  texPlatformCoin10, texPlatformCoin100: PTexture;
 
 
 procedure PlaySoundWallHurt;
@@ -330,21 +330,6 @@ public
   procedure AddGainToInGamePanel(aValue: integer); override;
 end;
 
-{ TProgressLine }
-
-TProgressLine = class(TShapeOutline)
-private
-  FDistanceToTravel: single;
-  FDistanceTraveled: single;
-  FLRIcon: TSprite;
-  procedure SetDistanceTraveled(AValue: single);
-public
-  constructor Create;
-  property DistanceToTravel: single read FDistanceToTravel write FDistanceToTravel;
-  property DistanceTraveled: single read FDistanceTraveled write SetDistanceTraveled;
-end;
-
-
 var FAtlas: TOGLCTextureAtlas;
     FLR: TZipLineMecanism;
     //FLeftPerspectiveLine, FRightPerspectiveLine: TPerspectiveLine;
@@ -387,30 +372,6 @@ end;
 procedure TBasePlatform.ProcessCollisionWithLR(var aNewDistance: single);
 begin
  // do nothing here
-end;
-
-{ TProgressLine }
-
-procedure TProgressLine.SetDistanceTraveled(AValue: single);
-begin
-  FDistanceTraveled := AValue;
-  FLRIcon.CenterX := FDistanceTraveled/FDistanceToTravel * Width;
-end;
-
-constructor TProgressLine.Create;
-begin
-  inherited Create(FScene);
-  FScene.Add(Self, LAYER_GAMEUI);
-  SetShapeLine(PointF(FScene.Width*0.05, texLRIcon^.FrameHeight*1.1),
-                PointF(FScene.Width*0.4,texLRIcon^.FrameHeight*1.1));
-  LineWidth := 2;
-  LineColor := BGRA(200,200,200);
-
-  FLRIcon := TSprite.Create(texLRIcon, False);
-  AddChild(FLRIcon, 0);
-  //FLRIcon.Blink(-1, 0.4, 0.4);
-  FLRIcon.Y.Value := -FLRIcon.Height*0.9;
-  FLRIcon.CenterX := 0;
 end;
 
 { TEndGameScorePanel }
@@ -1216,6 +1177,7 @@ var sky1, sky2: TMultiColorRectangle;
   yy: Single;
   i: Integer;
 begin
+  FGameState := gsUndefined;
   Audio.PauseMusicTitleMap;
   FMusic := Audio.AddMusic('CatchyMusic.ogg', True);
   FMusic.FadeIn(1.0, 1.0);
@@ -1271,10 +1233,12 @@ begin
   LoadCoinTexture(FAtlas);
   LoadCristalGrayTexture(FAtlas);
   LoadWatchTexture(FAtlas);
-  texLRIcon := FAtlas.AddFromSVG(SpriteBGFolder+'LR.svg', -1, ScaleH(32));
+  TProgressLine.LoadTexture(FAtlas);
 
   // font for button in pause panel
   FFontText := CreateGameFontText(FAtlas);
+  // load arrow for button panels
+  AddBlueArrowToAtlas(FAtlas);
 
   FAtlas.TryToPack;
   FAtlas.Build;
@@ -1370,7 +1334,7 @@ begin
   CreatePerspectiveLine(5, farPoint, nearPoint);
 
   // Ingame pause panel
-  FInGamePausePanel := TInGamePausePanel.Create(FFontText);
+  FInGamePausePanel := TInGamePausePanel.Create(FFontText, FAtlas);
 
   // begining platform
   TBeginEndPlatform.Create(FPerspectiveLines[2], True);
@@ -1416,12 +1380,13 @@ begin
   FScene.BackgroundColor := BGRA(80,40,80);
 
   // show how to play
-  with TDisplayGameHelp.Create(PlayerInfo.MountainPeak.HelpText, FFontText) do ShowModal;
+  PostMessage(50);
 end;
 
 procedure TScreenGameZipLine.FreeObjects;
 var i: integer;
 begin
+FScene.LogDebug('TScreenGameZipLine.FreeObjects BEGIN');
   FMusic.FadeOutThenKill(1.0);
   FsndZipLine.FadeOutThenKill(1.0);
   FsndZipLineBreak.Kill;
@@ -1431,10 +1396,16 @@ begin
   FScene.KillCamera(FCameraForPerspectiveObjects);
 
   FScene.ClearAllLayer;
-  FreeAndNil(FAtlas);
-  for i:=0 to High(FPerspectiveLines) do
-    FreeAndNil(FPerspectiveLines[i]);
-  FreeAndNil(FCenterPerspectiveLine);
+  FAtlas.Free;
+  FAtlas := NIL;
+  for i:=0 to High(FPerspectiveLines) do begin
+    FPerspectiveLines[i].Free;
+    FPerspectiveLines[i] := NIL;
+  end;
+  FCenterPerspectiveLine.Free;
+  FCenterPerspectiveLine := NIL;
+  ResetSceneCallbacks;
+FScene.LogDebug('TScreenGameZipLine.FreeObjects END');
 end;
 
 procedure TScreenGameZipLine.ProcessMessage(UserValue: TUserMessageValue);
@@ -1445,22 +1416,15 @@ begin
     0: begin
       PostMessage(1, 0.75);
     end;
-    1: begin
-      FGetReady := TSprite.Create(FScene, FFontDescriptor, sGetReady);
-      FScene.Add(FGetReady, LAYER_GAMEUI);
-      FGetReady.CenterOnScene;
-      FGetReady.KillDefered(2);
-      PostMessage(2, 2.5);
-    end;
+    1: ShowGetReadyGo(2, 0, NIL);
     2: begin
-      FGetReady := TSprite.Create(FScene, FFontDescriptor, sGo);
-      FScene.Add(FGetReady, LAYER_GAMEUI);
-      FGetReady.CenterOnScene;
-      FGetReady.KillDefered(1);
       GameState := gsRunning;
       FLR.StartCableSwingAndShake;
       FInGamePanel.StartTime;
     end;
+
+    // show instructions
+    50: ShowGameInstructions(PlayerInfo.MountainPeak.HelpText);
   end;
 end;
 
@@ -1481,7 +1445,7 @@ begin
   case GameState of
     gsRunning: begin
       // acceleration and break
-      if FScene.KeyState[KeyAction1] then begin
+      if Input.Action1Pressed then begin
         FLR.UseBreak(True);
         FGameSpeed := FGameSpeed - 0.5*aElapsedTime; //0.01;
         if FGameSpeed < 0.0 then FGameSpeed := 0.0;
@@ -1505,13 +1469,13 @@ begin
       FsndZipLine.Pitch.Value := 1.0 - (1.0 - FGameSpeed)*0.95;
 
       // left
-      if FScene.KeyState[KeyLeft] then begin
+      if Input.LeftPressed then begin
         FShiftValue := FShiftValue+(10+FShiftValue*0.5)*aElapsedTime;
         if FShiftValue > 2 then FShiftValue := 2;
         FLR.ShiftToLeft(FShiftValue);   // 40*aElapsedTime
       end else
       // right
-      if FScene.KeyState[KeyRight] then begin
+      if Input.RightPressed then begin
         FShiftValue := FShiftValue+(10+FShiftValue*0.5)*aElapsedTime;
         if FShiftValue > 2 then FShiftValue := 2;
         FLR.ShiftToRight(FShiftValue); // 40*aElapsedTime
@@ -1523,7 +1487,7 @@ begin
       FCameraForPerspectiveObjects.MoveTo(PointF(FScene.Width*(0.5-FLR.CurrentAngle*0.001), FScene.Height*0.5), 0);
 
       // check if player pause the game
-      if FScene.KeyState[KeyPause] then begin
+      if Input.PausePressed then begin
         FsndZipLine.Stop;
         FsndZipLineBreak.Stop;
         FInGamePausePanel.ShowModal;
@@ -1618,7 +1582,7 @@ begin
       end;
 
       // update progress panel
-      FProgressPanel.DistanceTraveled := FDistanceAccu;
+      FProgressPanel.DistanceTraveledByLR := FDistanceAccu;
     end;
 
     gsOutOfTime: begin
