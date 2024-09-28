@@ -22,6 +22,12 @@ create_no_install_archive(){
   # copy the license file
   cp "${PROJECT_DIR}/LICENSE.txt" "${STAGING_DIR}/LICENSE"
   
+  # copy the changelog file
+  cp "${PROJECT_DIR}/changelog.txt" "${STAGING_DIR}/changelog.txt" 
+  
+  # copy the cheat codes list
+  cp "${PROJECT_DIR}/cheatcodes.txt" "${STAGING_DIR}/cheatcodes.txt" 
+  
   # copy readme file
   cp readme "${STAGING_DIR}/readme"
   
