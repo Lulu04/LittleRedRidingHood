@@ -1050,7 +1050,7 @@ begin
   BodyWidth := FBody.Width;
   BodyHeight := FBody.Height;
 
-  FsndBlowtorch := Audio.AddSound('BlowTorchLoop.ogg');
+  FsndBlowtorch := Audio.AddSound('BlowtorchLoop.ogg');
   FsndBlowtorch.Loop := True;
   FsndBlowtorch.Volume.Value := 0.6;
   FsndBlowtorch.PositionRelativeToListener := False;
@@ -1886,7 +1886,7 @@ begin
   BodyWidth := Round(FWheelLeft.RightX - FWheelRight.X.Value);
   BodyHeight := Round(Abs(DeltaYToTop));
 
-  FsndBlowtorch := Audio.AddSound('BlowTorchLoop.ogg');
+  FsndBlowtorch := Audio.AddSound('BlowtorchLoop.ogg');
   FsndBlowtorch.Loop := True;
   FsndBlowtorch.Volume.Value := 0.7;
   FsndBlowtorch.PositionRelativeToListener := False;
