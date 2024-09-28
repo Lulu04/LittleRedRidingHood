@@ -10,6 +10,18 @@ uses
 
 type
 
+{ TGrassLarge }
+
+TGrassLarge = class(TDeformationGrid)
+  constructor Create(aTexture: PTexture; aX, aY: single; aLayerIndex: integer);
+end;
+
+{ TFlower }
+
+TFlower = class(TDeformationGrid)
+  constructor Create(aTexture: PTexture; aX, aY: single; aLayerIndex: integer);
+end;
+
 { TCloud }
 
 TCloud = class(TSprite)
@@ -43,7 +55,7 @@ end;
 
 var
 texPine,
-texCloud1: PTexture;
+texCloudTitle: PTexture;
 
 procedure LoadForestBGTexture(aAtlas: TOGLCTextureAtlas);
 procedure LoadCloudsTexture(aAtlas: TOGLCTextureAtlas);
@@ -58,7 +70,39 @@ end;
 
 procedure LoadCloudsTexture(aAtlas: TOGLCTextureAtlas);
 begin
-  texCloud1 := aAtlas.AddFromSVG(SpriteBGFolder+'Cloud1.svg', ScaleW(234), -1);
+  texCloudTitle := aAtlas.AddFromSVG(SpriteBGFolder+'CloudTitle.svg', ScaleW(234), -1);
+end;
+
+{ TFlower }
+
+constructor TFlower.Create(aTexture: PTexture; aX, aY: single; aLayerIndex: integer);
+begin
+  inherited Create(aTexture, False);
+  if aLayerIndex <> -1 then FScene.Add(Self, aLayerIndex);
+  SetCoordinate(aX, aY);
+  SetGrid(1, 1);
+  ApplyDeformation(dtWaveH);
+  SetDeformationAmountOnRow(1, 0.0);
+  Amplitude.Value := PointF(0.5, 0);
+  Update(Random);
+end;
+
+{ TGrassLarge }
+
+constructor TGrassLarge.Create(aTexture: PTExture; aX, aY: single; aLayerIndex: integer);
+var i: integer;
+begin
+  inherited Create(aTexture, False);
+  if aLayerIndex <> -1 then FScene.Add(Self, aLayerIndex);
+  SetCoordinate(aX, aY);
+  SetGrid(1, aTexture^.FrameWidth div ScaleW(20));
+  ApplyDeformation(dtWaveH);
+  SetDeformationAmountOnRow(1, 0.0);
+ // Amplitude.Value := PointF(ScaleW(15), 0);
+  for i:=0 to ColumnCount-1 do begin
+    Grid[0,i].TimeMultiplicator := 1.0 + Random*0.5-0.25;
+    Grid[0,i].DeformationAmount := 1.0 + Random*0.3-0.15;
+  end;
 end;
 
 { TPine }
@@ -81,7 +125,7 @@ end;
 constructor TCloud.Create(aX, aY, aDistance: single; aDirection: integer);
 var v: single;
 begin
-  inherited Create(texCloud1, False);
+  inherited Create(texCloudTitle, False);
   FScene.Add(Self, LAYER_BG1);
   FScaleValue := 1-aDistance;
   v := FScene.Width*0.02;

@@ -7,14 +7,14 @@ interface
 uses
   Classes, SysUtils,
   BGRABitmap, BGRABitmapTypes,
-  OGLCScene,
+  OGLCScene, u_gamescreentemplate,
   u_common, u_sprite_lrcommon, u_sprite_wolf, u_ui_panels, ALSound;
 
 type
 
 { TScreenTitle }
 
-TScreenTitle = class(TScreenTemplate)
+TScreenTitle = class(TGameScreenTemplate)
 private
   FAtlas: TOGLCTextureAtlas;
   FFontTitleSmallPart,
@@ -41,7 +41,8 @@ var ScreenTitle: TScreenTitle;
 
 implementation
 uses Forms, u_sprite_gameforest, u_app, form_main, u_gamebackground,
-  u_resourcestring, u_screen_map, u_mousepointer, u_common_ui, u_audio;
+  u_resourcestring, u_mousepointer, u_common_ui, u_audio,
+  u_screen_intro;
 
 { TScreenTitle }
 
@@ -87,7 +88,7 @@ end;
 procedure TScreenTitle.CreateNewPlayer(const aName: string);
 begin
   FSaveGame.CreateNewPlayer(aName);
-  FScene.RunScreen(ScreenMap);
+  FScene.RunScreen(ScreenIntro);
 end;
 
 procedure TScreenTitle.CreateObjects;
@@ -259,16 +260,10 @@ begin
   o.Face.FaceType := lrfSmile;
 
   w := TWolf.Create(False);
-  w.SetCoordinate(FScene.Width*0.85, FScene.Height-w.DeltaYToBottom-g.Height*0.45);
+  w.SetCoordinate(FScene.Width*0.85, FScene.Height*0.98-w.DeltaYToBottom); //-w.DeltaYToBottom-g.Height*0.45);
   w.Head.SetMouthClose;
   w.TimeMultiplicator:=1.0;
   w.State := wsIdle;
- // w.FlipH:=true;
-  //w.PostMessage(1000, 6);
- // w.Head.SetMouthTongue;
- // w.Head.SetMouthHurt;
-
- // w.Abdomen.Angle.ChangeTo(-10, 5);
 
   CustomizeMousePointer;
 end;
@@ -277,17 +272,19 @@ procedure TScreenTitle.FreeObjects;
 begin
   FreeMousePointer;
   FScene.ClearAllLayer;
-  FreeAndNil(FAtlas);
+  FAtlas.Free;
+  FAtlas := NIL;
+  ResetSceneCallbacks;
 end;
 
 procedure TScreenTitle.ProcessMessage(UserValue: TUserMessageValue);
 begin
-  inherited ProcessMessage(UserValue); // keep this line please
   case UserValue of
     // QUIT
     300: begin
-      FScene.ColorFadeIn(BGRA(0,0,0), 0.3);
-      PostMessage(301, 0.3);
+      FScene.ColorFadeIn(BGRA(0,0,0), 1.0);
+      Audio.FadeOutThenKillMusicTitleMap;
+      PostMessage(301, 1.0);
     end;
     301: begin
       FormMain.Close;

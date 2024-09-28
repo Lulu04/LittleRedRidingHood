@@ -7,7 +7,7 @@ interface
 uses
   Classes, SysUtils, Forms, Controls, Dialogs, Buttons, ExtCtrls, StdCtrls,
   OpenGLContext, OGLCScene,
-  u_common;
+  u_common, LCLType;
 
 type
 
@@ -17,12 +17,14 @@ type
     Memo1: TMemo;
     OpenGLControl1: TOpenGLControl;
     Panel1: TPanel;
+    Panel2: TPanel;
     Timer1: TTimer;
     procedure FormCloseQuery(Sender: TObject; var {%H-}CanClose: boolean);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure FormKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
+    procedure FormUTF8KeyPress(Sender: TObject; var UTF8Key: TUTF8Char);
     procedure Timer1Timer(Sender: TObject);
   private
     procedure LoadCommonData;
@@ -40,7 +42,7 @@ uses u_screen_title, u_screen_gameforest, BGRABitmap, BGRABitmapTypes,
   screen_logo, u_app, u_screen_map, u_screen_workshop, u_audio,
   u_screen_gamemountainpeaks, u_screen_gamevolcanoentrance,
   u_screen_gamevolcanoinner, u_resourcestring, u_screen_gamevolcanodino,
-  DefaultTranslator, LCLTranslator, i18_utils;
+  u_screen_intro, DefaultTranslator, LCLTranslator, i18_utils;
 {$R *.lfm}
 
 { TFormMain }
@@ -81,9 +83,14 @@ begin
   FScene.ProcessOnKeyUp(Key, Shift);
 end;
 
+procedure TFormMain.FormUTF8KeyPress(Sender: TObject; var UTF8Key: TUTF8Char);
+begin
+  FScene.ProcessOnUTF8KeyPress(UTF8Key);
+end;
+
 procedure TFormMain.Timer1Timer(Sender: TObject);
 begin
-  Caption := Format('scene %dx%d %d FPS %d max texture size  %d objects', [FScene.Width, FScene.Height, FScene.FPS, FScene.TexMan.MaxTextureWidth, FScene.SurfaceCount]);
+  Caption := Format('scene %dx%d %d FPS %d max texture size  %d objects FreeVRam %d Kb  %d sounds', [FScene.Width, FScene.Height, FScene.FPS, FScene.TexMan.MaxTextureWidth, FScene.SurfaceCount, FScene.Gpu.FreeVideoRamKb, Audio.PlaybackContext.SoundCount]);
 end;
 
 procedure TFormMain.LoadCommonData;
@@ -99,6 +106,7 @@ begin
 
   ScreenLogo := TScreenLogo.Create;
   ScreenTitle := TScreenTitle.Create;
+  ScreenIntro := TScreenIntroCinematic.Create;
   ScreenGameForest := TScreenGame1.Create;
   ScreenGameZipLine := TScreenGameZipLine.Create;
   ScreenGameVolcanoEntrance := TScreenGameVolcanoEntrance.Create;
@@ -106,16 +114,17 @@ begin
   ScreenGameVolcanoDino := TScreenGameVolcanoDino.Create;
   ScreenMap := TScreenMap.Create;
   ScreenWorkShop := TScreenWorkShop.Create;
-//  FScene.RunScreen(ScreenLogo);
+  FScene.RunScreen(ScreenLogo);
 
-FSaveGame.SetCurrentPlayerIndex(0);
-FScene.RunScreen(ScreenMap); // ScreenLogo ScreenTitle  ScreenGameForest ScreenMap  ScreenGameZipLine
+//FSaveGame.SetCurrentPlayerIndex(0);
+//FScene.RunScreen(ScreenMap); // ScreenIntro ScreenLogo ScreenTitle  ScreenGameForest ScreenMap  ScreenGameZipLine
 end;
 
 procedure TFormMain.FreeCommonData;
 begin
   FreeAndNil(FSaveGame);
   FreeAndNil(ScreenTitle);
+  FreeAndNil(ScreenIntro);
   FreeAndNil(ScreenMap);
   FreeAndNil(ScreenWorkShop);
   FreeAndNil(ScreenGameForest);

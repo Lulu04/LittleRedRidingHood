@@ -14,7 +14,7 @@ const
   APP_VERSION = '0.1.0';
 
 // Scene layers
-LAYER_COUNT = 11;
+LAYER_COUNT = 12;
    LAYER_TOP = 0;
    LAYER_GAMEUI = 1;
    LAYER_DIALOG = 2;
@@ -26,12 +26,12 @@ LAYER_COUNT = 11;
    LAYER_GROUND = 8;
    LAYER_BG1 = 9;
    LAYER_BG2 = 10;
+   LAYER_BG3 = 11;
 
 
 var
   FScene: TOGLCScene;
 
-  KeyLeft, KeyRight, KeyUp, KeyDown, KeyAction1, KeyAction2, KeyPause: byte;
   PlayerInfo: TPlayerInfo;
 
 

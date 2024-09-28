@@ -2,7 +2,7 @@
 
 [DEV]
 
-Game by Lulu, written in FreePascal with Lazarus IDE.
+Game by Lulu, written in FreePascal with the awesome Lazarus IDE.
 
 The following libraries are used for its development:
 - OGLCScene to render graphics with OpenGL  https://github.com/Lulu04/OGLCScene
@@ -11,14 +11,19 @@ The following libraries are used for its development:
 
 [GRAPHICS]
 
-character reworked from https://www.freepik.com/free-vector/little-red-riding-hood_984951.htm#query=little%20red%20riding%20hood&position=16&from_view=search&track=ais&uuid=ff0ce799-4a7d-4d3d-a595-d4baf053fdba
+Little red, Granny, wolf characters are reworked from https://www.freepik.com/free-vector/little-red-riding-hood_984951.htm#query=little%20red%20riding%20hood&position=16&from_view=search&track=ais&uuid=ff0ce799-4a7d-4d3d-a595-d4baf053fdba
 
 cristal reworked from https://opengameart.org/content/crystals-0, by AntumDeluge
 
 parchment reworked from https://opengameart.org/content/epic-collection-parchment by Melissa Krautheim
 
+Tyrannosaurus reworked from an image on http://www.freepik.com, designed by pikisuperstar
+https://fr.freepik.com/vecteurs-libre/fond-plat-t-rex_4662421.htm#fromView=author&page=2&position=24&uuid=a3420b66-724e-4c82-85a5-204ca503c034
+
 
 [MUSICS]
+
+Malloga_Ballinga_Mastered.ogg by Joe Reynolds - Professorlamp at https://opengameart.org/content/malloga-ballinga
 
 On The Islands.ogg,
 ForestInTheNight.ogg,
@@ -26,28 +31,87 @@ PromenonsNous.ogg,
 GuitarAndViolin.ogg,
 CatchyMusic.ogg,
 Success1.ogg,
-suspense1.ogg by Lulu, made with Reason 3.0
+suspense1.ogg,
+PercuLoop1.ogg,
+Emotion1Loop.ogg composed by Lulu with Reason 3.0
+
 
 
 [SOUNDS]
 
 Fire Crackle and Flames 001 by TheWoodlandNomad -- https://freesound.org/s/363093/ -- License: Creative Commons 0
+
 quick woosh by florianreichelt -- https://freesound.org/s/683101/ -- License: Creative Commons 0
+
 Balloon_Inflate_4 by Terhen -- https://freesound.org/s/234211/ -- License: Attribution 3.0
+
 Balloon Pop by Breviceps -- https://freesound.org/s/458398/ -- License: Creative Commons 0
+
 14 - Polea.wav by MichaelGillighan -- https://freesound.org/s/429215/ -- License: Creative Commons 0
+
 Storm cloud made from wind gap indoors 001 190310_1316.wav by klankbeeld -- https://freesound.org/s/463868/ -- License: Attribution 4.0
+
 ZIP LINE by daveincamas -- https://freesound.org/s/208728/ -- License: Attribution NonCommercial 4.0
+
 MetalClick by Kenney Vleugels (www.kenney.nl) -- License: Creative Commons 0
+
+SFX UI Button Click by suntemple -- https://freesound.org/s/253168/ -- License: Creative Commons 0
+
 Sea and Seagull, wave by suukadi -- https://freesound.org/s/410323/ -- License: Creative Commons 0
+
 Wall Bump 1.wav by Osiruswaltz -- https://freesound.org/s/457741/ -- License: Creative Commons 0
+
 stone_on_stone_ST.wav by wilhelmsqueek -- https://freesound.org/s/347391/ -- License: Creative Commons 0
+
 Smashing head on wall by pfranzen -- https://freesound.org/s/377157/ -- License: Attribution 4.0
+
 little girl saying woo hoo by LadyImperatrix -- https://freesound.org/s/620397/ -- License: Creative Commons 0
+
 grinder on metal.wav by jchiledred -- https://freesound.org/s/445829/ -- License: Attribution 4.0
+
 Fart 1 by Breviceps -- https://freesound.org/s/445998/ -- License: Creative Commons 0
+
 Larrun_Mountains_MedWind by nicotep -- https://freesound.org/s/725630/ -- License: Creative Commons 0
+
 Spaceship compartment door.With pneumatics(8lrs,mltprcssng).wav by newlocknew -- https://freesound.org/s/546922/ -- License: Attribution 4.0
+
 ALERT.flac by qubodup -- https://freesound.org/s/182724/ -- License: Creative Commons 0
+
 PutObject by Lulu (with my mouth)
+
 Beep1.ogg, Beep2.ogg and DecoderScanning.ogg by Lulu with Reason 3.0
+
+Scanner Samsung C460 - MS stereo by michieldb.nl -- https://freesound.org/s/420896/ -- License: Attribution 3.0
+
+EmergencyAlarm https://universal-soundbank.com/sounds/253.mp3
+
+ebulition.ogg,
+ElectricalMotorLoop.ogg,
+BlowtorchLoop.ogg,
+CollisionLong1.ogg,
+CollisionGlassBreakLong.ogg,
+CollisionGlassBreakShort.ogg,
+CollisionPunchShort.ogg,
+MotorEngineLoop.ogg,
+Explode1.ogg and Explode2.ogg by Lulu with Reason 3.0
+
+earthquake3.ogg by zatar -- https://freesound.org/s/514381/ -- License: Creative Commons 0
+
+Earthquake1_2654Loop.ogg -- https://universal-soundbank.com/sounds/2654.mp3
+
+Unlock lock unlock door inside.wav by jakobhandersen -- https://freesound.org/s/434774/ -- License: Creative Commons 0
+
+Train Door Beep, A.wav by InspectorJ -- https://freesound.org/s/346573/ -- License: Attribution 4.0
+
+custom_short_explosion_impact_sound by Artninja -- https://freesound.org/s/750822/ -- License: Attribution 4.0
+
+DinoSurprise.ogg by Lulu
+luffy_fire3alternate.ogg by luffy -- https://freesound.org/s/17299/ -- License: Attribution 4.0
+
+Pneumatic grease bomb by prnkys -- https://freesound.org/s/437205/ -- License: Attribution 3.0
+
+Cloth, Bedding, brush, sweep-015.wav by MattRuthSound -- https://freesound.org/s/561574/ -- License: Attribution 4.0
+
+Dropping Rocks by iwanPlays -- https://freesound.org/s/567250/ -- License: Creative Commons 0
+
+

@@ -8,7 +8,7 @@ uses
   Classes, SysUtils,
   OGLCScene, BGRABitmap, BGRABitmapTypes,
   u_sprite_lrcommon, u_sprite_gameforest,
-  u_audio;
+  u_audio, u_common;
 
 type
 
@@ -17,7 +17,7 @@ type
 TBalloon = class(TSprite)
 private
   const BALLOON_SIZE_MULTIPLICATOR = 6;
-        BALLOON_INFLATE_TIME = 7;
+        BALLOON_INFLATE_TIME = 6; //7;
 private
   FInflateTerminated: boolean;
   FTimeMultiplicator: single;
@@ -45,9 +45,11 @@ end;
 { TWolfHead }
 
 TWolfHead = class(TSprite)
+protected
+  procedure SetFlipH(AValue: boolean); override;
+  procedure SetFlipV(AValue: boolean); override;
+public
   MouthClose, MouthTongue, MouthHurt, MouthFalling, MouthSurprise: TSprite;
-  procedure SetFlipH(AValue: boolean);
-  procedure SetFlipV(AValue: boolean);
   constructor Create;
   procedure SetMouthClose;
   procedure SetMouthTongue;
@@ -59,8 +61,8 @@ end;
 //
 
 TWolfState = (wsUndefined=0, wsIdle,
-              wsPickingBalloon, wsInflateBalloon,
               wsFlying, wsLanding, wsWalking, wsFalling, wsSeatAndStunned,
+              wsPickingBalloon, wsInflateBalloon,
               wsTargetedByStormCloud,
               wsDestroyingElevator,
               wsWinner, wsLoser,
@@ -81,7 +83,6 @@ private
   FYGroundAtTheTopOfTheScreen, FYGroundAtBottomOfTheScreen: single;
   StarStunned: array[0..2] of TSpriteOnPathToFollow;
   FState: TWolfState;
-  FTimeMultiplicator: single;
   FUsedBalloonCrate: TBalloonCrate;
   FIsForestGame: boolean;
   FObjectToCarry: TSimpleSurfaceWithEffect;
@@ -99,27 +100,29 @@ private
   procedure CreatePiss;
   procedure CreateFart;
   procedure KillThePiss;
+protected
+  procedure SetFlipH(AValue: boolean); override;
+  procedure SetFlipV(AValue: boolean); override;
 public
   // The reference point is the middle of the top of the legs
   Head: TWolfHead;
   Abdomen, LeftArm, RightArm, LeftLeg, RightLeg, Tail, LeftLegSeat: TSprite;
   Balloon: TBalloon;
-  constructor Create(aIsForestGame: boolean);
+  // aLayerIndex can be -1 to avoid to add the sprite to a scene layer.
+  // Usefull if the wolf is a child of another surface
+  constructor Create(aIsForestGame: boolean; aLayerIndex: integer=LAYER_WOLF);
   procedure Update(const aElapsedTime: single); override;
-  procedure ProcessMessage({%H-}UserValue: TUserMessageValue); override;
-  procedure SetFlipH(AValue: boolean);
-  procedure SetFlipV(AValue: boolean);
+  procedure ProcessMessage(UserValue: TUserMessageValue); override;
   function GetSceneBallonCenterCoor: TPointF;
   property State: TWolfState read FState write SetState;
   property YGroundAtTheTopOfTheScreen: single read FYGroundAtTheTopOfTheScreen write FYGroundAtTheTopOfTheScreen;
   property YGroundAtBottomOfTheScreen: single read FYGroundAtBottomOfTheScreen write FYGroundAtBottomOfTheScreen;
-  property TimeMultiplicator: single read FTimeMultiplicator write FTimeMultiplicator;
 
   property OnCheckIfLost: TFuncCheckIfLost read FOnCheckIfLost write FOnCheckIfLost;
   property OnBalloonExplode: TSimpleCallback read FOnBalloonExplode write FOnBalloonExplode;
   property TargetElevatorEngine: TElevatorEngine read FTargetElevatorEngine write FTargetElevatorEngine;
 public // utils to control character during cinematics
-  procedure WalkHorizontallyTo(aX: single; aTargetScreen: TScreenTemplate; aMessageValueWhenFinish: TUserMessageValue; aDelay: single=0);
+  procedure WalkHorizontallyTo(aX: single; aTarget: TObject; aMessageValueWhenFinish: TUserMessageValue; aDelay: single=0);
 
   procedure SetAsCarryingAnObject(aObject: TSimpleSurfaceWithEffect);
   property ObjectToCarry: TSimpleSurfaceWithEffect read FObjectToCarry write FObjectToCarry;
@@ -174,15 +177,11 @@ var
 
   texCastle: PTexture;
 
-  sndBallonPop: TALSSound;
-
   procedure LoadWolfTextures(aAtlas: TOGLCTextureAtlas);
   procedure LoadBaseBallonTexture(aAtlas: TOGLCTextureAtlas);
-  procedure LoadBallonSound;
-  procedure FreeBallonSound;
 
 implementation
-uses u_common, u_app, BGRAPath, GeometricShapes;
+uses u_app, BGRAPath, GeometricShapes;
 
 procedure LoadWolfTextures(aAtlas: TOGLCTextureAtlas);
 var path: string;
@@ -210,7 +209,8 @@ begin
   FGeometricShapes.GlobalColor := BGRA(255,255,0);
   FGeometricShapes.DrawStar(ima);
   texWolfStarWhenStunned := aAtlas.Add(ima);
-  FreeAndNil(FGeometricShapes);
+  FGeometricShapes.Free;
+  FGeometricShapes := NIL;
 end;
 
 procedure LoadBaseBallonTexture(aAtlas: TOGLCTextureAtlas);
@@ -220,17 +220,6 @@ begin
   texBaseBalloon := aAtlas.AddFromSVG(path+'BaseBalloon.svg', ScaleW(23), -1);
   texStringBalloon := aAtlas.AddFromSVG(path+'BalloonString.svg', -1, ScaleH(78));
   texPafBalloon := aAtlas.AddFromSVG(path+'Paf.svg', ScaleW(166), -1);
-end;
-
-procedure LoadBallonSound;
-begin
-  sndBallonPop := Audio.AddSound('balloon-pop.ogg');
-end;
-
-procedure FreeBallonSound;
-begin
-  if sndBallonPop <> NIL then sndBallonPop.Kill;
-  sndBallonPop := NIL;
 end;
 
 
@@ -298,9 +287,9 @@ begin
                                 PointF(bw,0)], // right base
                               0, 5, ssInside);
   r := FPath.Bounds;
-  if (r.Top <> 0) or (r.Left <> 0) then begin
+  if (r.Top <> 0) or (r.Left <> 0) then
     FPath.Translate(PointF(-r.Left, -r.Top));
-  end;
+
   FPath.RemoveIdenticalConsecutivePoint;
   FPath.ClosePath;
 end;
@@ -343,7 +332,8 @@ end;
 
 destructor TBalloon.Destroy;
 begin
-  FreeAndNil(FSize);
+  FSize.Free;
+  FSize := NIL;
   inherited Destroy;
 end;
 
@@ -403,8 +393,7 @@ end;
 procedure TBalloon.StartInflate;
 begin
   FSize.ChangeTo(BALLOON_SIZE_MULTIPLICATOR, BALLOON_INFLATE_TIME*FTimeMultiplicator, idcStartSlowEndFast);
-  with Audio.AddSound('balloon_inflate_4.ogg') do
-    PlayThenKill(True);
+  Audio.PlayThenKillSound('balloon_inflate_4.ogg', 1.0);
 end;
 
 procedure TBalloon.Explode;
@@ -412,7 +401,7 @@ begin
   Glow.Visible := False;
   Inflatable.Visible := False;
   Paf.Visible := True;
-  if sndBallonPop <> NIL then sndBallonPop.Play(True);
+  Audio.PlayThenKillSound('balloon-pop.ogg', 1.0);
   PostMessage(0, 0.2);
 end;
 
@@ -440,23 +429,28 @@ end;
 
 procedure TWolfHead.SetFlipH(AValue: boolean);
 begin
-  FlipH := AValue;
+  inherited SetFlipH(AValue);
   MouthClose.FlipH := AValue;
   MouthTongue.FlipH := AValue;
   MouthHurt.FlipH := AValue;
+  MouthFalling.FlipH := AValue;
+  MouthSurprise.FlipH := AValue;
 end;
 
 procedure TWolfHead.SetFlipV(AValue: boolean);
 begin
-  FlipV := AValue;
+  inherited SetFlipV(AValue);
   MouthClose.FlipV := AValue;
   MouthTongue.FlipV := AValue;
   MouthHurt.FlipV := AValue;
+  MouthFalling.FlipV := AValue;
+  MouthSurprise.FlipV := AValue;
 end;
 
 constructor TWolfHead.Create;
 begin
   inherited Create(texWolfHead, False);
+  Frame := 1;
   ApplySymmetryWhenFlip := True;
 
   MouthClose := TSprite.Create(texWolfMouthClose, False);
@@ -535,6 +529,7 @@ end;
 { TWolf }
 
 procedure TWolf.SetState(AValue: TWolfState);
+var v: single;
 begin
   if FState = AValue then Exit;
 
@@ -576,8 +571,9 @@ begin
     end;
 
     wsWalking, wsCarryingWalking: begin
-      if not FFlipH then Speed.x.ChangeTo(FScene.ScaleDesignToSceneF(-80-(80*(1-FTimeMultiplicator))), FTimeMultiplicator, idcSinusoid)
-        else Speed.x.ChangeTo(FScene.ScaleDesignToSceneF(80+(80*(1-FTimeMultiplicator))), FTimeMultiplicator, idcSinusoid);
+      v := FScene.ScaleDesignToSceneF(90+(90*(1-TimeMultiplicator)));
+      if not FFlipH then Speed.x.ChangeTo(-v, TimeMultiplicator, idcSinusoid)
+        else Speed.x.ChangeTo(v, TimeMultiplicator, idcSinusoid);
       PostMessage(300);
     end;
 
@@ -668,12 +664,12 @@ end;
 
 procedure TWolf.MoveYToSeatDown(aDuration: single);
 begin
-  Y.ChangeTo(Y.Value+DeltaYToBottom, aDuration*FTimeMultiplicator, idcStartFastEndSlow);
+  Y.ChangeTo(Y.Value+DeltaYToBottom, aDuration*TimeMultiplicator, idcStartFastEndSlow);
 end;
 
 procedure TWolf.MoveYToStandUp(aDuration: single);
 begin
-  Y.ChangeTo(Y.Value-DeltaYToBottom, aDuration*FTimeMultiplicator, idcStartFastEndSlow);
+  Y.ChangeTo(Y.Value-DeltaYToBottom, aDuration*TimeMultiplicator, idcStartFastEndSlow);
 end;
 
 procedure TWolf.CreateBalloon;
@@ -683,7 +679,7 @@ begin
   Balloon.Pivot := PointF(0.5, 1);
   Balloon.CenterX := RightArm.X.Value+RightArm.Width*0.25;
   Balloon.BottomY := RightArm.Y.Value+RightArm.Height*0.7;
-  Balloon.TimeMultiplicator := FTimeMultiplicator;
+  Balloon.TimeMultiplicator := TimeMultiplicator;
 end;
 
 procedure TWolf.KillBalloon;
@@ -724,8 +720,8 @@ end;
 
 procedure TWolf.KillStarStunned;
 begin
-  EllipseStarStunned.Opacity.ChangeTo(0, 1.0*FTimeMultiplicator);
-  EllipseStarStunned.KillDefered(1.0*FTimeMultiplicator);
+  EllipseStarStunned.Opacity.ChangeTo(0, 1.0*TimeMultiplicator);
+  EllipseStarStunned.KillDefered(1.0*TimeMultiplicator);
   EllipseStarStunned := NIL;
 end;
 
@@ -737,7 +733,7 @@ begin
   FPEPiss.SetCoordinate(-BodyWidth*0.25, 0);
   FsndPiss := Audio.AddSound('piss.ogg');
   FsndPiss.Loop := True;
-  FsndPiss.Volume.Value := 0.7;
+  FsndPiss.Volume.Value := 0.85;
   FsndPiss.Play(True);
 end;
 
@@ -772,7 +768,7 @@ end;
 procedure TWolf.SetFlipH(AValue: boolean);
 begin
   if FObjectToCarry <> NIL then FObjectToCarry.FlipH := AVAlue;
-  FlipH := AValue;
+  inherited SetFlipH(AValue);
   LeftLegSeat.FlipH := AValue;
   LeftLeg.FlipH := AValue;
   RightLeg.FlipH := AValue;
@@ -786,7 +782,7 @@ end;
 procedure TWolf.SetFlipV(AValue: boolean);
 begin
   if FObjectToCarry <> NIL then FObjectToCarry.FlipV := AVAlue;
-  FlipV := AValue;
+  inherited SetFlipV(AValue);
   LeftLegSeat.FlipV := AValue;
   LeftLeg.FlipV := AValue;
   RightLeg.FlipV := AValue;
@@ -803,20 +799,20 @@ begin
     Result := Balloon.GetSceneBallonCenterCoor;
 end;
 
-procedure TWolf.WalkHorizontallyTo(aX: single; aTargetScreen: TScreenTemplate;
+procedure TWolf.WalkHorizontallyTo(aX: single; aTarget: TObject;
   aMessageValueWhenFinish: TUserMessageValue; aDelay: single);
 begin
   if X.Value < aX then begin
     SetFlipH(True);
     if FObjectToCarry = NIL then State := wsWalking
       else State := wsCarryingWalking;
-    CheckHorizontalMoveToX(aX, aTargetScreen, aMessageValueWhenFinish, aDelay);
+    CheckHorizontalMoveToX(aX, aTarget, aMessageValueWhenFinish, aDelay);
   end else if X.Value > aX then begin
     SetFlipH(False);
     if FObjectToCarry = NIL then State := wsWalking
       else State := wsCarryingWalking;
-    CheckHorizontalMoveToX(aX, aTargetScreen, aMessageValueWhenFinish, aDelay);
-  end else aTargetScreen.PostMessage(aMessageValueWhenFinish, aDelay);
+    CheckHorizontalMoveToX(aX, aTarget, aMessageValueWhenFinish, aDelay);
+  end else PostMessageToTargetObject(aTarget, aMessageValueWhenFinish, aDelay);
 end;
 
 procedure TWolf.SetAsCarryingAnObject(aObject: TSimpleSurfaceWithEffect);
@@ -829,11 +825,12 @@ begin
   State := wsCarryingIdle;
 end;
 
-constructor TWolf.Create(aIsForestGame: boolean);
+constructor TWolf.Create(aIsForestGame: boolean; aLayerIndex: integer);
 begin
   inherited Create(FScene);
-  FScene.Add(Self, LAYER_WOLF);
-  FTimeMultiplicator := 1.0;
+  if aLayerIndex <> -1 then
+    FScene.Add(Self, aLayerIndex);
+  TimeMultiplicator := 1.0;
   FIsForestGame := aIsForestGame;
 
   LeftLeg := CreateChildSprite(texWolfLeftLeg, 0);
@@ -1168,7 +1165,7 @@ begin
 
     // SEAT AND STUNNED THEN WAKEUP
     280: begin
-      d := 0.4*FTimeMultiplicator;
+      d := 0.4*TimeMultiplicator;
       LeftLegSeat.Angle.ChangeTo(85, d, idcSinusoid);
       LeftLegSeat.Visible := True;
       LeftLeg.Visible := False;
@@ -1185,11 +1182,11 @@ begin
     end;
     281: begin
       CreateStarStunned;
-      PostMessage(282, 6*FTimeMultiplicator);
+      PostMessage(282, 6*TimeMultiplicator);
     end;
     282: begin
       KillStarStunned;
-      PostMessage(283, 1*FTimeMultiplicator);
+      PostMessage(283, 1*TimeMultiplicator);
     end;
     283: begin
       if TargetElevatorEngine.Breaked then State := wsWinner
@@ -1202,7 +1199,7 @@ begin
     // STATE WALKING
     300: begin
       if not (FState in [wsWalking, wsCarryingWalking]) then exit;
-      d := 0.5*FTimeMultiplicator;
+      d := 0.5*TimeMultiplicator;
       LeftLeg.Angle.ChangeTo(-40, d, idcExtend);      //idcSinusoid
       RightLeg.Angle.ChangeTo(15, d, idcExtend);
       Abdomen.Angle.ChangeTo(-3, d, idcSinusoid);
@@ -1215,7 +1212,7 @@ begin
     end;
     301: begin
       if not (FState in [wsWalking, wsCarryingWalking]) then exit;
-      d := 0.5*FTimeMultiplicator;
+      d := 0.5*TimeMultiplicator;
       LeftLeg.Angle.ChangeTo(20, d, idcExtend);
       RightLeg.Angle.ChangeTo(-60, d, idcExtend);  //idcSinusoid
       Abdomen.Angle.ChangeTo(3, d, idcSinusoid);
@@ -1271,13 +1268,13 @@ begin
     // TAKE AN OBJECT FROM GROUND
     650: begin
       if FState <> wsTakeObjectFromGround then exit;
-      d := 1.0*FTimeMultiplicator;
+      d := 1.0*TimeMultiplicator;
       Abdomen.Angle.ChangeTo(-45, d, idcSinusoid);
       PostMessage(651, d);
     end;
     651: begin
       if FState <> wsTakeObjectFromGround then exit;
-      d := 0.5*FTimeMultiplicator;
+      d := 0.5*TimeMultiplicator;
       FObjectToCarry.MoveFromSceneToChildOf(Abdomen, 2);
       FObjectToCarry.RightX := Abdomen.Width*0.5;
       FObjectToCarry.BottomY := Abdomen.Height*0.8;
@@ -1294,7 +1291,7 @@ begin
     // PUT AN OBJECT TO GROUND
     700: begin
       if FState <> wsPutObjectToGround then exit;
-      d := 1.0*FTimeMultiplicator;
+      d := 1.0*TimeMultiplicator;
       FObjectToCarry.MoveFromChildToScene(LAYER_ARROW);
       FObjectToCarry.Y.ChangeTo(GetYBottom-FObjectToCarry.Height, d, idcSinusoid);
       FObjectToCarry.X.ChangeTo(X.Value-FObjectToCarry.Width, d, idcSinusoid);
@@ -1313,7 +1310,7 @@ begin
     // STATE PISSING
     750: begin
       if FState <> wsPissing then exit;
-      d := 0.5*FTimeMultiplicator;
+      d := 0.5*TimeMultiplicator;
       LeftArm.Angle.ChangeTo(15, d, idcSinusoid);
       RightArm.Angle.ChangeTo(-15, d, idcSinusoid);
       Head.Angle.ChangeTo(-25, d, idcSinusoid);
@@ -1325,9 +1322,9 @@ begin
 
     // ANIM WOLF FART
     780: begin
-      d := 0.75*FTimeMultiplicator;
+      d := 0.75*TimeMultiplicator;
       Tail.Angle.ChangeTo(-90, d, idcSinusoid);
-      PostMessage(781, d*2);
+      PostMessage(781, d*1.5);
     end;
     781: begin
       CreateFart;

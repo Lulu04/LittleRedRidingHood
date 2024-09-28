@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="49.136204"
+   height="26.456812"
+   viewBox="0 0 13.00062 7.0000315"
+   version="1.1"
+   id="svg1"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#505050"
+     bordercolor="#eeeeee"
+     borderopacity="1"
+     inkscape:showpageshadow="0"
+     inkscape:pageopacity="0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#0f0f0f"
+     inkscape:document-units="mm" />
+  <defs
+     id="defs1">
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient809"
+       id="linearGradient628"
+       gradientUnits="userSpaceOnUse"
+       x1="155.86366"
+       y1="245.21452"
+       x2="163.04498"
+       y2="245.21452"
+       gradientTransform="matrix(-1.8102921,0.00705237,0.00687543,1.856878,383.42429,-311.67784)" />
+    <linearGradient
+       id="linearGradient809"
+       inkscape:collect="always">
+      <stop
+         style="stop-color:#fbc544;stop-opacity:1;"
+         offset="0"
+         id="stop807-1" />
+      <stop
+         style="stop-color:#fab005;stop-opacity:1;"
+         offset="0.48672566"
+         id="stop808-9" />
+      <stop
+         style="stop-color:#c58b05;stop-opacity:1;"
+         offset="1"
+         id="stop809-7" />
+    </linearGradient>
+  </defs>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(-89.963984,-141.28749)">
+    <path
+       style="fill:url(#linearGradient628);fill-rule:evenodd;stroke:#1a1a1a;stroke-width:0.51744px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 98.991722,141.54681 -4.981329,0.0194 -3.604828,6.46087 12.122515,-0.0473 z"
+       id="path627" />
+  </g>
+</svg>

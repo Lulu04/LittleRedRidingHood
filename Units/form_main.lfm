@@ -14,41 +14,52 @@ object FormMain: TFormMain
   OnDestroy = FormDestroy
   OnKeyDown = FormKeyDown
   OnKeyUp = FormKeyUp
+  OnUTF8KeyPress = FormUTF8KeyPress
   LCLVersion = '2.2.6.0'
   WindowState = wsMaximized
-  object OpenGLControl1: TOpenGLControl
-    AnchorSideLeft.Side = asrCenter
-    AnchorSideTop.Side = asrCenter
-    Left = 16
-    Height = 72
-    Top = 72
-    Width = 98
-    Anchors = []
-  end
   object Panel1: TPanel
-    AnchorSideTop.Control = Owner
-    AnchorSideRight.Control = Owner
-    AnchorSideRight.Side = asrBottom
-    Left = 96
-    Height = 208
+    Left = 127
+    Height = 276
     Top = 0
-    Width = 275
+    Width = 244
+    Align = alRight
     Anchors = [akTop, akRight]
-    ClientHeight = 208
-    ClientWidth = 275
-    TabOrder = 1
+    ClientHeight = 276
+    ClientWidth = 244
+    TabOrder = 0
     Visible = False
     object Memo1: TMemo
       Left = 1
-      Height = 206
+      Height = 274
       Top = 1
-      Width = 273
+      Width = 242
       Align = alClient
       Lines.Strings = (
         'Memo1'
       )
       ScrollBars = ssAutoVertical
       TabOrder = 0
+    end
+  end
+  object Panel2: TPanel
+    Left = 0
+    Height = 276
+    Top = 0
+    Width = 127
+    Align = alClient
+    BevelOuter = bvNone
+    Caption = 'Panel2'
+    ClientHeight = 276
+    ClientWidth = 127
+    TabOrder = 1
+    object OpenGLControl1: TOpenGLControl
+      AnchorSideLeft.Side = asrCenter
+      AnchorSideTop.Side = asrCenter
+      Left = 18
+      Height = 72
+      Top = 50
+      Width = 98
+      Anchors = []
     end
   end
   object Timer1: TTimer

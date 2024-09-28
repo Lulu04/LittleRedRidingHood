@@ -1,6 +1,10 @@
 msgid ""
 msgstr "Content-Type: text/plain; charset=UTF-8"
 
+#: u_resourcestring.remedypumpatmaxi
+msgid "Remedy: pump acceleration at maximum level"
+msgstr ""
+
 #: u_resourcestring.saction1
 msgid "ACTION1"
 msgstr ""
@@ -9,12 +13,40 @@ msgstr ""
 msgid "ACTION2"
 msgstr ""
 
+#: u_resourcestring.sadorsalpropulsorineedit
+msgid "A dorsal propulsor! No way I'm leaving this here!"
+msgstr ""
+
 #: u_resourcestring.sadventuremode
 msgid "ADVENTURE MODE"
 msgstr ""
 
 #: u_resourcestring.sagain
 msgid "AGAIN ?!!"
+msgstr ""
+
+#: u_resourcestring.sahhhh
+msgid "Ahhhhh!"
+msgstr ""
+
+#: u_resourcestring.saicorrupted
+msgid "AI corrupted"
+msgstr ""
+
+#: u_resourcestring.saivoice
+msgid "AI voice"
+msgstr ""
+
+#: u_resourcestring.sandtheyusevolcanolavaasrawmaterial
+msgid "And they use the volcano's lava as a raw material..."
+msgstr ""
+
+#: u_resourcestring.sandyouweresinging
+msgid "And you sang at the top of your lungs! Hahaha!"
+msgstr ""
+
+#: u_resourcestring.sansdcardiwilltakeit
+msgid "an SD card... I'll take it, it might come in handy."
 msgstr ""
 
 #: u_resourcestring.sarcademode
@@ -27,6 +59,10 @@ msgstr ""
 
 #: u_resourcestring.sbacktomap
 msgid "BACK TO MAP"
+msgstr ""
+
+#: u_resourcestring.sbeforeileaveihavetosearchallcratesinthearea
+msgid "Before I leave, I have to search all the crates in the area."
 msgstr ""
 
 #: u_resourcestring.sbowexplanation
@@ -75,6 +111,10 @@ msgctxt "u_resourcestring.scontinuegame"
 msgid "CONTINUE GAME"
 msgstr ""
 
+#: u_resourcestring.sconversation
+msgid "conversation"
+msgstr ""
+
 #: u_resourcestring.scredits
 msgid "CREDITS"
 msgstr ""
@@ -91,8 +131,32 @@ msgstr ""
 msgid "DELETE"
 msgstr ""
 
+#: u_resourcestring.sdeploymentofemergencyexit
+msgid "Deployment of emergency exit"
+msgstr ""
+
 #: u_resourcestring.sdevelopment
 msgid "DEVELOPMENT"
+msgstr ""
+
+#: u_resourcestring.sdinoraceinstructions
+msgid ""
+"Win the race against Dino !\n"
+"Don't forget to collect gas cans to refill the tank\n"
+"UP/DOWN : move up and down\n"
+"ACTION1 : speed up"
+msgstr ""
+
+#: u_resourcestring.sdinowanthug
+msgid "Oh, a friend! You freed me from this cage, I'm going to jump into your arms and give you a hug!"
+msgstr ""
+
+#: u_resourcestring.sdontbespotted
+msgid "Don't be spotted!"
+msgstr ""
+
+#: u_resourcestring.sdorsalthrusterhint
+msgid "a dorsal thruster to fly in the air"
 msgstr ""
 
 #: u_resourcestring.selevatorupgradehint
@@ -116,6 +180,14 @@ msgstr ""
 msgid "EXIT"
 msgstr ""
 
+#: u_resourcestring.sfail
+msgid "FAIL"
+msgstr ""
+
+#: u_resourcestring.sfailtoopendoortrytoopencage
+msgid "Failed to open the door. I'll open the cage, so I'll still have opened something..."
+msgstr ""
+
 #: u_resourcestring.sfirstcompleteforest
 msgid "you must first complete the pine forest!"
 msgstr ""
@@ -127,9 +199,22 @@ msgstr ""
 
 #: u_resourcestring.sforesthelptext
 msgid ""
+"Burst the balloons to prevent the wolves from climbing up.\n"
+"Keep up the rhythm until the timer runs out.\n"
 "UP/DOWN to move\n"
 "ACTION1 : bow\n"
 "ACTION2 : lightning storm"
+msgstr ""
+
+#: u_resourcestring.sfunnyatthecanteen
+msgctxt "u_resourcestring.sfunnyatthecanteen"
+msgid "Spinach in the canteen this lunchtime"
+msgstr ""
+
+#: u_resourcestring.sfunnyrunaway
+msgid ""
+"Run away, quickly!\n"
+"And don't forget to pack warm socks"
 msgstr ""
 
 #: u_resourcestring.sgamepaused
@@ -148,8 +233,24 @@ msgstr ""
 msgid "I'll take a look at this plan in the workshop and see what I can do with it. (cough)"
 msgstr ""
 
+#: u_resourcestring.sgranny
+msgid "Granny"
+msgstr ""
+
+#: u_resourcestring.sgrannyask
+msgid "Granny??"
+msgstr ""
+
 #: u_resourcestring.sgraphics
 msgid "GRAPHICS"
+msgstr ""
+
+#: u_resourcestring.sgreatnowicanpass
+msgid "Great! Now I can pass!"
+msgstr ""
+
+#: u_resourcestring.shahaha
+msgid "Hahahaha!"
 msgstr ""
 
 #: u_resourcestring.shammerexplanation
@@ -161,16 +262,78 @@ msgctxt "u_resourcestring.shammerupgradehint"
 msgid "increase number of uses"
 msgstr ""
 
+#: u_resourcestring.shey
+msgid "Hey!!"
+msgstr ""
+
 #: u_resourcestring.showtochangekey
 msgid "To change keys, click on the desired button then press the desired key"
+msgstr ""
+
+#: u_resourcestring.shug
+msgid "HUG !"
+msgstr ""
+
+#: u_resourcestring.sibetterleavethisplacequickly
+msgid ""
+"What a mess!\n"
+"I'd better leave this place quickly..."
+msgstr ""
+
+#: u_resourcestring.sihavegottofindawaytostopthismachine
+msgid "I've got to find a way to stop this machine!"
 msgstr ""
 
 #: u_resourcestring.sihavetohide
 msgid "I hear someone behind the door. quick! I have to hide!"
 msgstr ""
 
+#: u_resourcestring.silovecommingtosee
+msgid "I love coming to see Granny..."
+msgstr ""
+
+#: u_resourcestring.simisshimtoo
+msgid "I miss him too..."
+msgstr ""
+
 #: u_resourcestring.simproveequipment
 msgid "upgrade your equipment in the workshop"
+msgstr ""
+
+#: u_resourcestring.sipromisetotakegoodcare
+msgid "I promise to take good care of her when she gets older!"
+msgstr ""
+
+#: u_resourcestring.sitsalmostready
+msgid "It's almost ready, we're going to have a great meal."
+msgstr ""
+
+#: u_resourcestring.sitsalreadybeenfiveyears
+msgid "It’s already been 5 years since he left us..."
+msgstr ""
+
+#: u_resourcestring.sitshugistooheavyforme
+msgid "His hug might be too weighing for me... I think it's time to try the dorsal thruster!"
+msgstr ""
+
+#: u_resourcestring.siwonderwhatalltheserobotsarefor
+msgid "I wonder what all these robots are for... Knowing wolves, certainly not to help mankind..."
+msgstr ""
+
+#: u_resourcestring.siwonderwhatthedigicodeisfor
+msgid "I wonder what the digicode is for..."
+msgstr ""
+
+#: u_resourcestring.sjulia1
+msgid "My dear Romeo, thank you a thousand times! I made a copy of the SD card and I’m using it to reply to you. Ever since I read your message, I’ve been doing great. I care about you a lot too, and I can’t wait for us to be together again. I really hope that happens soon!"
+msgstr ""
+
+#: u_resourcestring.sjulia2
+msgid "Romeo, my darling, be careful. I’m only thinking about you too. At the lab, my boss also says I’m daydreaming... Yesterday he asked me to serve him coffee, and instead, I poured the contents of the test tube with the dinosaur droppings into his cup!"
+msgstr ""
+
+#: u_resourcestring.sjumpinmyarmgivemehug
+msgid "Jump in my arms ?! A hug ?!"
 msgstr ""
 
 #: u_resourcestring.skeyboard
@@ -181,12 +344,20 @@ msgstr ""
 msgid "LANGUAGE"
 msgstr ""
 
+#: u_resourcestring.slettryhackingitandseewhathappens
+msgid "Let's try hacking it and see what happens."
+msgstr ""
+
 #: u_resourcestring.slevel
 msgid "Level"
 msgstr ""
 
 #: u_resourcestring.slevelachieved
 msgid "Level completed"
+msgstr ""
+
+#: u_resourcestring.smachineisnotinrightaxis
+msgid "Problem detected: machine is not in its axis"
 msgstr ""
 
 #: u_resourcestring.smakethedecoderbefore
@@ -203,7 +374,9 @@ msgstr ""
 
 #: u_resourcestring.smountainpeakhelptext
 msgid ""
-"LEFT/RIGHT to move\n"
+"Avoid rocks, collect bonuses.\n"
+"Brake at the end to earn the extra bonus.\n"
+"LEFT/RIGHT : move\n"
 "ACTION1 : break"
 msgstr ""
 
@@ -215,12 +388,33 @@ msgstr ""
 msgid "MUSIC VOLUME"
 msgstr ""
 
+#: u_resourcestring.smyfriendiwintherace
+msgid "My friend, I won the race, and you... you won a hug!"
+msgstr ""
+
+#: u_resourcestring.smyfriendyouwintherace
+msgid "My friend, you won the race, and me... I won a hug!"
+msgstr ""
+
+#: u_resourcestring.snewattempt
+msgctxt "u_resourcestring.snewattempt"
+msgid "New attempt"
+msgstr ""
+
 #: u_resourcestring.snewgame
 msgid "NEW GAME"
 msgstr ""
 
 #: u_resourcestring.snextlevel
 msgid "next level"
+msgstr ""
+
+#: u_resourcestring.sno
+msgid "No"
+msgstr ""
+
+#: u_resourcestring.snocomment
+msgid "...no comment..."
 msgstr ""
 
 #: u_resourcestring.snotwaiting
@@ -231,8 +425,20 @@ msgstr ""
 msgid "OK"
 msgstr ""
 
+#: u_resourcestring.sopenarmoureddoor
+msgid "Open armoured door"
+msgstr ""
+
+#: u_resourcestring.sopencage
+msgid "Open cage"
+msgstr ""
+
 #: u_resourcestring.soptions
 msgid "OPTIONS"
+msgstr ""
+
+#: u_resourcestring.soutofgas
+msgid "OUT OF GAS"
 msgstr ""
 
 #: u_resourcestring.soutoftime
@@ -243,6 +449,10 @@ msgstr ""
 msgid "PAUSE"
 msgstr ""
 
+#: u_resourcestring.spossiblecauselackoflava
+msgid "Possible cause: lack of lava"
+msgstr ""
+
 #: u_resourcestring.spressakey
 msgid "PRESS A KEY"
 msgstr ""
@@ -251,8 +461,20 @@ msgstr ""
 msgid "price"
 msgstr ""
 
+#: u_resourcestring.sproblemsolved
+msgid "Problem solved"
+msgstr ""
+
+#: u_resourcestring.sproblemsolvedbutevacuate
+msgid "Problem solved, however it is advisable to evacuate urgently"
+msgstr ""
+
 #: u_resourcestring.squit
 msgid "QUIT"
+msgstr ""
+
+#: u_resourcestring.srapidreturntotheaxis
+msgid "Remedy: rapid return to the axis"
 msgstr ""
 
 #: u_resourcestring.sredoalevel
@@ -269,6 +491,22 @@ msgstr ""
 
 #: u_resourcestring.sridinghood
 msgid "Riding Hood"
+msgstr ""
+
+#: u_resourcestring.sromeo1
+msgid "My dear Julia, I hope you’re doing well. This SD card is the key to unlocking the big armored door in the basement. It will help you get out of here in case the volcano becomes too unstable. I’m not allowed to give it to you, so I’ve hidden it in a way that you can easily find it. I don’t want anything to happen to you; you mean a lot to me, you’re the love of my life!"
+msgstr ""
+
+#: u_resourcestring.sromeo2
+msgid "Oh my love, I’m so happy you replied! I can’t wait for us to be together again either, but I have to be careful, the boss is watching me closely. He says I’m daydreaming... It’s because I can’t stop thinking about you!"
+msgstr ""
+
+#: u_resourcestring.sslowerrobotproduction
+msgid "New problem detected: slower robot production"
+msgstr ""
+
+#: u_resourcestring.ssmellgood
+msgid "Mmm... that smells good!"
 msgstr ""
 
 #: u_resourcestring.ssmootharrivalbonus
@@ -291,6 +529,11 @@ msgstr ""
 msgid "SPACE"
 msgstr ""
 
+#: u_resourcestring.sspinachisgoodforyourhealth
+msgctxt "u_resourcestring.sspinachisgoodforyourhealth"
+msgid "Spinach are good for your health"
+msgstr ""
+
 #: u_resourcestring.sstart
 msgid "START"
 msgstr ""
@@ -302,6 +545,14 @@ msgstr ""
 #: u_resourcestring.sstormcloudupgradehint
 msgctxt "u_resourcestring.sstormcloudupgradehint"
 msgid "increase number of uses"
+msgstr ""
+
+#: u_resourcestring.ssystemintrusionalert
+msgid "SYSTEM INTRUSION ALERT!"
+msgstr ""
+
+#: u_resourcestring.ssystemmalfunctionduetohacking
+msgid "MALFUNCTION DUE TO HACKING"
 msgstr ""
 
 #: u_resourcestring.sthanks
@@ -316,8 +567,20 @@ msgstr ""
 msgid "the new story of"
 msgstr ""
 
+#: u_resourcestring.sthiscomputerhavesdcardreader
+msgid "This computer has an SD card reader, so I'll be able to read the contents of the one I've found."
+msgstr ""
+
+#: u_resourcestring.sthiscrateislockedineedakeytoopenit
+msgid "This crate is locked, I need a key to open it."
+msgstr ""
+
 #: u_resourcestring.sthisplaceisbeautiful
 msgid "This place is beautiful."
+msgstr ""
+
+#: u_resourcestring.stomuchlavaisbadforyourhealth
+msgid "Too much lava is not good for your health"
 msgstr ""
 
 #: u_resourcestring.stotal
@@ -328,8 +591,12 @@ msgstr ""
 msgid "UPGRADE"
 msgstr ""
 
-#: u_resourcestring.svoicefromthecave
-msgid "Voice from the cave"
+#: u_resourcestring.svolcanodinohelptext
+msgctxt "u_resourcestring.svolcanodinohelptext"
+msgid ""
+"LEFT/RIGHT/UP/DOWN to move\n"
+"ACTION1 : jump\n"
+"ACTION2 : use object"
 msgstr ""
 
 #: u_resourcestring.svolcanoentrancehelptext
@@ -337,25 +604,88 @@ msgid "Use mouse and click objects on the screen"
 msgstr ""
 
 #: u_resourcestring.svolcanoinnerhelptext
+msgctxt "u_resourcestring.svolcanoinnerhelptext"
 msgid ""
 "LEFT/RIGHT/UP/DOWN to move\n"
-"ACTION1 : propulsor"
+"ACTION1 : jump\n"
+"ACTION2 : use object"
+msgstr ""
+
+#: u_resourcestring.swanttoracewithme
+msgid "Me too! Want to race with me? The first to arrive gives the other a hug, right?"
+msgstr ""
+
+#: u_resourcestring.swhengrandfatherwashere
+msgid "When your grandpa was still around, we often had barbecues; he loved that!"
+msgstr ""
+
+#: u_resourcestring.swillgorightnow
+msgid "I'll go right now, Granny!"
 msgstr ""
 
 #: u_resourcestring.swolf
 msgid "Wolf"
 msgstr ""
 
+#: u_resourcestring.swolfinthecave
+msgid "Wolf in the cave"
+msgstr ""
+
 #: u_resourcestring.swolvehavewalledupcaveentrance
 msgid "The wolves have walled up the cave entrance... I've got to find a way in!"
+msgstr ""
+
+#: u_resourcestring.swolvesaredefinitelyresourceful
+msgid "Wolves are definitely resourceful!"
 msgstr ""
 
 #: u_resourcestring.sworkshop
 msgid "Workshop"
 msgstr ""
 
+#: u_resourcestring.swouldyouliketopicksomeflowers
+msgid "Would you mind picking a few flowers to decorate the table?"
+msgstr ""
+
+#: u_resourcestring.swouldyouliketoseedinoreleasesceneagain
+msgid "Would you like to see Dino's release scene again?"
+msgstr ""
+
+#: u_resourcestring.swouldyouliketotryagain
+msgid "Would you like to try again ?"
+msgstr ""
+
+#: u_resourcestring.swowamachinethatbuildsrobots
+msgid "Wow! A machine that builds robots!"
+msgstr ""
+
+#: u_resourcestring.syes
+msgid "Yes"
+msgstr ""
+
+#: u_resourcestring.syesirememberwell
+msgid "Yes, I remember well, he always took his guitar and played music for us."
+msgstr ""
+
+#: u_resourcestring.syesitseasyijumpinyourarms
+msgid "Yees! Now you are my friend and I want to give you a big hug!"
+msgstr ""
+
+#: u_resourcestring.syestimepasses
+msgid "Yes... Time flies. I miss him..."
+msgstr ""
+
+#: u_resourcestring.syoulose
+msgctxt "u_resourcestring.syoulose"
+msgid "YOU LOST"
+msgstr ""
+
 #: u_resourcestring.syoutakeaplan
 msgid "They look like manufacturing plans. You take one discreetly."
+msgstr ""
+
+#: u_resourcestring.syouwin
+msgid "YOU WIN"
 msgstr ""
 
 #: u_resourcestring.sziplinehint

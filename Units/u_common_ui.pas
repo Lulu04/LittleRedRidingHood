@@ -8,17 +8,23 @@ uses
   Classes, SysUtils,
   OGLCScene, BGRABitmap, BGRABitmapTypes;
 
+const
+  ScenarioWhiteBlink= 'TintChange 255 255 255 200 0.5 0 Linear'#10+
+                         'Wait 0.5'#10+
+                         'TintChange 255 255 255 50 0.5 0 Linear'#10+
+                         'Wait 0.5'#10+
+                         'Loop';
+  ScenarioYellowBlink= 'TintChange 255 255 100 200 0.5 0 Linear'#10+
+                       'Wait 0.5'#10+
+                       'TintChange 255 255 100 50 0.5 0 Linear'#10+
+                       'Wait 0.5'#10+
+                       'Loop';
+
 type
 
 { TImageButton }
 // IMAGE BUTTON clickable by the player. When the mouse is over, the image pulse with white color
 TImageButton = class(TUIButton)
-private const
-  sceMOUSE_ENTER='TintChange 255 255 255 200 0.5 0 Linear'#10+
-                 'Wait 0.5'#10+
-                 'TintChange 255 255 255 50 0.5 0 Linear'#10+
-                 'Wait 0.5'#10+
-                 'Loop';
 private
   FsceIDMouseEnter: TIDScenario;
   procedure DoAnimMouseEnter(Sender: TSimpleSurfaceWithEffect);
@@ -65,6 +71,30 @@ TUIPurpleCristalCounter = class(TUIItemCounter)
   constructor Create;
 end;
 
+{ TUIManufacturerPlan }
+
+TUIManufacturerPlan = class(TUIItem)
+  constructor Create;
+end;
+
+{ TUIKeyMetalCounter }
+
+TUIKeyMetalCounter = class(TUIItemCounter)
+  constructor Create;
+end;
+
+{ TUISDCardGreen }
+
+TUISDCardGreen = class(TUIItem)
+  constructor Create;
+end;
+
+{ TUIDorsalThruster }
+
+TUIDorsalThruster = class(TUIItem)
+  constructor Create;
+end;
+
 
 { TUIClock }
 
@@ -91,10 +121,13 @@ end;
 TBaseInGamePanel = class(TUIPanel)
 private
   FTotalWidth, FTotalHeight, FMarginBetweenItem: integer;
-  FLastItem: TUIItem;
+  FLastAddedItem: TUIItem;
+  procedure RecomputePanelWidth;
 protected
-  procedure AddItem(aItem: TUIItem); virtual;
   procedure ResizeAndPlaceAtTopRight;
+public
+  procedure AddItem(aItem: TUIItem); virtual;
+  procedure RemoveItem(aItem: TUIItem; aCount: integer);
 public
   constructor Create;
   property TotalWidth: integer read FTotalWidth;
@@ -109,7 +142,7 @@ private
   function GetCoinCount: integer;
   function GetSecond: integer;
   procedure SetSecond(AValue: integer);
-protected
+public
   procedure AddItem(aItem: TUIItem); override;
 public
   constructor Create;
@@ -121,6 +154,20 @@ public
   property Second: integer read GetSecond write SetSecond;
   property CoinCount: integer read GetCoinCount;
 end;
+
+
+// base class for player inventory that contain icon of owned objects
+TInGameInventoryPanel = class(TBaseInGamePanel);
+
+{ TSpriteThatGoInInventory }
+// used when LR found an object, an image of the object appears above LR and move where the inventory is on the screen.
+TSpriteThatGoInInventory = class(TSprite)
+private FCenterPtToAppear, FCenterPtToDisapear: TPointF;
+public
+  constructor Create(aIconTexture: PTexture; aLayerIndex: integer; aCenterPtToAppear, aCenterPtToDisapear: TPointF);
+  procedure ProcessMessage(UserValue: TUserMessageValue); override;
+end;
+
 
 { TInMapPanel }
 
@@ -136,6 +183,8 @@ public
   procedure BlinkIconCoin;
   procedure AddToCoinCounter(aDelta: integer);
   procedure AddToPurpleCristalCounter(aDelta: integer);
+  property CoinCounter: TUICoinCounter read FCoinCounter;
+  property PurpleCristalCounter: TUIPurpleCristalCounter read FPurpleCristalCounter;
 end;
 
 
@@ -169,19 +218,27 @@ var
   UIFontNumber: TTexturedFont;
   texCoin,
   texCristalGray,
-  texWatchBody, texWatchHand: PTexture;
+  texWatchBody, texWatchHand,
+  texIconManufacturingPlan,
+  texKeyMetal,
+  texSDCardGreen,
+  texIconDorsalThruster: PTexture;
   FontNumberCapLine: integer;
 
 // FONTS used by the game
 function CreateGameFontText(aAtlas: TOGLCTextureAtlas): TTexturedFont;
 function CreateGameFontButton(aAtlas: TOGLCTextureAtlas; const aCharSet: string): TTexturedFont;
 procedure CreateGameFontNumber(aAtlas: TOGLCTextureAtlas);
-// call AFTER CreateGameFontNumber ! Return the height for the icon in game panel
+// call AFTER CreateGameFontNumber ! Return the height for the icon in game panel inventory
 function IconHeight: integer;
 
 procedure LoadCoinTexture(aAtlas: TOGLCTextureAtlas);
 procedure LoadCristalGrayTexture(aAtlas: TOGLCTextureAtlas);
 procedure LoadWatchTexture(aAtlas: TOGLCTextureAtlas);
+procedure LoadIconManufacturingPlanTexture(aAtlas: TOGLCTextureAtlas);
+procedure LoadKeyMetalTexture(aAtlas: TOGLCTextureAtlas);
+procedure LoadSDCardTexture(aAtlas: TOGLCTextureAtlas);
+procedure LoadDorsalThrusterTexture(aAtlas: TOGLCTextureAtlas);
 
 implementation
 uses u_app, u_common, u_resourcestring, Math, Graphics, LCLType;
@@ -191,7 +248,7 @@ function CreateGameFontText(aAtlas: TOGLCTextureAtlas): TTexturedFont;
 var fd: TFontDescriptor;
 begin
   fd.Create('Arial', Round(FScene.Height/35), [], BGRA(0,0,0));
-  Result := aAtlas.AddTexturedFont(fd, SIMPLELATIN_CHARSET+LATIN1_SUPP_CHARSET+'%-+_/=!?:,.''()#&');
+  Result := aAtlas.AddTexturedFont(fd, SIMPLELATIN_CHARSET+LATIN1_SUPP_CHARSET+'%$*-+_/=!?:,.''()#&->|');
 end;
 
 function CreateGameFontButton(aAtlas: TOGLCTextureAtlas; const aCharSet: string): TTexturedFont;
@@ -229,6 +286,107 @@ procedure LoadWatchTexture(aAtlas: TOGLCTextureAtlas);
 begin
   texWatchBody := aAtlas.AddFromSVG(SpriteUIFolder+'WatchBody.svg', -1, IconHeight);
   texWatchHand := aAtlas.AddFromSVG(SpriteUIFolder+'WatchHand.svg', -1, Round(IconHeight*0.304));
+end;
+
+procedure LoadIconManufacturingPlanTexture(aAtlas: TOGLCTextureAtlas);
+begin
+  texIconManufacturingPlan := aAtlas.AddFromSVG(SpriteUIFolder+'ManufacturingPlan.svg', -1, IconHeight);
+end;
+
+procedure LoadKeyMetalTexture(aAtlas: TOGLCTextureAtlas);
+begin
+  texKeyMetal := aAtlas.AddFromSVG(SpriteUIFolder+'KeyMetal.svg', -1, IconHeight);
+end;
+
+procedure LoadSDCardTexture(aAtlas: TOGLCTextureAtlas);
+begin
+  texSDCardGreen := aAtlas.AddFromSVG(SpriteUIFolder+'SDCardGreen.svg', -1, IconHeight);
+end;
+
+procedure LoadDorsalThrusterTexture(aAtlas: TOGLCTextureAtlas);
+begin
+  texIconDorsalThruster := aAtlas.AddFromSVG(SpriteUIFolder+'DorsalThruster.svg', -1, IconHeight);
+end;
+
+{ TUIManufacturerPlan }
+
+constructor TUIManufacturerPlan.Create;
+var o: TSprite;
+begin
+  inherited Create(FScene);
+  o := TSprite.Create(texIconManufacturingPlan, False);
+  AddChild(o);
+
+  FTotalWidth := o.Width;
+  FTotalHeight := o.Height;
+end;
+
+{ TSpriteThatGoInInventory }
+
+constructor TSpriteThatGoInInventory.Create(aIconTexture: PTexture;
+  aLayerIndex: integer; aCenterPtToAppear, aCenterPtToDisapear: TPointF);
+begin
+  inherited Create(aIconTexture, False);
+  if aLayerIndex <> -1 then FScene.Add(Self, aLayerIndex);
+  FCenterPtToAppear := aCenterPtToAppear;
+  FCenterPtToDisapear := aCenterPtToDisapear;
+  PostMessage(0);
+end;
+
+procedure TSpriteThatGoInInventory.ProcessMessage(UserValue: TUserMessageValue);
+const d = 1.0;
+begin
+  case UserValue of
+    0: begin
+      SetCenterCoordinate(FCenterPtToAppear);
+      Scale.Value := PointF(1.5, 1.5);
+      Scale.ChangeTo(PointF(1,1), 0.75, idcSinusoid);
+      PostMessage(1, 0.75);
+    end;
+    1: begin
+      Scale.Value := PointF(1.5, 1.5);
+      Scale.ChangeTo(PointF(1,1), 0.75, idcSinusoid);
+      PostMessage(2, 0.75);
+    end;
+    2: begin
+      MoveCenterTo(FCenterPtToDisapear, d, idcStartSlowEndFast);
+      Opacity.ChangeTo(0, d);
+      KillDefered(d);
+    end;
+  end;
+end;
+
+{ TUIDorsalThruster }
+
+constructor TUIDorsalThruster.Create;
+var o: TSprite;
+begin
+  inherited Create(FScene);
+  o := TSprite.Create(texIconDorsalThruster, False);
+  AddChild(o);
+
+  FTotalWidth := o.Width;
+  FTotalHeight := o.Height;
+end;
+
+{ TUISDCardGreen }
+
+constructor TUISDCardGreen.Create;
+var o: TSprite;
+begin
+  inherited Create(FScene);
+  o := TSprite.Create(texSDCardGreen, False);
+  AddChild(o);
+
+  FTotalWidth := o.Width;
+  FTotalHeight := o.Height;
+end;
+
+{ TUIKeyMetalCounter }
+
+constructor TUIKeyMetalCounter.Create;
+begin
+  inherited Create(texKeyMetal, UIFontNumber, 1);
 end;
 
 { TUIPurpleCristalCounter }
@@ -304,21 +462,64 @@ end;
 procedure TBaseInGamePanel.AddItem(aItem: TUIItem);
 begin
   AddChild(aItem, 0);
-  if FLastItem = NIL then begin
+  if FLastAddedItem = NIL then begin
     aItem.SetCoordinate(FMarginBetweenItem*0.5, 0);
-    FTotalWidth := FTotalWidth + aItem.TotalWidth + Round(FMarginBetweenItem*1.5);
+//    FTotalWidth := aItem.TotalWidth + Round(FMarginBetweenItem*1.5);
   end else begin
-    aItem.SetCoordinate(FLastItem.X.Value+FLastItem.TotalWidth + FMarginBetweenItem, 0);
-    FTotalWidth := FTotalWidth + aItem.TotalWidth + FMarginBetweenItem;
+    aItem.SetCoordinate(FLastAddedItem.X.Value+FLastAddedItem.TotalWidth + FMarginBetweenItem, 0);
+//    FTotalWidth := FTotalWidth + aItem.TotalWidth + FMarginBetweenItem;
   end;
-  FLastItem := aItem;
+  FLastAddedItem := aItem;
 
   if FTotalHeight < aItem.TotalHeight then FTotalHeight := aItem.TotalHeight;
+  Visible := True;
+  ResizeAndPlaceAtTopRight;
+end;
+
+procedure TBaseInGamePanel.RemoveItem(aItem: TUIItem; aCount: integer);
+var o: TUIItemCounter;
+begin
+  if aItem = NIL then exit;
+  if aItem is TUIItemCounter then begin
+    o := aItem as TUIItemCounter;
+    if o.Count > aCount then o.Count := o.Count - aCount
+      else begin
+        if o = FLastAddedItem then FLastAddedItem := NIL;
+        RemoveChild(o);
+        o.Free;
+        ResizeAndPlaceAtTopRight;
+      end;
+  end else begin
+    if o = FLastAddedItem then FLastAddedItem := NIL;
+    RemoveChild(o);
+    o.Free;
+    ResizeAndPlaceAtTopRight;
+  end;
+end;
+
+procedure TBaseInGamePanel.RecomputePanelWidth;
+var i: integer;
+  xx: single;
+begin
+  FTotalWidth := 0;
+  xx := FMarginBetweenItem*0.5;
+  for i:=0 to ChildCount-1 do
+    if Childs[i] is TUIItem then begin
+      if i = 0 then begin
+        Childs[i].SetCoordinate(xx, 0);
+        FTotalWidth := FTotalWidth + TUIItem(Childs[i]).TotalWidth + Round(FMarginBetweenItem*1.5);
+      end else begin
+        Childs[i].SetCoordinate(xx, 0);
+        FTotalWidth := FTotalWidth + TUIItem(Childs[i]).TotalWidth + FMarginBetweenItem;
+      end;
+      xx := xx + TUIItem(Childs[i]).TotalWidth + FMarginBetweenItem;
+  end;
 end;
 
 procedure TBaseInGamePanel.ResizeAndPlaceAtTopRight;
 begin
-  FTotalWidth := FTotalWidth - Round(FMarginBetweenItem*0.5);
+  RecomputePanelWidth;
+  //FTotalWidth := FTotalWidth - Round(FMarginBetweenItem*0.5);
   BodyShape.ResizeCurrentShape(FTotalWidth, Round(FTotalHeight*1.1), False);
 
   SetCoordinate(FScene.Width-FTotalWidth, 0);
@@ -334,6 +535,10 @@ begin
   ChildClippingEnabled := False;    // clipping is not necessary
 
   FMarginBetweenItem := UIFontNumber.GetCharWidth('9');
+  FTotalWidth := 0;
+  FTotalHeight := 0;
+
+  Visible := False; // not visible until item is added
 end;
 
 { TBasePanelEndGameScore }
@@ -496,7 +701,7 @@ begin
   ChildClippingEnabled := False;
   OnAnimMouseEnter := @DoAnimMouseEnter;
   OnAnimMouseLeave := @DoAnimMouseLeave;
-  FsceIDMouseEnter := Image.AddScenario(sceMOUSE_ENTER);
+  FsceIDMouseEnter := Image.AddScenario(ScenarioWhiteBlink);
 end;
 
 { TInMapPanel }
