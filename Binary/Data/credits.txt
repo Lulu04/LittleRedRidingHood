@@ -27,13 +27,15 @@ Malloga_Ballinga_Mastered.ogg by Joe Reynolds - Professorlamp at https://opengam
 
 On The Islands.ogg,
 ForestInTheNight.ogg,
-PromenonsNous.ogg,
-GuitarAndViolin.ogg,
+PromenonsNousDansLesBois.ogg,
 CatchyMusic.ogg,
 Success1.ogg,
-suspense1.ogg,
+SuccessShort1.ogg,
+SuccessShort2.ogg,
+Lose1.ogg
 PercuLoop1.ogg,
-Emotion1Loop.ogg composed by Lulu with Reason 3.0
+Emotion1Loop.ogg,
+Tranquille.ogg composed by Lulu with Reason 3.0
 
 
 
