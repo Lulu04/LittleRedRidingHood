@@ -1,0 +1,18 @@
+**English**
+For those who don't have time to play the game, but want to get a taste of it.
+
+PINE FOREST: on the map screen, enter "nofearinforest" to unlock all levels of this game, sets all related item to their max level, +5000 coins.
+
+MOUNTAIN PEAKS: on the map screen, enter "pumpkincrash" to unlock all levels of this game, +50 purple cristals and +5000 coins.
+
+VOLCANO: at level 2 to 4, pause the game pressing the pause key (default ESC) then enter "noeyeinvolcano" to be not detectable by laser, guards and switchs.
+
+
+**Français**
+Pour ceux qui n'ont pas le temps de jouer au jeu mais veulent en avoir un aperçu.
+
+LA FORET DE PINS: sur l'écran de la carte, entrez "nofearinforest" pour déverrouiller tous les niveaux, augmenter tous les objets relatifs à ce jeu sur leur niveau max, +5000 pièces.
+
+LES PICS MONTAGNEUX: sur l'écran de la carte, entrez "pumpkincrash" pour déverrouiller tous les niveaux, +50 cristaux mauves, +5000 pieces.
+
+VOLCANO: au niveau 2 à 4, mettez le jeu en pause puis entrez "noeyeinvolcano" pour être indétectable par les lasers, les gardes et les interrupteurs au sol.
