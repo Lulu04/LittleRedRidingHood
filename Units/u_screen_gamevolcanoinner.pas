@@ -1705,7 +1705,7 @@ begin
   TIronBlock.Create(ScaleW(1463), 2, 1, rsBothSide);
   TIronBlock.Create(ScaleW(1509), 2, 1, rsBothSide);
   TIronBlock.Create(ScaleW(1555), 3, 5, rsToTheRight);
-  TIronBlock.Create(FViewArea.Right-xx, Single(ScaleH(1954)), 12, rsToTheLeft);
+  TIronBlock.Create(FViewArea.Right-xx, 3, 12, rsToTheLeft);
 
   CreateLava(-xx, FViewArea.Right, ScaleH(1007), False);
   with TLavaFallingInRobotConstructor.Create(ScaleW(1509), ScaleH(723), LAYER_GROUND) do
