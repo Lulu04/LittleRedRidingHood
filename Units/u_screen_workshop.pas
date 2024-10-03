@@ -81,6 +81,8 @@ private
 public
   constructor Create(aX, aY: single);
   function AddItem(aItemDescriptor: TUpgradableItemDescriptor; texItem: PTexture): TUpgradableItem;
+
+  procedure UpdateAllItemNeededForNextLevel;
 end;
 
 
@@ -108,6 +110,15 @@ begin
   Result.SetCoordinate(0, FCurrentY);
   Result.OnUpgradeRequest := @ScreenWorkShop.ProcessOnUpgradeRequestEvent;
   FCurrentY := FCurrentY + FItemHeight + PPIScale(10);
+end;
+
+procedure TPanelItems.UpdateAllItemNeededForNextLevel;
+var i: integer;
+begin
+  for i:=0 to ChildCount-1 do
+    if Childs[i] is TUpgradableItem then begin
+      TUpgradableItem(Childs[i]).UpdateItemNeededForNextLevel;
+    end;
 end;
 
 { TUpgradableItem }
@@ -327,8 +338,9 @@ begin
       else raise exception.create('forgot to implement this money type');
     end;
   end;
+  FPanelItem.UpdateAllItemNeededForNextLevel;
   ClearMessageList;
-  PostMessage(0);
+  PostMessage(0); // anim LR is happy
 end;
 
 procedure TScreenWorkShop.CreateObjects;
