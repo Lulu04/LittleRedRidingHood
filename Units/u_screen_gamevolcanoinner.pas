@@ -1262,6 +1262,7 @@ end;
 
 procedure TWatchRoom.ProcessMessage(UserValue: TUserMessageValue);
 var glow: TOGLCGlow;
+  r: single;
 begin
   case UserValue of
     // wolf patrols
@@ -1299,7 +1300,8 @@ begin
     102: begin    // red glow + alarm sounds
       ScreenGameVolcanoInner.FsndPercuLoop.FadeOutThenKill(1.0);
       ScreenGameVolcanoInner.FsndPercuLoop := NIL;
-      glow := TOGLCGlow.Create(FScene, texWall^.FrameWidth*0.25, BGRA(255,0,0), FX_BLEND_NORMAL);
+      r := texWall^.FrameWidth*0.25;
+      glow := TOGLCGlow.Create(FScene, r, r, BGRA(255,0,0), FX_BLEND_NORMAL);
       AddChild(glow, 1);
       glow.SetCenterCoordinate(FAlarmGlowLocation);
       glow.AddAndPlayScenario('Visible TRUE'#10+

@@ -65,6 +65,7 @@ procedure TScreenLogo.CreateObjects;
 var fd: TFontDescriptor;
   path: string;
   h: integer;
+  r: single;
 begin
   FAtlas := FScene.CreateAtlas;
   FAtlas.Spacing := 1;
@@ -94,7 +95,9 @@ begin
   FHearthText.CenterX := FScene.Width*0.5;
   FHearthText.Y.Value := FHearth.BottomY + FScene.ScaleDesignToScene(50);
 
-  FGlow := TOGLCGlow.Create(FScene, FHearth.Width*0.5, BGRA(255,255,255));
+  r := FHearth.Width*0.5;
+  FGlow := TOGLCGlow.Create(FScene, r, r, BGRA(255,255,255));
+  FGlow.Power.Value := 0.895;
   FHearth.AddChild(FGlow, -1);
   FGlow.CenterOnParent;
 
