@@ -296,6 +296,7 @@ end;
 
 constructor TBalloon.Create;
 var c: TBGRAPixel;
+  r: single;
 begin
   inherited Create(texStringBalloon, False);
   c := RandomColor;
@@ -326,7 +327,9 @@ begin
   Inflatable.BodyShape.Fill.Color := c;
   AddChild(Inflatable, 0);
 
-  Glow := TOGLCGlow.Create(FScene, Width*BALLOON_SIZE_MULTIPLICATOR*0.5{*1.3}, BGRAWhite);
+  r := Width*BALLOON_SIZE_MULTIPLICATOR*0.5{*1.3};
+  Glow := TOGLCGlow.Create(FScene, r, r, BGRAWhite);
+  Glow.Power.Value := 0.20;
   AddChild(Glow, 1);
 end;
 
@@ -338,8 +341,8 @@ begin
 end;
 
 procedure TBalloon.Update(const aElapsedTime: single);
-const coeff1 = BALLOON_SIZE_MULTIPLICATOR*0.1;
-  coeff2 = 1-coeff1-0.02;
+const coeff1 = BALLOON_SIZE_MULTIPLICATOR*0.05;
+  coeff2 = 1-coeff1-0.04;
 var oldSize: single;
 begin
   inherited Update(aElapsedTime);
