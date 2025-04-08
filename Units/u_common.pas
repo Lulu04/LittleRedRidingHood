@@ -11,7 +11,7 @@ uses
 
 const
 
-  APP_VERSION = '0.2.0';
+  APP_VERSION = '0.3.0';   // plain of the sleeping moon
 
 // Scene layers
 LAYER_COUNT = 12;

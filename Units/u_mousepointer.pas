@@ -9,7 +9,7 @@ uses
   OGLCScene, BGRABitmap, BGRABitmapTypes;
 
 procedure LoadMousePointerTexture(aAtlas: TOGLCTextureAtlas);
-procedure CustomizeMousePointer;
+procedure CustomizeMousePointer(aShowCursor: boolean=False);
 procedure FreeMousePointer;
 
 implementation
@@ -24,15 +24,14 @@ begin
   texMousePointer := aAtlas.AddFromSVG(SpriteUIFolder+'MousePointer.svg', Round(FScene.Width/30), -1);
 end;
 
-procedure CustomizeMousePointer;
+procedure CustomizeMousePointer(aShowCursor: boolean);
 begin
-  exit;
-  FScene.Mouse.SetCursorSprite(texMousePointer, False);
+  FScene.Mouse.SetCursorSprite(texMousePointer, False, PointF(0,0));
+  FScene.Mouse.MouseSprite.Visible := aShowCursor;
 end;
 
 procedure FreeMousePointer;
 begin
-  exit;
   FScene.Mouse.DeleteCursorSprite;
   FScene.Mouse.SystemMouseCursorVisible := False;
 end;

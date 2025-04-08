@@ -28,6 +28,9 @@ uses
   function SpriteGameVolcanoDinoFolder: string;
   function SpriteDinoFolder: string;
   function SpriteIntroductionFolder: string;
+  function GetFolderSpritePlainOfSleepingMoon: string;
+  function FolderSpritePlainOfSleepingMoonInside: string;
+  function SpriteGameMermaidsPort: string;
   function LanguageFolder: string;
 
   function ALSoundLibrariesSubFolder: string;
@@ -262,6 +265,61 @@ public // special volcano item
 end;
 
 
+{ TLaserGun }
+
+TLaserGun = class(TUpgradableItemDescriptor)
+  function NextLevelExplanation: string; override;
+  function PriceForNextLevel: ArrayOfMoneyDescriptor; override;
+end;
+
+{ TPlainMoonDescriptor }
+
+TPlainMoonDescriptor = class(TGameDescriptor)
+private
+  FIntroAlreadySeen,
+  FHaveLaserGun: boolean;
+  FLaserGun: TLaserGun;
+  function GetHelpText: string; override;
+private // not saved
+  FCurrentWagonIndex: integer;
+  FCurrentWagonJustDone: boolean;
+  FRemainingSeconds: integer;
+ const
+  PlainMoonStepCount = 2;  // 1=Penelope encounter  2=train game
+  LaserGunMaxLevel = 1;
+public
+  constructor Create;
+  destructor Destroy; override;
+  function SaveToString: string; override;
+  procedure LoadFromString(const s: string); override;
+public // special item and properties
+  property HaveLaserGun: boolean read FHaveLaserGun write FHaveLaserGun;
+  property LaserGun: TLaserGun read FLaserGun;
+  property IntroAlreadySeen: boolean read FIntroAlreadySeen write FIntroAlreadySeen;
+
+  property CurrentWagonIndex: integer read FCurrentWagonIndex write FCurrentWagonIndex;
+  property CurrentWagonJustDone: boolean read FCurrentWagonJustDone write FCurrentWagonJustDone;
+  property RemainingSeconds: integer read FRemainingSeconds write FRemainingSeconds;
+end;
+
+{ TMermaidsPortDescriptor }
+
+TMermaidsPortDescriptor = class(TGameDescriptor)
+private
+  function GetHelpText: string; override;
+private
+ const
+  MermaidsPortStepCount = 5;  // 1=Penelope encounter  2=train game
+public
+  constructor Create;
+  destructor Destroy; override;
+  function SaveToString: string; override;
+  procedure LoadFromString(const s: string); override;
+public // special item and properties
+
+end;
+
+
 { TPlayerInfo }
 
 TPlayerInfo = class
@@ -272,6 +330,8 @@ private
   FForest: TForestDescriptor;
   FMountainPeak: TMountainPeakDescriptor;
   FVolcano: TVolcanoDescriptor;
+  FPlainMoon: TPlainMoonDescriptor;
+  FMermaidsPort: TMermaidsPortDescriptor;
 public
   constructor Create;
   destructor Destroy; override;
@@ -285,6 +345,8 @@ public
   property Forest: TForestDescriptor read FForest;
   property MountainPeak: TMountainPeakDescriptor read FMountainPeak;
   property Volcano: TVolcanoDescriptor read FVolcano;
+  property PlainMoon: TPlainMoonDescriptor read FPlainMoon;
+  property MermaidsPort: TMermaidsPortDescriptor read FMermaidsPort;
 end;
 
 { TSaveGame }
@@ -307,6 +369,7 @@ private
   procedure SetKeyUp(AValue: byte);
   procedure SetKeyRight(AValue: byte);
   procedure SetLanguage(AValue: string);
+  function GetLanguageCharSet: string;
   procedure SetMusicVolume(AValue: single);
   procedure SetSoundVolume(AValue: single);
 public
@@ -324,6 +387,7 @@ public
 
   // languages
   property Language: string read FLanguage write SetLanguage;
+  property LanguageCharSet: string read GetLanguageCharSet;
   // audio
   property MusicVolume: single read FMusicVolume write SetMusicVolume;
   property SoundVolume: single read FSoundVolume write SetSoundVolume;
@@ -347,7 +411,6 @@ uses Forms, u_common, u_resourcestring, u_utils, LCLType, i18_utils;
 function PPIScale(AValue: integer): integer;
 begin
   Result := FScene.ScaleDesignToScene(AValue);
-  //Result := Round(FScene.ScaleDesignToScene(AValue)*0.8);
 end;
 
 function ScaleW(AValue: integer): integer;
@@ -454,6 +517,21 @@ end;
 function SpriteIntroductionFolder: string;
 begin
   Result := SpriteFolder+'Introduction'+DirectorySeparator;
+end;
+
+function GetFolderSpritePlainOfSleepingMoon: string;
+begin
+  Result := SpriteFolder+'SleepingMoonPlain'+DirectorySeparator;
+end;
+
+function FolderSpritePlainOfSleepingMoonInside: string;
+begin
+  Result := SpriteFolder+'SleepingMoonPlainInside'+DirectorySeparator;
+end;
+
+function SpriteGameMermaidsPort: string;
+begin
+  Result := SpriteFolder+'MermaidsPort'+DirectorySeparator;
 end;
 
 function LanguageFolder: string;
@@ -821,6 +899,89 @@ begin
   prop.BooleanValueOf('AnimDinoOpenCageAndDoorAlreadySeen', FAnimDinoOpenCageAndDoorAlreadySeen, False);
 end;
 
+{ TLaserGun }
+
+function TLaserGun.NextLevelExplanation: string;
+begin
+  Result := sLaserGunHint;
+end;
+
+function TLaserGun.PriceForNextLevel: ArrayOfMoneyDescriptor;
+begin
+  Result := NIL;
+end;
+
+{ TPlainMoonDescriptor }
+
+function TPlainMoonDescriptor.GetHelpText: string;
+begin
+  Result := SPlainMoonHelpText;
+end;
+
+constructor TPlainMoonDescriptor.Create;
+begin
+  inherited Create(PlainMoonStepCount);
+  FLaserGun := TLaserGun.Create(LaserGunMaxLevel, atoiFound);
+end;
+
+destructor TPlainMoonDescriptor.Destroy;
+begin
+  FLaserGun.Free;
+  FLaserGun := NIL;
+  inherited Destroy;
+end;
+
+function TPlainMoonDescriptor.SaveToString: string;
+var prop: TProperties;
+begin
+  prop.Init('!');
+  SaveCommonProperties(prop);
+  prop.Add('IntroAlreadySeen', FIntroAlreadySeen);
+  prop.Add('HaveLaserGun', FHaveLaserGun);
+  Result := prop.PackedProperty;
+end;
+
+procedure TPlainMoonDescriptor.LoadFromString(const s: string);
+var prop: TProperties;
+begin
+  prop.Split(s, '!');
+  LoadCommonProperties(prop);
+  prop.BooleanValueOf('HaveLaserGun', FHaveLaserGun, False);
+  prop.BooleanValueOf('IntroAlreadySeen', FIntroAlreadySeen, False);
+end;
+
+{ TMermaidsPortDescriptor }
+
+function TMermaidsPortDescriptor.GetHelpText: string;
+begin
+
+end;
+
+constructor TMermaidsPortDescriptor.Create;
+begin
+  inherited Create(MermaidsPortStepCount);
+end;
+
+destructor TMermaidsPortDescriptor.Destroy;
+begin
+  inherited Destroy;
+end;
+
+function TMermaidsPortDescriptor.SaveToString: string;
+var prop: TProperties;
+begin
+  prop.Init('!');
+  SaveCommonProperties(prop);
+  Result := prop.PackedProperty;
+end;
+
+procedure TMermaidsPortDescriptor.LoadFromString(const s: string);
+var prop: TProperties;
+begin
+  prop.Split(s, '!');
+  LoadCommonProperties(prop);
+end;
+
 { TMountainPeakDescriptor }
 
 function TMountainPeakDescriptor.GetHelpText: string;
@@ -974,7 +1135,6 @@ procedure TGameDescriptor.IncCurrentStep;
 begin
   if FIsTerminated then exit;
   if StepPlayed <> FCurrentStep then exit;
-  //if FCurrentStep < FStepCount then inc(FCurrentStep);
 
   inc(FCurrentStep);
   if FCurrentStep = FStepCount+1 then FIsTerminated := True;
@@ -988,6 +1148,8 @@ begin
   FForest := TForestDescriptor.Create;
   FMountainPeak := TMountainPeakDescriptor.Create;
   FVolcano := TVolcanoDescriptor.Create;
+  FPlainMoon := TPlainMoonDescriptor.Create;
+  FMermaidsPort := TMermaidsPortDescriptor.Create;
 end;
 
 destructor TPlayerInfo.Destroy;
@@ -998,6 +1160,10 @@ begin
   FMountainPeak := NIL;
   FVolcano.Free;
   FVolcano := NIL;
+  FPlainMoon.Free;
+  FPlainMoon := NIL;
+  FMermaidsPort.Free;
+  FMermaidsPort := NIL;
   inherited Destroy;
 end;
 
@@ -1011,6 +1177,8 @@ begin
   prop.Add('Forest', Forest.SaveToString);
   prop.Add('MountainPeak', MountainPeak.SaveToString);
   prop.Add('Volcano', Volcano.SaveToString);
+  prop.Add('PlainOfSleepingMoon', PlainMoon.SaveToString);
+  prop.Add('MermaidsPort', FMermaidsPort.SaveToString);
   Result := prop.PackedProperty;
 end;
 
@@ -1029,7 +1197,10 @@ begin
   MountainPeak.LoadFromString(st);
   prop.StringValueOf('Volcano', st, '');
   Volcano.LoadFromString(st);
-
+  prop.StringValueOf('PlainOfSleepingMoon', st, '');
+  PlainMoon.LoadFromString(st);
+  prop.StringValueOf('MermaidsPort', st, '');
+  MermaidsPort.LoadFromString(st);
 end;
 
 { TSaveGame }
@@ -1129,6 +1300,17 @@ procedure TSaveGame.SetLanguage(AValue: string);
 begin
   FLanguage := AValue;
   AppLang.UseLanguage(FLanguage, LanguageFolder);
+end;
+
+function TSaveGame.GetLanguageCharSet: string;
+const symbols: string='%$*-+_/=!?:,.''()#&->|←→↑↓';
+begin
+  Result := '';
+  case FLanguage of
+    'fr', 'en': Result := FScene.Charsets.SIMPLELATIN +
+                          FScene.Charsets.LATIN1_SUPPLEMENT_1 +
+                          symbols;
+  end;
 end;
 
 procedure TSaveGame.SetMusicVolume(AValue: single);

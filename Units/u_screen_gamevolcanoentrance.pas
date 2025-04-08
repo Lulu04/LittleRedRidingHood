@@ -45,7 +45,7 @@ var ScreenGameVolcanoEntrance: TScreenGameVolcanoEntrance;
 implementation
 uses Forms, LCLType, u_app, u_sprite_wolf, u_screen_workshop, u_resourcestring,
   u_sprite_def,
-  u_screen_map, u_screen_gamevolcanoinner, u_utils;
+  u_screen_map, u_screen_gamevolcanoinner, u_utils, u_mousepointer;
 
 type
 
@@ -81,8 +81,8 @@ var FAtlas: TOGLCTextureAtlas;
 function LayerPlayerSortCompare(Item1, Item2: Pointer): Integer;
 var yBottom1, yBottom2: single;
 begin
-  if Item1 = Pointer(FLR) then yBottom1 := FLR.GetYBottom else yBottom1 := TSimpleSurfaceWithEffect(Item1).ScaledBottomY;
-  if Item2 = Pointer(FLR) then yBottom2 := FLR.GetYBottom else yBottom2 := TSimpleSurfaceWithEffect(Item2).ScaledBottomY;
+  if Item1 = Pointer(FLR) then yBottom1 := FLR.BodyBottomY else yBottom1 := TSimpleSurfaceWithEffect(Item1).ScaledBottomY;
+  if Item2 = Pointer(FLR) then yBottom2 := FLR.BodyBottomY else yBottom2 := TSimpleSurfaceWithEffect(Item2).ScaledBottomY;
   Result := Trunc(yBottom1 - yBottom2);
 end;
 
@@ -166,7 +166,7 @@ procedure TScreenGameVolcanoEntrance.CreateObjects;
 var path: string;
   ima: TBGRABitmap;
   o: TSprite;
-  sky1, sky2: TMultiColorRectangle;
+  sky1, sky2: TQuad4Color;
 begin
   FGameState := gsUndefined;
   Audio.PauseMusicTitleMap;
@@ -176,7 +176,7 @@ begin
   FsndWind.Play(True);
 
   FAtlas := FScene.CreateAtlas;
-  FAtlas.Spacing := 1;
+  FAtlas.Spacing := 2;
 
   LoadLR4DirTextures(FAtlas, False);
   LoadWolfTextures(FAtlas);
@@ -207,6 +207,7 @@ begin
 
   // load arrow for button panels
   AddBlueArrowToAtlas(FAtlas);
+  LoadMousePointerTexture(FAtlas);
 
   FAtlas.TryToPack;
   FAtlas.Build;
@@ -220,12 +221,12 @@ begin
   o.SetCoordinate(ScaleW(-47), ScaleH(56));
 
   // sky
-  sky1 := TMultiColorRectangle.Create(FScene.Width div 2, (FScene.Height-ScaleH(184)) div 2);
+  sky1 := TQuad4Color.Create(FScene.Width div 2, (FScene.Height-ScaleH(184)) div 2);
   FScene.Add(sky1, LAYER_BG2);
   sky1.SetTopColors(BGRA(255,255,255,0));
   sky1.SetBottomColors(BGRA(11,166,200));
   sky1.SetCoordinate(0, ScaleH(184));
-  sky2 := TMultiColorRectangle.Create(FScene.Width div 2, (FScene.Height-ScaleH(184)) div 2);
+  sky2 := TQuad4Color.Create(FScene.Width div 2, (FScene.Height-ScaleH(184)) div 2);
   FScene.Add(sky2, LAYER_BG2);
   sky2.SetTopColors(BGRA(11,166,200));
   sky2.SetBottomColors(BGRA(11,166,200));
@@ -338,6 +339,8 @@ begin
   // pause panel
   FInGamePausePanel := TInGamePausePanel.Create(FFontText, FAtlas);
 
+  CustomizeMousePointer(True);
+
   // show how to play (one frame deferred)
   if not (PlayerInfo.Volcano.HaveDecoderPlan and not PlayerInfo.Volcano.DigicodeDecoder.Owned) then
     PostMessage(5);
@@ -345,6 +348,7 @@ end;
 
 procedure TScreenGameVolcanoEntrance.FreeObjects;
 begin
+  FreeMousePointer;
   Audio.ResumeMusicTitleMap;
   FsndWind.FadeOutThenKill(3.0);
   if FsndAlarm <> NIL then FsndAlarm.FadeOutThenKill(3.0);

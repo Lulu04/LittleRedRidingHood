@@ -34,7 +34,8 @@ sOptions='OPTIONS';
 sCredits='CREDITS';
 sQuit='QUIT';
 
-sThanks='Thank you for playing this game!';
+sThanks='Thank you for playing this game!'+LineEnding+LineEnding+
+        'Participated in some way:';
 sDevelopment='DEVELOPMENT';
 sGraphics='GRAPHICS';
 sMusics='MUSICS';
@@ -106,6 +107,8 @@ sZipLineHint='a useful zip-line to cross the mountain peaks';
 sDecoderHint='a decoder to hack digicodes';
 sDorsalThrusterHint='a dorsal thruster to fly in the air';
 
+sLaserGunHint='a laser gun effective only against machines';
+
 // hints in the panel where player choose the step of the game
 sImproveEquipment='upgrade your equipment in the workshop';
 sRedoALevel='you can redo a level to earn the end bonus';
@@ -114,6 +117,8 @@ sBuyEquipment='buy new equipment in the workshop';
 sFirstCompleteForest='you must first complete the pine forest!';
 sBuyZipLineFirst='you need to buy the zip line first!';
 sFirstCompleteMountainPeaks='you must first complete the mountain peaks!';
+sFirstCompleteVolcano='you must first complete Volcano!';
+sFirstCompletePlainMoon='you must first complete Plain of the Sleeping Moon!';
 sSorryNotYetAvailable='Sorry, this game is not yet available...';
 
 SArcadeMode='ARCADE MODE';
@@ -122,28 +127,44 @@ SAdventureMode='ADVENTURE MODE';
 // help text
 SForestHelpText='Burst the balloons to prevent the wolves from climbing up.' + LineEnding +
                 'Keep up the rhythm until the timer runs out.' + LineEnding +
-                'UP/DOWN to move' + LineEnding +
+                '↑↓ to move' + LineEnding +
                 'ACTION1 : bow' + LineEnding +
                 'ACTION2 : lightning storm';
 SMountainPeakHelpText='Avoid rocks, collect bonuses.' + LineEnding +
                       'Brake at the end to earn the extra bonus.' + LineEnding +
-                      'LEFT/RIGHT : move' + LineEnding +
+                      '←→ : move' + LineEnding +
                       'ACTION1 : break';
 SVolcanoEntranceHelpText='Use mouse and click objects on the screen';
 sDontBeSpotted='Don''t be spotted!';
-SVolcanoInnerHelpText='LEFT/RIGHT/UP/DOWN to move' + LineEnding +
+SVolcanoInnerHelpText='←→↑↓ to move' + LineEnding +
                       'ACTION1 : jump' + LineEnding +
                       'ACTION2 : use object';
-SVolcanoDinoHelpText= 'LEFT/RIGHT/UP/DOWN to move' + LineEnding +
+SVolcanoDinoHelpText= '←→↑↓ to move' + LineEnding +
                       'ACTION1 : jump' + LineEnding +
                       'ACTION2 : use object';
 sDinoRaceInstructions='Win the race against Dino !'+ LineEnding+
                       'Don''t forget to collect gas cans to refill the tank' + LineEnding +
-                      'UP/DOWN : move up and down' + LineEnding +
+                      '↑↓ : move up and down' + LineEnding +
                       'ACTION1 : speed up';
+SPlainMoonHelpText='Blow up the robots as fast as you can' + LineEnding +
+                   'Outside: ←→↑↓ to move, ACTION1 to jump, ACTION2 to fire' + LineEnding +
+                   'Inside: use the mouse to target the robots, ACTION2 to fire';
 
 sWolf='Wolf';
 sAIvoice='AI voice';
+
+// place names on the map and hints
+sWorkShopHint='home, sweet home';
+sPinForest='The pins forest';
+sPinForestHint='beware the wolf!';
+sMountainPeaks='Mountain peaks';
+sMountainPeaksHint='if you''re afraid of heights, don''t go!';
+sVolcano='Volcano';
+sVolcanoHint='lava, it''s hot...';
+sPlainOfSleepingMoon='The plain of the sleeping moon';
+sPlainOfSleepingMoonHint='it is said that on full moon nights you can hear the train whistle...';
+sMermaidsPort='The Mermaids port';
+sMermaidsPortHint='don''t forget your swimsuit!';
 
 // dialogs intro
 sGranny='Granny';
@@ -229,10 +250,62 @@ sYouWin='YOU WIN';
 sYouLose='YOU LOST';
 sOutOfGas='OUT OF GAS';
 sMyFriendYouWinTheRace='My friend, you won the race, and me... I won a hug!';
+sNowWeAreBuddyForLife='Now we''re buddies for life!';
+sThankYouDino='Thank you, Dino. I''m glad to know you. I hope we''ll meet again.';
+sIdLoveToYouCan='I''d love to! You can come and see me whenever you like.';
 sMyFriendIWinTheRace='My friend, I won the race, and you... you won a hug!';
 sHug='HUG !';
 sNoComment='...no comment...';
 sWouldYouLikeToTryAgain='Would you like to try again ?';
+
+// dialogs Plain of the sleeping moon
+sDriverVoice='Driver voice';
+sWeHaveReachedFullSpeed='We''ve reached full speed. We''ll arrive in less than ten minutes.';
+sAllRightWeWillBeOnTime='All right, we''ll be on time.';
+sATrain='A train!?';
+sIDontKnowWhereItsGoing='I don''t know where it''s going, but I have a feeling '+
+                        'it''s going to bring me closer to Granny. No time to lose!';
+sThereSomeoneOnMyTrain='There''s someone on my train!';
+sYouWhatAreYouDoingOnMyTrain='You! What are you doing on my train?';
+sIveComeForMyGrandMother='I''ve come for my grandmother, you''ve kidnapped her!... Where is she? Answer me!';
+sRelaxIDontEvenKnown='Relax, I don''t even know what you''re talking about.';
+sYouLying='You''re lying! I''m sure you know where she is!';
+sOkOkYouLookSmart='Ok, ok... You look smart, I''ll give you a challenge.';
+sTakeThis='Take this.';
+sItsALaserGun='It''s a laser pistol, harmless against humans and wolves but highly effective against robots.';
+sWhy='Why?';
+sShhIfYouManage='Shhh... If you manage to blow up my robots hiding in the carriages before the journey''s over, I''ll help you.';
+sYouWontBeAbleChangeCarriages='You won''t be able to change carriages until all the robots occupying them have been destroyed.';
+sButWhatAboutYourRobots='What about your robots? Don''t you mind losing them?';
+sOhDontWorryICanHave='Oh, don''t worry, I can have as many as I want!';
+sSoAreYouIn='So, are you in?';
+sIHaveNoChoice='I have no choice... I accept, but you have to help me afterwards, ok?';
+sIAlwaysKeepMyWord='I always keep my word.';
+sComeOnItsTime='Come on, it''s time to get started.';
+sYouveGotExactly='You''ve got exactly %d seconds and there are %d carriages: '+
+                        'if you succeed, join me on the locomotive. If you fail, '+
+                        'you''ll be ejected from the train... Good luck!';
+sIThinkIveBrokenANail='I think I''ve broken a nail...';
+sHeyIDidIt='Hey! I did it!';
+sIKnewYouCouldDoIt='I knew you could do it, congratulations!';
+sLetsLookAtTheLandscape='Let''s look at the landscape for a moment, shall we?';
+sAreYouGoingToHelpMeNow='Are you going to help me now?';
+sYesAsIToldYouIAlways='Yes, as I told you, I always keep my word.';
+sYourGrandmotherWasInvited='Your grandmother was invited by my parents.';
+sInvitedYouTiedHer='Invited?! You tied her up and took her by force!';
+sMyFatherWasInHurry='My father was in a hurry, and when he''s in a hurry, he ignores politeness...';
+sWeirdWayOfInvitingPeople='Weird way of inviting people over... What''s the hurry? What''s going on?';
+sIDontKnowAboutThatIDont='I don''t know about that. I don''t deal with my parents'' business.';
+sIfYouWantToJoinYour='If you want to join your grandmother, you''ll have to go to the castle.';
+sButHurryItsReallyUrgent='But hurry, it''s really urgent, I''ve rarely seen my parents so worried.';
+sWillTheyLeaveTheCastle='Will they leave the castle?';
+sYesThatsWhatIVaguelyHeard='Yes, that''s what I vaguely heard.';
+sOkDoYouKnownWhereICanFindABoat='Ok... Do you know where I can find a boat?';
+sNoIdeaYouAreSmart='No idea! You''re smart, you''ll find a way on your own.';
+sWeArriveAtMermaidsPort='We arrive at Mermaids Port. No one must see you. '+
+                        'As soon as the train stops, jump off and find a way to get to the island. Good luck!';
+sThankYouForYourHelp='Thank you for your help.';
+
 
 implementation
 uses OGLCScene, LazUTF8;

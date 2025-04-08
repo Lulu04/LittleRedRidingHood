@@ -9,9 +9,9 @@ uses
   OGLCScene, BGRABitmap, BGRABitmapTypes;
 
 const
-  ScenarioWhiteBlink= 'TintChange 255 255 255 200 0.5 0 Linear'#10+
+  ScenarioWhiteBlink= 'TintChange 255 255 255 100 0.5 0 Linear'#10+
                          'Wait 0.5'#10+
-                         'TintChange 255 255 255 50 0.5 0 Linear'#10+
+                         'TintChange 255 255 255 0 0.5 0 Linear'#10+
                          'Wait 0.5'#10+
                          'Loop';
   ScenarioYellowBlink= 'TintChange 255 255 100 200 0.5 0 Linear'#10+
@@ -31,6 +31,7 @@ private
   procedure DoAnimMouseLeave(Sender: TSimpleSurfaceWithEffect);
 public
   constructor Create(aTexture: PTexture);
+  procedure StopBlink;
   property sceIDMouseEnter: TIDScenario read FsceIDMouseEnter;
 end;
 
@@ -92,6 +93,12 @@ end;
 { TUIDorsalThruster }
 
 TUIDorsalThruster = class(TUIItem)
+  constructor Create;
+end;
+
+{ TUILaserGun }
+
+TUILaserGun = class(TUIItem)
   constructor Create;
 end;
 
@@ -163,9 +170,11 @@ TInGameInventoryPanel = class(TBaseInGamePanel);
 // used when LR found an object, an image of the object appears above LR and move where the inventory is on the screen.
 TSpriteThatGoInInventory = class(TSprite)
 private FCenterPtToAppear, FCenterPtToDisapear: TPointF;
+        FTargetScreen: TScreenTemplate; FUserValue: TUserMessageValue;
 public
-  constructor Create(aIconTexture: PTexture; aLayerIndex: integer; aCenterPtToAppear, aCenterPtToDisapear: TPointF);
-  procedure ProcessMessage(UserValue: TUserMessageValue); override;
+  constructor Create(aIconTexture: PTexture; aLayerIndex: integer; aCenterPtToAppear, aCenterPtToDisapear: TPointF;
+                     aTargetScreen: TScreenTemplate=NIL; aUserValue: TUserMessageValue=999999);
+  procedure ProcessMessage(aUserValue: TUserMessageValue); override;
 end;
 
 
@@ -214,6 +223,28 @@ public
 end;
 
 
+// show 3 ⯆ to inform the player where s/he must go
+
+{ TDirectionnalArrow }
+T4Direction = (d4Left, d4Right, d4Up, d4Down);
+TDirectionnalArrow = class(TSprite)
+private
+  FArrow2, FArrow3: TSprite;
+  FIsVisible: boolean;
+  FStepDuration: single;
+  FDirection: T4Direction;
+  procedure DoSetDirection;
+  procedure SetDirection(AValue: T4Direction);
+public
+  constructor Create(aDirection: T4Direction; aTexture: PTexture; aLayerIndex: integer=-1);
+  procedure ProcessMessage(UserValue: TUserMessageValue); override;
+  procedure Show;
+  procedure Hide;
+  property Direction: T4Direction read FDirection write SetDirection;
+  property StepDuration: single read FStepDuration write FStepDuration; // default is 0.3s
+end;
+
+
 var
   UIFontNumber: TTexturedFont;
   texCoin,
@@ -222,7 +253,8 @@ var
   texIconManufacturingPlan,
   texKeyMetal,
   texSDCardGreen,
-  texIconDorsalThruster: PTexture;
+  texIconDorsalThruster,
+  texIconLaserGun: PTexture;
   FontNumberCapLine: integer;
 
 // FONTS used by the game
@@ -239,6 +271,7 @@ procedure LoadIconManufacturingPlanTexture(aAtlas: TOGLCTextureAtlas);
 procedure LoadKeyMetalTexture(aAtlas: TOGLCTextureAtlas);
 procedure LoadSDCardTexture(aAtlas: TOGLCTextureAtlas);
 procedure LoadDorsalThrusterTexture(aAtlas: TOGLCTextureAtlas);
+procedure LoadLaserGunTexture(aAtlas: TOGLCTextureAtlas);
 
 implementation
 uses u_app, u_common, u_resourcestring, Math, Graphics, LCLType;
@@ -248,7 +281,7 @@ function CreateGameFontText(aAtlas: TOGLCTextureAtlas): TTexturedFont;
 var fd: TFontDescriptor;
 begin
   fd.Create('Arial', Round(FScene.Height/35), [], BGRA(0,0,0));
-  Result := aAtlas.AddTexturedFont(fd, SIMPLELATIN_CHARSET+LATIN1_SUPP_CHARSET+'%$*-+_/=!?:,.''()#&->|');
+  Result := aAtlas.AddTexturedFont(fd, FSaveGame.LanguageCharSet);
 end;
 
 function CreateGameFontButton(aAtlas: TOGLCTextureAtlas; const aCharSet: string): TTexturedFont;
@@ -308,6 +341,11 @@ begin
   texIconDorsalThruster := aAtlas.AddFromSVG(SpriteUIFolder+'DorsalThruster.svg', -1, IconHeight);
 end;
 
+procedure LoadLaserGunTexture(aAtlas: TOGLCTextureAtlas);
+begin
+  texIconLaserGun := aAtlas.AddFromSVG(SpriteUIFolder+'LaserGun.svg', -1, IconHeight);
+end;
+
 { TUIManufacturerPlan }
 
 constructor TUIManufacturerPlan.Create;
@@ -324,19 +362,22 @@ end;
 { TSpriteThatGoInInventory }
 
 constructor TSpriteThatGoInInventory.Create(aIconTexture: PTexture;
-  aLayerIndex: integer; aCenterPtToAppear, aCenterPtToDisapear: TPointF);
+  aLayerIndex: integer; aCenterPtToAppear, aCenterPtToDisapear: TPointF;
+  aTargetScreen: TScreenTemplate; aUserValue: TUserMessageValue);
 begin
   inherited Create(aIconTexture, False);
   if aLayerIndex <> -1 then FScene.Add(Self, aLayerIndex);
   FCenterPtToAppear := aCenterPtToAppear;
   FCenterPtToDisapear := aCenterPtToDisapear;
+  FTargetScreen := aTargetScreen;
+  FUserValue := aUserValue;
   PostMessage(0);
 end;
 
-procedure TSpriteThatGoInInventory.ProcessMessage(UserValue: TUserMessageValue);
+procedure TSpriteThatGoInInventory.ProcessMessage(aUserValue: TUserMessageValue);
 const d = 1.0;
 begin
-  case UserValue of
+  case aUserValue of
     0: begin
       SetCenterCoordinate(FCenterPtToAppear);
       Scale.Value := PointF(1.5, 1.5);
@@ -350,8 +391,9 @@ begin
     end;
     2: begin
       MoveCenterTo(FCenterPtToDisapear, d, idcStartSlowEndFast);
-      Opacity.ChangeTo(0, d);
+      Opacity.ChangeTo(80, d);
       KillDefered(d);
+      if FTargetScreen <> NIL then FTargetScreen.PostMessage(FUserValue, d);
     end;
   end;
 end;
@@ -367,6 +409,20 @@ begin
 
   FTotalWidth := o.Width;
   FTotalHeight := o.Height;
+end;
+
+{ TUILaserGun }
+
+constructor TUILaserGun.Create;
+var o: TSprite;
+begin
+  inherited Create(FScene);
+  o := TSprite.Create(texIconLaserGun, False);
+  AddChild(o);
+  o.Y.Value := o.Y.Value + o.Height*0.2;
+
+  FTotalWidth := o.Width;
+  FTotalHeight := o.Height + Round(o.Height*0.2);
 end;
 
 { TUISDCardGreen }
@@ -678,6 +734,86 @@ begin
   end;
 end;
 
+{ TDirectionnalArrow }
+
+procedure TDirectionnalArrow.DoSetDirection;
+begin
+  case FDirection of
+    d4Left: Angle.Value := 90;
+    d4Right: Angle.Value := -90;
+    d4Up: Angle.Value := 180;
+    d4Down: Angle.Value := 0;
+  end;
+
+  FArrow2.SetCoordinate(PointF(0, Height));
+  FArrow3.SetCoordinate(PointF(0, Height*2));
+end;
+
+procedure TDirectionnalArrow.SetDirection(AValue: T4Direction);
+begin
+  if FDirection = AValue then exit;
+  FDirection := AValue;
+  DoSetDirection;
+end;
+
+constructor TDirectionnalArrow.Create(aDirection: T4Direction;
+  aTexture: PTexture; aLayerIndex: integer);
+begin
+  inherited Create(aTexture, False);
+  if aLayerIndex <> -1 then
+    FScene.Add(Self, aLayerIndex);
+
+  FArrow2 := CreateSpriteChild(aTexture, False, 0);
+  FArrow3 := CreateSpriteChild(aTexture, False, 0);
+  FStepDuration := 0.2;
+  FDirection := aDirection;
+  DoSetDirection;
+
+  Visible := False;
+  FArrow2.Visible := False;
+  FArrow3.Visible := False;
+end;
+
+procedure TDirectionnalArrow.ProcessMessage(UserValue: TUserMessageValue);
+begin
+  case UserValue of
+    0: begin
+      Visible := True;
+      PostMessage(2, FStepDuration);
+    end;
+    2: begin
+      FArrow2.Visible := True;
+      PostMessage(4, FStepDuration);
+    end;
+    4: begin
+      FArrow3.Visible := True;
+      PostMessage(6, FStepDuration);
+    end;
+    6: begin
+      Visible := False;
+      FArrow2.Visible := False;
+      FArrow3.Visible := False;
+      PostMessage(0, FStepDuration);
+    end;
+  end;
+end;
+
+procedure TDirectionnalArrow.Show;
+begin
+  if not FIsVisible then
+    PostMessage(0);
+  FIsVisible := True;
+end;
+
+procedure TDirectionnalArrow.Hide;
+begin
+  ClearMessageList;
+  Visible := False;
+  FArrow2.Visible := False;
+  FArrow3.Visible := False;
+  FIsVisible := False;
+end;
+
 { TImageButton }
 
 procedure TImageButton.DoAnimMouseEnter(Sender: TSimpleSurfaceWithEffect);
@@ -687,8 +823,7 @@ end;
 
 procedure TImageButton.DoAnimMouseLeave(Sender: TSimpleSurfaceWithEffect);
 begin
-  Image.StopScenario(FsceIDMouseEnter);
-  Image.Tint.Alpha.ChangeTo(0, 0.5);
+  StopBlink;
 end;
 
 constructor TImageButton.Create(aTexture: PTexture);
@@ -702,6 +837,12 @@ begin
   OnAnimMouseEnter := @DoAnimMouseEnter;
   OnAnimMouseLeave := @DoAnimMouseLeave;
   FsceIDMouseEnter := Image.AddScenario(ScenarioWhiteBlink);
+end;
+
+procedure TImageButton.StopBlink;
+begin
+  Image.StopScenario(FsceIDMouseEnter);
+  Image.Tint.Alpha.ChangeTo(0, 0.5);
 end;
 
 { TInMapPanel }

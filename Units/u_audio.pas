@@ -76,7 +76,7 @@ public
   property FXReverbShort: TALSEffect read FReverbShort;
   property FXReverbLong: TALSEffect read FReverbLong;
 
-  procedure SetListenerPosition(aX, aY: single);
+  procedure SetListenerPosition(aX, aY: single; aZ: single=0.0);
   procedure ResetPositionListener;
 end;
 
@@ -325,9 +325,9 @@ begin
   end;
 end;
 
-procedure TAudioManager.SetListenerPosition(aX, aY: single);
+procedure TAudioManager.SetListenerPosition(aX, aY: single; aZ: single);
 begin
-  PlaybackContext.SetListenerPosition(aX, aY, 0.0);
+  PlaybackContext.SetListenerPosition(aX, aY, aZ);
 end;
 
 procedure TAudioManager.ResetPositionListener;

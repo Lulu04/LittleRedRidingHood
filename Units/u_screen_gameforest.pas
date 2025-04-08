@@ -59,7 +59,7 @@ end;
 
 var ScreenGameForest: TScreenGame1;
 implementation
-uses Forms, Controls, LCLType, u_app, u_screen_map, u_utils,
+uses Forms, Controls, LCLType, u_app, u_screen_map, u_utils, u_mousepointer,
   Math;
 
 { TScreenGame1 }
@@ -95,7 +95,7 @@ begin
   FMusic.FadeIn(1.0, 1.0);
 
   FAtlas := FScene.CreateAtlas;
-  FAtlas.Spacing := 1;
+  FAtlas.Spacing := 2;
 
   LoadTexturesForForestGame(FAtlas);
   LoadBaseBallonTexture(FAtlas);
@@ -114,6 +114,7 @@ begin
   FFontText := CreateGameFontText(FAtlas);
   // load arrow for button panels
   AddBlueArrowToAtlas(FAtlas);
+  LoadMousePointerTexture(FAtlas);
 
   FAtlas.TryToPack;
   FAtlas.Build;
@@ -232,7 +233,9 @@ PlayerInfo.Forest.StormCloudLevel := 3;  }
   if PlayerInfo.Forest.StormCloud.Level <> 0 then
     FStormCloud := TStormCloud.Create(FAtlas);
 
+
  // FScene.Mouse.SystemMouseCursorVisible := False;
+  CustomizeMousePointer;
 
   PostMessage(50); // (one frame deferred) show how to play and run game
 end;
@@ -240,7 +243,7 @@ end;
 procedure TScreenGame1.FreeObjects;
 var i: integer;
 begin
-FScene.LogDebug('TScreenGame1.FreeObjects BEGIN');
+  FreeMousePointer;
   FreeSoundForForestGame;
   FMusic.FadeOutThenKill(1.0);
   FMusic := NIL;
@@ -252,7 +255,6 @@ FScene.LogDebug('TScreenGame1.FreeObjects BEGIN');
   FAtlas := NIL;
   FEndGameScorePanel := NIL;
   ResetSceneCallbacks;
-FScene.LogDebug('TScreenGame1.FreeObjects END');
 end;
 
 procedure TScreenGame1.ProcessMessage(UserValue: TUserMessageValue);

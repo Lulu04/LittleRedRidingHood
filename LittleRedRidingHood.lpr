@@ -15,7 +15,9 @@ uses
   u_mousepointer, u_screen_gamemountainpeaks, u_screen_gamevolcanoentrance,
   u_sprite_lr4dir, u_screen_gamevolcanoinner, u_screen_gamevolcanodino,
   u_sprite_def, u_gamescreentemplate, u_weather_effects, u_lr4_usable_object,
-  u_utils, u_sprite_granny, u_screen_intro;
+  u_utils, u_sprite_granny, u_screen_intro, screen_gameplainmoon,
+  u_postprocessing_watermirror, u_procedural_starnest, u_ProceduralPlanet,
+  u_proceduralcloud, screen_gameplainmooninside, u_screen_gamemermaidsport;
 
 {$R *.res}
 

@@ -464,7 +464,7 @@ begin
     FPanelItem.AddItem(DorsalThruster, texDorsalThruster);
   end;
 
-  CustomizeMousePointer;
+  CustomizeMousePointer(True);
 end;
 
 procedure TScreenWorkShop.FreeObjects;

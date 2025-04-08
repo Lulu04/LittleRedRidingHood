@@ -97,7 +97,7 @@ var o: TLRFrontView;
   ima: TBGRABitmap;
   g: TGround1;
   fd: TFontDescriptor;
-  sky: TMultiColorRectangle;
+  sky: TQuad4Color;
   i, xx: integer;
   yy: single;
   t: PTexture;
@@ -143,7 +143,7 @@ begin
   ima.Free;
 
   // sky
-  sky := TMultiColorRectangle.Create(FScene.Width, FScene.Height);
+  sky := TQuad4Color.Create(FScene.Width, FScene.Height);
   sky.SetTopColors(BGRA(110,142,255));
   sky.SetBottomColors(BGRA(13,31,178)); //(BGRA(65,209,99)); //(BGRA(8,242,130));
   FScene.Add(sky, LAYER_BG2);
@@ -265,7 +265,7 @@ begin
   w.TimeMultiplicator:=1.0;
   w.State := wsIdle;
 
-  CustomizeMousePointer;
+  CustomizeMousePointer(True);
 end;
 
 procedure TScreenTitle.FreeObjects;

@@ -1033,13 +1033,13 @@ begin
     // SEARCH a possible target and shoot
     50: begin
       // suivant le niveau du stormcloud, on va tirer n éclairs. (préparer
-      // chercher les loups en mode wsFlying et crever les ballons de ceux qui sont le plus haut
+      // chercher les loups en mode wsFlyingWithBallon et crever les ballons de ceux qui sont le plus haut
       currentYValue := FScene.Height*2;
       FTargetWolf := NIL;
       for i:=0 to FScene.Layer[LAYER_WOLF].SurfaceCount-1 do
         if FScene.Layer[LAYER_WOLF].Surface[i] is TWolf then begin
           o := TWolf(FScene.Layer[LAYER_WOLF].Surface[i]);
-          if (o.State = wsFlying) and (o.Y.Value < currentYValue) then begin
+          if (o.State = wsFlyingWithBallon) and (o.Y.Value < currentYValue) then begin
             currentYValue := o.Y.Value;
             FTargetWolf := TSpriteContainer(o);
           end;

@@ -15,7 +15,7 @@ object FormMain: TFormMain
   OnKeyDown = FormKeyDown
   OnKeyUp = FormKeyUp
   OnUTF8KeyPress = FormUTF8KeyPress
-  LCLVersion = '2.2.6.0'
+  LCLVersion = '3.8.0.0'
   WindowState = wsMaximized
   object Panel1: TPanel
     Left = 127
@@ -26,6 +26,7 @@ object FormMain: TFormMain
     Anchors = [akTop, akRight]
     ClientHeight = 276
     ClientWidth = 244
+    ParentBackground = False
     TabOrder = 0
     Visible = False
     object Memo1: TMemo
@@ -48,9 +49,9 @@ object FormMain: TFormMain
     Width = 127
     Align = alClient
     BevelOuter = bvNone
-    Caption = 'Panel2'
     ClientHeight = 276
     ClientWidth = 127
+    ParentBackground = False
     TabOrder = 1
     object OpenGLControl1: TOpenGLControl
       AnchorSideLeft.Side = asrCenter

@@ -59,7 +59,7 @@ var ScreenGameVolcanoDino: TScreenGameVolcanoDino;
 implementation
 
 uses Forms, u_sprite_wolf, u_app, u_resourcestring, u_utils, u_screen_map,
-  LCLType, Math, BGRAPath, ALSound;
+  u_mousepointer, LCLType, Math, BGRAPath, ALSound;
 
 {
   -  flat
@@ -137,7 +137,7 @@ TGasJauge = class(TUIPanel)
 private
   FNozzle,
   FExclamation : TSprite;
-  FProgress: TMultiColorRectangle;
+  FProgress: TQuad4Color;
   FExclamationCanBlink: boolean;
   FPercent: single;
   function GetTankPath: TOGLCPath;
@@ -460,7 +460,7 @@ begin
   MouseInteractionEnabled := False;
   SetCoordinate(FScene.Width-Width*1.1, Height*0.1);
 
-  FProgress := TMultiColorRectangle.Create(Width, Height);
+  FProgress := TQuad4Color.Create(Width, Height);
   AddChild(FProgress, 0);
 
   FNozzle := TSprite.Create(texNozzle, False);
@@ -1263,7 +1263,7 @@ FsndRaceMusic.Volume.Value := 0.8;
   FsndEmotionMusic := NIL;
 
   FAtlas := FScene.CreateAtlas;
-  FAtlas.Spacing := 1;
+  FAtlas.Spacing := 2;
 
   AdditionnalScale := 0.8;
 
@@ -1314,6 +1314,7 @@ FsndRaceMusic.Volume.Value := 0.8;
 
   // load arrow for button panels
   AddBlueArrowToAtlas(FAtlas);
+  LoadMousePointerTexture(FAtlas);
 
   FAtlas.TryToPack;
   FAtlas.Build;
@@ -1331,8 +1332,7 @@ FsndRaceMusic.Volume.Value := 0.8;
 
   // cameras
   FCamera := FScene.CreateCamera;
-  FCamera.AssignToLayer([LAYER_DIALOG, LAYER_WEATHER, LAYER_ARROW, LAYER_PLAYER,
-   LAYER_WOLF, LAYER_FXANIM, LAYER_GROUND, LAYER_BG1, LAYER_BG2]);
+  FCamera.AssignToLayerRange(LAYER_DIALOG, LAYER_BG2);
   FCameraFollowLR := True;
 
   CreateLevel;
@@ -1373,10 +1373,13 @@ FsndRaceMusic.Volume.Value := 0.8;
     ShowGameInstructions(PlayerInfo.Volcano.HelpText); // show how to play
     FGameState := gsRunningOnGround;
   end;
+
+  CustomizeMousePointer;
 end;
 
 procedure TScreenGameVolcanoDino.FreeObjects;
 begin
+  FreeMousePointer;
   Audio.ResumeMusicTitleMap;
   if FsndDoorMotor <> NIL then FsndDoorMotor.FadeOutThenKill(1.0);
   FsndDoorMotor := NIL;
@@ -1401,8 +1404,16 @@ begin
 end;
 
 procedure TScreenGameVolcanoDino.ProcessMessage(UserValue: TUserMessageValue);
-var
-  r: TRectF;
+var r: TRectF;
+  p: TPointF;
+  procedure ShowComputerMessage(const aMess: string; aUserValue:TUSerMessageValue);
+  begin
+    r := FCamera.GetViewRect;
+    with TInfoPanel.Create(sAIvoice, aMess, FFontText, Self, aUserValue) do begin
+      CenterX := r.Left + r.Width*0.6;
+      BottomY := r.Height*0.7;
+    end;
+  end;
 begin
   case UserValue of
     // before LR use the computer
@@ -1467,8 +1478,7 @@ begin
       FCamera.Shaker.Stop;
       PostMessage(210, 0.75);
     end;
-    210: with TInfoPanel.Create(sAIvoice, sFailToOpenDoorTryToOpenCage, FFontText, Self, 218) do
-            SetCenterCoordinate(PointF(FUsableComputer.Center.x, GetCameraCenterView.y));
+    210: ShowComputerMessage(sFailToOpenDoorTryToOpenCage, 218);
 
     218: begin  // camera shift to the left to see cage and LR
       FCameraFollowLR := False;
@@ -1583,7 +1593,7 @@ begin
       FCamera.Shaker.Stop;
       FLR.MoveTo(FArmoredDoor.X.Value + FArmoredDoor.Height*0.6, FScene.Height*0.5, 1.0, idcSinusoid);
       FLRWaitInTheAir := False;
-      PostMessage(263, 0.5);
+      PostMessage(263, 1.0);
     end;
     263: begin
       FLR.SetFaceType(lrfSmile);
@@ -1757,9 +1767,9 @@ begin
       FLR.LRRight.Face.Angle.ChangeTo(-30, 1.0, idcSinusoid);
       PostMessage(518, 2.0);
     end;
-    518: FDino.ShowDialog('Maintenant, on est copain pour la vie!', FFontText, Self, 520, 0, FCamera);
-    520: FLR.ShowDialog('Merci Dino. Je suis contente de te connaître. J''espère qu''on se reverra.', FFontText, Self, 522, 0, FCamera);
-    521: FDino.ShowDialog('Moi aussi! Tu peux venir me voir quand tu voudras.', FFontText, Self, 522, 0, FCamera);
+    518: FDino.ShowDialog(sNowWeAreBuddyForLife, FFontText, Self, 520, 0, FCamera);
+    520: FLR.ShowDialog(sThankYouDino, FFontText, Self, 522, 0, FCamera);
+    521: FDino.ShowDialog(sIdLoveToYouCan, FFontText, Self, 522, 0, FCamera);
     522: begin
       FLR.LRRight.Face.Angle.ChangeTo(0, 1.5, idcSinusoid);
       PostMessage(523, 0.5);
@@ -1873,8 +1883,11 @@ begin
       FsndEarthQuakeLoop.FadeOut(2.0);
       FDino.ShowDialog(sHug, FFontText, Self, 577, 0, FCamera);
     end;
-    577: with TInfoPanel.Create(PlayerInfo.Name, sNoComment, FFontText, Self, 578, 0) do
-            SetCoordinate(FLR.X.Value+FLR.BodyHeight*0.5, FLR.Y.Value-FLR.BodyWidth);
+    577: with TInfoPanel.Create(PlayerInfo.Name, sNoComment, FFontText, Self, 578, 0) do begin
+           p := PointF(FLR.X.Value+FLR.BodyHeight*0.5, FLR.Y.Value-FLR.BodyWidth);
+           p := FCamera.WorldToControlF(p);
+           SetCoordinate(p);
+         end;
     578: DialogQuestion(sWouldYouLikeToTryAgain, sYes, sNo, FFontText, Self, 579, 580, FAtlas);
     579: FScene.RunScreen(ScreenGameVolcanoDino);
     580: FScene.RunScreen(ScreenMap);

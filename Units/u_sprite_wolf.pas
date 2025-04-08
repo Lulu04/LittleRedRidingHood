@@ -51,6 +51,7 @@ protected
 public
   MouthClose, MouthTongue, MouthHurt, MouthFalling, MouthSurprise: TSprite;
   constructor Create;
+  procedure HideAllMouth;
   procedure SetMouthClose;
   procedure SetMouthTongue;
   procedure SetMouthFalling;
@@ -61,13 +62,16 @@ end;
 //
 
 TWolfState = (wsUndefined=0, wsIdle,
-              wsFlying, wsLanding, wsWalking, wsFalling, wsSeatAndStunned,
-              wsPickingBalloon, wsInflateBalloon,
-              wsTargetedByStormCloud,
-              wsDestroyingElevator,
+              wsWalking, wsFalling, wsSeatAndStunned,
+              wsJumping,
               wsWinner, wsLoser,
-              wsTakeObjectFromGround, wsCarryingIdle, wsCarryingWalking, wsPutObjectToGround,
-              wsPissing, wsFart);
+              wsTakeObjectFromGround, wsPutObjectToGround,
+              wsCarryingIdle, wsCarryingWalking,
+              wsPissing, wsFart,
+              //  specific "pin forest" game
+              wsFlyingWithBallon, wsPickingBalloon, wsInflateBalloon,
+              wsTargetedByStormCloud, wsDestroyingElevator
+              );
 
 TFuncCheckIfLost = function(): boolean of object;
 TSimpleCallback = procedure of object;
@@ -89,7 +93,7 @@ private
   FPEPiss: TParticleEmitter;
   FsndPiss: TALSSound;
   procedure SetState(AValue: TWolfState);
-  procedure ForceIdlePosition;
+  procedure ForceIdlePosition(aImmediat: boolean=False);
   procedure ForceCarryingIdlePosition;
   procedure MoveYToSeatDown(aDuration: single);
   procedure MoveYToStandUp(aDuration: single);
@@ -100,11 +104,18 @@ private
   procedure CreatePiss;
   procedure CreateFart;
   procedure KillThePiss;
+private
+  FIsJumping: boolean;
+  FCallbackDoOnJumpMove: TCallbackDoOnJumpMove;
+  FJumpDeltaX: single;
+  procedure ProcessCallbackDoOnJumpMove(aDuration: single; aJumpStep: integer);
+private // behavior specific to mini game
+  procedure ApplyForestGameBehavior;
 protected
   procedure SetFlipH(AValue: boolean); override;
   procedure SetFlipV(AValue: boolean); override;
 public
-  // The reference point is the middle of the top of the legs
+  // The reference point is the top/center of the legs
   Head: TWolfHead;
   Abdomen, LeftArm, RightArm, LeftLeg, RightLeg, Tail, LeftLegSeat: TSprite;
   Balloon: TBalloon;
@@ -123,10 +134,42 @@ public
   property TargetElevatorEngine: TElevatorEngine read FTargetElevatorEngine write FTargetElevatorEngine;
 public // utils to control character during cinematics
   procedure WalkHorizontallyTo(aX: single; aTarget: TObject; aMessageValueWhenFinish: TUserMessageValue; aDelay: single=0);
+  procedure Idle;
+  procedure IdleLeft;
+  procedure IdleRight;
+  function IsOrientedToRight: boolean;
+  procedure Jump;
 
   procedure SetAsCarryingAnObject(aObject: TSimpleSurfaceWithEffect);
   property ObjectToCarry: TSimpleSurfaceWithEffect read FObjectToCarry write FObjectToCarry;
+  // a default routine is assigned to this callback. Change to customize the jump
+  // aJumpStep: 0=up  1=down  2=jump is done
+  property CallbackDoOnJumpMove: TCallbackDoOnJumpMove read FCallbackDoOnJumpMove write FCallbackDoOnJumpMove;
+  property IsJumping: boolean read FIsJumping;
+  // The number of pixel to shift the character when s/he jumps
+  // default value is FScene.Width*0.08
+  property JumpDeltaX: single read FJumpDeltaX write FJumpDeltaX;
   property Atlas: TOGLCTextureAtlas read FAtlas write FAtlas;
+end;
+
+
+// the sister
+
+{ TWolfPenelope }
+
+TWolfPenelope = class(TWolf)
+private
+  FShirt, FSkirt, FNavelPiercing, FNosePiercing, FRightShoe, FLeftShoe,
+  FMouth, FLashes, FHair, FPonyTail: TSprite;
+protected
+  procedure SetFlipH(AValue: boolean); override;
+  procedure SetFlipV(AValue: boolean); override;
+public
+  constructor Create(aIsForestGame: boolean; aLayerIndex: integer=LAYER_WOLF);
+  procedure ProcessMessage(UserValue: TUserMessageValue); override;
+
+  procedure SetRunMode;
+  procedure SetWalkMode;
 end;
 
 
@@ -175,10 +218,21 @@ var
   texStringBalloon,
   texPafBalloon,
 
+  texPenelopeShirt,
+  texPenelopeSkirt,
+  texPenelopeNavelPiercing,
+  texPenelopeNosePiercing,
+  texPenelopeShoe,
+  texPenelopeMouth,
+  texPenelopeLashes,
+  texPenelopeHair,
+  texPenelopePonytail,
+
   texCastle: PTexture;
 
   procedure LoadWolfTextures(aAtlas: TOGLCTextureAtlas);
   procedure LoadBaseBallonTexture(aAtlas: TOGLCTextureAtlas);
+  procedure LoadPenelopeTextures(aAtlas: TOGLCTextureAtlas);
 
 implementation
 uses u_app, BGRAPath, GeometricShapes;
@@ -220,6 +274,21 @@ begin
   texBaseBalloon := aAtlas.AddFromSVG(path+'BaseBalloon.svg', ScaleW(23), -1);
   texStringBalloon := aAtlas.AddFromSVG(path+'BalloonString.svg', -1, ScaleH(78));
   texPafBalloon := aAtlas.AddFromSVG(path+'Paf.svg', ScaleW(166), -1);
+end;
+
+procedure LoadPenelopeTextures(aAtlas: TOGLCTextureAtlas);
+var path: string;
+begin
+  path := SpriteFolder+'Wolf'+DirectorySeparator;
+  texPenelopeShirt := aAtlas.AddFromSVG(path+'PenelopeShirt.svg', ScaleW(24), -1);
+  texPenelopeSkirt := aAtlas.AddFromSVG(path+'PenelopeSkirt.svg', ScaleW(42), -1);
+  texPenelopeNavelPiercing := aAtlas.AddFromSVG(path+'PenelopeNavelPiercing.svg', ScaleW(5), -1);
+  texPenelopeNosePiercing := aAtlas.AddFromSVG(path+'PenelopeNosePiercing.svg', ScaleW(5), -1);
+  texPenelopeShoe := aAtlas.AddFromSVG(path+'PenelopeShoe.svg', ScaleW(34), -1);
+  texPenelopeMouth := aAtlas.AddFromSVG(path+'PenelopeMouth.svg', ScaleW(26), -1);
+  texPenelopeLashes := aAtlas.AddFromSVG(path+'PenelopeLashes.svg', ScaleW(38), -1);
+  texPenelopeHair := aAtlas.AddFromSVG(path+'PenelopeHair.svg', ScaleW(49), -1);
+  texPenelopePonytail := aAtlas.AddFromSVG(path+'PenelopePonytail.svg', ScaleW(16), -1);
 end;
 
 
@@ -327,9 +396,8 @@ begin
   Inflatable.BodyShape.Fill.Color := c;
   AddChild(Inflatable, 0);
 
-  r := Width*BALLOON_SIZE_MULTIPLICATOR*0.5{*1.3};
+  r := Width*BALLOON_SIZE_MULTIPLICATOR*0.25{*1.3};
   Glow := TOGLCGlow.Create(FScene, r, r, BGRAWhite);
-  Glow.Power.Value := 0.20;
   AddChild(Glow, 1);
 end;
 
@@ -341,8 +409,6 @@ begin
 end;
 
 procedure TBalloon.Update(const aElapsedTime: single);
-const coeff1 = BALLOON_SIZE_MULTIPLICATOR*0.05;
-  coeff2 = 1-coeff1-0.04;
 var oldSize: single;
 begin
   inherited Update(aElapsedTime);
@@ -360,8 +426,7 @@ begin
   Inflatable.BottomY := -BaseBalloon.Height;
 
   Glow.SetCenterCoordinate(Inflatable.X.Value+Inflatable.Width*0.3, Inflatable.Y.Value+Inflatable.Width*0.3);
- // Glow.Power.Value := 0.6 + 0.38*(FSize.Value/BALLOON_SIZE_MULTIPLICATOR);
-  Glow.Power.Value := coeff1 + coeff2*(FSize.Value/BALLOON_SIZE_MULTIPLICATOR);
+  Glow.SetSize(Inflatable.Width div 2, Inflatable.Width div 2);
 end;
 
 procedure TBalloon.ProcessMessage(UserValue: TUserMessageValue);
@@ -460,28 +525,42 @@ begin
   AddChild(MouthClose);
   MouthClose.SetCenterCoordinate(Width*0.6, Height*0.85);
   MouthClose.ApplySymmetryWhenFlip := True;
+  MouthClose.Freeze := True;
 
   MouthTongue := TSprite.Create(texWolfMouthTongue, False);
   AddChild(MouthTongue);
   MouthTongue.SetCenterCoordinate(Width*0.50, Height*0.945);
   MouthTongue.ApplySymmetryWhenFlip := True;
+  MouthTongue.Freeze := True;
 
   MouthHurt := TSprite.Create(texWolfMouthHurt, False);
   AddChild(MouthHurt);
   MouthHurt.CenterX := Width*0.55;
   MouthHurt.Y.Value := Height*0.86;
   MouthHurt.ApplySymmetryWhenFlip := True;
+  MouthHurt.Freeze := True;
 
   MouthFalling := TSprite.Create(texWolfMouthFalling, False);
   AddChild(MouthFalling);
   MouthFalling.CenterX := Width*0.55;
   MouthFalling.Y.Value := Height*0.86;
   MouthFalling.ApplySymmetryWhenFlip := True;
+  MouthFalling.Freeze := True;
 
   MouthSurprise := TSprite.Create(texWolfMouthSurprise, False);
   AddChild(MouthSurprise);
   MouthSurprise.SetCenterCoordinate(Width*0.6, Height*0.85);
   MouthSurprise.ApplySymmetryWhenFlip := True;
+  MouthSurprise.Freeze := True;
+end;
+
+procedure TWolfHead.HideAllMouth;
+begin
+  MouthClose.Visible := False;
+  MouthTongue.Visible := False;
+  MouthHurt.Visible := False;
+  MouthFalling.Visible := False;
+  MouthSurprise.Visible := False;
 end;
 
 procedure TWolfHead.SetMouthClose;
@@ -532,9 +611,9 @@ end;
 { TWolf }
 
 procedure TWolf.SetState(AValue: TWolfState);
-var v: single;
 begin
   if FState = AValue then Exit;
+  if (AValue = wsJumping) and FIsJumping then exit;
 
   if FState = wsSeatAndStunned then MoveYToStandUp(0.5);
 
@@ -554,7 +633,7 @@ begin
       PostMessage(100);
       PostMessage(102);
     end;
-    wsFlying: begin
+    wsFlyingWithBallon: begin
       Speed.y.ChangeTo(FScene.ScaleDesignToSceneF(-40-random*20), 1, idcSinusoid);
       PostMessage(200);
       PostMessage(202);
@@ -574,9 +653,8 @@ begin
     end;
 
     wsWalking, wsCarryingWalking: begin
-      v := FScene.ScaleDesignToSceneF(90+(90*(1-TimeMultiplicator)));
-      if not FFlipH then Speed.x.ChangeTo(-v, TimeMultiplicator, idcSinusoid)
-        else Speed.x.ChangeTo(v, TimeMultiplicator, idcSinusoid);
+      if not FFlipH then Speed.x.ChangeTo(-WalkSpeed, TimeMultiplicator, idcSinusoid)
+        else Speed.x.ChangeTo(WalkSpeed, TimeMultiplicator, idcSinusoid);
       PostMessage(300);
     end;
 
@@ -624,22 +702,30 @@ begin
     wsFart: begin
       PostMessage(780);
     end;
+
+    wsJumping: begin
+      FIsJumping := True;
+      Speed.Value := PointF(0, 0);
+      PostMessage(850);
+    end;
   end;
 end;
 
-procedure TWolf.ForceIdlePosition;
+procedure TWolf.ForceIdlePosition(aImmediat: boolean);
+var d: single;
 begin
+  if aImmediat then d := 0.0 else d := 1.0;
   Speed.Value := PointF(0,0);
   Head.SetMouthClose;
-  Head.Angle.ChangeTo(0, 1, idcSinusoid);
+  Head.Angle.ChangeTo(0, d, idcSinusoid);
   Head.Frame := 1;
-  Abdomen.Angle.ChangeTo(0, 1, idcSinusoid);
-  LeftArm.Angle.ChangeTo(60, 1, idcSinusoid);
-  RightArm.Angle.ChangeTo(-28, 1, idcSinusoid);
-  LeftLeg.Angle.ChangeTo(0, 1, idcSinusoid);
-  RightLeg.Angle.ChangeTo(0, 1, idcSinusoid);
-  Tail.Angle.ChangeTo(0, 1, idcSinusoid);
-  LeftLegSeat.Angle.ChangeTo(0, 1, idcSinusoid);
+  Abdomen.Angle.ChangeTo(0, d, idcSinusoid);
+  LeftArm.Angle.ChangeTo(60, d, idcSinusoid);
+  RightArm.Angle.ChangeTo(-28, d, idcSinusoid);
+  LeftLeg.Angle.ChangeTo(0, d, idcSinusoid);
+  RightLeg.Angle.ChangeTo(0, d, idcSinusoid);
+  Tail.Angle.ChangeTo(0, d, idcSinusoid);
+  LeftLegSeat.Angle.ChangeTo(0, d, idcSinusoid);
   LeftLegSeat.Visible := False;
   LeftLeg.Visible := True;
   // kill the 'piss' if any
@@ -768,6 +854,106 @@ begin
   end;
 end;
 
+procedure TWolf.ApplyForestGameBehavior;
+var o: TSimpleSurfaceWithEffect;
+  xx: single;
+begin
+  if (State = wsFlyingWithBallon) then begin
+    // check if balloon collide with an arrow
+    if Balloon.BalloonCollideWithArrow then begin
+      if Balloon <> NIL then begin
+        Balloon.Explode;
+        Balloon := NIL;
+        FOnBalloonExplode();
+      end;
+      State := wsFalling;
+    end else
+    // check if the wolf is at the top of the screen
+      if Y.Value+DeltaYToBottom <= FYGroundAtTheTopOfTheScreen then begin
+      // anim balloon disappear in the sky
+      if Balloon <> NIL then begin
+        Balloon.MoveFromChildToScene(LAYER_FXANIM);
+        Balloon.Speed.y.Value := Speed.y.Value;
+        Balloon.Angle.ChangeTo(0, 1, idcSinusoid);
+        Balloon.PostMessage(100);
+      end;
+
+      Speed.Y.Value := 0;
+      Y.ChangeTo(FYGroundAtTheTopOfTheScreen-DeltaYToBottom, 0.5, idcSinusoid);
+      if TargetElevatorEngine.Breaked then State := wsWinner
+        else State := wsWalking;
+    end;
+  end;
+
+  if State = wsFalling then begin
+    // check if there is a ground below the wolf
+    if Y.Value+DeltaYToBottom >= FYGroundAtBottomOfTheScreen then begin
+      Speed.y.Value := 0;
+      Y.Value := FYGroundAtBottomOfTheScreen-DeltaYToBottom;
+      State := wsSeatAndStunned;
+    end;
+  end;
+
+  if State = wsWalking then begin
+    // reverse direction on the left/right bounds of the scene
+    if ((X.Value-Head.Width*0.5 <= 0) and not FFlipH) or
+       ((X.Value+Head.Width*0.5 >= FScene.Width) and FFlipH) then begin
+         SetFlipH(not FlipH);
+         Speed.x.Value := -Speed.x.Value;
+       end;
+
+    // check if there is a balloon crate in front of the wolf
+    if not FFlipH then xx := X.Value-texBalloonCrate^.FrameWidth*0.6
+      else xx := X.Value-texBalloonCrate^.FrameWidth*1.3;
+    o := FParentScene.Layer[LAYER_FXANIM].CollisionTest(xx, Y.Value, 1, 10);
+    if (o is TBalloonCrate) and not TBalloonCrate(o).Busy then begin
+      FUsedBalloonCrate := TBalloonCrate(o);
+      FUsedBalloonCrate.Busy := True;
+      if FFlipH then SetFlipH(False);
+      Speed.Value := PointF(0, 0);
+      ForceIdlePosition;
+      State := wsPickingBalloon;
+    end;
+
+    // check if there is the elevator engine in front of the wolf
+    if not FFlipH then xx := X.Value - Abdomen.Width*1 - texMotorBody^.FrameWidth
+      else xx := X.Value + Abdomen.Width*1.1 + texMotorBody^.FrameWidth;
+    o := FParentScene.Layer[LAYER_FXANIM].CollisionTest(xx, Y.Value-texMotorBody^.FrameHeight*0.5, texMotorBody^.FrameWidth*0.1, texMotorBody^.FrameHeight);
+    if (o is TElevatorEngine) then begin
+      ForceIdlePosition;
+      State := wsDestroyingElevator;
+    end;
+  end;
+
+  if FState = wsInflateBalloon then begin
+    // check if the balloon is inflated
+    if Balloon.InflateTerminated then begin
+      FUsedBalloonCrate.Busy := False;
+      FUsedBalloonCrate := NIL;
+      State := wsFlyingWithBallon;
+    end;
+  end;
+
+  // check if elevator is destroyed -> wolf win
+  if (TargetElevatorEngine <> NIL) and TargetElevatorEngine.Breaked and
+    (FState in [wsIdle, wsWalking, wsDestroyingElevator, wsPickingBalloon, wsInflateBalloon]) then begin
+    KillBalloon;
+    State := wsWinner;
+  end;
+
+  // check if wolf lose
+  if (FOnCheckIfLost <> NIL) and FOnCheckIfLost() then begin
+    if FState in [wsIdle, wsWalking, wsDestroyingElevator, wsPickingBalloon, wsInflateBalloon] then begin
+      KillBalloon;
+      State := wsLoser;
+    end else if FState = wsFlyingWithBallon then begin
+      Balloon.Explode;
+      Balloon := NIL;
+      State := wsFalling;
+    end;
+  end;
+end;
+
 procedure TWolf.SetFlipH(AValue: boolean);
 begin
   if FObjectToCarry <> NIL then FObjectToCarry.FlipH := AVAlue;
@@ -818,6 +1004,50 @@ begin
   end else PostMessageToTargetObject(aTarget, aMessageValueWhenFinish, aDelay);
 end;
 
+procedure TWolf.Idle;
+begin
+  ForceIdlePosition(False);
+end;
+
+procedure TWolf.ProcessCallbackDoOnJumpMove(aDuration: single; aJumpStep: integer);
+var v: single;
+begin
+  if IsOrientedToRight then v := 1 else v := -1;
+  case aJumpStep of
+    0: begin  // up
+      Y.ChangeTo(Y.Value - FScene.Height*0.1, aDuration, idcStartFastEndSlow);
+      X.ChangeTo(X.Value + FJumpDeltaX*v, aDuration, idcLinear);
+    end;
+    1: begin  // down
+      Y.ChangeTo(Y.Value + FScene.Height*0.1, aDuration, idcStartSlowEndFast);// idcStartFastEndSlow);
+      X.ChangeTo(X.Value + FJumpDeltaX*v, aDuration, idcLinear);
+    end;
+    2: FState := wsIdle;
+  end;
+end;
+
+procedure TWolf.IdleLeft;
+begin
+  SetFlipH(False);
+  State := wsIdle;
+end;
+
+procedure TWolf.IdleRight;
+begin
+  SetFlipH(True);
+  State := wsIdle;
+end;
+
+function TWolf.IsOrientedToRight: boolean;
+begin
+  Result := FlipH;
+end;
+
+procedure TWolf.Jump;
+begin
+  State := wsJumping;
+end;
+
 procedure TWolf.SetAsCarryingAnObject(aObject: TSimpleSurfaceWithEffect);
 begin
   FObjectToCarry := aObject;
@@ -833,7 +1063,12 @@ begin
   inherited Create(FScene);
   if aLayerIndex <> -1 then
     FScene.Add(Self, aLayerIndex);
+
   TimeMultiplicator := 1.0;
+  WalkSpeed := FScene.ScaleDesignToSceneF(90+(90*(1-TimeMultiplicator)));
+  JumpDeltaX := FScene.Width*0.08;
+  FCallbackDoOnJumpMove := @ProcessCallbackDoOnJumpMove;
+
   FIsForestGame := aIsForestGame;
 
   LeftLeg := CreateChildSprite(texWolfLeftLeg, 0);
@@ -895,107 +1130,10 @@ begin
 end;
 
 procedure TWolf.Update(const aElapsedTime: single);
-var o: TSimpleSurfaceWithEffect;
-  xx: single;
 begin
   inherited Update(aElapsedTime);
-  if not FIsForestGame then exit;
 
-  if (State = wsFlying) then begin
-    // check if balloon collide with an arrow
-    if Balloon.BalloonCollideWithArrow then begin
-      if Balloon <> NIL then begin
-        Balloon.Explode;
-        Balloon := NIL;
-        FOnBalloonExplode();
-      end;
-      State := wsFalling;
-    end else
-    // check if the wolf is at the top of the screen
-      if Y.Value+DeltaYToBottom <= FYGroundAtTheTopOfTheScreen then begin
-      // anim balloon disappear in the sky
-      if Balloon <> NIL then begin
-        Abdomen.RemoveChild(Balloon);
-        FScene.Add(Balloon, LAYER_FXANIM);
-        Balloon.Speed.y.Value := Speed.y.Value;
-        Balloon.Angle.ChangeTo(0, 1, idcSinusoid);
-        Balloon.PostMessage(100);
-      end;
-
-      Speed.Y.Value := 0;
-      Y.ChangeTo(FYGroundAtTheTopOfTheScreen-DeltaYToBottom, 0.5, idcSinusoid);
-      if TargetElevatorEngine.Breaked then State := wsWinner
-        else State := wsWalking;
-    end;
-  end;
-
-  if State = wsFalling then begin
-    // check if there is a ground below the wolf
-    if Y.Value+DeltaYToBottom >= FYGroundAtBottomOfTheScreen then begin
-      Speed.y.Value := 0;
-      Y.Value := FYGroundAtBottomOfTheScreen-DeltaYToBottom;
-      State := wsSeatAndStunned;
-    end;
-  end;
-
-  if State = wsWalking then begin
-    // reverse direction on the left/right bounds of the scene
-    if ((X.Value-Head.Width*0.5 <= 0) and not FFlipH) or
-       ((X.Value+Head.Width*0.5 >= FScene.Width) and FFlipH) then begin
-         SetFlipH(not FlipH);
-         Speed.x.Value := -Speed.x.Value;
-       end;
-
-    // check if there is a balloon crate in front of the wolf
-    if not FFlipH then xx := X.Value-texBalloonCrate^.FrameWidth*0.6
-      else xx := X.Value-texBalloonCrate^.FrameWidth*1.3;
-    o := FParentScene.Layer[LAYER_FXANIM].CollisionTest(xx, Y.Value, 1, 10);
-    if (o is TBalloonCrate) and not TBalloonCrate(o).Busy then begin
-      FUsedBalloonCrate := TBalloonCrate(o);
-      FUsedBalloonCrate.Busy := True;
-      if FFlipH then SetFlipH(False);
-      Speed.Value := PointF(0, 0);
-      ForceIdlePosition;
-      State := wsPickingBalloon;
-    end;
-
-    // check if there is the elevator engine in front of the wolf
-    if not FFlipH then xx := X.Value - Abdomen.Width*1 - texMotorBody^.FrameWidth
-      else xx := X.Value + Abdomen.Width*1.1 + texMotorBody^.FrameWidth;
-    o := FParentScene.Layer[LAYER_FXANIM].CollisionTest(xx, Y.Value-texMotorBody^.FrameHeight*0.5, texMotorBody^.FrameWidth*0.1, texMotorBody^.FrameHeight);
-    if (o is TElevatorEngine) then begin
-      ForceIdlePosition;
-      State := wsDestroyingElevator;
-    end;
-  end;
-
-  if FState = wsInflateBalloon then begin
-    // check if the balloon is inflated
-    if Balloon.InflateTerminated then begin
-      FUsedBalloonCrate.Busy := False;
-      FUsedBalloonCrate := NIL;
-      State := wsFlying;
-    end;
-  end;
-
-  // check if elevator is destroyed -> wolf win
-  if (TargetElevatorEngine <> NIL) and TargetElevatorEngine.Breaked and
-    (FState in [wsIdle, wsWalking, wsDestroyingElevator, wsPickingBalloon, wsInflateBalloon]) then begin
-    KillBalloon;
-    State := wsWinner;
-  end;
-
-  // check if wolf lose
-  if (FOnCheckIfLost <> NIL) and FOnCheckIfLost() then begin
-    if FState in [wsIdle, wsWalking, wsDestroyingElevator, wsPickingBalloon, wsInflateBalloon] then begin
-      KillBalloon;
-      State := wsLoser;
-    end else if FState = wsFlying then begin
-      Balloon.Explode;
-      Balloon := NIL;
-      State := wsFalling;
-    end;
-  end;
+  if FIsForestGame then ApplyForestGameBehavior;
 end;
 
 procedure TWolf.ProcessMessage(UserValue: TUserMessageValue);
@@ -1084,59 +1222,59 @@ begin
       PostMessage(102, 0.3);
     end;
 
-    // STATE FLYING
+    // STATE FLYING WITH BALLON
     200: begin         // legs
-      if FState <> wsFlying then exit;
+      if FState <> wsFlyingWithBallon then exit;
       RightLeg.Angle.ChangeTo(0, 0.4, idcSinusoid);
       LeftLeg.Angle.ChangeTo(5, 0.4, idcSinusoid);
       PostMessage(201, 0.4);
     end;
     201: begin
-      if FState <> wsFlying then exit;
+      if FState <> wsFlyingWithBallon then exit;
       RightLeg.Angle.ChangeTo(10, 0.4, idcSinusoid);
       LeftLeg.Angle.ChangeTo(-5, 0.4, idcSinusoid);
       PostMessage(200, 0.4);
     end;
     202: begin         // abdomen
-      if FState <> wsFlying then exit;
+      if FState <> wsFlyingWithBallon then exit;
       Abdomen.Angle.ChangeTo(20, 2, idcSinusoid);
       PostMessage(203, 2);
     end;
     203: begin
-      if FState <> wsFlying then exit;
+      if FState <> wsFlyingWithBallon then exit;
       Abdomen.Angle.ChangeTo(10, 2, idcSinusoid);
       PostMessage(202, 2);
     end;
     204: begin         // balloon
-      if FState <> wsFlying then exit;
+      if FState <> wsFlyingWithBallon then exit;
       Balloon.Angle.ChangeTo(-25, 2, idcSinusoid);
       PostMessage(205, 2);
     end;
     205: begin
-      if FState <> wsFlying then exit;
+      if FState <> wsFlyingWithBallon then exit;
       Balloon.Angle.ChangeTo(-5, 2, idcSinusoid);
       PostMessage(204, 2);
     end;
     206: begin        // tail
-      if FState <> wsFlying then exit;
+      if FState <> wsFlyingWithBallon then exit;
       d := random*0.5+0.5;
       Tail.Angle.ChangeTo(-3-random*8, d, idcSinusoid);
       PostMessage(207, d);
     end;
     207: begin
-      if FState <> wsFlying then exit;
+      if FState <> wsFlyingWithBallon then exit;
       d := random*0.5+0.5;
       Tail.Angle.ChangeTo(3+random*4, d, idcSinusoid);
       PostMessage(206, d);
     end;
     208: begin       // head
-      if FState <> wsFlying then exit;
+      if FState <> wsFlyingWithBallon then exit;
       d := random*2+1;
       Head.Angle.ChangeTo(-random*10-10, d, idcSinusoid);
       PostMessage(209, d+random*2);
     end;
     209: begin
-      if FState <> wsFlying then exit;
+      if FState <> wsFlyingWithBallon then exit;
       d := random*2+1;
       Head.Angle.ChangeTo(-random*10, d, idcSinusoid);
       PostMessage(208, d+random*2);
@@ -1203,8 +1341,8 @@ begin
     300: begin
       if not (FState in [wsWalking, wsCarryingWalking]) then exit;
       d := 0.5*TimeMultiplicator;
-      LeftLeg.Angle.ChangeTo(-40, d, idcExtend);      //idcSinusoid
-      RightLeg.Angle.ChangeTo(15, d, idcExtend);
+      LeftLeg.Angle.ChangeTo(-24, d, idcDrop);      //idcSinusoid   -40   idcExtend    idcDrop
+      RightLeg.Angle.ChangeTo(15, d, idcDrop);
       Abdomen.Angle.ChangeTo(-3, d, idcSinusoid);
       Head.Angle.ChangeTo(2, d, idcSinusoid);
       if FState = wsWalking then begin
@@ -1216,8 +1354,8 @@ begin
     301: begin
       if not (FState in [wsWalking, wsCarryingWalking]) then exit;
       d := 0.5*TimeMultiplicator;
-      LeftLeg.Angle.ChangeTo(20, d, idcExtend);
-      RightLeg.Angle.ChangeTo(-60, d, idcExtend);  //idcSinusoid
+      LeftLeg.Angle.ChangeTo(20, d, idcDrop);
+      RightLeg.Angle.ChangeTo(-60, d, idcDrop);  //idcSinusoid   idcExtend
       Abdomen.Angle.ChangeTo(3, d, idcSinusoid);
       Head.Angle.ChangeTo(-2, d, idcSinusoid);
       if FState = wsWalking then begin
@@ -1296,7 +1434,7 @@ begin
       if FState <> wsPutObjectToGround then exit;
       d := 1.0*TimeMultiplicator;
       FObjectToCarry.MoveFromChildToScene(LAYER_ARROW);
-      FObjectToCarry.Y.ChangeTo(GetYBottom-FObjectToCarry.Height, d, idcSinusoid);
+      FObjectToCarry.Y.ChangeTo(BodyBottomY-FObjectToCarry.Height, d, idcSinusoid);
       FObjectToCarry.X.ChangeTo(X.Value-FObjectToCarry.Width, d, idcSinusoid);
       FObjectToCarry := NIL;
       Abdomen.Angle.ChangeTo(-45, d, idcSinusoid);
@@ -1337,7 +1475,162 @@ begin
       Tail.Angle.ChangeTo(0, d, idcSinusoid);
       FState := wsPissing;
     end;
+
+  // 800 to 820 used by Penelope ponytail
+
+    // JUMP ANIM
+    850: begin
+      // start position
+      Abdomen.Angle.Value := -20;
+
+      // in air
+      d := TimeMultiplicator*0.625; //0.5;
+      Abdomen.Angle.ChangeTo(17, d);
+      LeftArm.Angle.ChangeTo(0, d);
+      RightArm.Angle.ChangeTo(0, d);
+      LeftLeg.Angle.ChangeTo(-20, d);
+      RightLeg.Angle.ChangeTo(-30, d);
+      FCallbackDoOnJumpMove(d, 0);
+      PostMessage(851, d);
+    end;
+    851: begin
+      d := TimeMultiplicator*0.625; //0.5;
+      Abdomen.Angle.ChangeTo(17, d, idcStartSlowEndFast);
+      LeftArm.Angle.ChangeTo(0, d, idcStartSlowEndFast);
+      RightArm.Angle.ChangeTo(0, d, idcStartSlowEndFast);
+      LeftLeg.Angle.ChangeTo(-20, d, idcStartSlowEndFast);
+      RightLeg.Angle.ChangeTo(-30, d, idcStartSlowEndFast);
+      FCallbackDoOnJumpMove(d, 1);
+      PostMessage(852, d);
+    end;
+    852: begin
+      FIsJumping := False;
+      ForceIdlePosition(True);
+      FCallbackDoOnJumpMove(0, 2);
+      State := wsIdle;
+    end;
+  end;//case
+end;
+
+{ TWolfPenelope }
+
+procedure TWolfPenelope.SetFlipH(AValue: boolean);
+begin
+  inherited SetFlipH(AValue);
+  FShirt.FlipH := AValue;
+  FSkirt.FlipH := AValue;
+  FNavelPiercing.FlipH := AValue;
+  FNosePiercing.FlipH := AValue;
+  FRightShoe.FlipH := AValue;
+  FLeftShoe.FlipH := AValue;
+  FMouth.FlipH := AValue;
+  FLashes.FlipH := AValue;
+  FHair.FlipH := AValue;
+  FPonyTail.FlipH := AValue;
+end;
+
+procedure TWolfPenelope.SetFlipV(AValue: boolean);
+begin
+  inherited SetFlipV(AValue);
+  FShirt.FlipV := AValue;
+  FSkirt.FlipV := AValue;
+  FNavelPiercing.FlipV := AValue;
+  FNosePiercing.FlipV := AValue;
+  FRightShoe.FlipV := AValue;
+  FLeftShoe.FlipV := AValue;
+  FMouth.FlipV := AValue;
+  FLashes.FlipV := AValue;
+  FHair.FlipV := AValue;
+  FPonyTail.FlipV := AValue;
+end;
+
+constructor TWolfPenelope.Create(aIsForestGame: boolean; aLayerIndex: integer);
+begin
+  inherited Create(aIsForestGame, aLayerIndex);
+  DialogAuthorName := 'Penelope';
+  // add shirt
+  FShirt := TSprite.Create(texPenelopeShirt, False);
+  Abdomen.AddChild(FShirt, 2);
+  FShirt.SetCoordinate(Abdomen.Width*0.1, Abdomen.Height*0.4);
+  FShirt.ApplySymmetryWhenFlip := True;
+  // add skirt
+  FSkirt := TSprite.Create(texPenelopeSkirt, False);
+  Abdomen.AddChild(FSkirt, 2);
+  FSkirt.SetCoordinate(-FSkirt.Width*0.02, Abdomen.Height-FSkirt.Height*0.6);
+  FSkirt.ApplySymmetryWhenFlip := True;
+  // add navel piercing
+  FNavelPiercing := TSprite.Create(texPenelopeNavelPiercing, False);
+  Abdomen.AddChild(FNavelPiercing, 2);
+  FNavelPiercing.SetCoordinate(Abdomen.Width*0.3, Abdomen.Height*0.75);
+  FNavelPiercing.ApplySymmetryWhenFlip := True;
+  // add nose piercing
+  FNosePiercing := TSprite.Create(texPenelopeNosePiercing, False);
+  Head.AddChild(FNosePiercing, 1);
+  FNosePiercing.SetCoordinate(Head.Width*0.05, Head.Height-FNosePiercing.Height);
+  FNosePiercing.ApplySymmetryWhenFlip := True;
+  // add right shoe
+  FRightShoe := TSprite.Create(texPenelopeShoe, False);
+  RightLeg.AddChild(FRightShoe, 1);
+  FRightShoe.SetCoordinate(0, RightLeg.Height-FRightShoe.Height*0.9);
+  FRightShoe.ApplySymmetryWhenFlip := True;
+  // add left shoe
+  FLeftShoe := TSprite.Create(texPenelopeShoe, False);
+  LeftLeg.AddChild(FLeftShoe, 1);
+  FLeftShoe.SetCoordinate(0, LeftLeg.Height-FLeftShoe.Height*0.9);
+  FLeftShoe.ApplySymmetryWhenFlip := True;
+  // add mouth
+  Head.HideAllMouth;
+  FMouth := TSprite.Create(texPenelopeMouth, False);
+  Head.AddChild(FMouth, 1);
+  FMouth.SetCoordinate(Head.Width*0.5-FMouth.Width*0.5, Head.Height-FMouth.Height*1.15);
+  FMouth.ApplySymmetryWhenFlip := True;
+  // add lashes
+  FLashes := TSprite.Create(texPenelopeLashes, False);
+  Head.AddChild(FLashes, 1);
+  FLashes.SetCoordinate(Head.Width*0.5-FLashes.Width*0.6, Head.Height*0.5-FLashes.Height*0.35);
+  FLashes.ApplySymmetryWhenFlip := True;
+  // add hair
+  FHair := TSprite.Create(texPenelopeHair, False);
+  Head.AddChild(FHair, 1);
+  FHair.SetCoordinate(Head.Width*0.25, Head.Height*0.23);
+  FHair.ApplySymmetryWhenFlip := True;
+  // add ponytail
+  FPonyTail := TSprite.Create(texPenelopePonytail, False);
+  Head.AddChild(FPonyTail, -5);
+  FPonyTail.SetCoordinate(Head.Width*0.7, Head.Height*0.65);
+  FPonyTail.Pivot := PointF(0.5, 0);
+  FPonyTail.ApplySymmetryWhenFlip := True;
+  PostMessage(800); // ponytail swing
+end;
+
+procedure TWolfPenelope.ProcessMessage(UserValue: TUserMessageValue);
+var d: single;
+begin
+  inherited ProcessMessage(UserValue);
+  case UserValue of
+    800: begin
+      d := random*2.0+1.0;
+      FPonyTail.Angle.ChangeTo(-5, d);
+      PostMessage(801, d);
+    end;
+    801: begin
+      d := random*2.0+1.0;
+      FPonyTail.Angle.ChangeTo(5, d);
+      PostMessage(800, d);
+    end;
   end;
+end;
+
+procedure TWolfPenelope.SetRunMode;
+begin
+  TimeMultiplicator := 0.3;
+  WalkSpeed := FScene.ScaleDesignToSceneF(1200);
+end;
+
+procedure TWolfPenelope.SetWalkMode;
+begin
+  TimeMultiplicator := 0.6;
+  WalkSpeed := FScene.ScaleDesignToSceneF(90+(90*(1-TimeMultiplicator)));
 end;
 
 end.

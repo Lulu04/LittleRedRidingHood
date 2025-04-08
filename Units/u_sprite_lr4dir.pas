@@ -7,7 +7,7 @@ interface
 uses
   Classes, SysUtils,
   OGLCScene, BGRABitmap, BGRABitmapTypes,
-  u_sprite_lrcommon, u_audio;
+  u_sprite_lrcommon, u_audio, u_common;
 
 type
 
@@ -51,6 +51,7 @@ public
   procedure ProcessMessage({%H-}UserValue: TUserMessageValue); override;
   procedure SetWindSpeed(AValue: single);
   procedure SetIdlePosition(aImmediat: boolean);
+  procedure SetWinPosture;
   property State: TLRFrontViewState read FState write SetState;
   property TimeMultiplicator: single read FTimeMultiplicator write FTimeMultiplicator;
 end;
@@ -91,11 +92,12 @@ public
   procedure SetSoundIdleSpeed;
 end;
 
-TCallbackDoOnJumpMove = procedure(aDuration: single; aJumpStep: integer) of object;
 TCallbackPickUpSomethingWhenBendDown = procedure(aPickUpToTheRight: boolean) of object;
 
 TLRRightView = class(TWalkingCharacter) //(TBaseComplexContainer)
-private type TLRRightViewState = (rvsIdle, rvsWalking, rvsJumping, rvsBendDown, rvsBendUp,
+private type TLRRightViewState = (rvsIdle, rvsWalking, rvsJumping,
+                                  rvsBendDown, rvsBendUp,
+                                  rvsReceiveObjectFromNPC,
                                   rvsDorsalThrusterTakeOff,
                                   rvsDorsalThrusterIdleInTheAir,
                                   rvsDorsalThrusterLanding,
@@ -106,10 +108,10 @@ private
   FCallbackPickUpSomethingWhenBendDown: TCallbackPickUpSomethingWhenBendDown;
   FDress: TLRDress;
   FHood, FLeftCloak: TDeformationGrid;
-  FLeftArm, FRightArm: TSprite;
   FState: TLRRightViewState;
   FTimeMultiplicator: single;
   FIsJumping: boolean;
+  FJumpDeltaX: single;
   FYDressOriginPosition, FPosOriginIdleInTheAir: TPointF;
   function GetIsOrientedToRight: boolean;
   procedure SetDeformationOnHood;
@@ -121,6 +123,7 @@ protected
 public
   Face: TLRRightViewFace;
   FLeftLeg, FRightLeg: TSprite;
+  FLeftArm, FRightArm: TSprite;
   constructor Create;
   destructor Destroy; override;
   procedure ProcessMessage({%H-}UserValue: TUserMessageValue); override;
@@ -141,11 +144,25 @@ public // dorsal thruster
 public
   property State: TLRRightViewState read FState write SetState;
   property TimeMultiplicator: single read FTimeMultiplicator write FTimeMultiplicator;
-  property CallbackDoOnJumpMove: TCallbackDoOnJumpMove read FCallbackDoOnJumpMove write FCallbackDoOnJumpMove;
   property IsOrientedToRight: boolean read GetIsOrientedToRight;
+  // aJumpStep: 0=up  1=down  2=jump is done
+  property CallbackDoOnJumpMove: TCallbackDoOnJumpMove read FCallbackDoOnJumpMove write FCallbackDoOnJumpMove;
   property IsJumping: boolean read FIsJumping;
+  // The number of pixel to shift the character when s/he jumps
+  // default value is FScene.Width*0.08
+  property JumpDeltaX: single read FJumpDeltaX write FJumpDeltaX;
   property CallbackPickUpSomethingWhenBendDown: TCallbackPickUpSomethingWhenBendDown read FCallbackPickUpSomethingWhenBendDown write FCallbackPickUpSomethingWhenBendDown;
   property CallbackBendUpIsFinished: TOGLCEvent read FCallbackBendUpIsFinished write FCallbackBendUpIsFinished;
+private // OBJECT HAND HELDED
+  FObjectInRightHand: TSimpleSurfaceWithEffect;
+public
+  // insert aSurface as child of right arm
+  procedure AddObjectInRightHand(aSurface: TSimpleSurfaceWithEffect; aOffset: TPointF; aZOrder: integer=-1);
+  // remove the child dependency. if aFreeSurface is True the object (surface) is freed.
+  procedure RemoveObjectInRightHand(aFreeSurface: boolean);
+  // moves immediately the right arm to horizontal then lower it to its initial position.
+  procedure ShootWithRightHandObject;
+  property ObjectInRightHand: TSimpleSurfaceWithEffect read FObjectInRightHand;
 end;
 
 
@@ -197,6 +214,7 @@ TLR4State = (lr4sUndefined=0,
              lr4sOnLadderIdle, lr4sOnLadderUp, lr4sOnLadderDown,  // only in back view
              lr4sJumping,  // only in right/left view
              lr4sBendDown, lr4sBendUp, // only in right/left view
+             lr4sReceiveObjectFromNPC, // only in right/left view. LR bends over and stretches out her arms
 {DT=dorsal thruster}
              lr4sDTTakeOff, lr4sDTLanding, lr4sDTIdleInTheAir, lr4sDTSpeedUp, lr4sDTSpeedInertia,
              lr4sHugToDino,
@@ -207,6 +225,7 @@ TLR4State = (lr4sUndefined=0,
 const COEFF_SPEED_WALKING = 0.1; // used as pixel/sec = FScene.Width*COEFF_SPEED_WALKING
       BASE_TIME_MOVE = 0.4;
       BASE_TIME_BEND = 1.0;
+      BASE_TIME_BEND_TO_RECEIVE_OBJECT_FROM_NPC = 0.75;
   type
 { TLR4Direction }
 
@@ -217,6 +236,7 @@ private
   FLRFront: TLRFrontView;
   FLRRight: TLRRightView;
   FLRBack: TLRBackView;
+  FYBeforeJump: single;
   procedure SetCallbackPickUpSomethingWhenBendDown(AValue: TCallbackPickUpSomethingWhenBendDown);
   procedure SetState(AValue: TLR4State);
   procedure ProcessCallbackDoLadderMove(aMoveDelta, aMoveDuration: single);
@@ -231,8 +251,10 @@ protected
   procedure SetFlipH(AValue: boolean); override;
   procedure SetFlipV(AValue: boolean); override;
   procedure SetTimeMultiplicator(AValue: single); override;
+  procedure SetWalkSpeed(AValue: single); override;
+  procedure SetJumpDeltaX(AValue: single); override;
 public
-  constructor Create;
+  constructor Create(aLayerIndex: integer=LAYER_PLAYER);
   procedure ProcessMessage(UserVale: TUserMessageValue); override;
   procedure SetIdlePosition;
 public // utils to check if LR can do some moves
@@ -240,6 +262,12 @@ public // utils to check if LR can do some moves
   function IsIdle: boolean;
   function IsOnLadder: boolean;
   function IsJumping: boolean;
+  function IsOrientedRight: boolean;
+  function IsOrientedLeft: boolean;
+  function IsOrientedBack: boolean;
+  function IsOrientedFront: boolean;
+  // the y coordinate before LR jump (can be usefull to avoid camera move on Y axis when LR jump)
+  property YBeforeJump: single read FYBeforeJump;
 public // utils to check collision with part of LR
   function BottomFeetCollideWith(const r: TRectF): boolean;
 public // utils to control character during cinematics
@@ -258,9 +286,9 @@ public // DON'T FORGET to define a callback TLayer.OnBeforeUpdate on the layer w
        //  to set FLR.LadderInUse := NIL;  FLR.ObjectToHandle := NIL;  FLR.DistanceToObjectToHandle := MaxSingle;
   // the ladder that can be used by LR. This property is set by TLadderBase object.
   property LadderInUse: TSimpleSurfaceWithEffect read FLadderInUse write FLadderInUse;
-  // the object in the word that can be handled by LR
+  // the object in the world that can be handled by LR. Initialized by the object itself.
   property ObjectToHandle: TSimpleSurfaceWithEffect read FObjectToHandle write FObjectToHandle;
-  // the distance to the object that can be handled by LR
+  // the distance to the object that can be handled by LR. Initialized by the object itself.
   property DistanceToObjectToHandle: single read FDistanceToObjectToHandle write FDistanceToObjectToHandle;
 public // dorsal thruster
   procedure UseDorsalThruster;
@@ -269,9 +297,18 @@ public // dorsal thruster
   procedure TakeOffWithDorsalThruster(aTargetY, aDuration: single);
   procedure StandByInTheAirWithDorsalThruster;
   procedure LandWithDorsalThruster(aTargetY, aDuration: single);
+  // sets the position of LR when player accelerate.
   procedure SetPositionWhenSpeedUpWithDorsalThruster;
+  // sets the position of LR when player don't accelerate.
   procedure SetPositionInertiaWithDorsalThruster;
   property DorsalThruster: TLRRightDorsalThruster read GetDorsalThruster;
+{public // OBJECT HAND HELDED
+  // insert aSurface as child of right arm
+  procedure AddObjectInRightHand(aSurface: TSimpleSurfaceWithEffect; aOffset: TPointF; aZOrder: integer=-1);
+  // remove the child dependency. You have to free the surface!
+  procedure RemoveObjectInRightHand;
+  procedure RightHandShoot;
+  property ObjectInRightHand: TSimpleSurfaceWithEffect read FObjectInRightHand;  }
 public
   property State: TLR4State read FState write SetState;
 public // direct access to child instances
@@ -285,7 +322,7 @@ procedure LoadLR4DirTextures(aAtlas: TOGLCTextureAtlas; aLoadDorsalThruster: boo
 
 implementation
 
-uses u_app, u_common;
+uses u_app, Math;
 
 
 var
@@ -451,9 +488,13 @@ end;
 
 procedure TLR4Direction.SetState(AValue: TLR4State);
 var flagFlip: boolean;
-  walkingSpeed: Single;
+  //mystring: string;
 begin
   if FState = AValue then Exit;
+
+{WriteStr(mystring, AValue);
+FScene.LogDebug('LR4Direction.STATE= '+mystring); }
+
   if FLRRight.IsJumping then exit;
 
   if (AValue in [lr4sOnLadderUp, lr4sOnLadderDown]) and not FLRBack.CanMoveOnLadder then exit;
@@ -476,6 +517,7 @@ begin
 
   FLRRight.Visible := flagFlip or (FState in [lr4sRightIdle, lr4sRightWalking, lr4sJumping,
                                               lr4sBendDown, lr4sBendUp,
+                                              lr4sReceiveObjectFromNPC,
                                               lr4sDTTakeOff, lr4sDTLanding,
                                               lr4sDTIdleInTheAir, lr4sDTSpeedUp, lr4sDTSpeedInertia,
                                               lr4sHugToDino]);
@@ -488,28 +530,11 @@ begin
 if not FLRFront.Visible and not FLRRight.Visible and not FLRBack.Visible
 then raise exception.create('nothing to see!');
 
-{  if FLRFront.Visible then begin
-    DeltaYToTop := FLRFront.DeltaYToTop;
-    DeltaYToBottom := FLRFront.DeltaYToBottom;
-    BodyWidth := FLRFront.BodyWidth;
-    BodyHeight := FLRFront.BodyHeight;
-  end else
-  if FLRRight.Visible then begin  }
-
   // we keep the same  value for all positions
     DeltaYToTop := FLRRight.DeltaYToTop;
     DeltaYToBottom := FLRRight.DeltaYToBottom;
     BodyWidth := FLRRight.BodyWidth;
     BodyHeight := FLRRight.BodyHeight;
-
-{  end else begin
-    DeltaYToTop := FLRBack.DeltaYToTop;
-    DeltaYToBottom := FLRBack.DeltaYToBottom;
-    BodyWidth := FLRBack.BodyWidth;
-    BodyHeight := FLRBack.BodyHeight;
-  end; }
-
-  walkingSpeed := FScene.Width * (COEFF_SPEED_WALKING + (1-TimeMultiplicator)*0.25);
 
   case FState of
     lr4sRightIdle, lr4sLeftIdle: begin
@@ -530,26 +555,26 @@ then raise exception.create('nothing to see!');
     end;
     lr4sRightWalking: begin
       FLRRight.State := rvsWalking;
-      if Speed.X.Value < 0 then Speed.X.Value := walkingSpeed
-        else Speed.X.ChangeTo(walkingSpeed, 0.2, idcSinusoid); //FScene.Width*COEFF_SPEED_WALKING*(1-FTimeMultiplicator)
+      if Speed.X.Value < 0 then Speed.X.Value := WalkSpeed
+        else Speed.X.ChangeTo(WalkSpeed, 0.2, idcSinusoid); //FScene.Width*COEFF_SPEED_WALKING*(1-FTimeMultiplicator)
       Speed.Y.Value := 0;
     end;
     lr4sLeftWalking: begin
       FLRRight.State := rvsWalking;
-      if Speed.X.Value > 0 then Speed.X.Value := -walkingSpeed
-        else Speed.X.ChangeTo(-walkingSpeed, 0.2, idcSinusoid);
+      if Speed.X.Value > 0 then Speed.X.Value := -WalkSpeed
+        else Speed.X.ChangeTo(-WalkSpeed, 0.2, idcSinusoid);
       Speed.Y.Value := 0;
     end;
     lr4sUpWalking: begin
       FLRBack.State := bvsWalking;
-      if Speed.Y.Value > 0 then Speed.Y.Value := -walkingSpeed
-        else Speed.Y.ChangeTo(-walkingSpeed, 0.2, idcSinusoid);
+      if Speed.Y.Value > 0 then Speed.Y.Value := -WalkSpeed
+        else Speed.Y.ChangeTo(-WalkSpeed, 0.2, idcSinusoid);
       Speed.X.Value := 0;
     end;
     lr4sDownWalking: begin
       FLRFront.State := fvsWalking;
-      if Speed.Y.Value < 0 then Speed.Y.Value := walkingSpeed
-        else Speed.Y.ChangeTo(walkingSpeed, 0.2, idcSinusoid);
+      if Speed.Y.Value < 0 then Speed.Y.Value := WalkSpeed
+        else Speed.Y.ChangeTo(WalkSpeed, 0.2, idcSinusoid);
       Speed.X.Value := 0;
     end;
     lr4sOnLadderUp: begin
@@ -561,6 +586,7 @@ then raise exception.create('nothing to see!');
       Speed.Value := PointF(0,0);
     end;
     lr4sJumping: begin
+      FYBeforeJump := Y.Value;
       FLRRight.State := rvsJumping;
       Speed.Value := PointF(0,0);
     end;
@@ -570,6 +596,10 @@ then raise exception.create('nothing to see!');
     end;
     lr4sBendUp: begin
       FLRRight.State := rvsBendUp;
+      Speed.Value := PointF(0,0);
+    end;
+    lr4sReceiveObjectFromNPC: begin
+      FLRRight.State := rvsReceiveObjectFromNPC;
       Speed.Value := PointF(0,0);
     end;
     lr4sStartAnimWinner: begin
@@ -603,6 +633,16 @@ begin
   FLRFront.TimeMultiplicator := AValue;
   FLRRight.TimeMultiplicator := AValue;
   FLRBack.TimeMultiplicator := AValue;
+
+  WalkSpeed := FScene.Width * (COEFF_SPEED_WALKING + (1-TimeMultiplicator)*0.25);
+end;
+
+procedure TLR4Direction.SetWalkSpeed(AValue: single);
+begin
+  inherited SetWalkSpeed(AValue);
+  FLRFront.WalkSpeed := AValue;
+  FLRRight.WalkSpeed := AValue;
+  FLRBack.WalkSpeed := AValue;
 end;
 
 procedure TLR4Direction.ProcessCallbackDoLadderMove(aMoveDelta, aMoveDuration: single);
@@ -618,21 +658,21 @@ begin
 end;
 
 procedure TLR4Direction.ProcessCallbackDoOnJumpMove(aMoveDuration: single; aJumpStep: integer);
-var v, deltaX: single;
+var v: single;
 begin
-  if {FJumpToTheRight}FLRRight.IsFlippedH then v := -1 else v := 1;
-  deltaX := FScene.Width*0.08;
+  if FLRRight.IsFlippedH then v := -1 else v := 1;
   case aJumpStep of
     0: begin  // up
+      //FYBeforeJump := Y.Value;
       Y.ChangeTo(Y.Value - FScene.Height*0.1, aMoveDuration, idcStartFastEndSlow);
-      X.ChangeTo(X.Value + deltaX*v, aMoveDuration, idcLinear);
+      X.ChangeTo(X.Value + JumpDeltaX*v, aMoveDuration, idcLinear);
     end;
     1: begin  // down
-      Y.ChangeTo(Y.Value + FScene.Height*0.1, aMoveDuration, idcStartSlowEndFast);// idcStartFastEndSlow);
-      X.ChangeTo(X.Value + deltaX*v, aMoveDuration, idcLinear);
+      Y.ChangeTo(FYBeforeJump, aMoveDuration, idcStartSlowEndFast);// idcStartFastEndSlow);
+      X.ChangeTo(X.Value + JumpDeltaX*v, aMoveDuration, idcLinear);
     end;
     2: begin
-      if {FJumpToTheRight}FLRRight.IsFlippedH then FState := lr4sLeftIdle
+      if FLRRight.IsFlippedH then FState := lr4sLeftIdle
         else FState := lr4sRightIdle;
     end;
   end;
@@ -649,6 +689,12 @@ begin
   Result := FLRRight.FDorsalThruster;
 end;
 
+procedure TLR4Direction.SetJumpDeltaX(AValue: single);
+begin
+  inherited SetJumpDeltaX(AValue);
+  FLRRight.JumpDeltaX := AValue;
+end;
+
 procedure TLR4Direction.SetFlipH(AValue: boolean);
 begin
   inherited SetFlipH(AValue);
@@ -660,10 +706,11 @@ begin
   inherited SetFlipV(AValue);
 end;
 
-constructor TLR4Direction.Create;
+constructor TLR4Direction.Create(aLayerIndex: integer);
 begin
   inherited Create(FScene);
-  FScene.Add(Self, LAYER_PLAYER);
+  if aLayerIndex <> -1 then
+    FScene.Add(Self, aLayerIndex);
   MarkOffset := PointF({-ScaleW(25)}0, -ScaleH(10));
 
   FLRFront := TLRFrontView.Create;
@@ -683,6 +730,7 @@ begin
   DialogAuthorName := PlayerInfo.Name;
 
   TimeMultiplicator := 1.0;
+  JumpDeltaX := FScene.Width*0.08;
 end;
 
 procedure TLR4Direction.ProcessMessage(UserVale: TUserMessageValue);
@@ -718,7 +766,27 @@ end;
 
 function TLR4Direction.IsJumping: boolean;
 begin
-  Result := FState = lr4sJumping;
+  Result := FLRRight.Visible and (FLRRight.State = rvsJumping); //FState = lr4sJumping;
+end;
+
+function TLR4Direction.IsOrientedRight: boolean;
+begin
+  Result := FLRRight.Visible and not FLRRight.FlipH;
+end;
+
+function TLR4Direction.IsOrientedLeft: boolean;
+begin
+  Result := FLRRight.Visible and FLRRight.FlipH;
+end;
+
+function TLR4Direction.IsOrientedBack: boolean;
+begin
+  Result := FLRBack.Visible;
+end;
+
+function TLR4Direction.IsOrientedFront: boolean;
+begin
+  Result := FLRFront.Visible;
 end;
 
 function TLR4Direction.BottomFeetCollideWith(const r: TRectF): boolean;
@@ -727,15 +795,15 @@ var m: TOGLCMatrix;
 begin
   // check left shoe
   if FLRRight.Visible then begin
-    m := FLRRight.FLeftLeg.GetMatrixSurfaceSpaceToScene;
+    m := FLRRight.FLeftLeg.GetMatrixSurfaceToWorld;
     p1 := PointF(FLRRight.FLeftLeg.Width*0.2, FLRRight.FLeftLeg.Height);
     p2 := PointF(FLRRight.FLeftLeg.Width*0.8, FLRRight.FLeftLeg.Height);
   end else if FLRFront.Visible then begin
-    m := FLRFront.FLeftShoe.GetMatrixSurfaceSpaceToScene;
+    m := FLRFront.FLeftShoe.GetMatrixSurfaceToWorld;
     p1 := PointF(FLRFront.FLeftShoe.Width*0.1, FLRFront.FLeftShoe.Height);
     p2 := PointF(FLRFront.FLeftShoe.Width*0.9, FLRFront.FLeftShoe.Height);
   end else if FLRBack.Visible then begin
-    m := FLRBack.FLeftShoe.GetMatrixSurfaceSpaceToScene;
+    m := FLRBack.FLeftShoe.GetMatrixSurfaceToWorld;
     p1 := PointF(FLRBack.FLeftShoe.Width*0.1, FLRBack.FLeftShoe.Height);
     p2 := PointF(FLRBack.FLeftShoe.Width*0.9, FLRBack.FLeftShoe.Height);
   end else exit(False);
@@ -747,15 +815,15 @@ begin
 
   // check right shoe
   if FLRRight.Visible then begin
-    m := FLRRight.FRightLeg.GetMatrixSurfaceSpaceToScene;
+    m := FLRRight.FRightLeg.GetMatrixSurfaceToWorld;
     p1 := PointF(FLRRight.FRightLeg.Width*0.2, FLRRight.FRightLeg.Height);
     p2 := PointF(FLRRight.FRightLeg.Width*0.8, FLRRight.FRightLeg.Height);
   end else if FLRFront.Visible then begin
-    m := FLRFront.FRightShoe.GetMatrixSurfaceSpaceToScene;
+    m := FLRFront.FRightShoe.GetMatrixSurfaceToWorld;
     p1 := PointF(FLRFront.FRightShoe.Width*0.1, FLRFront.FRightShoe.Height);
     p2 := PointF(FLRFront.FRightShoe.Width*0.9, FLRFront.FRightShoe.Height);
   end else if FLRBack.Visible then begin
-    m := FLRBack.FRightShoe.GetMatrixSurfaceSpaceToScene;
+    m := FLRBack.FRightShoe.GetMatrixSurfaceToWorld;
     p1 := PointF(FLRBack.FRightShoe.Width*0.1, FLRBack.FRightShoe.Height);
     p2 := PointF(FLRBack.FRightShoe.Width*0.9, FLRBack.FRightShoe.Height);
   end else exit(False);
@@ -1272,6 +1340,7 @@ procedure TLRRightView.SetState(AValue: TLRRightViewState);
 begin
   if FState = AValue then Exit;
   if (AValue = rvsJumping) and FIsJumping then exit;
+
   FState := AValue;
   case FState of
     rvsIdle: begin
@@ -1291,16 +1360,20 @@ begin
     rvsBendUp: begin
       PostMessage(400);
     end;
+
     rvsDorsalThrusterTakeOff:;
     rvsDorsalThrusterLanding:;
     rvsDorsalThrusterIdleInTheAir: PostMessage(520);
     rvsHugToDino: PostMessage(550);
+    rvsReceiveObjectFromNPC: PostMessage(600);
   end;
 end;
 
 constructor TLRRightView.Create;
 begin
   inherited Create(FScene);
+
+  FJumpDeltaX := FScene.Width*0.08;
 
   FDress := TLRDress.Create(texLRrDress);
   AddChild(FDress, 0);
@@ -1530,6 +1603,13 @@ begin
       FLeftArm.Angle.ChangeTo(-35, d, idcSinusoid);
       PostMessage(551, d);
     end;
+
+    // Receive Object From NPC
+    600: begin
+      FDress.Angle.ChangeTo(8, BASE_TIME_BEND_TO_RECEIVE_OBJECT_FROM_NPC*FTimeMultiplicator, idcSinusoid);
+      FLeftArm.Angle.ChangeTo(-40, BASE_TIME_BEND_TO_RECEIVE_OBJECT_FROM_NPC*FTimeMultiplicator, idcSinusoid);
+      FRightArm.Angle.ChangeTo(-40, BASE_TIME_BEND_TO_RECEIVE_OBJECT_FROM_NPC*FTimeMultiplicator, idcSinusoid);
+    end;
   end;//case
 end;
 
@@ -1546,6 +1626,7 @@ begin
   FLeftLeg.FlipH := AValue;
   FRightLeg.FlipH := AValue;
   if FDorsalThruster <> NIL then FDorsalThruster.FlipH := AValue;
+  if FObjectInRightHand <> NIL then FObjectInRightHand.FlipH := AValue;
 end;
 
 procedure TLRRightView.SetFlipV(AValue: boolean);
@@ -1580,7 +1661,7 @@ end;
 
 procedure TLRRightView.SetWindSpeed(AValue: single);
 begin
-  Face.SetWindSpeed(AValue);
+  Face.SetWindSpeed(Min(1.0, AValue));
   FDress.SetWindSpeed(AValue);
   FHood.Amplitude.Value := PointF(0.3*AValue, 0.2*AValue);
   FLeftCloak.Amplitude.Value := PointF(0.3*AValue, 0.2*AValue);
@@ -1654,6 +1735,31 @@ begin
   Face.Angle.ChangeTo(-10, 0.3, idcSinusoid);
   FLeftArm.Angle.ChangeTo(-20, 0.3, idcSinusoid);
   FRightArm.Angle.ChangeTo(0, 0.3, idcSinusoid);
+end;
+
+procedure TLRRightView.AddObjectInRightHand(aSurface: TSimpleSurfaceWithEffect;
+  aOffset: TPointF; aZOrder: integer);
+begin
+  FObjectInRightHand := aSurface;
+  FRightArm.AddChild(FObjectInRightHand, aZOrder);
+  FObjectInRightHand.SetCoordinate(PointF(FRightArm.Width*0.5, FRightArm.Height) + aOffset);
+end;
+
+procedure TLRRightView.RemoveObjectInRightHand(aFreeSurface: boolean);
+begin
+  if FObjectInRightHand = NIL then exit;
+
+  FRightArm.RemoveChild(FObjectInRightHand);
+  if aFreeSurface then FObjectInRightHand.Free;
+  FObjectInRightHand := NIL;
+end;
+
+procedure TLRRightView.ShootWithRightHandObject;
+var a: single;
+begin
+  a := FRightArm.Angle.Value;
+  FRightArm.Angle.Value := -38;
+  FRightArm.Angle.ChangeTo(a, 0.5, idcDrop);
 end;
 
 { TLRFrontView }
@@ -1746,9 +1852,11 @@ begin
 
   FRightLeg := CreateChildSprite(texLRfRightLeg, -1);
   FRightLeg.SetCoordinate(-FRightLeg.Width, -FRightLeg.Height*0.25);
+  FRightLeg.Pivot := PointF(0.5, 0.1);
 
   FLeftLeg := CreateChildSprite(texLRfLeftLeg, -1);
   FLeftLeg.SetCoordinate(FLeftLeg.Width*0.05, -FLeftLeg.Height*0.25);
+  FLeftLeg.Pivot := PointF(0.5, 0.1);
 
   FYLegIdlePosition := FLeftLeg.Y.Value;
 
@@ -1918,6 +2026,16 @@ begin
   FLeftShoe.CornerOffset.BottomRight.ChangeTo(PointF(0,0), v, idcSinusoid);
   FRightShoe.CornerOffset.BottomLeft.ChangeTo(PointF(0,0), v, idcSinusoid);
   FRightShoe.CornerOffset.BottomRight.ChangeTo(PointF(0,0), v, idcSinusoid);
+end;
+
+procedure TLRFrontView.SetWinPosture;
+begin
+  FRightArm.Angle.Value := 150;
+  FLeftArm.Angle.Value := -150;
+  FLeftLeg.Pivot := PointF(0.5, 0.1);
+  FRightLeg.Pivot := PointF(0.5, 0.1);
+  FLeftLeg.Angle.Value := -20;
+  FRightLeg.Angle.Value := 20;
 end;
 
 { TLRFrontViewFace }

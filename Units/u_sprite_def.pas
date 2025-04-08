@@ -118,6 +118,7 @@ private // gui mode
   FMousePositionOrigin: TPointF;
   FYNext: single;
   FBOpenConversation, FBOpenArmouredDoor: TUIButton;
+  FMousePointerPreviousVisibleState: boolean;
   procedure ProcessButtonClick(Sender: TSimpleSurfaceWithEffect);
   procedure AddTextToGui(aFaceTexture: PTexture; const Name, s: string; aNameColor: TBGRAPixel; aOnLeftSide: boolean);
   procedure SetGUIMode(aClearContent: boolean);
@@ -127,6 +128,8 @@ public
   class procedure LoadTextures(aAtlas: TOGLCTextureAtlas);
   constructor Create(aFont: TTexturedFont);
   procedure ProcessMessage(UserValue: TUserMessageValue); override;
+  procedure Show; override;
+  procedure Hide(aFree: boolean); override;
   procedure StartAnimSDCardVolcano;
   // True when player click button 'open armored door'
   property AnimIsDone: boolean read FAnimIsDone;
@@ -135,11 +138,11 @@ end;
 { TLittleRobot }
 
 TLittleRobot = class(TWalkingCharacter)
-private class var texWheel, texBody, texArm, texFingerLeft, texFingerRight: PTexture;
+public class var texWheel, texBody, texArm, texFingerLeft, texFingerRight: PTexture;
 private
-  FWheel1, FWheel2, FBody, FArm, FFingerLeft, FFingerRight: TSprite;
-  FTimeMultiplicator: single;
+  FWheel1, FWheel2, FBody, FFingerLeft, FFingerRight: TSprite;
   FFingerKnitting: boolean;
+  FRadiusWheel: single;
 protected
   procedure SetFlipH(AValue: boolean); override;
   procedure SetFlipV(AValue: boolean); override;
@@ -149,13 +152,12 @@ public
   procedure Update(const aElapsedTime: single); override;
   procedure ProcessMessage(UserValue: TUserMessageValue); override;
 public // move utils
+  FArm: TSprite;
   procedure FingerStartKnitting;
   procedure FingerStopKnitting;
   procedure MoveArmForward;
   procedure MoveArmDown;
   procedure WalkHorizontallyTo(aX: single; aMessageReceiver: TObject; aMessageValueWhenFinish: TUserMessageValue; aDelay: single=0);
-
-  property TimeMultiplicator: single read FTimeMultiplicator write FTimeMultiplicator;
 end;
 
 { TLittleRobotConstructor }
@@ -285,6 +287,26 @@ public
   procedure SetHugPosition(aDuration: single);
   property State: TDinoState read FDinoState write SetDinoState;
   property CanMoveInRushPosition: boolean read FCanMoveInRushPosition;
+end;
+
+
+{ TAutomaticDoor }
+
+TAutomaticDoor = class(TSprite)
+public
+  class var texDoorFrame, texDoorRight, texDoorLeft: PTexture;
+  class procedure LoadTexture(aAtlas: TOGLCTextureAtlas;
+                              aDoorFrameWidthScaledW: integer;
+                              aDoorFrameHeightScaledH: integer=-1);
+private
+  FDoorLeft, FDoorRight: TDeformationGrid;
+  FIsOpened: boolean;
+public
+  constructor Create(aX, aY: single; aLayerIndex: integer=-1);
+  procedure ProcessMessage(UserValue: TUserMessageValue); override;
+  procedure Open;
+  procedure Close;
+  property IsOpened: boolean read FIsOpened;
 end;
 
 
@@ -619,6 +641,77 @@ begin
   FHead.X.Value := FHead.X.Value+FHead.Width*0.5;
 end;
 
+{ TAutomaticDoor }
+
+class procedure TAutomaticDoor.LoadTexture(aAtlas: TOGLCTextureAtlas;
+  aDoorFrameWidthScaledW: integer; aDoorFrameHeightScaledH: integer);
+var path: string;
+begin
+  path := SpriteGameVolcanoEntranceFolder;
+  texDoorFrame := aAtlas.AddFromSVG(path+'DoorFrame.svg', aDoorFrameWidthScaledW,
+                                                          aDoorFrameHeightScaledH);
+  texDoorLeft := aAtlas.AddFromSVG(path+'DoorLeft.svg', aDoorFrameWidthScaledW div 2,
+                                                        aDoorFrameHeightScaledH);
+  texDoorRight := aAtlas.AddFromSVG(path+'DoorRight.svg', aDoorFrameWidthScaledW div 2,
+                                                          aDoorFrameHeightScaledH);
+end;
+
+constructor TAutomaticDoor.Create(aX, aY: single; aLayerIndex: integer);
+begin
+  inherited Create(texDoorFrame, False);
+  if aLayerIndex <> -1 then FScene.Add(Self, aLayerIndex);
+  SetCoordinate(aX, aY);
+  // door left
+  FDoorLeft := TDeformationGrid.Create(texDoorLeft, False);
+  AddChild(FDoorLeft, -1);
+  FDoorLeft.X.Value := 0;
+  FDoorLeft.BottomY := Height;
+  FDoorLeft.SetGrid(1, 10);
+  // door right
+  FDoorRight := TDeformationGrid.Create(texDoorRight, False);
+  AddChild(FDoorRight, -1);
+  FDoorRight.X.Value := FDoorRight.Width-1;
+  FDoorRight.BottomY := Height;
+  FDoorRight.SetGrid(1, 10);
+end;
+
+procedure TAutomaticDoor.ProcessMessage(UserValue: TUserMessageValue);
+begin
+  case UserValue of
+    0: FIsOpened := True;
+  end;
+end;
+
+procedure TAutomaticDoor.Open;
+var snd: TALSSound;
+begin
+  snd := Audio.AddSound('spaceship-compartment-doorOPEN.ogg');
+  snd.Volume.Value := 0.8;
+  snd.ApplyEffect(Audio.FXReverbShort);
+  snd.SetEffectDryWetVolume(Audio.FXReverbLong, 0.6);
+  snd.PlayThenKill(True);
+
+  FDoorLeft.DeformationSpeed.Value := PointF(FScene.Width*0.1, 0);
+  FDoorRight.DeformationSpeed.Value := PointF(FScene.Width*0.1, 0);
+  FDoorLeft.ApplyDeformation(dtWindingLeft);
+  FDoorRight.ApplyDeformation(dtWindingRight);
+  PostMessage(0, 0.8);  // wait 0.8s before sets FIsOpened to True
+end;
+
+procedure TAutomaticDoor.Close;
+var snd: TALSSound;
+begin
+  snd := Audio.AddSound('spaceship-compartment-doorCLOSE.ogg');
+  snd.Volume.Value := 0.7;
+  snd.ApplyEffect(Audio.FXReverbShort);
+  snd.SetEffectDryWetVolume(Audio.FXReverbLong, 0.6);
+  snd.PlayThenKill(True);
+
+  FDoorLeft.DeformationSpeed.Value := PointF(-FScene.Width*0.1, 0);
+  FDoorRight.DeformationSpeed.Value := PointF(-FScene.Width*0.1, 0);
+  FIsOpened := False;
+end;
+
 { TPanelUsingComputer }
 
 procedure TPanelUsingComputer.HideArmsToBottom;
@@ -687,6 +780,9 @@ begin
     FSB.DeleteAllChilds;
     FYNext := PPIScale(3);
   end;
+
+  if FScene.Mouse.MouseSprite <> NIL then
+    FScene.Mouse.MouseSprite.Visible := True;
 end;
 
 procedure TPanelUsingComputer.CreateButtonOpenConversation;
@@ -859,7 +955,7 @@ begin
       PostMessage(1, 1.5);
     end;
     1: begin    // LR arm moves to sd card slot
-      RemoveChild(FArmRight);     // LR arm put becomes child of SDCardS
+      RemoveChild(FArmRight);     // LR arm becomes child of SDCardS
       FSDCard.AddChild(FArmRight, 0);
       FArmRight.Angle.Value := 0;
       FArmRight.CenterX := FSDCard.Width*0.5;
@@ -948,6 +1044,20 @@ begin
     end;
 
   end;
+end;
+
+procedure TPanelUsingComputer.Show;
+begin
+  inherited Show;
+  if FScene.Mouse.MouseSprite <> NIL then
+    FMousePointerPreviousVisibleState := FScene.Mouse.MouseSprite.Visible;
+end;
+
+procedure TPanelUsingComputer.Hide(aFree: boolean);
+begin
+  if FScene.Mouse.MouseSprite <> NIL then
+    FScene.Mouse.MouseSprite.Visible := FMousePointerPreviousVisibleState;
+  inherited Hide(aFree);
 end;
 
 procedure TPanelUsingComputer.StartAnimSDCardVolcano;
@@ -1570,7 +1680,9 @@ begin
   BodyWidth := FBody.Width;
   BodyHeight := Round(DeltaYToTop);
 
-  FTimeMultiplicator := 1.0;
+  TimeMultiplicator := 1.0;
+  WalkSpeed := FScene.Width*0.1;
+  FRadiusWheel := texWheel^.FrameWidth*0.5;
 end;
 
 procedure TLittleRobot.Update(const aElapsedTime: single);
@@ -1579,7 +1691,8 @@ begin
   inherited Update(aElapsedTime);
 
   // wheel rotation versus speed.X.Value
-  v := -Abs(Speed.X.Value*2.2);  // /(FWheel1.Width*3.14);
+//  v := -Abs(Speed.X.Value*2.2);  // /(FWheel1.Width*3.14);
+  v := LinearSpeedToAngleRotation(-Abs(Speed.X.Value), FRadiusWheel);
   FWheel1.Angle.AddConstant(v);
   FWheel2.Angle.AddConstant(v);
 
@@ -1637,18 +1750,18 @@ end;
 procedure TLittleRobot.FingerStopKnitting;
 begin
   FFingerKnitting := False;
-  FFingerLeft.Angle.ChangeTo(0, 1.0*FTimeMultiplicator);
-  FFingerRight.Angle.ChangeTo(0, 1.0*FTimeMultiplicator);
+  FFingerLeft.Angle.ChangeTo(0, 1.0*TimeMultiplicator);
+  FFingerRight.Angle.ChangeTo(0, 1.0*TimeMultiplicator);
 end;
 
 procedure TLittleRobot.MoveArmForward;
 begin
-  FArm.Angle.ChangeTo(80, 1.0*FTimeMultiplicator, idcSinusoid);
+  FArm.Angle.ChangeTo(80, 1.0*TimeMultiplicator, idcSinusoid);
 end;
 
 procedure TLittleRobot.MoveArmDown;
 begin
-  FArm.Angle.ChangeTo(0, 1.0*FTimeMultiplicator, idcSinusoid);
+  FArm.Angle.ChangeTo(0, 1.0*TimeMultiplicator, idcSinusoid);
 end;
 
 procedure TLittleRobot.WalkHorizontallyTo(aX: single; aMessageReceiver: TObject;
@@ -1656,7 +1769,7 @@ procedure TLittleRobot.WalkHorizontallyTo(aX: single; aMessageReceiver: TObject;
 var sp: single;
 begin
   if TimeMultiplicator = 0 then sp := 0
-    else sp := FScene.Width*0.1 * 1/TimeMultiplicator;
+    else sp := WalkSpeed; //FScene.Width*0.1 * 1/TimeMultiplicator;
 
   if X.Value < aX then begin
     SetFlipH(True);
