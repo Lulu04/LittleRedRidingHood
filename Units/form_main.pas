@@ -42,7 +42,8 @@ uses u_screen_title, u_screen_gameforest, BGRABitmap, BGRABitmapTypes,
   screen_logo, u_app, u_screen_map, u_screen_workshop, u_audio,
   u_screen_gamemountainpeaks, u_screen_gamevolcanoentrance,
   u_screen_gamevolcanoinner, u_resourcestring, u_screen_gamevolcanodino,
-  u_screen_intro, DefaultTranslator, LCLTranslator, i18_utils;
+  u_screen_intro, screen_gameplainmoon, screen_gameplainmooninside,
+  u_screen_gamemermaidsport, DefaultTranslator, LCLTranslator, i18_utils;
 {$R *.lfm}
 
 { TFormMain }
@@ -90,14 +91,16 @@ end;
 
 procedure TFormMain.Timer1Timer(Sender: TObject);
 begin
-  Caption := Format('scene %dx%d %d FPS %d max texture size  %d objects FreeVRam %d Kb  %d sounds', [FScene.Width, FScene.Height, FScene.FPS, FScene.TexMan.MaxTextureWidth, FScene.SurfaceCount, FScene.Gpu.FreeVideoRamKb, Audio.PlaybackContext.SoundCount]);
+  if (Audio <> NIL) and (FScene <> NIL) then
+  Caption := Format('scene:%dx%d  FPS:%d  max texture size:%d   objects count:%d  FreeVRam:%d Kb  sounds: %d', [FScene.Width, FScene.Height, FScene.FPS, FScene.TexMan.MaxTextureWidth, FScene.SurfaceCount, FScene.Gpu.FreeVideoRamKb, Audio.PlaybackContext.SoundCount]);
 end;
 
 procedure TFormMain.LoadCommonData;
 begin
   FSaveGame := TSaveGame.Create;
   FSaveGame.Load;
-  if FSaveGame.FolderCreated then FScene.CreateLogFile(FSaveGame.SaveFolder+'scene.log', True, @ProcessLogCallback, NIL);
+  if FSaveGame.FolderCreated then
+    FScene.CreateLogFile(FSaveGame.SaveFolder+'scene.log', True, @ProcessLogCallback, NIL);
 
   Audio := TAudioManager.Create;
   if Audio.PlaybackContext.Error then
@@ -112,12 +115,15 @@ begin
   ScreenGameVolcanoEntrance := TScreenGameVolcanoEntrance.Create;
   ScreenGameVolcanoInner := TScreenGameVolcanoInner.Create;
   ScreenGameVolcanoDino := TScreenGameVolcanoDino.Create;
+  ScreenPlainOfSleepingMoon := TScreenPlainOfSleepingMoon.Create;
+  ScreenPlainMoonInside := TScreenPlainMoonInside.Create;
+  ScreenMermaidsPort := TScreenMermaidsPort.Create;
   ScreenMap := TScreenMap.Create;
   ScreenWorkShop := TScreenWorkShop.Create;
-  FScene.RunScreen(ScreenLogo);
+//  FScene.RunScreen(ScreenLogo);
 
-//FSaveGame.SetCurrentPlayerIndex(0);
-//FScene.RunScreen(ScreenMap); // ScreenIntro ScreenLogo ScreenTitle  ScreenGameForest ScreenMap  ScreenGameZipLine
+FSaveGame.SetCurrentPlayerIndex(0);
+FScene.RunScreen(ScreenMap);     //ScreenMap  ScreenIntro   ScreenPlainMoonInside
 end;
 
 procedure TFormMain.FreeCommonData;
@@ -132,6 +138,9 @@ begin
   FreeAndNil(ScreenGameVolcanoEntrance);
   FreeAndNil(ScreenGameVolcanoInner);
   FreeAndNil(ScreenGameVolcanoDino);
+  FreeAndNil(ScreenPlainOfSleepingMoon);
+  FreeAndNil(ScreenPlainMoonInside);
+  FreeAndnil(ScreenMermaidsPort);
   FreeAndNil(ScreenLogo);
   FreeAndNil(Audio);
 end;

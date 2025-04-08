@@ -17,12 +17,14 @@ uses
     - update procedure TScreenMap.UnableMouseInteractionOnMapObjects(aValue: boolean);
     - update procedure TScreenMap.SetLRIconPositionOnGameToPlay
     - add the new cheat codes (if any) in procedure TScreenMap.CreateObjects and handle them in TScreenMap.Update()
-}
+    - update procedure ProcessButtonMouseEnter and Leave
+    }
 
 type
 
 // add new game here
-TGameOnMap = (gomUnknow, gomPineForest, gomZipLine, gomVolcano);
+TGameOnMap = (gomUnknow, gomPineForest, gomZipLine, gomVolcano,
+              gomPlainOfSleepingMoon, gomMermaidPort);
 
 { TScreenMap }
 
@@ -30,7 +32,10 @@ TScreenMap = class(TGameScreenTemplate)
 private
   FsndSeaWave: TALSSound;
   FIconLR: TSprite;
-  BWorkShop, BPineForest, BMountainPeaks, BVolcano: TImageButton;
+  BWorkShop, BPineForest, BMountainPeaks, BVolcano, BPlainMoon, BMermaidPort: TImageButton;
+  FLabelPlaceOnTheMap: TUILabel;
+  FPlaceHint: TUITextArea;
+  FFontPlaceName: TTexturedFont;
   FTargetButtonForFireworkAnim: TImageButton;
   BMainMenu: TUIButton;
   FFireworkCount: integer;
@@ -39,6 +44,8 @@ private
 
   function CreateImageButton(tex: PTexture): TImageButton;
   function CreateButton(const aCaption: string; tex: PTexture): TUIButton;
+  procedure ProcessButtonMouseEnter(Sender: TSimpleSurfaceWithEffect);
+  procedure ProcessButtonMouseLeave(Sender: TSimpleSurfaceWithEffect);
   procedure ProcessButtonClick(Sender: TSimpleSurfaceWithEffect);
   procedure ShowLastGameStepPanel;
   function CheckIfASubGameWasCompleted: boolean;
@@ -46,7 +53,7 @@ private
 public
   procedure CreateObjects; override;
   procedure FreeObjects; override;
-  procedure ProcessMessage({%H-}UserValue: TUserMessageValue); override;
+  procedure ProcessMessage(UserValue: TUserMessageValue); override;
   procedure Update(const aElapsedTime: single); override;
 
   // enable disable button on the map
@@ -60,9 +67,30 @@ implementation
 uses u_app, u_resourcestring, u_screen_title, u_screen_gameforest,
   u_screen_workshop, u_mousepointer, u_screen_gamemountainpeaks, u_ui_panels,
   u_screen_gamevolcanoentrance, u_audio, u_screen_gamevolcanoinner,
-  u_screen_gamevolcanodino, BGRAPath, Forms, Math;
+  u_screen_gamevolcanodino, screen_gameplainmoon, u_screen_gamemermaidsport,
+  BGRAPath, Forms, Math;
 
 type
+
+{ TSeagull }
+
+TSeagull = class(TSprite)
+private
+  FLeftWing, FRightWing: TSprite;
+  FTimeAccu, FThresholdX: single;
+  function ComputeHSpeed: single;
+  function ComputeVSpeed: single;
+  procedure ComputeTimeToChangeY;
+  procedure ComputeLeftThresholdX;
+  procedure ComputeRightThresholdX;
+protected
+  procedure SetFlipH(AValue: boolean); override;
+  procedure SetFlipV(AValue: boolean); override;
+public
+  constructor Create(aLayerIndex: integer);
+  procedure Update(const aElapsedTime: single); override;
+  procedure ProcessMessage(UserValue: TUserMessageValue); override;
+end;
 
 { TPanelChooseGameStep }
 
@@ -86,7 +114,10 @@ private
 protected
   procedure ProcessButtonClick(Sender: TSimpleSurfaceWithEffect); override;
 public
-  constructor Create(aTexIcon, aLRIcon: PTexture; aGame: TGameDescriptor; aMessageToRunScreen: TUserMessageValue);
+  // if aHint is empty, a default hint is displayed
+  constructor Create(aTexIcon, aLRIcon: PTexture;
+                     aGame: TGameDescriptor; aMessageToRunScreen: TUserMessageValue;
+                     const aHint: string);
   procedure RemoveStartButton;
   property Hint: string write SetHint;
 end;
@@ -96,10 +127,151 @@ var FFontText: TTexturedFont;
   texMapCastleFW, texMapCastleOutline,
   texMap1FW, texMap1Outline, texLRHome, texPineForest,
   texZipLinePeaks, texZipLinePeaksCableToVolcano,
-  texVolcanoMountain,
-  texCastle: PTexture;
+  texVolcanoMountain, texPlainOfSleepingMoon, texFactory,
+  texCastle,
+  texSeagullBody, texSeagullWing: PTexture;
   FPanelChooseGameStep: TPanelChooseGameStep=NIL;
   FAtlas: TOGLCTextureAtlas;
+
+{ TSeagull }
+
+function TSeagull.ComputeHSpeed: single;
+begin
+  Result := FScene.Width*0.01+Random*FScene.Width*0.008;
+end;
+
+function TSeagull.ComputeVSpeed: single;
+begin
+  Result := Random * PPIScale(20) - PPIScale(10);
+end;
+
+procedure TSeagull.ComputeTimeToChangeY;
+begin
+  FTimeAccu := 3 + Random*3;
+end;
+
+procedure TSeagull.ComputeLeftThresholdX;
+begin
+  FThresholdX := ScaleW(90) + Random*ScaleW(190);
+end;
+
+procedure TSeagull.ComputeRightThresholdX;
+begin
+  FThresholdX := ScaleW(360) + Random*ScaleW(240);
+end;
+
+procedure TSeagull.SetFlipH(AValue: boolean);
+begin
+  inherited SetFlipH(AValue);
+  FLeftWing.FlipH := AValue;
+  FRightWing.FlipH := AValue;
+end;
+
+procedure TSeagull.SetFlipV(AValue: boolean);
+begin
+  inherited SetFlipV(AValue);
+  FLeftWing.FlipV := AValue;
+  FRightWing.FlipV := AValue;
+end;
+
+constructor TSeagull.Create(aLayerIndex: integer);
+var v: single;
+begin
+  inherited Create(texSeagullBody, False);
+  FScene.Add(Self, aLayerIndex); // LAYER_ARROW);
+
+  FLeftWing := CreateSpriteChild(texSeagullWing, False, 1);
+  FLeftWing.SetCoordinate(Width*0.6, -FLeftWing.Height*0.5);
+  FLeftWing.Pivot := PointF(0.0, 1.0);
+  FLeftWing.ApplySymmetryWhenFlip := True;
+
+  FRightWing :=  CreateSpriteChild(texSeagullWing, False, -1);
+  FRightWing.SetCoordinate(Width*0.46, -FRightWing.Height*0.8);
+  FRightWing.Pivot := PointF(0.0, 1.0);
+  FRightWing.ApplySymmetryWhenFlip := True;
+
+  SetCoordinate(ScaleW(166)+Random*ScaleW(370), ScaleH(130)+Random*ScaleH(450));
+  Speed.Value := PointF(ComputeHSpeed, ComputeVSpeed);
+  if Random>0.5 then Speed.x.Value := -Speed.x.Value;
+  if Random>0.5 then Speed.y.Value := -Speed.y.Value;
+  FlipH := Speed.X.Value > 0;
+  if Speed.X.Value > 0 then ComputeRightThresholdX
+    else ComputeLeftThresholdX;
+  ComputeTimeToChangeY;
+
+  v := 1.0+Random*0.25-0.125;
+  Scale.Value := PointF(v, v);
+
+  PostMessage(0); // anim wings
+
+  Update(Random);
+  Update(Random);
+  Update(Random);
+end;
+
+procedure TSeagull.Update(const aElapsedTime: single);
+var v: single;
+begin
+  inherited Update(aElapsedTime);
+
+  if (Speed.X.Value < 0) and (X.Value < FThresholdX) then begin
+    Speed.X.Value := ComputeHSpeed;
+    ComputeRightThresholdX;
+    FlipH := True;
+  end;
+
+  if (Speed.X.Value > 0) and (X.Value > FThresholdX) then begin
+    Speed.X.Value := -ComputeHSpeed;
+    ComputeLeftThresholdX;
+    FlipH := False;
+  end;
+
+
+{  if (X.Value < ScaleW(70)) and (Speed.X.Value < 0) then begin
+    Speed.X.Value := ComputeHSpeed;
+    FlipH := True;
+  end;
+
+  if (X.Value > ScaleW(550)) and (Speed.X.Value > 0) then begin
+    Speed.X.Value := -ComputeHSpeed;
+    FlipH := False;
+  end;   }
+
+  FTimeAccu := FTimeAccu - aElapsedTime;
+  if FTimeAccu <= 0 then begin
+    ComputeTimeToChangeY;
+    //Speed.Y.Value := EnsureRange(Speed.Y.Value+Random*0.5-0.25, -PPIScale(5), PPIScale(5));
+    v := ComputeVSpeed;
+    if Sign(Speed.Y.Value) = Sign(v) then v := -v;
+    Speed.Y.ChangeTo(v, FTimeAccu*0.5, idcSinusoid);
+  end;
+
+  if (Y.Value < ScaleH(70)) and (Speed.Y.Value < 0) then
+    Speed.Y.Value := Random*3;
+
+  if (Y.Value > ScaleH(580)) and (Speed.Y.Value > 0) then
+    Speed.Y.Value := -Random*3;
+
+  if not FlipH then Angle.Value := -Speed.Y.Value*3
+    else Angle.Value := Speed.Y.Value*3;
+end;
+
+procedure TSeagull.ProcessMessage(UserValue: TUserMessageValue);
+const d = 0.25;
+begin
+  case UserValue of
+    0: begin
+      FLeftWing.Angle.ChangeTo(63, d, idcDrop);
+      FRightWing.Angle.ChangeTo(67, d, idcDrop);
+      PostMessage(2, d);
+    end;
+    2: begin
+      FLeftWing.Angle.ChangeTo(0, d, idcSinusoid);
+      FRightWing.Angle.ChangeTo(0, d, idcSinusoid);
+      PostMessage(0, d);
+    end;
+  end;
+end;
 
 
 
@@ -149,8 +321,9 @@ begin
   end;
 end;
 
-constructor TPanelChooseGameStep.Create(aTexIcon, aLRIcon: PTexture; aGame: TGameDescriptor;
-  aMessageToRunScreen: TUserMessageValue);
+constructor TPanelChooseGameStep.Create(aTexIcon, aLRIcon: PTexture;
+  aGame: TGameDescriptor; aMessageToRunScreen: TUserMessageValue;
+  const aHint: string);
 var i, w: integer;
   A: TUIButtonArray;
 begin
@@ -227,9 +400,11 @@ begin
   FHint.BodyShape.SetShapeRectangle(Round(Width/2), Round(Height/2), 0);
   FHint.BodyShape.Fill.Visible := False;
   FHint.BodyShape.Border.Visible := False;
-  FHint.Text.Caption := GameHints[FHintIndex];
-  inc(FHintIndex);
-  if FHintIndex > High(GameHints) then FHintIndex := 0;
+  if aHint = '' then begin
+    FHint.Text.Caption := GameHints[FHintIndex];
+    inc(FHintIndex);
+    if FHintIndex > High(GameHints) then FHintIndex := 0;
+  end else FHint.Text.Caption := aHint;
   FHint.Text.Align := taTopCenter;
   FHint.Text.TexturedFont := FFontText;
   FHint.SetCoordinate(Width/2-PPIScale(10), PPIScale(10));
@@ -257,6 +432,8 @@ begin
   Result := TImageButton.Create(tex);
   FScene.Add(Result, LAYER_GROUND);
   Result.OnClick := @ProcessButtonClick;
+  Result.OnMouseEnter := @ProcessButtonMouseEnter;
+  Result.OnMouseLeave := @ProcessButtonMouseLeave;
 end;
 
 function TScreenMap.CreateButton(const aCaption: string; tex: PTexture): TUIButton;
@@ -270,8 +447,51 @@ begin
   Result.BodyShape.Border.Color := BGRA(128,64,32);
 end;
 
+procedure TScreenMap.ProcessButtonMouseEnter(Sender: TSimpleSurfaceWithEffect);
+var old, s, hint: string;
+begin
+  old := FLabelPlaceOnTheMap.Caption;
+  s := '';
+  hint := '';
+  if Sender = BWorkShop then begin
+    s := sWorkShop;
+    hint := sWorkShopHint;
+  end else if Sender = BPineForest then begin
+    s := sPinForest;
+    hint := sPinForestHint;
+  end else if Sender = BMountainPeaks then begin
+    s := sMountainPeaks;
+    hint := sMountainPeaksHint;
+  end else if Sender = BVolcano then begin
+    s := sVolcano;
+    hint := sVolcanoHint;
+  end else if Sender = BPlainMoon then begin
+    s := sPlainOfSleepingMoon;
+    hint := sPlainOfSleepingMoonHint;
+  end else if Sender = BMermaidPort then begin
+    s := sMermaidsPort;
+    hint := sMermaidsPortHint;
+  end;
+  FLabelPlaceOnTheMap.Caption := s;
+  FLabelPlaceOnTheMap.CenterX := ScaleW(687);
+  FLabelPlaceOnTheMap.ScaledBottomY := FScene.Height-ScaleH(50);
+  FPlaceHint.Text.Caption := hint;
+  if old <> s then begin
+    FLabelPlaceOnTheMap.Opacity.Value := 0;
+    FPlaceHint.Opacity.Value := 0;
+  end;
+  FLabelPlaceOnTheMap.Opacity.ChangeTo(180, 0.75);
+  FPlaceHint.Opacity.ChangeTo(180, 0.75);
+end;
+
+procedure TScreenMap.ProcessButtonMouseLeave(Sender: TSimpleSurfaceWithEffect);
+begin
+  FLabelPlaceOnTheMap.Opacity.ChangeTo(0, 0.75);
+  FPlaceHint.Opacity.ChangeTo(0, 0.75);
+end;
+
 procedure TScreenMap.ProcessButtonClick(Sender: TSimpleSurfaceWithEffect);
-var pineForestDone, mountainPicDone: boolean;
+var pineForestDone, mountainPicDone, volcanoDone: boolean;
   s: string;
   procedure _ShowPanelChooseGameStep;
   begin
@@ -288,6 +508,7 @@ begin
 
   pineForestDone := PlayerInfo.Forest.IsTerminated;
   mountainPicDone := PlayerInfo.MountainPeak.IsTerminated;
+  volcanoDone := PlayerInfo.Volcano.IsTerminated;
 
 
   if Sender = BMainMenu then begin
@@ -305,7 +526,7 @@ begin
 
   if Sender = BPineForest then begin
     UnableMouseInteractionOnMapObjects(False);
-    FPanelChooseGameStep := TPanelChooseGameStep.Create(texPineForest, texLRIcon, PlayerInfo.Forest, 100);
+    FPanelChooseGameStep := TPanelChooseGameStep.Create(texPineForest, texLRIcon, PlayerInfo.Forest, 100, '');
     _ShowPanelChooseGameStep;
     LastGameClicked := gomPineForest;
     exit;
@@ -317,7 +538,7 @@ begin
 
   if Sender = BMountainPeaks then begin
     UnableMouseInteractionOnMapObjects(False);
-    FPanelChooseGameStep := TPanelChooseGameStep.Create(texZipLinePeaks, texLRIcon, PlayerInfo.MountainPeak, 110);
+    FPanelChooseGameStep := TPanelChooseGameStep.Create(texZipLinePeaks, texLRIcon, PlayerInfo.MountainPeak, 110, '');
     _ShowPanelChooseGameStep;
     LastGameClicked := gomZipLine;
     exit;
@@ -333,13 +554,34 @@ begin
       FScene.RunScreen(ScreenGameVolcanoEntrance);
       LastGameClicked := gomUnknow;
     end else begin
-      FPanelChooseGameStep := TPanelChooseGameStep.Create(texVolcanoMountain, texLRIcon, PlayerInfo.Volcano, 120);
+      FPanelChooseGameStep := TPanelChooseGameStep.Create(texVolcanoMountain, texLRIcon, PlayerInfo.Volcano, 120, '');
       _ShowPanelChooseGameStep;
       LastGameClicked := gomVolcano;
       exit;
     end;
   end;
 
+  if s = '' then
+    if not volcanoDone then s := sFirstCompleteVolcano;
+
+  if Sender = BPlainMoon then begin
+    UnableMouseInteractionOnMapObjects(False);
+    FPanelChooseGameStep := TPanelChooseGameStep.Create(texPlainOfSleepingMoon, texLRIcon, PlayerInfo.PlainMoon, 130, ' ');
+    _ShowPanelChooseGameStep;
+    LastGameClicked := gomPlainOfSleepingMoon;
+    exit;
+  end;
+
+  if s = '' then
+    if not PlayerInfo.PlainMoon.IsTerminated then s := sFirstCompletePlainMoon;
+
+  if Sender = BMermaidPort then begin
+    UnableMouseInteractionOnMapObjects(False);
+    FPanelChooseGameStep := TPanelChooseGameStep.Create(texFactory, texLRIcon, PlayerInfo.MermaidsPort, 140, ' ');
+    _ShowPanelChooseGameStep;
+    LastGameClicked := gomMermaidPort;
+    exit;
+  end;
 end;
 
 procedure TScreenMap.ShowLastGameStepPanel;
@@ -348,6 +590,8 @@ begin
     gomPineForest: ProcessButtonClick(BPineForest);
     gomZipLine: ProcessButtonClick(BMountainPeaks);
     gomVolcano: ProcessButtonClick(BVolcano);
+    gomPlainOfSleepingMoon: ProcessButtonClick(BPlainMoon);
+    gomMermaidport: ProcessButtonClick(BMermaidPort);
   end;
 end;
 
@@ -358,7 +602,11 @@ begin
   else
   if PlayerInfo.MountainPeak.FirstTimeTerminated then FTargetButtonForFireworkAnim := BMountainPeaks
   else
-  if PlayerInfo.Volcano.FirstTimeTerminated then FTargetButtonForFireworkAnim := BVolcano;
+  if PlayerInfo.Volcano.FirstTimeTerminated then FTargetButtonForFireworkAnim := BVolcano
+  else
+  if PlayerInfo.PlainMoon.FirstTimeTerminated then FTargetButtonForFireworkAnim := BPlainMoon
+  else
+  if PlayerInfo.MermaidsPort.FirstTimeTerminated then FTargetButtonForFireworkAnim := BMermaidport;
 
   Result := FTargetButtonForFireworkAnim <> NIL;
   if Result then begin
@@ -369,6 +617,10 @@ end;
 
 procedure TScreenMap.SetLRIconPositionOnGameToPlay;
 begin
+  if PlayerInfo.PlainMoon.IsTerminated then FIconLR.SetCenterCoordinate(BMermaidPort.CenterX, BMermaidPort.CenterY)
+  else
+  if PlayerInfo.Volcano.IsTerminated then FIconLR.SetCenterCoordinate(BPlainMoon.CenterX, BPlainMoon.CenterY)
+  else
   if PlayerInfo.MountainPeak.IsTerminated then FIconLR.SetCenterCoordinate(BVolcano.CenterX, BVolcano.CenterY)
   else
   if PlayerInfo.Forest.IsTerminated then FIconLR.SetCenterCoordinate(BMountainPeaks.CenterX, BMountainPeaks.CenterY)
@@ -378,13 +630,12 @@ end;
 procedure TScreenMap.CreateObjects;
 var o, o1: TSprite;
   pe: TParticleEmitter;
-  sea: TMultiColorRectangle;
+  sea: TQuad4Color;
   ima: TBGRABitmap;
   s: String;
   d, waveCount, i: Integer;
+  fd: TFontDescriptor;
 begin
-FScene.LogDebug('TScreenMap.CreateObjects BEGIN');
-
 //  LastGameClicked := gomUnknow;
   FPanelChooseGameStep := NIL;
 
@@ -409,16 +660,25 @@ FScene.LogDebug('TScreenMap.CreateObjects BEGIN');
   texLRHome := FAtlas.AddFromSVG(SpriteBGFolder+'LRHome.svg', ScaleW(87), -1);
   FAtlas.Add(ParticleFolder+'sphere_particle.png');
   texPineForest := FAtlas.AddFromSVG(SpriteMapFolder+'PineForest.svg', ScaleW(167), -1);
-  texVolcanoMountain := FAtlas.AddFromSVG(SpriteMapFolder+'VolcanoMountain.svg', ScaleW(123), -1);
-  texZipLinePeaks := FAtlas.AddFromSVG(SpriteMapFolder+'ZipLinePeaks.svg', ScaleW(119), -1);
-  texZipLinePeaksCableToVolcano := FAtlas.AddFromSVG(SpriteMapFolder+'ZipLinePeaksCableToVolcano.svg', ScaleW(93), -1);
+  texVolcanoMountain := FAtlas.AddFromSVG(SpriteMapFolder+'VolcanoMountain.svg', ScaleW(124), -1);
+  texZipLinePeaks := FAtlas.AddFromSVG(SpriteMapFolder+'ZipLinePeaks.svg', ScaleW(100), -1);
+  texZipLinePeaksCableToVolcano := FAtlas.AddFromSVG(SpriteMapFolder+'ZipLinePeaksCableToVolcano.svg', ScaleW(137), -1);
+  texPlainOfSleepingMoon := FAtlas.AddFromSVG(SpriteMapFolder+'MapPlainOfSleepingMoon.svg', ScaleW(211), -1);
+  texFactory := FAtlas.AddFromSVG(SpriteMapFolder+'MapFactory.svg', ScaleW(159), -1);
 
   // castle island
   texMapCastleFW := FAtlas.AddFromSVG(SpriteMapFolder+'MapCastleFW.svg', ScaleW(170), -1);
   texMapCastleOutline := FAtlas.AddFromSVG(SpriteMapFolder+'MapCastleOutline.svg', ScaleW(170), -1);
   texCastle := FAtlas.AddFromSVG(SpriteBGFolder+'WolfCastle.svg', ScaleW(121), -1);
 
+  AdditionnalScale := 0.25;
+  texSeagullBody := FAtlas.AddFromSVG(SpriteMapFolder+'SeagullBody.svg', ScaleW(59), -1);
+  texSeagullWing := FAtlas.AddFromSVG(SpriteMapFolder+'SeagullWing.svg', ScaleW(23), -1);
+  AdditionnalScale := 1.0;
+
   FFontText := CreateGameFontText(FAtlas);
+  fd.Create('Arial', Round(FScene.Height/17.5), [], BGRA(0,0,0));
+  FFontPlaceName := FAtlas.AddTexturedFont(fd, FSaveGame.LanguageCharSet);
 
   CreateGameFontNumber(FAtlas);
   LoadCoinTexture(FAtlas);
@@ -433,14 +693,13 @@ FScene.LogDebug('TScreenMap.CreateObjects BEGIN');
   ima.Free;
 
   // sea
-  sea := TMultiColorRectangle.Create(FScene.Width, FScene.Height);
+  sea := TQuad4Color.Create(FScene.Width, FScene.Height);
   sea.SetAllColorsTo(BGRA(4,83,177));
- // sky.SetBottomColors(BGRA(13,31,178)); //(BGRA(65,209,99)); //(BGRA(8,242,130));
-  FScene.Add(sea, LAYER_BG2);
+  FScene.Add(sea, LAYER_BG3);
 
-  // LR island
+  // big island
   o := TSprite.Create(texMap1FW, False);
-  FScene.Add(o, LAYER_GROUND);
+  FScene.Add(o, LAYER_BG2);
   o.SetCoordinate(ScaleW(36), ScaleH(31));
 
   o1 := TSprite.Create(texMap1FW, False);   // blue BG
@@ -474,7 +733,7 @@ FScene.LogDebug('TScreenMap.CreateObjects BEGIN');
 
   // castle island
   o := TSprite.Create(texMapCastleFW, False);
-  FScene.Add(o, LAYER_GROUND);
+  FScene.Add(o, LAYER_BG2);
   o.SetCoordinate(ScaleW(752), ScaleH(168));
 
   o1 := TSprite.Create(texMapCastleFW, False);
@@ -505,7 +764,9 @@ FScene.LogDebug('TScreenMap.CreateObjects BEGIN');
                           'Goto HERE');
   end;
 
-
+  // seagulls
+  for i:=0 to 7 do
+    TSeagull.Create(LAYER_FXANIM);
 
   // button workshop
   BWorkShop := CreateImageButton(texLRHome);
@@ -518,11 +779,15 @@ FScene.LogDebug('TScreenMap.CreateObjects BEGIN');
 
   // button pine forest
   BPineForest := CreateImageButton(texPineForest);
-  BPineForest.SetCoordinate(ScaleW(60), ScaleH(50));
+  BPineForest.SetCoordinate(ScaleW(45), ScaleH(47));
+
+  // button mountain peaks
+  BMountainPeaks := CreateImageButton(texZipLinePeaks);
+  BMountainPeaks.SetCoordinate(ScaleW(233), ScaleH(102));
 
   // button volcano mountain
   BVolcano := CreateImageButton(texVolcanoMountain);
-  BVolcano.SetCoordinate(ScaleW(357), ScaleH(163));
+  BVolcano.SetCoordinate(ScaleW(352), ScaleH(269));
   pe := TParticleEmitter.Create(FScene);
   BVolcano.AddChild(pe, 1);
   pe.LoadFromFile(ParticleFolder+'VolcanoMountainSmoke.par', FAtlas);
@@ -530,12 +795,18 @@ FScene.LogDebug('TScreenMap.CreateObjects BEGIN');
   pe.SetEmitterTypeLine(PointF(BVolcano.Width*0.5279, BVolcano.Height*0.0729));
   pe.FParticleParam.Size := 0.22;
 
-  // button mountain peaks
-  BMountainPeaks := CreateImageButton(texZipLinePeaks);
-  BMountainPeaks.SetCoordinate(ScaleW(230), ScaleH(94));
+  // cable between Mountain Peaks and Volcano
   o := TSprite.Create(texZipLinePeaksCableToVolcano, False);
-  BMountainPeaks.AddChild(o, 0);
-  o.SetCoordinate(BMountainPeaks.Width*0.75, BMountainPeaks.Height*0.55);
+  FScene.Add(o, LAYER_GROUND);
+  o.SetCoordinate(ScaleW(272), ScaleH(262));
+
+  // button plain of the sleeping moon
+  BPlainMoon := CreateImageButton(texPlainOfSleepingMoon);
+  BPlainMoon.SetCoordinate(ScaleW(291), ScaleH(439));
+
+  // button factory
+  BMermaidPort := CreateImageButton(texFactory);
+  BMermaidPort.SetCoordinate(ScaleW(516), ScaleH(184));
 
   // Wolf castle
   o := TSprite.Create(texCastle, False);
@@ -555,6 +826,24 @@ FScene.LogDebug('TScreenMap.CreateObjects BEGIN');
   BMainMenu.X.Value := ScaleW(10);
   BMainMenu.BottomY := FScene.Height-ScaleH(10);
 
+  // label place on map
+  FLabelPlaceOnTheMap := TUILabel.Create(FScene, '', FFontPlaceName);
+  FScene.Add(FLabelPlaceOnTheMap, LAYER_GAMEUI);
+  FLabelPlaceOnTheMap.Opacity.Value := 0;
+  //FLabelPlaceOnTheMap.Scale.Value := PointF(2,2);
+  FLabelPlaceOnTheMap.Tint.Value := BGRA(200,200,200);
+
+  FPlaceHint:= TUITextArea.Create(FScene);
+  FPlaceHint.BodyShape.SetShapeRectangle(Round(FScene.Width*0.6), Round(FScene.Height*0.1), 0);
+  FPlaceHint.BodyShape.Fill.Visible := False;
+  FScene.Add(FPlaceHint, LAYER_GAMEUI);
+  FPlaceHint.Text.Caption := '';
+  FPlaceHint.Text.Align := taTopCenter;
+  FPlaceHint.Text.TexturedFont := FFontText;
+  FPlaceHint.Opacity.Value := 0;
+  FPlaceHint.Text.Tint.Value := BGRA(200,200,200);
+  FPlaceHint.AnchorPosToSurface(FLabelPlaceOnTheMap, haCenter, haCenter, 0, vaTop, vaBottom, 0);// ScaleH(10));
+
   // player items panel
   FInMapPanel := TInMapPanel.Create;
 
@@ -570,14 +859,11 @@ FScene.LogDebug('TScreenMap.CreateObjects BEGIN');
   if not PlayerInfo.MountainPeak.IsTerminated then
     FCheatCodeManager.AddCheatCodeToList(MountainPeaksCheatCode);
 
-  CustomizeMousePointer;
-
-FScene.LogDebug('TScreenMap.CreateObjects END');
+  CustomizeMousePointer(True);
 end;
 
 procedure TScreenMap.FreeObjects;
 begin
-FScene.LogDebug('TScreenMap.FreeObjects BEGIN');
   FsndSeaWave.FadeOutThenKill(3.0);
   FsndSeaWave := NIL;
   FreeMousePointer;
@@ -585,7 +871,6 @@ FScene.LogDebug('TScreenMap.FreeObjects BEGIN');
   FAtlas.Free;
   FAtlas := NIL;
   ResetSceneCallbacks;
-FScene.LogDebug('TScreenMap.FreeObjects END');
 end;
 
 procedure TScreenMap.ProcessMessage(UserValue: TUserMessageValue);
@@ -657,6 +942,8 @@ begin
       else
         FScene.RunScreen(ScreenGameVolcanoInner);
     end;
+    130: FScene.RunScreen(ScreenPlainOfSleepingMoon);
+    140: FScene.RunScreen(ScreenMermaidsPort);
   end;
 end;
 
@@ -704,6 +991,8 @@ begin
   BPineForest.MouseInteractionEnabled := aValue;
   BMountainPeaks.MouseInteractionEnabled := aValue;
   BVolcano.MouseInteractionEnabled := aValue;
+  BPlainMoon.MouseInteractionEnabled := aValue;
+  BMermaidPort.MouseInteractionEnabled := aValue;
   BMainMenu.MouseInteractionEnabled := aValue;
 end;
 

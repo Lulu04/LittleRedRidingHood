@@ -81,10 +81,15 @@ begin
   if aLayerIndex <> -1 then FScene.Add(Self, aLayerIndex);
   SetCoordinate(aX, aY);
   SetGrid(1, 1);
-  ApplyDeformation(dtWaveH);
+  if random > 0.5 then
+    ApplyDeformation(dtWaveH)
+    else ApplyDeformation(dtBasic);
+  SetTimeMultiplicatorOnRow(0, 0.5+Random*0.5);
   SetDeformationAmountOnRow(1, 0.0);
   Amplitude.Value := PointF(0.5, 0);
-  Update(Random);
+  Update(1);
+  Update(1);
+  Update(1);
 end;
 
 { TGrassLarge }
@@ -190,9 +195,9 @@ begin
 end;
 
 constructor TForestBG.Create;
-var sky: TMultiColorRectangle;
+var sky: TQuad4Color;
 begin
-  sky := TMultiColorRectangle.Create(FScene.Width, FScene.Height);
+  sky := TQuad4Color.Create(FScene.Width, FScene.Height);
   sky.SetTopColors(BGRA(110,142,255));
   sky.SetBottomColors(BGRA(13,31,178)); //(BGRA(65,209,99)); //(BGRA(8,242,130));
   FScene.Add(sky, LAYER_BG2);

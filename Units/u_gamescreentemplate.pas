@@ -44,6 +44,9 @@ public // modal panels
 
   procedure ShowGetReadyGo(aMessageValueWhenDone: TUserMessageValue; aDelay: single=0; aCameraInUse: TOGLCCamera=NIL);
 
+  // this function create a sprite on LAYER_TOP with a text and center it on the scene
+  function SpriteMessage(const aText: string): TSprite;
+
 public // loading particle texture in atlas
   procedure AddSphereParticleToAtlas(aAtlas: TOGLCTextureAtlas);
   procedure AddCrossParticleToAtlas(aAtlas: TOGLCTextureAtlas);
@@ -160,11 +163,20 @@ begin
     ShowModal;
 end;
 
-procedure TGameScreenTemplate.ShowGetReadyGo(
-  aMessageValueWhenDone: TUserMessageValue; aDelay: single; aCameraInUse: TOGLCCamera);
+procedure TGameScreenTemplate.ShowGetReadyGo(aMessageValueWhenDone: TUserMessageValue;
+   aDelay: single; aCameraInUse: TOGLCCamera);
 begin
   with TGetReadyGo.Create(Self, aMessageValueWhenDone, aDelay) do
     SetCenterCoordinate(GetCenterView(aCameraInUse));
+end;
+
+function TGameScreenTemplate.SpriteMessage(const aText: string): TSprite;
+var fd: TFontDescriptor;
+begin
+  fd.Create('Arial', Round(FScene.Height*0.1), [], BGRA(255,255,0), BGRA(0,0,0), PPIScale(3));
+  Result := TSprite.Create(FScene, fd, aText);
+  FScene.Add(Result, LAYER_TOP);
+  Result.CenterOnScene;
 end;
 
 procedure TGameScreenTemplate.AddSphereParticleToAtlas(aAtlas: TOGLCTextureAtlas);
@@ -229,6 +241,8 @@ begin
     FScene.Layer[i].OnBeforeUpdate := NIL;
     FScene.Layer[i].OnAfterUpdate := NIL;
     FScene.Layer[i].OnSortCompare := NIL;
+    FScene.Layer[i].PostProcessing.DisableAll;
+    FScene.Layer[i].PostProcessing.UseCustomRenderer(NIL);
   end;
 end;
 

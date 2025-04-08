@@ -46,7 +46,7 @@ end;
 
 TPanelWithBGDarkness = class(TUIPanel)
 private
-  FSceneDarkness: TMultiColorRectangle;
+  FSceneDarkness: TQuad4Color;
   procedure CreateSceneDarkness;
 public
   constructor CreateAsRect(aWidth, aHeight: integer);
@@ -180,11 +180,13 @@ end;
 { TInGamePausePanel }
 TCallbackPlayerEnterCheatCode = procedure(const aCheatCode: string) of object;
 TInGamePausePanel = class(TUIModalPanel)
+private class var FPlayerHaveClickedBackToMapButton: boolean;
 private
   FKeyboardToButtons: TButtonsClickableByKeyboard;
   BResumeGame, BBackToMap: TUIButton;
   FCheatCodeManager: TCheatCodeManager;
   FOnPlayerEnterCheatCode: TCallbackPlayerEnterCheatCode;
+  FMousePointerPreviousVisibleState: Boolean;
   procedure FormatButton(aButton: TUIButton);
   procedure ProcessButtonClick(Sender: TSimpleSurfaceWithEffect);
 public
@@ -192,7 +194,8 @@ public
   procedure Update(const aElapsedTime: single); override;
   procedure ProcessMessage({%H-}UserValue: TUserMessageValue); override;
   procedure ShowModal; override;
-
+  procedure Hide(aFree: boolean); override;
+  class property PlayerHaveClickedBackToMapButton: boolean read FPlayerHaveClickedBackToMapButton;
 public
   procedure SetCheatCodeList(const aList: TStringArray);
   property OnPlayerEnterCheatCode: TCallbackPlayerEnterCheatCode read FOnPlayerEnterCheatCode write FOnPlayerEnterCheatCode;
@@ -221,11 +224,14 @@ private
   FBYes, FBNo: TUIButton;
   FTargetScreen: TScreenTemplate;
   FYesUserValue, FNoUserValue: TUserMessageValue;
+  FMousePointerPreviousVisibleState: Boolean;
   procedure ProcessButtonClick(Sender: TSimpleSurfaceWithEffect);
 public
   constructor Create(const aText, aYes, aNo: string; aFont: TTexturedFont;
                      aTargetScreen: TScreenTemplate; aYesUserValue, aNoUserValue: TUserMessageValue;
                      aAtlas: TOGLCTextureAtlas);
+  procedure ShowModal; override;
+  procedure Hide(aFree: boolean); override;
 end;
 
 
@@ -471,6 +477,22 @@ begin
   CenterOnScene;
 end;
 
+procedure TDialogQuestion.ShowModal;
+begin
+  if FScene.Mouse.MouseSprite <> NIL then begin
+    FMousePointerPreviousVisibleState := FScene.Mouse.MouseSprite.Visible;
+    FScene.Mouse.MouseSprite.Visible := True;
+  end;
+  inherited ShowModal;
+end;
+
+procedure TDialogQuestion.Hide(aFree: boolean);
+begin
+  if FScene.Mouse.MouseSprite <> NIL then
+    FScene.Mouse.MouseSprite.Visible := FMousePointerPreviousVisibleState;
+  inherited Hide(aFree);
+end;
+
 { TDisplayGameHelp }
 
 function TDisplayGameHelp.CreateSpriteFromString(const s: string): TSprite;
@@ -671,7 +693,7 @@ end;
 
 procedure TPanelWithBGDarkness.CreateSceneDarkness;
 begin
-  FSceneDarkness := TMultiColorRectangle.Create(FScene.Width, FScene.Height);
+  FSceneDarkness := TQuad4Color.Create(FScene.Width, FScene.Height);
   FSceneDarkness.SetAllColorsTo(BGRA(0,0,0));
   FScene.Add(FSceneDarkness, LAYER_GAMEUI);
   FSceneDarkness.Opacity.Value := 0;
@@ -775,6 +797,7 @@ begin
   if Sender = BBackToMap then begin
     Hide(True);
     FScene.RunScreen(ScreenMap);
+    FPlayerHaveClickedBackToMapButton := True;
   end;
   Audio.GlobalVolume := 1.0;
 end;
@@ -814,6 +837,7 @@ begin
   FKeyboardToButtons.Select(BResumeGame);
 
   FCheatCodeManager.InitDefault;
+  FPlayerHaveClickedBackToMapButton := False;
 end;
 
 procedure TInGamePausePanel.Update(const aElapsedTime: single);
@@ -860,6 +884,17 @@ begin
   PostMessage(0, 1.0);
   Audio.GlobalVolume := 0.5;
   FKeyboardToButtons.KeyboardEnabled := True;
+  if FScene.Mouse.MouseSprite <> NIL then begin
+    FMousePointerPreviousVisibleState := FScene.Mouse.MouseSprite.Visible;
+    FScene.Mouse.MouseSprite.Visible := True;
+  end;
+end;
+
+procedure TInGamePausePanel.Hide(aFree: boolean);
+begin
+  if FScene.Mouse.MouseSprite <> NIL then
+    FScene.Mouse.MouseSprite.Visible := FMousePointerPreviousVisibleState;
+  inherited Hide(aFree);
 end;
 
 procedure TInGamePausePanel.SetCheatCodeList(const aList: TStringArray);
@@ -1423,7 +1458,7 @@ begin
   end
   else begin
     //keyboard
-    FName.Caption := FName.Caption + SIMPLELATIN_CHARSET[Sender.Tag1];
+    FName.Caption := FName.Caption + FScene.Charsets.SIMPLELATIN[Sender.Tag1];
   end;
 end;
 
@@ -1455,7 +1490,7 @@ begin
   FKeyboardButtonSpacing := PPIScale(10);
   i := 1;
   while i < 62 do begin
-    b := TUIButton.Create(FScene, SIMPLELATIN_CHARSET[i+1], aFont, NIL);
+    b := TUIButton.Create(FScene, FScene.Charsets.SIMPLELATIN[i+1], aFont, NIL);
     AddChild(b, 0);
     b.Tag1 := i+1;
     FormatButtonKeyboard(b);

@@ -1,11 +1,12 @@
 [THANKS]
+rchastain, circular, Charlotte, Coralie.
 
 [DEV]
 
 Game by Lulu, written in FreePascal with the awesome Lazarus IDE.
 
 The following libraries are used for its development:
-- OGLCScene to render graphics with OpenGL  https://github.com/Lulu04/OGLCScene
+- OGLCScene a 2D framework to render graphics with OpenGL  https://github.com/Lulu04/OGLCScene
 - ALSound to render sounds and musics  https://github.com/Lulu04/ALSound
 - BGRABitmap to handle fonts, images and svg files.
 
@@ -20,10 +21,16 @@ parchment reworked from https://opengameart.org/content/epic-collection-parchmen
 Tyrannosaurus reworked from an image on http://www.freepik.com, designed by pikisuperstar
 https://fr.freepik.com/vecteurs-libre/fond-plat-t-rex_4662421.htm#fromView=author&page=2&position=24&uuid=a3420b66-724e-4c82-85a5-204ca503c034
 
+Star Nest fragment shader by Pablo Roman Andrioli: https://www.shadertoy.com/view/XlfGRj
+
+Procedural Planet fragment shader is a modified version found in the article at: https://docs.godotengine.org/en/stable/tutorials/shaders/using_viewport_as_texture.html
+
 
 [MUSICS]
 
 Malloga_Ballinga_Mastered.ogg by Joe Reynolds - Professorlamp at https://opengameart.org/content/malloga-ballinga
+
+Boss-Time by David Renda - https://www.fesliyanstudios.com/royalty-free-music/download/boss-time/2340
 
 On The Islands.ogg,
 ForestInTheNight.ogg,
@@ -116,4 +123,18 @@ Cloth, Bedding, brush, sweep-015.wav by MattRuthSound -- https://freesound.org/s
 
 Dropping Rocks by iwanPlays -- https://freesound.org/s/567250/ -- License: Creative Commons 0
 
+Laser gunshot by MattBrs -- https://freesound.org/s/660404/ -- License: Creative Commons 0
 
+big-boom by freesound community -- https://pixabay.com/sound-effects/search/explode/?pagi=2
+
+train-horn by Aman Kumar -- https://pixabay.com/sound-effects/search/train%20horn/
+
+radio-static by freesound community -- https://pixabay.com/sound-effects/search/talkies%20walkies/
+
+engine-47745 by freesound community -- https://pixabay.com/sound-effects/search/train%20engine/?pagi=3
+
+train-braking by Radio_fragola_gorizia -- https://freesound.org/s/400093/ -- License: Creative Commons 0
+
+Depressurization of the brakes of a train.mp3 by Oscar de Ávila -- https://freesound.org/s/140036/ -- License: Creative Commons 0
+
+Punch, slap, n' kick.wav by CGEffex -- https://freesound.org/s/98341/ -- License: Attribution 4.0

@@ -22,7 +22,6 @@ TScreenIntroCinematic = class(TGameScreenTemplate)
 private
   FGameState: TGameState;
   FCamera: TOGLCCamera;
-  FCameraFollowLR: boolean;
   FLR: TLR4Direction;
   FGranny: TGranny;
   FBBQ, FGrannyKidnapped: TSprite;
@@ -44,9 +43,6 @@ public
   procedure ProcessMessage({%H-}UserValue: TUserMessageValue); override;
   procedure Update(const aElapsedTime: single); override;
 
-  procedure MoveCameraTo(const p: TPointF; aDuration: single);
-  procedure ZoomCameraTo(const z: TPointF; aDuration: single);
-
   property GameState: TGameState read FGameState write SetGameState;
 end;
 
@@ -54,7 +50,7 @@ var ScreenIntro: TScreenIntroCinematic;
 
 implementation
 
-uses Forms,u_app, u_gamebackground, u_resourcestring, u_screen_map, Math;
+uses Forms,u_app, u_gamebackground, u_resourcestring, u_screen_map, u_utils;
 
 // sort the surfaces by Y value
 function SortSprite(Item1, Item2: Pointer): Integer;
@@ -86,7 +82,7 @@ TCloud = class(TSprite)
 end;
 
 var
-  FViewArea: TRectF;
+  FViewArea, FCameraBounds: TRectF;
 
 { TCloud }
 
@@ -115,28 +111,30 @@ begin
 end;
 
 procedure TScreenIntroCinematic.CreateLevel;
-var rec: TMultiColorRectangle;
+var rec: TQuad4Color;
+  gradient: TGradientRectangle;
   o: TSprite;
   g: TGrassLarge;
   xx, yy: single;
   i: integer;
 begin
-  FViewArea.Left := FScene.Width*0.5;
-  FViewArea.Top := FScene.Height*0.5;
+  FViewArea.Left := 0; // FScene.Width*0.5;
+  FViewArea.Top := 0; // FScene.Height*0.5;
   FViewArea.Right := ScaleW(1855);
   FViewArea.Bottom := ScaleH(768);
 
   // blue sky
-  rec := TMultiColorRectangle.Create(Round(FViewArea.Right), ScaleH(422));
+  rec := TQuad4Color.Create(Round(FViewArea.Right), ScaleH(422));
   FScene.Add(rec, LAYER_BG3);
   rec.SetTopColors(BGRA(157,226,252));
   rec.SetBottomColors(BGRA(58,134,255));
   // green ground
-  rec := TMultiColorRectangle.Create(Round(FViewArea.Right), ScaleH(346));
-  FScene.Add(rec, LAYER_BG3);
-  rec.SetCoordinate(0, ScaleH(423));
-  rec.SetTopColors(BGRA(2,126,0));
-  rec.SetBottomColors(BGRA(62,249,79));
+  gradient := TGradientRectangle.Create;
+  FScene.Add(gradient, LAYER_BG3);
+  gradient.Gradient.CreateVertical([BGRA(3,53,0), BGRA(19,127,12), BGRA(19,127,0)], [0, 0.5, 1]);
+  gradient.SetSize(Round(FViewArea.Right), ScaleH(346));
+  gradient.SetCoordinate(0, ScaleH(423));
+
   // peak montain gray
   FScene.AddSprite(texSmallPeakMontainGray, False, LAYER_BG3, ScaleW(736), ScaleH(219));
   FScene.AddSprite(texBigPeakMontainGray, False, LAYER_BG3, ScaleW(632), ScaleH(135));
@@ -207,6 +205,8 @@ begin
       g := TGrassLarge.Create(texGrassLarge, xx, yy, LAYER_GROUND);
       g.Amplitude.X.Value := 0.4;
       g.DeformationSpeed.Value := PointF(1.2, 0);
+      g.Tint.Value := BGRA(32,64,0,Random(100)+155);
+      g.Opacity.Value := Random(100)+155;
       xx := xx + texGrassLarge^.FrameWidth - Random*texGrassLarge^.FrameWidth*0.25;
     until xx > FViewArea.Right+texGrassLarge^.FrameWidth*0.25;
     yy := yy + texGrassLarge^.FrameHeight*0.6;
@@ -226,8 +226,12 @@ begin
   TCloud.Create(ScaleW(1000), ScaleH(-19), FAtlas);
   TCloud.Create(ScaleW(1187), ScaleH(31), FAtlas);
 
-  FViewArea.Right := FViewArea.Right - FScene.Width*0.5;
-  FViewArea.Bottom := FViewArea.Bottom - FScene.Height*0.5;
+//  FViewArea.Right := FViewArea.Right - FScene.Width*0.5;
+//  FViewArea.Bottom := FViewArea.Bottom - FScene.Height*0.5;
+  FCameraBounds.Left := FScene.Width*0.5;
+  FCameraBounds.Top := FScene.Height*0.5;
+  FCameraBounds.Right := FViewArea.Right - FScene.Width*0.5;
+  FCameraBounds.Bottom := FViewArea.Bottom - FScene.Height*0.5;
 end;
 
 function TScreenIntroCinematic.CharacterBottomY: single;
@@ -261,7 +265,7 @@ begin
   FsndTranquille.FadeIn(1.0, 1.0);
 
   FAtlas := FScene.CreateAtlas;
-  FAtlas.Spacing := 1;
+  FAtlas.Spacing := 2;
 
   LoadLR4DirTextures(FAtlas, False);
   LoadGranMaTextures(FAtlas);
@@ -310,18 +314,20 @@ begin
   FGranny.SetCoordinate(ScaleW(478), CharacterBottomY-FGranny.DeltaYToBottom);
   FGranny.SetCookingAnim;
 
-  // cameras
-  FCamera := FScene.CreateCamera;
-  FCamera.AssignToLayer([LAYER_DIALOG, LAYER_WEATHER, LAYER_ARROW, LAYER_PLAYER,
-   LAYER_WOLF, LAYER_FXANIM, LAYER_GROUND, LAYER_BG1, LAYER_BG2, LAYER_BG3]);
-
   CreateLevel;
   // sort the layer LAYER_GROUND to have the right ZOrder according BottomY coordinate of the surfaces.
   FScene.Layer[LAYER_GROUND].OnSortCompare := @SortSprite;
 
+  // cameras
+  FCamera := FScene.CreateCamera;
+  FCamera.AssignToLayerRange(LAYER_DIALOG, LAYER_BG3);
+  FCamera.AutoFollow.Bounds := FCameraBounds;
+  FCamera.AutoFollow.Speed := 0.03;
+
   // center view on the BBQ
-  FCameraFollowLR := False;
-  MoveCameraTo(PointF(FBBQ.CenterX, FScene.Height*0.5), 0.0);
+  //FCamera.MoveTo(PointF(FBBQ.CenterX, FScene.Height*0.5));
+  FCamera.AutoFollow.SetTargetSurface(FBBQ, PointF(FBBQ.Width*0.5, FBBQ.Height*0.5), True);
+
   // start the cinematic
   PostMessage(0);
 end;
@@ -340,7 +346,8 @@ begin
 end;
 
 procedure TScreenIntroCinematic.ProcessMessage(UserValue: TUserMessageValue);
-var r: TRectF;
+var
+  r: TRectF;
 begin
   case UserValue of
     // intro cinematic
@@ -359,11 +366,10 @@ begin
     23: PostMessage(24, 3.0);
     24: FGranny.ShowDialog(sWouldYouLikeToPickSomeFlowers, FFontText, Self, 25, 0, FCamera);
     25: begin
-      MoveCameraTo(PointF(FLR.X.Value, FScene.Height*0.5), 3.0);
       FLR.ShowDialog(sWillGoRightNow, FFontText, Self, 26, 0, FCamera);
     end;
     26: begin
-      FCameraFollowLR := True;
+      FCamera.AutoFollow.SetTargetSurface(FLR);
       FLR.IdleRight;
       FLR.WalkHorizontallyTo(ScaleW(1600), Self, 28);
     end;
@@ -380,9 +386,9 @@ begin
       PostMessage(36, 1.0);
     end;
     36: begin
-      r := FCamera.GetViewRect;
+      r := GetViewRect(FCamera);
       with TInfoPanel.Create(sGranny, sAhhhh, FFontText, Self, 38) do
-        SetCoordinate(r.Left+PPIScale(20), FScene.Height*0.5);
+        SetCoordinate(r.Left + PPIScale(20), r.Height*0.5);
       PrepareGrannyKidnapped;
       FGranny.Visible := False;
     end;
@@ -392,7 +398,8 @@ begin
       PostMessage(40, 0.5);
     end;
     40: begin
-      FLR.TimeMultiplicator := 0.5;
+      FLR.TimeMultiplicator := 0.4;
+      FLR.WalkSpeed := FScene.Width*0.5;
       FLR.State := lr4sBendUp;
       PostMessage(42, 0.5);
     end;
@@ -403,56 +410,38 @@ begin
     end;
     44: FLR.ShowDialog(sGrannyAsk, FFontText, Self, 46, 0, FCamera);
     46: begin
-      FCameraFollowLR := False;
-      MoveCameraTo(PointF(FBBQ.CenterX, FScene.Height*0.5), 3.0);
-      FLR.WalkHorizontallyTo(ScaleW(965), Self, 48);
-    end;
-    48: begin
-      FLR.IdleLeft;
-      FLR.ShowExclamationMark;
-      //FCameraFollowLR := False;
-      //MoveCameraTo(FBBQ.CenterX, FScene.Height*0.5),
-      PostMessage(50,0.2);
+      //FCamera.MoveTo(PointF(FBBQ.CenterX, FScene.Height*0.5));
+      FCamera.AutoFollow.SetTargetSurface(FBBQ, PointF(FBBQ.Width*0.5, FBBQ.Height*0.5), True);
+      PostMessage(50, 0.5);
     end;
     50: begin
+      FWolfLeft.WalkSpeed := ScaleW(110);
       FWolfLeft.WalkHorizontallyTo(ScaleW(-406), Self, 9999);
       FWolfRight.WalkHorizontallyTo(ScaleW(-406), Self, 9999);
       FWolfRight.Speed.Value := PointF(0, 0);
-      PostMessage(52, 1.5);
+      PostMessage(51, 2.0);
     end;
+    51: FLR.WalkHorizontallyTo(ScaleW(965), Self, 52);
     52: begin
+      FLR.IdleLeft;
+      FLR.ShowExclamationMark;
+      PostMessage(53,0.2);
+    end;
+    53: begin
       FLR.HideMark;
       FLR.ShowDialog(sHey, FFontText, 1.0, FCamera);
       FLR.WalkHorizontallyTo(ScaleW(-406), Self, 54);
-      //PostMessage(54, 2.0);
     end;
     54: FScene.RunScreen(ScreenMap);
   end;
 end;
 
 procedure TScreenIntroCinematic.Update(const aElapsedTime: single);
-var p: TPointF;
 begin
   inherited Update(aElapsedTime);
 
-  // camera follow LR in the bounds of FViewArea
-  if FCameraFollowLR then begin
-    p.x := EnsureRange(FLR.X.Value, FViewArea.Left, FViewArea.Right);
-    p.y := FScene.Height*0.5;
-    MoveCameraTo(p, 0.0);
-    // audio listener position follow LR position
-    Audio.SetListenerPosition(FLR.X.Value, FLR.Y.Value)
-  end;
-end;
-
-procedure TScreenIntroCinematic.MoveCameraTo(const p: TPointF; aDuration: single);
-begin
-  FCamera.MoveTo(p, aDuration, idcSinusoid);
-end;
-
-procedure TScreenIntroCinematic.ZoomCameraTo(const z: TPointF; aDuration: single);
-begin
-  FCamera.Scale.ChangeTo(z, aDuration, idcSinusoid);
+  // audio listener position follow LR position
+  Audio.SetListenerPosition(FLR.X.Value, FLR.Y.Value);
 end;
 
 end.

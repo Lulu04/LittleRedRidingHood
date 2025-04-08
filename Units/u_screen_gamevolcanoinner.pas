@@ -84,7 +84,7 @@ var ScreenGameVolcanoInner: TScreenGameVolcanoInner;
 implementation
 
 uses Forms, u_sprite_wolf, u_app, u_screen_map, u_resourcestring, u_utils,
-  LCLType, Math, ALSound, BGRAPath;
+  u_mousepointer, LCLType, Math, ALSound, BGRAPath;
 
 function FloorToY(aFloorIndex0Based: integer): integer;
 begin
@@ -840,7 +840,7 @@ begin
   // check if LR can use this ladder
   if ((FLR.X.Value - FLR.BodyWidth*0.5 > X.Value+Width*0.0) and
      (FLR.X.Value + FLR.BodyWidth*0.5 < RightX-Width*0.0) and
-     InRange(FLR.GetYBottom, Y.Value, BottomY)) then
+     InRange(FLR.BodyBottomY, Y.Value, BottomY)) then
       FLR.LadderInUse := Self;
 end;
 
@@ -859,13 +859,13 @@ begin
   if Self is TLadderTop then exit(False);
 
   if FLR.CurrentFloor = FloorIndex then exit(AboveLadder <> NIL);
-  Result := InRange(FLR.GetYBottom, Y.Value, BottomY);
+  Result := InRange(FLR.BodyBottomY, Y.Value, BottomY);
 end;
 
 function TLadderBase.LRCanClimbDown: boolean;
 begin
   if FLR.CurrentFloor = FloorIndex then exit(BelowLadder <> NIL);
-  Result := InRange(FLR.GetYBottom, Y.Value, BottomY);
+  Result := InRange(FLR.BodyBottomY, Y.Value, BottomY);
 end;
 
 { TPillarWithScanner }
@@ -931,7 +931,7 @@ begin
 
   if FBeam.Visible then begin
     // check if the beam touch LR
-    m := FBeam.GetMatrixSurfaceSpaceToScene;
+    m := FBeam.GetMatrixSurfaceToWorld;
 
     collide := False;
     CheckLineCollisionWithLR(FBeamTopRight, FBeamBottomRight);
@@ -1127,7 +1127,7 @@ end;
 function TLRCustom.GetCurrentFloor: integer;
 var yy: single;
 begin
-  yy := GetYBottom - DeltaFloorToCharacterFeet;
+  yy := BodyBottomY - DeltaFloorToCharacterFeet;
   Result := YToFloor(yy);
 end;
 
@@ -1262,7 +1262,6 @@ end;
 
 procedure TWatchRoom.ProcessMessage(UserValue: TUserMessageValue);
 var glow: TOGLCGlow;
-  r: single;
 begin
   case UserValue of
     // wolf patrols
@@ -1300,8 +1299,10 @@ begin
     102: begin    // red glow + alarm sounds
       ScreenGameVolcanoInner.FsndPercuLoop.FadeOutThenKill(1.0);
       ScreenGameVolcanoInner.FsndPercuLoop := NIL;
-      r := texWall^.FrameWidth*0.25;
-      glow := TOGLCGlow.Create(FScene, r, r, BGRA(255,0,0), FX_BLEND_NORMAL);
+      glow := TOGLCGlow.Create(FScene, FX_BLEND_NORMAL);
+      glow.SetRadius(texWall^.FrameWidth*0.25, texWall^.FrameWidth*0.25);
+      //glow.Power.Value := 0.97;
+      glow.SetAllColorsTo(BGRA(255,0,0));
       AddChild(glow, 1);
       glow.SetCenterCoordinate(FAlarmGlowLocation);
       glow.AddAndPlayScenario('Visible TRUE'#10+
@@ -1707,7 +1708,7 @@ begin
   TIronBlock.Create(ScaleW(1463), 2, 1, rsBothSide);
   TIronBlock.Create(ScaleW(1509), 2, 1, rsBothSide);
   TIronBlock.Create(ScaleW(1555), 3, 5, rsToTheRight);
-  TIronBlock.Create(FViewArea.Right-xx, 3, 12, rsToTheLeft);
+  TIronBlock.Create(FViewArea.Right-xx, Single(ScaleH(1954)), 12, rsToTheLeft);
 
   CreateLava(-xx, FViewArea.Right, ScaleH(1007), False);
   with TLavaFallingInRobotConstructor.Create(ScaleW(1509), ScaleH(723), LAYER_GROUND) do
@@ -1878,7 +1879,7 @@ begin
   FsndBoilingLava.FadeIn(0.5, 1.0);
 
   FAtlas := FScene.CreateAtlas;
-  FAtlas.Spacing := 1;
+  FAtlas.Spacing := 2;
 
   AdditionnalScale := 0.8;
   LoadLR4DirTextures(FAtlas, False);
@@ -1939,6 +1940,7 @@ begin
 
   // load arrow for button panels
   AddBlueArrowToAtlas(FAtlas);
+  LoadMousePointerTexture(FAtlas);
 
   FAtlas.TryToPack;
   FAtlas.Build;
@@ -1961,8 +1963,7 @@ begin
 
   // camera
   FCamera := FScene.CreateCamera;
-  FCamera.AssignToLayer([LAYER_DIALOG, LAYER_WEATHER, LAYER_ARROW, LAYER_PLAYER,
-   LAYER_WOLF, LAYER_FXANIM, LAYER_GROUND, LAYER_BG1, LAYER_BG2]);
+  FCamera.AssignToLayerRange(LAYER_DIALOG, LAYER_BG2);
 
   FCameraBGWall := FScene.CreateCamera;
   FCameraBGWall.AssignToLayer(LAYER_BG3);
@@ -2004,12 +2005,15 @@ begin
     FGameState := gsRunning;
   end else FGameState := gsRunning;
 
+  CustomizeMousePointer;
+
   // show how to play
   ShowGameInstructions(PlayerInfo.Volcano.HelpText);
 end;
 
 procedure TScreenGameVolcanoInner.FreeObjects;
 begin
+  FreeMousePointer;
   Audio.ResumeMusicTitleMap;
   if FsndPercuLoop <> NIL then FsndPercuLoop.FadeOutThenKill(3.0);
   FsndPercuLoop := NIL;
@@ -2033,6 +2037,11 @@ end;
 
 procedure TScreenGameVolcanoInner.ProcessMessage(UserValue: TUserMessageValue);
 var d: single;
+  procedure ShowComputerMessage(const s: string; aUserValue: TUserMessageValue);
+  begin
+    with TInfoPanel.Create(sAIvoice, s, FFontText, Self, aUserValue) do
+        SetCenterCoordinate(PointF(FComputer.Center.x, GetCameraCenterView.y));
+  end;
 begin
   inherited ProcessMessage(UserValue);
   case UserValue of
@@ -2088,9 +2097,9 @@ begin
 
     // ANIM discover of the machine
     110: begin // zoom on the machine
-      FCameraFollowLR := False;
+   {   FCameraFollowLR := False;
       FCamera.MoveTo(PointF(FRobotConstructor.X.Value, FRobotConstructor.Y.Value-FRobotConstructor.texWheel^.FrameHeight*0.5));
-      FCamera.Scale.Value := PointF(3.0, 3.0);
+      FCamera.Scale.Value := PointF(3.0, 3.0); }
       PostMessage(111, 10.0);
     end;
     111: begin // zoom out
@@ -2139,18 +2148,14 @@ begin
 
     // show some warning dialogs from the computer
     160: begin
-      sndEmergencyAlarm := Audio.AddSound('EmergencyAlarm.mp3');   // alarm
-      sndEmergencyAlarm.Loop := True;
-      sndEmergencyAlarm.Volume.Value := 0.4;
+      sndEmergencyAlarm := Audio.AddSound('EmergencyAlarm.mp3', 0.4, True);   // alarm
       sndEmergencyAlarm.Play(True);
       FComputer.StartScreenFlashRed;
       FComputer.SetText(sAICorrupted);
       FLR.ShowQuestionMark;
-      with TInfoPanel.Create(sAIvoice, sSystemIntrusionAlert, FFontText, Self, 161) do
-          SetCenterCoordinate(PointF(FComputer.Center.x, GetCameraCenterView.y));
+      ShowComputerMessage(sSystemIntrusionAlert, 161);
     end;
-    161: with TInfoPanel.Create(sAIvoice, CorruptString(sSystemMalfunctionDueToHacking), FFontText, Self, 200) do
-          SetCenterCoordinate(PointF(FComputer.Center.x, GetCameraCenterView.y));
+    161: ShowComputerMessage(CorruptString(sSystemMalfunctionDueToHacking), 200);
 
     // gsStartAnimRobotConstructorMoves
     200: begin  // camera zoom out
@@ -2180,11 +2185,9 @@ begin
       PostMessage(205, 1.0);
     end;
     205: begin // message computer try to position the machine
-      with TInfoPanel.Create(sAIvoice, CorruptString(sMachineIsNotInRightAxis), FFontText, Self, 206) do
-          SetCenterCoordinate(PointF(FComputer.Center.x, GetCameraCenterView.y));
+      ShowComputerMessage(CorruptString(sMachineIsNotInRightAxis), 206);
     end;
-    206: with TInfoPanel.Create(sAIvoice, CorruptString(sRapidReturnToTheAxis), FFontText, Self, 207) do
-          SetCenterCoordinate(PointF(FComputer.Center.x, GetCameraCenterView.y));
+    206: ShowComputerMessage(CorruptString(sRapidReturnToTheAxis), 207);
     207: begin  // machine run to the right and hurt computer
       FRobotConstructor.X.ChangeTo(FComputer.X.Value-FRobotConstructor.BodyWidth*0.5, 1.0, idcStartSlowEndFast);
       FRobotConstructor.SetWheelsAngleTo(360, 1.0, idcStartSlowEndFast);
@@ -2243,19 +2246,15 @@ begin
       FCamera.Shaker.Stop;
       PostMessage(216, 1.0);
     end;
-    216: with TInfoPanel.Create(sAIvoice, CorruptString(sProblemSolved), FFontText, Self, 220) do
-          SetCenterCoordinate(PointF(FComputer.Center.x, GetCameraCenterView.y));
+    216: ShowComputerMessage(CorruptString(sProblemSolved),  220);
 
          // some message from the computer
     220: begin
       FLR.HideMark;
-      with TInfoPanel.Create(sAIvoice, CorruptString(sSlowerRobotProduction), FFontText, Self, 221) do
-          SetCenterCoordinate(PointF(FComputer.Center.x, GetCameraCenterView.y));
+      ShowComputerMessage(CorruptString(sSlowerRobotProduction), 221);
     end;
-    221: with TInfoPanel.Create(sAIvoice, CorruptString(sPossibleCauseLackOfLava), FFontText, Self, 222) do
-          SetCenterCoordinate(PointF(FComputer.Center.x, GetCameraCenterView.y));
-    222: with TInfoPanel.Create(sAIvoice, CorruptString(RemedyPumpAtMaxi), FFontText, Self, 223) do
-          SetCenterCoordinate(PointF(FComputer.Center.x, GetCameraCenterView.y));
+    221: ShowComputerMessage(CorruptString(sPossibleCauseLackOfLava), 222);
+    222: ShowComputerMessage(CorruptString(RemedyPumpAtMaxi), 223);
     223: begin // center camera on the pump
       MoveCameraTo(FPump.Center-PointF(ScaleW(20),0), 4.0);
       PostMessage(224, 4.0);
@@ -2292,8 +2291,7 @@ begin
       FFireOnComputer.KillDefered(2.0);
       PostMessage(250, 3.0);
     end;
-    250: with TInfoPanel.Create(sAIvoice, CorruptString(sProblemSolvedButEvacuate), FFontText, Self, 251) do
-          SetCenterCoordinate(PointF(FComputer.Center.x, GetCameraCenterView.y));
+    250: ShowComputerMessage(CorruptString(sProblemSolvedButEvacuate), 251);
     251: begin // camera on LR
       MoveCameraTo(FLR.GetXY, 4.0);
       PostMessage(252, 4.0);
@@ -2302,8 +2300,7 @@ begin
       FCameraFollowLR := True;
       PostMessage(255);
     end;
-    255: with TInfoPanel.Create(sAIvoice, CorruptString(sDeploymentOfEmergencyExit), FFontText, Self, 260) do
-          SetCenterCoordinate(PointF(FComputer.Center.x, GetCameraCenterView.y));
+    255: ShowComputerMessage(CorruptString(sDeploymentOfEmergencyExit), 260);
     260: begin // ladder become accessible
       FLR.IdleRight;
       FLadderEmergency.Y.ChangeTo(FloorToY(1) + texGroundLarge^.FrameHeight*0.3 - texLadderTop^.FrameHeight, 2.0, idcSinusoid);
@@ -2617,7 +2614,7 @@ begin
       // bug: if LR is on ladder and LR.LadderInUse = NIL
       if FLR.IsOnLadder and (FLR.LadderInUse = NIL) and flagPlayerIdle then begin
         // move LR on the nearest floor
-        FLR.CurrentFloor := GetNearestFloor(FLR.GetYBottom);
+        FLR.CurrentFloor := GetNearestFloor(FLR.BodyBottomY);
         FLR.IdleRight;
       end;
 
@@ -2677,4 +2674,5 @@ begin
 end;
 
 end.
+
 

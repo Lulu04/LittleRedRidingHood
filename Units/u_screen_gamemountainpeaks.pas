@@ -56,8 +56,8 @@ var ScreenGameZipLine: TScreenGameZipLine;
 
 implementation
 
-uses u_app, u_resourcestring, u_screen_map, u_sprite_def, u_utils, Forms, Math,
-  ALSound;
+uses u_app, u_resourcestring, u_screen_map, u_sprite_def, u_utils,
+  u_mousepointer, Forms, Math, ALSound;
 
 type //L=left R=right Z=random side ZZ=random object/obstacle at random side
 TLevelObject = (LObj, RObj, ZObj, LObs,  RObs, ZObs, ZZ);
@@ -1169,7 +1169,7 @@ begin
 end;
 
 procedure TScreenGameZipLine.CreateObjects;
-var sky1, sky2: TMultiColorRectangle;
+var sky1, sky2: TQuad4Color;
   o: TSprite;
   ima: TBGRABitmap;
   farPoint, nearPoint: TPointF;
@@ -1190,7 +1190,7 @@ begin
   FsndZipLineBreak.Volume.Value := ZIP_LINE_BREAK_VOLUME;
 
   FAtlas := FScene.CreateAtlas;
-  FAtlas.Spacing := 1;
+  FAtlas.Spacing := 2;
 
   // textures for LR front view (end of the game, win or lost)
   AdditionnalScale := 1.5483;
@@ -1239,6 +1239,7 @@ begin
   FFontText := CreateGameFontText(FAtlas);
   // load arrow for button panels
   AddBlueArrowToAtlas(FAtlas);
+  LoadMousePointerTexture(FAtlas);
 
   FAtlas.TryToPack;
   FAtlas.Build;
@@ -1283,12 +1284,12 @@ begin
   pe.SetEmitterTypeLine(PointF(FVolcano.Width*0.55, FVolcano.Height*0.08));
 
   // sky
-  sky1 := TMultiColorRectangle.Create(FScene.Width, (FScene.Height-ScaleH(184)) div 2);
+  sky1 := TQuad4Color.Create(FScene.Width, (FScene.Height-ScaleH(184)) div 2);
   FScene.Add(sky1, LAYER_BG1);
   sky1.SetTopColors(BGRA(255,255,255,0));
   sky1.SetBottomColors(BGRA(11,166,200));
   sky1.SetCoordinate(0, ScaleH(184));
-  sky2 := TMultiColorRectangle.Create(FScene.Width, (FScene.Height-ScaleH(184)) div 2);
+  sky2 := TQuad4Color.Create(FScene.Width, (FScene.Height-ScaleH(184)) div 2);
   FScene.Add(sky2, LAYER_BG1);
   sky2.SetTopColors(BGRA(11,166,200));
   sky2.SetBottomColors(BGRA(11,166,200));
@@ -1359,7 +1360,6 @@ begin
   // in game panel
   FInGamePanel := TInGamePanel.Create;
 
-
   // set game difficulty
   FDifficulty := PlayerInfo.MountainPeak.StepPlayed;
   FMaxGameSpeed := EnsureRange(0.6 + 0.5*FDifficulty/PlayerInfo.MountainPeak.StepCount, 0.5, 1); // [0.5 to 1.0]
@@ -1379,6 +1379,8 @@ begin
 
   FScene.BackgroundColor := BGRA(80,40,80);
 
+  CustomizeMousePointer;
+
   // show how to play
   PostMessage(50);
 end;
@@ -1386,7 +1388,7 @@ end;
 procedure TScreenGameZipLine.FreeObjects;
 var i: integer;
 begin
-FScene.LogDebug('TScreenGameZipLine.FreeObjects BEGIN');
+  FreeMousePointer;
   FMusic.FadeOutThenKill(1.0);
   FsndZipLine.FadeOutThenKill(1.0);
   FsndZipLineBreak.Kill;

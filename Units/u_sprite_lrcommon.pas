@@ -25,13 +25,15 @@ TBaseComplexContainer = class(TSpriteContainer)
 private
   FDeltaYToBottom, FDeltaYToTop: single;
   FBodyWidth, FBodyHeight: integer;
+  function GetBodyBottomY: single;
+  function GetBodyTopY: single;
+  procedure SetBodyBottomY(AValue: single);
+  procedure SetBodyTopY(AValue: single);
 public
   function CreateChildSprite(aTex: PTexture; aZOrder: integer): TSprite;
   function CreateChildPolar(aTex: PTexture; aZOrder: integer): TPolarSprite;
   function CreateChildDeformationGrid(aTex: PTexture; aZOrder: integer): TDeformationGrid;
 public
-  function GetYTop: single;
-  function GetYBottom: single;
   function GetBodyRect: TRectF;
 
   function CheckCollisionWith(aX, aY: single): boolean; overload;
@@ -40,9 +42,16 @@ public
   // init in descendent classes
   property DeltaYToTop: single read FDeltaYToTop write FDeltaYToTop;
   property DeltaYToBottom: single read FDeltaYToBottom write FDeltaYToBottom;
+
+  property BodyTopY: single read GetBodyTopY write SetBodyTopY;
+  property BodyBottomY: single read GetBodyBottomY write SetBodyBottomY;
   property BodyWidth: integer read FBodyWidth write FBodyWidth;
   property BodyHeight: integer read FBodyHeight write FBodyHeight;
+
 end;
+
+// aJumpStep: 0=up  1=down  2=jump is done
+TCallbackDoOnJumpMove = procedure(aDuration: single; aJumpStep: integer) of object;
 
 { TWalkingCharacter }
 
@@ -55,16 +64,25 @@ private
   FMessageReceiver: TObject;
   FMessageValueWhenFinish: TUserMessageValue;
   FDelay: single;
-  FTimeMultiplicator: single;
+  FTimeMultiplicator, FWalkSpeed, FJumpDeltaX: single;
 protected
   procedure SetTimeMultiplicator(AValue: single); virtual;
+  procedure SetWalkSpeed(AValue: single); virtual;
+  procedure SetJumpDeltaX(AValue: single); virtual;
 public
   procedure Update(const aElapsedTime: single); override;
   procedure PostMessageToTargetObject(aTarget: TObject; aMessageValue: TUserMessageValue; aDelay: single);
   procedure CheckHorizontalMoveToX(aX: single; aMessageReceiver: TObject; aMessageValueWhenFinish: TUserMessageValue; aDelay: single=0);
   procedure CheckVerticalMoveToY(aY: single; aMessageReceiver: TObject; aMessageValueWhenFinish: TUserMessageValue; aDelay: single=0);
   procedure CheckMoveTo(aX, aY: single; aMessageReceiver: TObject; aMessageValueWhenFinish: TUserMessageValue; aDelay: single=0);
+  // allow to control the speed of arms/legs/etc... when the character moves.
   property TimeMultiplicator: single read FTimeMultiplicator write SetTimeMultiplicator;
+  // in pixel/sec
+  property WalkSpeed: single read FWalkSpeed write SetWalkSpeed;
+  // // The number of pixel to shift the character when s/he jump.
+  property JumpDeltaX: single read FJumpDeltaX write SetJumpDeltaX;
+public
+  procedure ApplyTint(const aColor: TBGRAPixel);
 end;
 
 { TCharacterWithMark }
@@ -374,12 +392,17 @@ end;
 
 constructor TInfoPanel.Create(const aAuthor, aText: string; aTexturedFont: TTexturedFont; aLifeTime: single;
   aLayerIndex: integer);
+var w: integer;
 begin
-  Inherited Create(FScene);
+  inherited Create(FScene);
+  VScrollBarMode := sbmNeverShow;
+  HScrollBarMode := sbmNeverShow;
   FScene.Add(Self, aLayerIndex);
-  BodyShape.SetShapeRoundRect(Round(FScene.Width*0.3), 50, PPIScale(8), PPIScale(8), PPIScale(3));
+  if Length(aText) >= 200 then w := Round(FScene.Width*0.5)
+  else if Length(aText) >= 100 then w := Round(FScene.Width*0.4)
+  else w := Round(FScene.Width*0.3);
+  BodyShape.SetShapeRoundRect(w, 50, PPIScale(8), PPIScale(8), PPIScale(3));
   Text.TexturedFont := aTexturedFont;
-  Text.Align := taCenterCenter;
   Text.Caption := aText;
   Init(False);
 
@@ -394,24 +417,50 @@ end;
 procedure TCharacterWithDialogPanel.PlacePanelOnView(aCameraInUse: TOGLCCamera);
 var p: TPointF;
     w, h: single;
-    rView, rPanel: TRectF;
+    rView, rPanel, r: TRectF;
 begin
   rView := GetViewRect(aCameraInUse);
 
   w := FPanel.Width;
-  h := FPanel. Height;
-  p := PointF(X.Value-w*0.5, GetYTop - h - PPIScale(20));
+  h := FPanel.Height;
 
-  p.x := EnsureRange(p.x, rView.Left, rView.Right-w);
-  p.y := EnsureRange(p.y, rView.Top, rView.Bottom-h);
+  p := SurfaceToScene(PointF(-w*0.5, -DeltaYToTop-h-PPIScale(20)));
 
-  // message panel overlapps the character body ?
+  //p := PointF(X.Value-w*0.5, BodyTopY - h - PPIScale(20));
+
+  p.x := EnsureRange(p.x, rView.Left, rView.Right - w);
+  p.y := EnsureRange(p.y, rView.Top, rView.Bottom - h);
+
+{  // message panel overlapps the character body ?
   rPanel := RectF(p.x, p.y, p.x+w, p.y+h);
   if FScene.Collision.RectFRectF(GetBodyRect, rPanel) then begin
     // the panel overlapps the character -> we shift it to the left or to the right
     if p.x > rView.Left+rView.Width*0.5 then p.x := GetBodyRect.Left-w
       else p.x := GetBodyRect.Right;
-  end;
+  end; }
+
+{  w := FPanel.Width;
+  h := FPanel.Height;
+  p := SurfaceToScene(PointF(0, -DeltaYToTop));
+  if aCameraInUse <> NIL then
+    p := aCameraInUse.WorldToControlF(p);
+  p := p - PointF(w * 0.5, h + PPIScale(20));  }
+
+{  if aCameraInUse <> NIL then begin
+    r := aCameraInUse.GetViewRect;
+    p.x := Ensurerange(p.x, r.Left, r.Right - w);
+    p.y := EnsureRange(p.y, r.Top, r.Bottom - h);
+  end else begin
+    p.x := EnsureRange(p.x, 0, FScene.Width - w);
+    p.y := EnsureRange(p.y, 0, FScene.Height - h);
+  end;   }
+
+{  FPanel.SetChildOf(Self, 100);
+  FPanel.SetCoordinate(-FPanel.Width*0.5, -FPanel.Height-PPIScale(20)-DeltaYToTop);
+  FPanel.MoveFromChildToScene(LAYER_GAMEUI);
+  p := FPanel.GetXY;
+  if aCameraInUse <> NIL then p := aCameraInUse.WorldToControlF(p); }
+
   //FPanel.SetCoordinate(p);
   FPanel.SetCoordinate(Trunc(p.x), Trunc(p.y)); // truncate to avoid artifact on characters
 end;
@@ -487,6 +536,16 @@ end;
 procedure TWalkingCharacter.SetTimeMultiplicator(AValue: single);
 begin
   FTimeMultiplicator := AValue;
+end;
+
+procedure TWalkingCharacter.SetWalkSpeed(AValue: single);
+begin
+  FWalkSpeed := AValue;
+end;
+
+procedure TWalkingCharacter.SetJumpDeltaX(AValue: single);
+begin
+  FJumpDeltaX := AValue;
 end;
 
 procedure TWalkingCharacter.Update(const aElapsedTime: single);
@@ -592,14 +651,26 @@ begin
   FDelay := aDelay;
 end;
 
+procedure TWalkingCharacter.ApplyTint(const aColor: TBGRAPixel);
+  procedure TintChildsOf(aSurface: TSimpleSurfaceWithEffect);
+  var i: integer;
+  begin
+    aSurface.Tint.Value := aColor;
+    for i:=0 to aSurface.ChildCount-1 do
+      TintChildsOf(aSurface.Childs[i]);
+  end;
+begin
+  TintChildsOf(Self);
+end;
+
 { TBaseComplexContainer }
 
 function TBaseComplexContainer.GetBodyRect: TRectF;
 begin
   Result.Left := X.Value - FBodyWidth*0.5;
-  Result.Top := GetYTop;
+  Result.Top := BodyTopY;
   Result.Right := Result.Left + FBodyWidth;
-  Result.Bottom := GetYBottom;
+  Result.Bottom := BodyBottomY;
 end;
 
 function TBaseComplexContainer.CreateChildSprite(aTex: PTexture; aZOrder: integer): TSprite;
@@ -623,21 +694,31 @@ begin
   Result.ApplySymmetryWhenFlip := True;
 end;
 
-function TBaseComplexContainer.GetYTop: single;
+function TBaseComplexContainer.GetBodyTopY: single;
 begin
   Result := Y.Value - FDeltaYToTop;
 end;
 
-function TBaseComplexContainer.GetYBottom: single;
+function TBaseComplexContainer.GetBodyBottomY: single;
 begin
   Result := Y.Value + FDeltaYToBottom;
+end;
+
+procedure TBaseComplexContainer.SetBodyBottomY(AValue: single);
+begin
+  Y.Value := AValue - FDeltaYToBottom;
+end;
+
+procedure TBaseComplexContainer.SetBodyTopY(AValue: single);
+begin
+  Y.Value := AValue + FDeltaYToTop;
 end;
 
 function TBaseComplexContainer.CheckCollisionWith(aX, aY: single): boolean;
 var r: TRectF;
 begin
   r.Left := X.Value - BodyWidth * 0.5;
-  r.Top := GetYTop;
+  r.Top := BodyTopY;
   r.Width := BodyWidth;
   r.Height := BodyHeight;
   Result := FScene.Collision.PointRectF(PointF(aX,aY), r);
@@ -647,7 +728,7 @@ function TBaseComplexContainer.CheckCollisionWithLine(aPt1, aPt2: TPointF): bool
 var r: TRectF;
 begin
   r.Left := X.Value - BodyWidth * 0.5;
-  r.Top := GetYTop;
+  r.Top := BodyTopY;
   r.Width := BodyWidth;
   r.Height := BodyHeight;
   Result := FScene.Collision.LineRectF(aPt1, aPt2, r);
@@ -659,7 +740,7 @@ begin
   w := BodyWidth;
   h := BodyHeight;
   xx := X.Value - w*0.5;
-  yy := GetYTop;
+  yy := BodyTopY;
   Result := FScene.Collision.RectFRectF(aRectF, RectF(xx, yy, xx+w, yy+h));
 end;
 
@@ -707,14 +788,20 @@ begin
 end;
 
 procedure TLRBaseFace.SetDeformationOnHair(aHair: TDeformationGrid);
+var i: integer;
 begin
   aHair.SetGrid(5, 5);
   aHair.ApplyDeformation(dtWaveH);
   aHair.DeformationSpeed.Value := PointF(1.5,1.6);
   aHair.Amplitude.Value := PointF(0.3,0.2);
   aHair.SetDeformationAmountOnRow(0, 0.4);
-  aHair.SetDeformationAmountOnRow(1, 0.6);
-  aHair.SetDeformationAmountOnRow(1, 0.8);
+  aHair.SetDeformationAmountOnRow(1, 0.4);
+  aHair.SetDeformationAmountOnRow(2, 0.4);
+  aHair.SetDeformationAmountOnRow(3, 0.6);
+  aHair.SetDeformationAmountOnRow(4, 0.7);
+
+  for i:=0 to 4 do
+    aHair.SetTimeMultiplicatorOnRow(i, 1.0+ 0.08*i);
 
   aHair.SetTimeMultiplicatorOnRow(5, 1.5);
 //aHair.ShowGrid:=true;

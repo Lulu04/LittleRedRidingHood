@@ -1,7 +1,14 @@
+version 0.3.0 -
+> rework the game map.
+> add new mini game The Plain of the Sleeping Moon.
+> fix a camera bug in the introduction.
+> fix some dialogs appears outside their panel.
+> rework the design of the colors and grass in the introduction.
+> modifie the logo animation.
 
 version 0.2.0 - sep 28, 2024
 -----------------------------
->When a new player is created, a cinematic explain the quest of the main character.
+>When a new player is created, an cinematic explain the quest of the main character.
 >Added game Volcano, made of three part:
  - the Volcano entrance: an humorous point'n click game.
  - Volcano inner: a platformer game where main character must avoid detection by laser beam, guards and switch on the floor.
