@@ -477,14 +477,15 @@ begin
   inherited Update(aElapsedTime);
 
   // bounds
-  if (X.Value < FParentWagon.FullWidth*0.15) or
-     (X.Value > FParentWagon.FullWidth*0.85) then begin
+  if (X.Value < FParentWagon.FullWidth*0.05) or
+     (X.Value > FParentWagon.FullWidth*0.95) then begin
     Speed.x.Value := -Speed.x.Value;
     FlipH := not FlipH;
   end;
 
   // check LR collision
-  if ScreenPlainOfSleepingMoon.GameState = gsLRPlayOutside then
+  if (ScreenPlainOfSleepingMoon.GameState = gsLRPlayOutside) and
+     (FLR.BodyBottomY = YFeetOnTrain) then
     if FScene.Collision.RectFRectF(FLR.GetBodyRect, GetBodyRect) then begin
       ScreenPlainOfSleepingMoon.GameState := gsLRIsEjectedByRobot;
     end;
