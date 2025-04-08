@@ -1,6 +1,6 @@
 # LittleRedRidingHood
 Game written in FreePascal with Lazarus IDE, to test and improve OGLCScene and ALSound library.  
-    
+Pre-compiled binaries can be found in the [Release section](https://github.com/Lulu04/LittleRedRidingHood/releases).    
 Enjoy!  
 
 ## Supported platforms
