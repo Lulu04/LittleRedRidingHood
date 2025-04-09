@@ -977,3 +977,4 @@ msgstr "Tu ne pourras changer de wagon que lorsque tous les robots qui l'occupen
 #: u_resourcestring.sziplinehint
 msgid "a useful zip-line to cross the mountain peaks"
 msgstr "une tyrolienne indispensable pour traverser les Pics Montagneux"
+

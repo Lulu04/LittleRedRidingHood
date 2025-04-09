@@ -604,6 +604,10 @@ begin
   sprite := TSprite.Create(texLeftWallWindow, False);
   FScene.Add(sprite, LAYER_BG2);
   sprite.SetCoordinate(ScaleW(-155), ScaleH(156));
+  sprite.CollisionBody.AddPolygon([PointF(ScaleW(154), ScaleH(50)),
+                                   PointF(ScaleW(639), ScaleH(205)),
+                                   PointF(ScaleW(639), ScaleH(229)),
+                                   PointF(ScaleW(154), ScaleH(276))]);
 
   // sky behind the right window
   sky := TQuad4Color.Create(QuadCoor(PointF(0,192), PointF(ScaleW(490), ScaleH(0)),
@@ -626,6 +630,10 @@ begin
   FScene.Add(sprite, LAYER_BG2);
   sprite.FlipH := True;
   sprite.SetCoordinate(ScaleW(539), ScaleH(156));
+  sprite.CollisionBody.AddPolygon([PointF(ScaleW(0), ScaleH(205)),
+                                   PointF(ScaleW(485), ScaleH(50)),
+                                   PointF(ScaleW(485), ScaleH(276)),
+                                   PointF(ScaleW(0), ScaleH(229))]);
 
   // high wall left
   quad[cTL] := PointF(ScaleW(0), ScaleH(0));

@@ -31,7 +31,7 @@ uses
 
  }
 
-const  PLAIN_MOON_GAME_TIME = 300;
+const  PLAIN_MOON_GAME_TIME = 300;   // medium 280   hard 260
        PLAIN_MOON_WAGON_COUNT = 4;
 type
 
