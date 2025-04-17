@@ -11,7 +11,7 @@ Linux 64b,GTK2 (tested on Ubuntu 22.04 LTS)
 
 ## How to compile
 You must have Lazarus IDE installed on your system with BGRABitmap and LazOpenGLContext package.  
-Create a directory named "littlered" on your disk and into it do the following:
+Create a directory named "littlered" on your disk and inside it do the following:
 - clone this repository or download the zip.
 - clone the repository [UnitsCommon](https://github.com/Lulu04/UnitsCommon). If you choose to download the zip, unzip it and rename the obtained directory to "UnitsCommon".
 - clone the repository [ALSound library](https://github.com/Lulu04/ALSound). If you choose to download the zip, unzip it and rename the obtained directory to "ALSound".
