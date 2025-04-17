@@ -17,7 +17,8 @@ uses
   u_sprite_def, u_gamescreentemplate, u_weather_effects, u_lr4_usable_object,
   u_utils, u_sprite_granny, u_screen_intro, screen_gameplainmoon,
   u_postprocessing_watermirror, u_procedural_starnest, u_ProceduralPlanet,
-  u_proceduralcloud, screen_gameplainmooninside, u_screen_gamemermaidsport;
+  u_proceduralcloud, screen_gameplainmooninside, u_screen_gamemermaidsport,
+  u_screen_forest_amara;
 
 {$R *.res}
 

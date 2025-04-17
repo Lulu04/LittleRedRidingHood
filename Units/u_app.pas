@@ -74,6 +74,7 @@ private
   FActionToOwnItem: TActionToOwnItem;
 public
   constructor Create(aMaxItemLevel: byte; aActionToOwnThisItem: TActionToOwnItem);
+  function CanDisplayPriceAndHint: boolean; virtual;
   // return True if player have the resources required to buy/build/upgrade the item
   function CanBePurchased: boolean;
   // Substract all resources from the player inventory
@@ -145,6 +146,7 @@ end;
 { TForestHammer }
 
 TForestHammer = class(TUpgradableItemDescriptor)
+  function CanDisplayPriceAndHint: boolean; override;
   function NextLevelExplanation: string; override;
   function PriceForNextLevel: ArrayOfMoneyDescriptor; override;
   function UsesCount: integer;
@@ -153,6 +155,7 @@ end;
 { TForestStormCloud }
 
 TForestStormCloud = class(TUpgradableItemDescriptor)
+  function CanDisplayPriceAndHint: boolean; override;
   function NextLevelExplanation: string; override;
   function PriceForNextLevel: ArrayOfMoneyDescriptor; override;
   function UsesCount: integer;
@@ -173,6 +176,9 @@ private
   FElevator: TForestElevator;
   FHammer: TForestHammer;
   FStormCloud: TForestStormCloud;
+  FAmaraHaveAlreadyAskForTheHammer,
+  FAmaraHaveAlreadyAskForTheStormCloud: boolean;
+
   function GetHelpText: string; override;
 public
   constructor Create;
@@ -185,7 +191,10 @@ public
   property Elevator: TForestElevator read FElevator;
   property Hammer: TForestHammer read FHammer;
   property StormCloud: TForestStormCloud read FStormCloud;
-
+  // return True when player reach level 4 and 8
+  function CanEncounterAmara: boolean;
+  property AmaraHaveAlreadyAskForTheHammer: boolean read FAmaraHaveAlreadyAskForTheHammer write FAmaraHaveAlreadyAskForTheHammer;
+  property AmaraHaveAlreadyAskForTheStormCloud: boolean read FAmaraHaveAlreadyAskForTheStormCloud write FAmaraHaveAlreadyAskForTheStormCloud;
 end;
 
 // MOUNTAIN PEAK GAME DESCRIPTOR
@@ -194,6 +203,7 @@ type
 { TMountainPeakZipLine }
 
 TMountainPeakZipLine = class(TUpgradableItemDescriptor)
+  function CanDisplayPriceAndHint: boolean; override;
   function NextLevelExplanation: string; override;
   function PriceForNextLevel: ArrayOfMoneyDescriptor; override;
 end;
@@ -221,6 +231,7 @@ end;
 { TDigicodeDecoder }
 
 TDigicodeDecoder = class(TUpgradableItemDescriptor)
+  function CanDisplayPriceAndHint: boolean; override;
   function NextLevelExplanation: string; override;
   function PriceForNextLevel: ArrayOfMoneyDescriptor; override;
 end;
@@ -228,6 +239,7 @@ end;
 { TDorsalThruster }
 
 TDorsalThruster = class(TUpgradableItemDescriptor)
+  function CanDisplayPriceAndHint: boolean; override;
   function NextLevelExplanation: string; override;
   function PriceForNextLevel: ArrayOfMoneyDescriptor; override;
 end;
@@ -268,6 +280,7 @@ end;
 { TLaserGun }
 
 TLaserGun = class(TUpgradableItemDescriptor)
+  function CanDisplayPriceAndHint: boolean; override;
   function NextLevelExplanation: string; override;
   function PriceForNextLevel: ArrayOfMoneyDescriptor; override;
 end;
@@ -276,8 +289,7 @@ end;
 
 TPlainMoonDescriptor = class(TGameDescriptor)
 private
-  FIntroAlreadySeen,
-  FHaveLaserGun: boolean;
+  FIntroAlreadySeen: boolean;
   FLaserGun: TLaserGun;
   function GetHelpText: string; override;
 private // not saved
@@ -293,7 +305,6 @@ public
   function SaveToString: string; override;
   procedure LoadFromString(const s: string); override;
 public // special item and properties
-  property HaveLaserGun: boolean read FHaveLaserGun write FHaveLaserGun;
   property LaserGun: TLaserGun read FLaserGun;
   property IntroAlreadySeen: boolean read FIntroAlreadySeen write FIntroAlreadySeen;
 
@@ -302,21 +313,32 @@ public // special item and properties
   property RemainingSeconds: integer read FRemainingSeconds write FRemainingSeconds;
 end;
 
+
+{ TPocketSubmarine }
+
+TPocketSubmarine = class(TUpgradableItemDescriptor)
+  function CanDisplayPriceAndHint: boolean; override;
+  function NextLevelExplanation: string; override;
+  function PriceForNextLevel: ArrayOfMoneyDescriptor; override;
+end;
+
 { TMermaidsPortDescriptor }
 
 TMermaidsPortDescriptor = class(TGameDescriptor)
 private
   function GetHelpText: string; override;
 private
+  FPocketSubmarine: TPocketSubmarine;
  const
   MermaidsPortStepCount = 5;  // 1=Penelope encounter  2=train game
+  PocketSubmarineMaxLevel = 1;
 public
   constructor Create;
   destructor Destroy; override;
   function SaveToString: string; override;
   procedure LoadFromString(const s: string); override;
 public // special item and properties
-
+  property PocketSubmarine: TPocketSubmarine read FPocketSubmarine;
 end;
 
 
@@ -551,9 +573,17 @@ end;
 
 { TDorsalThruster }
 
+function TDorsalThruster.CanDisplayPriceAndHint: boolean;
+begin
+  Result := PlayerInfo.Volcano.DorsalThruster.Owned;
+end;
+
 function TDorsalThruster.NextLevelExplanation: string;
 begin
-  Result := sDorsalThrusterHint;
+  case Level of
+    0: Result := '?';
+    else Result := sDorsalThrusterExplanation;
+  end;
 end;
 
 function TDorsalThruster.PriceForNextLevel: ArrayOfMoneyDescriptor;
@@ -563,9 +593,17 @@ end;
 
 { TDigicodeDecoder }
 
+function TDigicodeDecoder.CanDisplayPriceAndHint: boolean;
+begin
+  Result := PlayerInfo.Volcano.HaveDecoderPlan;
+end;
+
 function TDigicodeDecoder.NextLevelExplanation: string;
 begin
-  Result := sDecoderHint;
+  case Level of
+    0: Result := '?';
+    else Result := sDecoderExplanation;
+  end;
 end;
 
 function TDigicodeDecoder.PriceForNextLevel: ArrayOfMoneyDescriptor;
@@ -588,9 +626,17 @@ end;
 
 { TMountainPeakZipLine }
 
+function TMountainPeakZipLine.CanDisplayPriceAndHint: boolean;
+begin
+  Result := PlayerInfo.Forest.IsTerminated;
+end;
+
 function TMountainPeakZipLine.NextLevelExplanation: string;
 begin
-  Result := sZipLineHint;
+  case Level of
+    0: Result := '?';
+    else Result := sZipLineHint;
+  end;
 end;
 
 function TMountainPeakZipLine.PriceForNextLevel: ArrayOfMoneyDescriptor;
@@ -606,11 +652,16 @@ end;
 
 { TForestStormCloud }
 
+function TForestStormCloud.CanDisplayPriceAndHint: boolean;
+begin
+  Result := Owned;
+end;
+
 function TForestStormCloud.NextLevelExplanation: string;
 begin
   case Level of
-    //0: Result := sStormCloudHint
-    0, 3: Result := sStormCloudExplanation;
+    0: Result := '?';
+    1, 3: Result := sStormCloudExplanation;
     else Result := sStormCloudUpgradeHint;
   end;
 end;
@@ -650,10 +701,16 @@ end;
 
 { TForestHammer }
 
+function TForestHammer.CanDisplayPriceAndHint: boolean;
+begin
+  Result := Owned;
+end;
+
 function TForestHammer.NextLevelExplanation: string;
 begin
   case Level of
-    0, 5: Result := sHammerExplanation;
+    0: Result := '?';
+    1, 5: Result := sHammerExplanation;
     else Result := sHammerUpgradeHint;
   end;
 end;
@@ -695,7 +752,7 @@ end;
 function TForestElevator.NextLevelExplanation: string;
 begin
   case Level of
-    5: Result := '';
+    5: Result := sElevatorExplanation;
     else Result := sElevatorUpgradeHint;
   end;
 end;
@@ -790,6 +847,11 @@ begin
   FActionToOwnItem := aActionToOwnThisItem;
 end;
 
+function TUpgradableItemDescriptor.CanDisplayPriceAndHint: boolean;
+begin
+  Result := True;
+end;
+
 function TUpgradableItemDescriptor.CanBePurchased: boolean;
 var A: ArrayOfMoneyDescriptor;
   i: integer;
@@ -833,7 +895,8 @@ end;
 
 procedure TUpgradableItemDescriptor.IncLevel;
 begin
-  inc(FLevel);
+  if FLevel < FMaxLevel then
+    inc(FLevel);
 end;
 
 { TVolcanoDescriptor }
@@ -901,9 +964,17 @@ end;
 
 { TLaserGun }
 
+function TLaserGun.CanDisplayPriceAndHint: boolean;
+begin
+  Result := PlayerInfo.FPlainMoon.LaserGun.Owned;
+end;
+
 function TLaserGun.NextLevelExplanation: string;
 begin
-  Result := sLaserGunHint;
+  case Level of
+    0: Result := '?';
+    else Result := sLaserGunExplanation;
+  end;
 end;
 
 function TLaserGun.PriceForNextLevel: ArrayOfMoneyDescriptor;
@@ -937,33 +1008,58 @@ begin
   prop.Init('!');
   SaveCommonProperties(prop);
   prop.Add('IntroAlreadySeen', FIntroAlreadySeen);
-  prop.Add('HaveLaserGun', FHaveLaserGun);
+  prop.Add('LaserGunLevel', FLaserGun.Level);
   Result := prop.PackedProperty;
 end;
 
 procedure TPlainMoonDescriptor.LoadFromString(const s: string);
 var prop: TProperties;
+  vi: byte;
 begin
+  vi := 0;
   prop.Split(s, '!');
   LoadCommonProperties(prop);
-  prop.BooleanValueOf('HaveLaserGun', FHaveLaserGun, False);
+  prop.ByteValueOf('LaserGunLevel', vi, 0);
+  LaserGun.Level := vi;
   prop.BooleanValueOf('IntroAlreadySeen', FIntroAlreadySeen, False);
+end;
+
+{ TPocketSubmarine }
+
+function TPocketSubmarine.CanDisplayPriceAndHint: boolean;
+begin
+  Result := PlayerInfo.MermaidsPort.PocketSubmarine.Owned;
+end;
+
+function TPocketSubmarine.NextLevelExplanation: string;
+begin
+  case level of
+    0: Result := '?';
+    else Result := sPocketSubmarineExplanation;
+ end;
+end;
+
+function TPocketSubmarine.PriceForNextLevel: ArrayOfMoneyDescriptor;
+begin
+  Result := NIL;
 end;
 
 { TMermaidsPortDescriptor }
 
 function TMermaidsPortDescriptor.GetHelpText: string;
 begin
-
+  Result := 'not yet implemented';
 end;
 
 constructor TMermaidsPortDescriptor.Create;
 begin
   inherited Create(MermaidsPortStepCount);
+  FPocketSubmarine := TPocketSubmarine.Create(PocketSubmarineMaxLevel, atoiFound);
 end;
 
 destructor TMermaidsPortDescriptor.Destroy;
 begin
+  FreeAndNil(FPocketSubmarine);
   inherited Destroy;
 end;
 
@@ -972,14 +1068,19 @@ var prop: TProperties;
 begin
   prop.Init('!');
   SaveCommonProperties(prop);
+  prop.Add('SubmarineLevel', FPocketSubmarine.Level);
   Result := prop.PackedProperty;
 end;
 
 procedure TMermaidsPortDescriptor.LoadFromString(const s: string);
 var prop: TProperties;
+  vi: byte;
 begin
+  vi := 0;
   prop.Split(s, '!');
   LoadCommonProperties(prop);
+  prop.ByteValueOf('SubmarineLevel', vi, 0);
+  FPocketSubmarine.Level := vi;
 end;
 
 { TMountainPeakDescriptor }
@@ -1046,10 +1147,10 @@ begin
   inherited Create(ForestStepCount);
   FBow := TForestBow.Create(BowMaxLevel, atoiBuy);
   FBow.Level := 1;
-  FElevator := TForestElevator.Create(ElevatorMaxLevel, atoiBuy);
+  FElevator := TForestElevator.Create(ElevatorMaxLevel, atoiFound);
   FElevator.Level := 1;
-  FHammer := TForestHammer.Create(HammerMaxLevel, atoiBuy);
-  FStormCloud := TForestStormCloud.Create(StormCloudMaxLevel, atoiBuy);
+  FHammer := TForestHammer.Create(HammerMaxLevel, atoiFound);
+  FStormCloud := TForestStormCloud.Create(StormCloudMaxLevel, atoiFound);
 end;
 
 destructor TForestDescriptor.Destroy;
@@ -1103,6 +1204,17 @@ begin
   FCurrentStep := FStepCount + 1;
   FIsTerminated := True;
   FFirstTimeTerminated := True;
+end;
+
+function TForestDescriptor.CanEncounterAmara: boolean;
+var hammerPrice, stormcloudPrice: integer;
+begin
+  hammerPrice := Hammer.PriceForNextLevel[0].Count;
+  stormcloudPrice := StormCloud.PriceForNextLevel[0].Count;
+
+  Result := ((not Hammer.Owned) and (CurrentStep >= 4) and (PlayerInfo.CoinCount >= hammerPrice)) or
+            ((not StormCloud.Owned) and (CurrentStep >= 7) and (PlayerInfo.CoinCount >= stormcloudPrice));
+  Result := Result and not IsTerminated;
 end;
 
 { TGameDescriptor }

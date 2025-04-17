@@ -96,6 +96,7 @@ sNo='No';
 sBowExplanation='your bow';
 sBowUpgradeHint='increase arrow speed, decrease bow reloading time';
 
+sElevatorExplanation='a simple system for getting on and off';
 sElevatorUpgradeHint='increase speed';
 sHammerExplanation='the hammer to protect something';
 sHammerUpgradeHint='increase number of uses';
@@ -104,14 +105,17 @@ sStormCloudUpgradeHint='increase number of uses';
 
 sZipLineHint='a useful zip-line to cross the mountain peaks';
 
-sDecoderHint='a decoder to hack digicodes';
-sDorsalThrusterHint='a dorsal thruster to fly in the air';
+sDecoderExplanation='a decoder to hack digicodes';
+sDorsalThrusterExplanation='a dorsal thruster to fly in the air';
 
-sLaserGunHint='a laser gun effective only against machines';
+sLaserGunExplanation='a laser gun effective only against machines';
+
+sPocketSubmarineExplanation='a submarine that can shrink to fit in a pocket';
 
 // hints in the panel where player choose the step of the game
 sImproveEquipment='upgrade your equipment in the workshop';
 sRedoALevel='you can redo a level to earn the end bonus';
+sIfYouHaveEnoughMoney='if you have enough money, maybe you''ll meet someone in the forest?';
 sBuyEquipment='buy new equipment in the workshop';
 
 sFirstCompleteForest='you must first complete the pine forest!';
@@ -184,6 +188,38 @@ sIPromiseToTakeGoodCare='I promise to take good care of her when she gets older!
 sAhhhh='Ahhhhh!';
 sGrannyAsk='Granny??';
 sHey='Hey!!';
+
+// dialogs pine forest
+sSomethingTellMeYouNeedMyHelp='Something tells me you need my help.';
+sWhoAreYou='Who are you?';
+SMyNameIsAmara='My name is Amara, and I''ve lived here for a very long time. Where are you going?';
+sINeedToGetThroughThisForest='I need to get through this forest and the wolves want to stop me...';
+sThenYouWillHaveToEquipBetter='Then you''ll have to equip yourself better than that: your bow won''t be enough!';
+sProposeHammer='I''ve got just the thing for you: I''m offering you a rather special '+
+               'hammer that will protect your elevator. If a wolf comes near it, '+
+               'it''ll get a blow on the head! I''ll sell it to you for %d pieces. How about it?';
+sSoHaveYouThoughtAboutHammer='So have you thought about it? Are you buying the hammer?';
+sBuyTheHammer='Buy the hammer for %d coins?';
+sSometimeItMissesTheMark='Sometimes it misses the mark, but overall it works pretty well. See you soon!';
+sAsYouWishButIThink='As you wish, but I think we''ll see you soon hihihi!';
+
+sWellDoneYouAreMakingGood='Well done, you''re making good progress!';
+sIHaveGotSomethingElseThatMightHelp='I''ve got something else that might help: the lightning storm. '+
+                                    'You''ll see, it''s much more effective than the hammer.';
+sSoWhyDidYouSellMeTheHammer='So why did you sell me the hammer in the first place?';
+sBusinessIsBusiness='Business is Business. Hihihi...';
+sIAmSeriousTheLightning='I''m serious, the lightning storm is super effective, '+
+                        'I guarantee it! What''s more, I''ll sell it to you for '+
+                        'only %d coins. What do you think?';
+sSoHaveYouThoughtAboutStormCloud='So have you thought about it? Are you buying the Storm Cloud?';
+sBuyTheStormCloud='Buy the Storm Cloud for %d coins?';
+sItsAGreatDeal='It''s a great deal!';
+sBecauseYouHaveBoughtItems='Because you''ve bought items from me, you''re entitled to a free bonus: '+
+                           'I''m giving you the power to teleport anywhere on the map simply by clicking '+
+                           'on the place you want to go. Isn''t that nice?!';
+sUhIAlreadyDid='Uh... I already did...';
+sWellTmOff='Well, I''m off. Good luck in your adventures!';
+
 
 // dialogs volcano entrance
 sWolfInTheCave='Wolf in the cave';
@@ -343,10 +379,11 @@ end;
 function GameHints: TStringArray;
 begin
   Result := NIL;
-  SetLength(Result, 3);
+  SetLength(Result, 4);
   Result[0] := sImproveEquipment;
   Result[1] := sRedoALevel;
-  Result[2] := sBuyEquipment;
+  Result[2] := sIfYouHaveEnoughMoney;
+  Result[3] := sBuyEquipment;
 end;
 
 function CorruptString(const s: string): string;

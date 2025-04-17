@@ -43,7 +43,8 @@ uses u_screen_title, u_screen_gameforest, BGRABitmap, BGRABitmapTypes,
   u_screen_gamemountainpeaks, u_screen_gamevolcanoentrance,
   u_screen_gamevolcanoinner, u_resourcestring, u_screen_gamevolcanodino,
   u_screen_intro, screen_gameplainmoon, screen_gameplainmooninside,
-  u_screen_gamemermaidsport, DefaultTranslator, LCLTranslator, i18_utils;
+  u_screen_gamemermaidsport, u_screen_forest_amara, DefaultTranslator,
+  LCLTranslator, i18_utils;
 {$R *.lfm}
 
 { TFormMain }
@@ -111,6 +112,7 @@ begin
   ScreenTitle := TScreenTitle.Create;
   ScreenIntro := TScreenIntroCinematic.Create;
   ScreenGameForest := TScreenGame1.Create;
+  ScreenForestAmara := TScreenForestAmara.Create;
   ScreenGameZipLine := TScreenGameZipLine.Create;
   ScreenGameVolcanoEntrance := TScreenGameVolcanoEntrance.Create;
   ScreenGameVolcanoInner := TScreenGameVolcanoInner.Create;
@@ -123,7 +125,7 @@ begin
 //  FScene.RunScreen(ScreenLogo);
 
 FSaveGame.SetCurrentPlayerIndex(0);
-FScene.RunScreen(ScreenMap);     //ScreenMap  ScreenIntro   ScreenPlainMoonInside
+FScene.RunScreen(ScreenTitle);     //ScreenMap  ScreenIntro   ScreenPlainMoonInside
 end;
 
 procedure TFormMain.FreeCommonData;
@@ -134,6 +136,7 @@ begin
   FreeAndNil(ScreenMap);
   FreeAndNil(ScreenWorkShop);
   FreeAndNil(ScreenGameForest);
+  FreeAndNil(ScreenForestAmara);
   FreeAndNil(ScreenGameZipLine);
   FreeAndNil(ScreenGameVolcanoEntrance);
   FreeAndNil(ScreenGameVolcanoInner);

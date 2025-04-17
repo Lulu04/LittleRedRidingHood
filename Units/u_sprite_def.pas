@@ -309,6 +309,31 @@ public
   property IsOpened: boolean read FIsOpened;
 end;
 
+{ TAmara }
+// need cross particle in atlad
+TAmara = class(TCharacterWithDialogPanel)
+private
+  class var texSorcirella, texCrossParticle: PTexture;
+  class var FAtlas: TAtlas;
+private
+  FSorcirella: TSprite;
+  FPowder: TParticleEmitter;
+  FFloatInAir: boolean;
+  FFloatXRef, FFloatYRef: single;
+  FLayerIndex: integer;
+  FAnimComesFromTheForestIsDone: boolean;
+protected
+  procedure SetFlipH(AValue: boolean); override;
+  procedure SetFlipV(AValue: boolean); override;
+public
+  class procedure LoadTexture(aAtlas: TAtlas);
+  constructor Create(aLayerIndex: integer=-1);
+  procedure Update(const aElapsedTime: single); override;
+  procedure ProcessMessage(UserValue: TUserMessageValue); override;
+  procedure StartAnimComesFromTheForest;
+  property AnimComesFromTheForestIsDone: boolean read FAnimComesFromTheForestIsDone;
+  procedure AnimDisapearsToTheLeft;
+end;
 
 implementation
 uses u_common, u_app, u_resourcestring, BGRAPath;
@@ -712,6 +737,146 @@ begin
   FIsOpened := False;
 end;
 
+{ TAmara }
+
+procedure TAmara.SetFlipH(AValue: boolean);
+begin
+  inherited SetFlipH(AValue);
+  FSorcirella.FlipH := AValue;
+end;
+
+procedure TAmara.SetFlipV(AValue: boolean);
+begin
+  inherited SetFlipV(AValue);
+  FSorcirella.FlipV := AValue;
+end;
+
+class procedure TAmara.LoadTexture(aAtlas: TAtlas);
+begin
+  texSorcirella := aAtlas.AddFromSVG(SpriteCommonFolder+'AmaraWithShadow.svg', ScaleW(180), -1);
+  texCrossParticle := aAtlas.RetrieveTextureByFileName('Cross.png');
+  FAtlas := aAtlas;
+end;
+
+constructor TAmara.Create(aLayerIndex: integer);
+begin
+  inherited Create(FScene);
+  FLayerIndex := aLayerIndex;
+  if aLayerIndex <> -1 then
+    FScene.Add(Self, aLayerIndex);
+
+  FSorcirella := TSprite.Create(texSorcirella, False);
+  AddChild(FSorcirella, 0);
+  FSorcirella.SetCoordinate(-FSorcirella.Width*0.5, -FSorcirella.Height);
+  FSorcirella.ApplySymmetryWhenFlip := True;
+
+  FPowder := TParticleEmitter.Create(FScene);
+  FPowder.LoadFromFile(ParticleFolder+'AmaraPowder.par', FAtlas);
+  if aLayerIndex <> -1 then
+    FScene.Add(FPowder, aLayerIndex);
+  FPowder.ParticlesPosRelativeToEmitterPos := False;
+
+  DeltaYToTop := FSorcirella.Height;
+  DeltaYToBottom := 0;
+  BodyWidth := FSorcirella.Width;
+  BodyHeight := FSorcirella.Height;
+  DialogAuthorName := 'Amara';
+end;
+
+procedure TAmara.Update(const aElapsedTime: single);
+begin
+  inherited Update(aElapsedTime);
+
+  // particle emitter follow sorcirella
+  FPowder.Scale.Value := Scale.Value;
+  FPowder.SetCoordinate(ScaledX+BodyWidth*Scale.x.value*0.45, ScaledY-BodyHeight*Scale.y.Value*0.32);
+  FPowder.SetEmitterTypeLine(PointF(ScaledX-BodyWidth*Scale.x.value*0.45, ScaledY-BodyHeight*Scale.y.Value*0.5));
+end;
+
+procedure TAmara.ProcessMessage(UserValue: TUserMessageValue);
+const d = 2.0;
+var
+  dd, mvt: Extended;
+begin
+  case UserValue of
+    // anim comes from the forest
+    100: begin
+      FPowder.Opacity.Value := 50;
+      FPowder.FParticleParam.Life := 0.5;
+      Scale.Value := PointF(0.25, 0.25);
+      SetCoordinate(FScene.Width+BodyWidth, ScaleH(463));
+      X.ChangeTo(ScaleW(75), d, idcSinusoid);
+      PostMessage(105, d);
+    end;
+    105: begin
+      FPowder.Opacity.Value := 80;
+      Scale.Value := PointF(0.35, 0.35);
+      FlipH := True;
+      MoveTo(FScene.Width+BodyWidth, ScaleH(500), d, idcSinusoid);
+      PostMessage(110, d);
+    end;
+    110: begin
+      FPowder.FParticleParam.Life := 0.8;
+      FPowder.Opacity.Value := 150;
+      Scale.Value := PointF(0.5, 0.5);
+      FlipH := False;
+      MoveTo(ScaleW(75), ScaleH(530), d, idcSinusoid);
+      PostMessage(115, d);
+    end;
+    115: begin
+      FPowder.Opacity.Value := 180;
+      Scale.Value := PointF(0.6, 0.6);
+      FlipH := True;
+      MoveTo(FScene.Width+BodyWidth, ScaleH(590), d, idcSinusoid);
+      PostMessage(120, d);
+    end;
+    120: begin
+      FPowder.FParticleParam.Life := 3.6;
+      FPowder.Opacity.Value := 200;
+      FPowder.MoveToLayer(FLayerIndex-1);
+      MoveToLayer(FLayerIndex-1);
+      Scale.Value := PointF(1.0,1.0);
+      FlipH := False;
+      MoveTo(ScaleW(643), ScaleH(647), d*1.5, idcSinusoid);
+      PostMessage(125, d);
+      FFloatInAir := True;
+      FFloatXRef := ScaleW(643);
+      FFloatYRef := ScaleH(647);
+      PostMessage(300, d*1.5);
+      PostMessage(310, d*1.5);
+      FAnimComesFromTheForestIsDone := True;
+    end;
+
+    // anim float in air
+    300: begin
+      if not FFloatInAir then exit;
+      dd := Random+1.5;
+      mvt := Random*PPIScale(20)-PPIScale(10);
+      X.ChangeTo(FFloatXRef+mvt, dd, idcSinusoid);
+      PostMessage(300, dd);
+    end;
+    310: begin
+      if not FFloatInAir then exit;
+      dd := Random+1.5;
+      mvt := Random*PPIScale(10)-PPIScale(5);
+      Y.ChangeTo(FFloatYRef+mvt, dd, idcSinusoid);
+      PostMessage(310, dd);
+    end;
+  end;
+end;
+
+procedure TAmara.StartAnimComesFromTheForest;
+begin
+  PostMessage(100);
+  FAnimComesFromTheForestIsDone := False;
+end;
+
+procedure TAmara.AnimDisapearsToTheLeft;
+begin
+  FFloatInAir := False;
+  X.ChangeTo(-BodyWidth*2, 1.5, idcExtend);
+end;
+
 { TPanelUsingComputer }
 
 procedure TPanelUsingComputer.HideArmsToBottom;
@@ -1029,7 +1194,7 @@ begin
       if not FFakeMouseFollowPlayerMouse then exit;
       if FSB.MouseIsOver then begin
         p1 := FScene.Mouse.Position;
-        p := FSB.ScreenToSurface(PointF(p1));
+        p := FSB.SceneToSurface(PointF(p1));
         p.x := p.x / FSB.Width * FMouse.Width*1.0;
         p.y := p.y / FSB.Height * FMouse.Width*0.6;
         FMouse.SetCenterCoordinate(p + FMousePositionOrigin);

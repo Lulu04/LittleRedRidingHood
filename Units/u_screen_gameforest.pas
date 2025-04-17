@@ -60,7 +60,7 @@ end;
 var ScreenGameForest: TScreenGame1;
 implementation
 uses Forms, Controls, LCLType, u_app, u_screen_map, u_utils, u_mousepointer,
-  Math;
+  u_screen_forest_amara, Math;
 
 { TScreenGame1 }
 
@@ -213,7 +213,7 @@ PlayerInfo.Forest.StormCloudLevel := 3;  }
   FPlatformLRMinY := g.BottomY+g.Height*0.25;
   FPlatformLRMaxY := FScene.Height*0.85-FPlatformLR.Height;
 
-  // In game panel
+  // In game inventory panel
   FInGamePanel := TInGamePanel.Create;
   FInGamePanel.Second := gameTime;
   FInGamePanel.StartTime;
@@ -247,7 +247,9 @@ begin
   FreeSoundForForestGame;
   FMusic.FadeOutThenKill(1.0);
   FMusic := NIL;
-  Audio.ResumeMusicTitleMap;
+
+  if FScene.RequestedScreen = ScreenMap then
+    Audio.ResumeMusicTitleMap;
 
   for i:=0 to High(FWolfGates) do FWolfGates[i].Free;
   FScene.ClearAllLayer;
@@ -398,7 +400,11 @@ begin
     end;
 
     gsAddingScore: begin
-      if FEndGameScorePanel.Done and FScene.UserPressAKey then FScene.RunScreen(ScreenMap);
+      if FEndGameScorePanel.Done and FScene.UserPressAKey then begin
+        if PlayerInfo.Forest.CanEncounterAmara
+           then FScene.RunScreen(ScreenForestAmara)
+           else FScene.RunScreen(ScreenMap);
+      end;
     end;
   end;//case
 

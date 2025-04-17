@@ -42,7 +42,7 @@ var
   texCoin, texSmallCristalGray,
   texBow, texElevator, texHammer, texStormCloud,
   texZipLine,
-  texDigicodeDecoder, texDorsalThruster: PTexture;
+  texDigicodeDecoder, texDorsalThruster, texLaserGun, texSubmarine: PTexture;
   FItemHeight: integer;
   FFontText: TTexturedFont;
 
@@ -174,7 +174,7 @@ begin
     else raise exception.Create('forgot to implement');
   end;
 
-  FLabelNextLevel.Visible := FItemDescriptor.LevelCanBeUpgraded;
+  FLabelNextLevel.Visible := FItemDescriptor.CanDisplayPriceAndHint; // FItemDescriptor.LevelCanBeUpgraded;
   if FLabelNextLevel.Visible then FLabelNextLevel.Caption := s;
 end;
 
@@ -194,7 +194,7 @@ begin
     for i:=0 to High(FPriceItems) do FPriceItems[i].Kill;
   FPriceItems := NIL;
 
-  if not FItemDescriptor.LevelCanBeUpgraded then exit;
+  if not FItemDescriptor.CanDisplayPriceAndHint then exit; // .LevelCanBeUpgraded then exit;
 
   A := FItemDescriptor.PriceForNextLevel;
   if Length(A) = 0 then exit;
@@ -230,7 +230,7 @@ begin
     if Length(A) = 1 then FPriceItems[i].AnchorPosToSurface(FLabelNextLevel, haCenter, haCenter, 0, vaTop, vaBottom, 0)
       else if i = 0 then FPriceItems[i].AnchorPosToSurface(FLabelNextLevel, haLeft, haLeft, 0, vaTop, vaBottom, 0)
              else FPriceItems[i].AnchorPosToSurface(FPriceItems[i-1], haLeft, haRight, 0, vaTop, vaTop, 0);
-    end;
+  end;
 end;
 
 constructor TUpgradableItem.Create(aWidth, aHeight: integer; aItemDescriptor: TUpgradableItemDescriptor;
@@ -289,7 +289,7 @@ begin
   case FItemDescriptor.ActionToOwnItem of
     atoiBuy: if FItemDescriptor.Owned then s := sUpgrade else s := sBuy;
     atoiBuild: if FItemDescriptor.Owned then s := sUpgrade else s := sBuild;
-    atoiFound: s := '';
+    atoiFound: if FItemDescriptor.Owned then s := sUpgrade else s := '';
     else raise exception.Create('forgot to implement');
   end;
   BUpgrade := TUIButton.Create(FScene, s, FFontText, NIL);
@@ -299,7 +299,8 @@ begin
   BUpgrade.OnClick := @ProcessButtonClick;
   BUpgrade.AnchorPosToParent(haCenter, haLeft, FCellWidth*3+FCellWidth div 2,
                              vaCenter, vaCenter, 0);
-  BUpgrade.Visible := FItemDescriptor.CanBePurchased and FItemDescriptor.LevelCanBeUpgraded;
+  BUpgrade.Visible := FItemDescriptor.CanBePurchased and FItemDescriptor.LevelCanBeUpgraded and
+                      (s <> '');
 
   // text
   FText := TUITextArea.Create(FScene);
@@ -388,6 +389,8 @@ begin
   texZipLine := FAtlas.AddFromSVG(SpriteUIFolder+'ZipLine.svg', -1, FItemHeight);
   texDigicodeDecoder := FAtlas.AddFromSVG(SpriteUIFolder+'DigicodeDecoder.svg', -1, FItemHeight);
   texDorsalThruster := FAtlas.AddFromSVG(SpriteUIFolder+'DorsalThruster.svg', -1, FItemHeight);
+  texLaserGun := FAtlas.AddFromSVG(SpriteUIFolder+'LaserGun.svg', -1, FItemHeight);
+  texSubmarine := FAtlas.AddFromSVG(SpriteUIFolder+'Submarine.svg', -1, FItemHeight);
 
   FAtlas.TryToPack;
   FAtlas.Build;
@@ -458,10 +461,23 @@ begin
   // item decoder
   with PlayerInfo.Volcano do begin
     // digicode decoder
-    if HaveDecoderPlan or DigicodeDecoder.Owned then
+    //if HaveDecoderPlan or DigicodeDecoder.Owned then
       FPanelItem.AddItem(DigicodeDecoder, texDigicodeDecoder);
     // dorsal thruster
     FPanelItem.AddItem(DorsalThruster, texDorsalThruster);
+  end;
+
+  // item plain of the sleeping moon
+  with PlayerInfo.PlainMoon do begin
+    // laser gun
+    //if LaserGun.Owned then
+      FPanelItem.AddItem(LaserGun, texLaserGun);
+  end;
+
+  // item Mermaids port
+  with PlayerInfo.MermaidsPort do begin
+    // pocket submarine
+    FPanelItem.AddItem(PocketSubmarine, texSubmarine);
   end;
 
   CustomizeMousePointer(True);
