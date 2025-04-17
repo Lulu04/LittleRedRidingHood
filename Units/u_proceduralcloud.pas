@@ -189,7 +189,7 @@ public
   procedure Update(const aElapsedTime: single); override;
   procedure DoDraw; override;
 public
-  constructor Create(aParentScene: TOGLCScene; aPlanetRenderer: TOGLCCloudsRenderer);
+  constructor Create(aParentScene: TOGLCScene; aCloudRenderer: TOGLCCloudsRenderer);
 
   procedure SetSize(aWidth, aHeight: integer);
 
@@ -568,11 +568,11 @@ begin
   FCloudsRenderer.PushQuad(FModelArea, FlipToIndex);
 end;
 
-constructor TOGLCSpriteClouds.Create(aParentScene: TOGLCScene; aPlanetRenderer: TOGLCCloudsRenderer);
+constructor TOGLCSpriteClouds.Create(aParentScene: TOGLCScene; aCloudRenderer: TOGLCCloudsRenderer);
 begin
   inherited Create;
   FParentScene := aParentScene;
-  FCloudsRenderer := aPlanetRenderer;
+  FCloudsRenderer := aCloudRenderer;
 
   // default parameters
   FParams.InitDefault;

@@ -2141,7 +2141,7 @@ begin
     FPlainIntroductionCinematic.Create
   else begin
     FPlainGame.Create;
-    FLaserGun.Visible := PlayerInfo.PlainMoon.HaveLaserGun;
+    FLaserGun.Visible := PlayerInfo.PlainMoon.LaserGun.Owned;
     if PlayerInfo.PlainMoon.CurrentWagonJustDone then begin
       PlayerInfo.PlainMoon.CurrentWagonJustDone := False;
       PostMessage(400);
@@ -2190,7 +2190,7 @@ begin
 
   case UserValue of
     0: begin  // choose which part to start with
-      case PlayerInfo.PlainMoon.StepPlayed of // .HaveLaserGun
+      case PlayerInfo.PlainMoon.StepPlayed of
         1: PostMessage(2);   // Penelope encounter
         2: PostMessage(100)  // start the game directly
         else raise exception.create('??? value is '+PlayerInfo.PlainMoon.CurrentStep.ToString);
@@ -2329,7 +2329,7 @@ begin
     35: begin
       TLaserGunThatGoInInventory.Create(36);
       Audio.PlayMusicSuccessShort1;
-      PlayerInfo.PlainMoon.HaveLaserGun := True;
+      PlayerInfo.PlainMoon.LaserGun.IncLevel;
       FSaveGame.Save;
       PostMessage(37, 1.5);
     end;

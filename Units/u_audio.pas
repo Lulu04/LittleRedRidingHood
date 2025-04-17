@@ -260,6 +260,7 @@ end;
 
 procedure TAudioManager.PauseMusicTitleMap(aFadeDuration: single);
 begin
+
   FMusicTitleAndMap.FadeOutThenPause(aFadeDuration);
 end;
 
