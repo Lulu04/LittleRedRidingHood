@@ -45,6 +45,9 @@ end;
 { TWolfHead }
 
 TWolfHead = class(TSprite)
+private
+  FDontShowOriginalMouth: boolean;
+  procedure SetDontShowOriginalMouth(AValue: boolean);
 protected
   procedure SetFlipH(AValue: boolean); override;
   procedure SetFlipV(AValue: boolean); override;
@@ -57,6 +60,7 @@ public
   procedure SetMouthFalling;
   procedure SetMouthHurt;
   procedure SetMouthSurprise;
+  property DontShowOriginalMouth: boolean read FDontShowOriginalMouth write SetDontShowOriginalMouth;
 end;
 
 //
@@ -522,6 +526,13 @@ end;
 
 { TWolfHead }
 
+procedure TWolfHead.SetDontShowOriginalMouth(AValue: boolean);
+begin
+  if FDontShowOriginalMouth = AValue then Exit;
+  FDontShowOriginalMouth := AValue;
+  if AValue then HideAllMouth;
+end;
+
 procedure TWolfHead.SetFlipH(AValue: boolean);
 begin
   inherited SetFlipH(AValue);
@@ -592,7 +603,7 @@ end;
 
 procedure TWolfHead.SetMouthClose;
 begin
-  MouthClose.Visible := True;
+  MouthClose.Visible := not FDontShowOriginalMouth;
   MouthTongue.Visible := False;
   MouthHurt.Visible := False;
   MouthFalling.Visible := False;
@@ -602,7 +613,7 @@ end;
 procedure TWolfHead.SetMouthTongue;
 begin
   MouthClose.Visible := False;
-  MouthTongue.Visible := True;
+  MouthTongue.Visible := not FDontShowOriginalMouth;
   MouthHurt.Visible := False;
   MouthFalling.Visible := False;
   MouthSurprise.Visible := False;
@@ -613,7 +624,7 @@ begin
   MouthClose.Visible := False;
   MouthTongue.Visible := False;
   MouthHurt.Visible := False;
-  MouthFalling.Visible := True;
+  MouthFalling.Visible := not FDontShowOriginalMouth;
   MouthSurprise.Visible := False;
 end;
 
@@ -621,7 +632,7 @@ procedure TWolfHead.SetMouthHurt;
 begin
   MouthClose.Visible := False;
   MouthTongue.Visible := False;
-  MouthHurt.Visible := True;
+  MouthHurt.Visible := not FDontShowOriginalMouth;
   MouthFalling.Visible := False;
   MouthSurprise.Visible := False;
 end;
@@ -632,7 +643,7 @@ begin
   MouthTongue.Visible := False;
   MouthHurt.Visible := False;
   MouthFalling.Visible := False;
-  MouthSurprise.Visible := True;
+  MouthSurprise.Visible := not FDontShowOriginalMouth;
 end;
 
 { TWolf }
@@ -1120,6 +1131,7 @@ begin
     Head.Pivot := PointF(0.5, 1);
     Head.ApplySymmetryWhenFlip := True;
 
+// arms are inversed....
     LeftArm := TSprite.Create(texWolfLeftArm, False);
     Abdomen.AddChild(LeftArm, 3);
     LeftArm.X.Value := Abdomen.Width*0.7;
@@ -1131,7 +1143,7 @@ begin
     Abdomen.AddChild(RightArm, -1);
     RightArm.RightX := Abdomen.Width*0.35;
     RightArm.Y.Value := Abdomen.Height*0.25;
-    RightArm.Pivot := PointF(1,0.2);
+    RightArm.Pivot := PointF(1.0,0.2);
     RightArm.ApplySymmetryWhenFlip := True;
 
     LeftLegSeat := TSprite.Create(texWolfRightLeg, False);
@@ -1575,6 +1587,8 @@ constructor TWolfPenelope.Create(aIsForestGame: boolean; aLayerIndex: integer);
 begin
   inherited Create(aIsForestGame, aLayerIndex);
   DialogAuthorName := 'Penelope';
+  Head.DontShowOriginalMouth := True;
+
   // add shirt
   FShirt := TSprite.Create(texPenelopeShirt, False);
   Abdomen.AddChild(FShirt, 2);
@@ -1614,7 +1628,7 @@ begin
   // add lashes
   FLashes := TSprite.Create(texPenelopeLashes, False);
   Head.AddChild(FLashes, 1);
-  FLashes.SetCoordinate(Head.Width*0.5-FLashes.Width*0.6, Head.Height*0.5-FLashes.Height*0.35);
+  FLashes.SetCoordinate(Head.Width*0.5-FLashes.Width*0.6, Head.Height*0.5-FLashes.Height*0.6);
   FLashes.ApplySymmetryWhenFlip := True;
   // add hair
   FHair := TSprite.Create(texPenelopeHair, False);
