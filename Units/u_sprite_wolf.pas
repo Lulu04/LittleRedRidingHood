@@ -153,10 +153,8 @@ public // utils to control character during cinematics
 end;
 
 
-// the sister
-
 { TWolfPenelope }
-
+// the sister
 TWolfPenelope = class(TWolf)
 private
   FShirt, FSkirt, FNavelPiercing, FNosePiercing, FRightShoe, FLeftShoe,
@@ -170,6 +168,19 @@ public
 
   procedure SetRunMode;
   procedure SetWalkMode;
+end;
+
+{ TWolfMarcus }
+
+TWolfMarcus = class(TWolf)
+private
+  FShirt, FShortLeft, FShortRight, FHat: TSprite;
+protected
+  procedure SetFlipH(AValue: boolean); override;
+  procedure SetFlipV(AValue: boolean); override;
+public
+  constructor Create(aIsForestGame: boolean; aLayerIndex: integer=LAYER_WOLF);
+  procedure ProcessMessage(UserValue: TUserMessageValue); override;
 end;
 
 
@@ -228,11 +239,17 @@ var
   texPenelopeHair,
   texPenelopePonytail,
 
+  texMarcusShirt,
+  texMarcusShortLeft,
+  texMarcusShortRight,
+  texMarcusHat,
+
   texCastle: PTexture;
 
   procedure LoadWolfTextures(aAtlas: TOGLCTextureAtlas);
   procedure LoadBaseBallonTexture(aAtlas: TOGLCTextureAtlas);
   procedure LoadPenelopeTextures(aAtlas: TOGLCTextureAtlas);
+  procedure LoadMarcusTextures(aAtlas: TAtlas);
 
 implementation
 uses u_app, BGRAPath, GeometricShapes;
@@ -279,7 +296,7 @@ end;
 procedure LoadPenelopeTextures(aAtlas: TOGLCTextureAtlas);
 var path: string;
 begin
-  path := SpriteFolder+'Wolf'+DirectorySeparator;
+  path := SpriteWolfFolder;
   texPenelopeShirt := aAtlas.AddFromSVG(path+'PenelopeShirt.svg', ScaleW(24), -1);
   texPenelopeSkirt := aAtlas.AddFromSVG(path+'PenelopeSkirt.svg', ScaleW(42), -1);
   texPenelopeNavelPiercing := aAtlas.AddFromSVG(path+'PenelopeNavelPiercing.svg', ScaleW(5), -1);
@@ -289,6 +306,16 @@ begin
   texPenelopeLashes := aAtlas.AddFromSVG(path+'PenelopeLashes.svg', ScaleW(38), -1);
   texPenelopeHair := aAtlas.AddFromSVG(path+'PenelopeHair.svg', ScaleW(49), -1);
   texPenelopePonytail := aAtlas.AddFromSVG(path+'PenelopePonytail.svg', ScaleW(16), -1);
+end;
+
+procedure LoadMarcusTextures(aAtlas: TAtlas);
+var path: string;
+begin
+  path := SpriteWolfFolder;
+  texMarcusShirt := aAtlas.AddFromSVG(path+'MarcusShirt.svg', ScaleW(39), -1);
+  texMarcusShortLeft := aAtlas.AddFromSVG(path+'MarcusLeftShort.svg', ScaleW(17), -1);
+  texMarcusShortRight := aAtlas.AddFromSVG(path+'MarcusRightShort.svg', ScaleW(18), -1);
+  texMarcusHat := aAtlas.AddFromSVG(path+'MarcusHat.svg', ScaleW(68), -1);
 end;
 
 
@@ -1631,6 +1658,57 @@ procedure TWolfPenelope.SetWalkMode;
 begin
   TimeMultiplicator := 0.6;
   WalkSpeed := FScene.ScaleDesignToSceneF(90+(90*(1-TimeMultiplicator)));
+end;
+
+{ TWolfMarcus }
+
+procedure TWolfMarcus.SetFlipH(AValue: boolean);
+begin
+  inherited SetFlipH(AValue);
+  FShirt.FlipH := AValue;
+  FShortLeft.FlipH := AValue;
+  FShortRight.FlipH := AValue;
+  FHat.FlipH := AValue;
+end;
+
+procedure TWolfMarcus.SetFlipV(AValue: boolean);
+begin
+  inherited SetFlipV(AValue);
+  FShirt.FlipV := AValue;
+  FShortLeft.FlipV := AValue;
+  FShortRight.FlipV := AValue;
+  FHat.FlipV := AValue;
+end;
+
+constructor TWolfMarcus.Create(aIsForestGame: boolean; aLayerIndex: integer);
+begin
+  inherited Create(aIsForestGame, aLayerIndex);
+  DialogAuthorName := 'Marcus';
+  // add shirt
+  FShirt := TSprite.Create(texMarcusShirt, False);
+  Abdomen.AddChild(FShirt, 2);
+  FShirt.SetCoordinate(0, Abdomen.Height*0.25);
+  FShirt.ApplySymmetryWhenFlip := True;
+  // add short on left leg
+  FShortLeft := TSprite.Create(texMarcusShortLeft, False);
+  LeftLeg.AddChild(FShortLeft, 1);
+  FShortLeft.SetCoordinate(LeftLeg.Width*0.5, 0);
+  FShortLeft.ApplySymmetryWhenFlip := True;
+  // add short on right leg
+  FShortRight := TSprite.Create(texMarcusShortRight, False);
+  RightLeg.AddChild(FShortRight, 1);
+  FShortRight.SetCoordinate(RightLeg.Width*0.5, 0);
+  FShortRight.ApplySymmetryWhenFlip := True;
+  // add hat
+  FHat := TSprite.Create(texMarcusHat, False);
+  Head.AddChild(FHat, 2);
+  FHat.SetCoordinate(-FHat.Width*0.1, Head.Height*0.3);
+  FHat.ApplySymmetryWhenFlip := True;
+end;
+
+procedure TWolfMarcus.ProcessMessage(UserValue: TUserMessageValue);
+begin
+  inherited ProcessMessage(UserValue);
 end;
 
 end.
