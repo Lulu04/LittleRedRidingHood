@@ -143,7 +143,8 @@ begin
   ima.Free;
 
   // sky
-  sky := TQuad4Color.Create(FScene.Width, FScene.Height);
+  sky := TQuad4Color.Create(FScene);
+  sky.SetSize(FScene.Width, FScene.Height);
   sky.SetTopColors(BGRA(110,142,255));
   sky.SetBottomColors(BGRA(13,31,178)); //(BGRA(65,209,99)); //(BGRA(8,242,130));
   FScene.Add(sky, LAYER_BG2);

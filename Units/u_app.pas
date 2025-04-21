@@ -18,6 +18,7 @@ uses
   function SpriteLR4DirFrontFolder: string;
   function SpriteLR4DirBackFolder: string;
   function SpriteGranMaFolder: string;
+  function SpriteWolfFolder: string;
   function SpriteCommonFolder: string;
   function SpriteUIFolder: string;
   function SpriteBGFolder: string;
@@ -496,6 +497,11 @@ begin
   Result := SpriteFolder+'GranMa'+DirectorySeparator;
 end;
 
+function SpriteWolfFolder: string;
+begin
+  Result := SpriteFolder+'Wolf'+DirectorySeparator;
+end;
+
 function SpriteCommonFolder: string;
 begin
   Result := SpriteFolder+'Common'+DirectorySeparator;
@@ -661,8 +667,8 @@ function TForestStormCloud.NextLevelExplanation: string;
 begin
   case Level of
     0: Result := '?';
-    1, 3: Result := sStormCloudExplanation;
-    else Result := sStormCloudUpgradeHint;
+    1..3: Result := sStormCloudUpgradeHint;
+    else Result := sStormCloudExplanation;
   end;
 end;
 
@@ -710,8 +716,8 @@ function TForestHammer.NextLevelExplanation: string;
 begin
   case Level of
     0: Result := '?';
-    1, 5: Result := sHammerExplanation;
-    else Result := sHammerUpgradeHint;
+    1..5: Result := sHammerUpgradeHint;
+    else Result := sHammerExplanation;
   end;
 end;
 

@@ -693,7 +693,8 @@ begin
   ima.Free;
 
   // sea
-  sea := TQuad4Color.Create(FScene.Width, FScene.Height);
+  sea := TQuad4Color.Create(FScene);
+  sea.SetSize(FScene.Width, FScene.Height);
   sea.SetAllColorsTo(BGRA(4,83,177));
   FScene.Add(sea, LAYER_BG3);
 

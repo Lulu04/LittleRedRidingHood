@@ -124,12 +124,13 @@ begin
   FViewArea.Bottom := ScaleH(768);
 
   // blue sky
-  rec := TQuad4Color.Create(Round(FViewArea.Right), ScaleH(422));
+  rec := TQuad4Color.Create(FScene);
+  rec.SetSize(Round(FViewArea.Right), ScaleH(422));
   FScene.Add(rec, LAYER_BG3);
   rec.SetTopColors(BGRA(157,226,252));
   rec.SetBottomColors(BGRA(58,134,255));
   // green ground
-  gradient := TGradientRectangle.Create;
+  gradient := TGradientRectangle.Create(FScene);
   FScene.Add(gradient, LAYER_BG3);
   gradient.Gradient.CreateVertical([BGRA(3,53,0), BGRA(19,127,12), BGRA(19,127,0)], [0, 0.5, 1]);
   gradient.SetSize(Round(FViewArea.Right), ScaleH(346));

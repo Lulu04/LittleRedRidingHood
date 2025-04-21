@@ -730,7 +730,7 @@ begin
   sndTrainWheel.FadeIn(0.6, 2.0);
 
   // sky gradient
-  sky := TGradientRectangle.Create;
+  sky := TGradientRectangle.Create(FScene);
   sky.Gradient.CreateVertical([BGRA(60,0,184), BGRA(212,68,119), BGRA(57,4,37), BGRA(57,4,37)],
                               [0.0, 0.35, 0.6, 1.0]);
   sky.SetSize(FScene.Width, FScene.Height);
@@ -1266,7 +1266,7 @@ procedure TSky.Create;
 var sky: TGradientRectangle;
 begin
   // high sky gradient
-  sky := TGradientRectangle.Create;
+  sky := TGradientRectangle.Create(FScene);
   sky.Gradient.CreateVertical([BGRA(60,0,184), BGRA(60,0,184), BGRA(60,0,184)],
                               [0.0, 0.55, 1.0]);
 //  sky.SetSize(Round(FScene.Width*4.5), FScene.Height*2);
@@ -1277,7 +1277,7 @@ begin
 
 
   // low sky gradient
-  sky := TGradientRectangle.Create;
+  sky := TGradientRectangle.Create(FScene);
 //  sky.Gradient.CreateVertical([BGRA(180,87,237), BGRA(212,68,119), BGRA(57,4,37), BGRA(57,4,37)],
 //                              [0.0, 0.35, 0.6, 1.0]);
   sky.Gradient.CreateVertical([BGRA(60,0,184), BGRA(212,68,119), BGRA(57,4,37), BGRA(57,4,37)],

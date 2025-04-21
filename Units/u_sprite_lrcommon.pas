@@ -717,31 +717,34 @@ end;
 function TBaseComplexContainer.CheckCollisionWith(aX, aY: single): boolean;
 var r: TRectF;
 begin
-  r.Left := X.Value - BodyWidth * 0.5;
-  r.Top := BodyTopY;
+  r.Left := -BodyWidth * 0.5;
+  r.Top := -DeltaYToTop;
   r.Width := BodyWidth;
   r.Height := BodyHeight;
+  r := GetMatrixSurfaceToWorld.Transform(r);
   Result := FScene.Collision.PointRectF(PointF(aX,aY), r);
 end;
 
 function TBaseComplexContainer.CheckCollisionWithLine(aPt1, aPt2: TPointF): boolean;
 var r: TRectF;
 begin
-  r.Left := X.Value - BodyWidth * 0.5;
-  r.Top := BodyTopY;
+  r.Left := -BodyWidth * 0.5;
+  r.Top := -DeltaYToTop;
   r.Width := BodyWidth;
   r.Height := BodyHeight;
+  r := GetMatrixSurfaceToWorld.Transform(r);
   Result := FScene.Collision.LineRectF(aPt1, aPt2, r);
 end;
 
 function TBaseComplexContainer.CheckCollisionWith(aRectF: TRectF): boolean;
-var xx, yy, w, h: single;
+var r: TRectF;
 begin
-  w := BodyWidth;
-  h := BodyHeight;
-  xx := X.Value - w*0.5;
-  yy := BodyTopY;
-  Result := FScene.Collision.RectFRectF(aRectF, RectF(xx, yy, xx+w, yy+h));
+  r.Left := -BodyWidth * 0.5;
+  r.Top := -DeltaYToTop;
+  r.Width := BodyWidth;
+  r.Height := BodyHeight;
+  r := GetMatrixSurfaceToWorld.Transform(r);
+  Result := FScene.Collision.RectFRectF(aRectF, r);
 end;
 
 { TBaseComplexSprite }
