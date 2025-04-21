@@ -125,7 +125,7 @@ begin
 //  FScene.RunScreen(ScreenLogo);
 
 FSaveGame.SetCurrentPlayerIndex(0);
-FScene.RunScreen(ScreenTitle);     //ScreenMap  ScreenIntro   ScreenPlainMoonInside
+FScene.RunScreen(ScreenMap);     //ScreenMap  ScreenIntro   ScreenPlainMoonInside
 end;
 
 procedure TFormMain.FreeCommonData;
