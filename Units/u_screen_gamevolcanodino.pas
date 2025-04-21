@@ -460,7 +460,8 @@ begin
   MouseInteractionEnabled := False;
   SetCoordinate(FScene.Width-Width*1.1, Height*0.1);
 
-  FProgress := TQuad4Color.Create(Width, Height);
+  FProgress := TQuad4Color.Create(FScene);
+  FProgress.SetSize(Width, Height);
   AddChild(FProgress, 0);
 
   FNozzle := TSprite.Create(texNozzle, False);

@@ -221,12 +221,14 @@ begin
   o.SetCoordinate(ScaleW(-47), ScaleH(56));
 
   // sky
-  sky1 := TQuad4Color.Create(FScene.Width div 2, (FScene.Height-ScaleH(184)) div 2);
+  sky1 := TQuad4Color.Create(FScene);
+  sky1.SetSize(FScene.Width div 2, (FScene.Height-ScaleH(184)) div 2);
   FScene.Add(sky1, LAYER_BG2);
   sky1.SetTopColors(BGRA(255,255,255,0));
   sky1.SetBottomColors(BGRA(11,166,200));
   sky1.SetCoordinate(0, ScaleH(184));
-  sky2 := TQuad4Color.Create(FScene.Width div 2, (FScene.Height-ScaleH(184)) div 2);
+  sky2 := TQuad4Color.Create(FScene);
+  sky2.SetSize(FScene.Width div 2, (FScene.Height-ScaleH(184)) div 2);
   FScene.Add(sky2, LAYER_BG2);
   sky2.SetTopColors(BGRA(11,166,200));
   sky2.SetBottomColors(BGRA(11,166,200));

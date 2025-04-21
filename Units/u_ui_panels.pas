@@ -693,7 +693,8 @@ end;
 
 procedure TPanelWithBGDarkness.CreateSceneDarkness;
 begin
-  FSceneDarkness := TQuad4Color.Create(FScene.Width, FScene.Height);
+  FSceneDarkness := TQuad4Color.Create(FScene);
+  FSceneDarkness.SetSize(FScene.Width, FScene.Height);
   FSceneDarkness.SetAllColorsTo(BGRA(0,0,0));
   FScene.Add(FSceneDarkness, LAYER_GAMEUI);
   FSceneDarkness.Opacity.Value := 0;

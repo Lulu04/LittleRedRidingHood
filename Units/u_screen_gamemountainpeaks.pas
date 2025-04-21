@@ -1284,12 +1284,14 @@ begin
   pe.SetEmitterTypeLine(PointF(FVolcano.Width*0.55, FVolcano.Height*0.08));
 
   // sky
-  sky1 := TQuad4Color.Create(FScene.Width, (FScene.Height-ScaleH(184)) div 2);
+  sky1 := TQuad4Color.Create(FScene);
+  sky1.SetSize(FScene.Width, (FScene.Height-ScaleH(184)) div 2);
   FScene.Add(sky1, LAYER_BG1);
   sky1.SetTopColors(BGRA(255,255,255,0));
   sky1.SetBottomColors(BGRA(11,166,200));
   sky1.SetCoordinate(0, ScaleH(184));
-  sky2 := TQuad4Color.Create(FScene.Width, (FScene.Height-ScaleH(184)) div 2);
+  sky2 := TQuad4Color.Create(FScene);
+  sky2.SetSize(FScene.Width, (FScene.Height-ScaleH(184)) div 2);
   FScene.Add(sky2, LAYER_BG1);
   sky2.SetTopColors(BGRA(11,166,200));
   sky2.SetBottomColors(BGRA(11,166,200));

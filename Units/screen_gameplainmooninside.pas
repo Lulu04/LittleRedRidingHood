@@ -529,7 +529,8 @@ begin
   quad[cTR] := PointF(ScaleW(649), 0);     //648
   quad[cBR] := PointF(ScaleW(469), ScaleH(414));
   quad[cBL] := PointF(ScaleW(0), ScaleH(414));
-  o := TQuad4Color.Create(quad);
+  o := TQuad4Color.Create(FScene);
+  o.SetSize(quad);
   o.SetTopColors(BGRA(49,42,16));
   o.SetBottomColors(BGRA(102,100,49));
   FScene.Add(o, LAYER_BG2);
@@ -541,7 +542,8 @@ begin
   quad[cTR] := PointF(ScaleW(230), 0);
   quad[cBR] := PointF(ScaleW(403), ScaleH(395));
   quad[cBL] := PointF(ScaleW(0), ScaleH(395));
-  o := TQuad4Color.Create(quad);
+  o := TQuad4Color.Create(FScene);
+  o.SetSize(quad);
   o.SetTopColors(BGRA(124,48,34));
   o.SetBottomColors(BGRA(254,142,124));
   FScene.Add(o, LAYER_BG2);
@@ -553,7 +555,8 @@ begin
   quad[cTR] := PointF(ScaleW(8), 0);
   quad[cBR] := PointF(ScaleW(652), ScaleH(414));
   quad[cBL] := PointF(ScaleW(182), ScaleH(414));
-  o := TQuad4Color.Create(quad);
+  o := TQuad4Color.Create(FScene);
+  o.SetSize(quad);
   o.SetTopColors(BGRA(49,42,16));
   o.SetBottomColors(BGRA(102,100,49));
   FScene.Add(o, LAYER_BG2);
@@ -565,7 +568,8 @@ begin
   quad[cTR] := PointF(ScaleW(638), ScaleH(0));
   quad[cBR] := PointF(ScaleW(638), ScaleH(24));
   quad[cBL] := PointF(ScaleW(0), ScaleH(437));
-  o := TQuad4Color.Create(quad);
+  o := TQuad4Color.Create(FScene);
+  o.SetSize(quad);
   o.SetLeftColors(BGRA(255,247,108));
   o.SetRightColors(BGRA(185,175,0));
   FScene.Add(o, LAYER_BG2);
@@ -577,7 +581,8 @@ begin
   quad[cTR] := PointF(ScaleW(644), ScaleH(62));   //63
   quad[cBR] := PointF(ScaleW(644), ScaleH(438));
   quad[cBL] := PointF(ScaleW(0), ScaleH(24));
-  o := TQuad4Color.Create(quad);
+  o := TQuad4Color.Create(FScene);
+  o.SetSize(quad);
   o.SetRightColors(BGRA(255,247,108));
   o.SetLeftColors(BGRA(185,175,0));
   FScene.Add(o, LAYER_BG2);
@@ -585,8 +590,9 @@ begin
   o.CollisionBody.AddPolygon(quad);
 
   // sky behind the left window
-  sky := TQuad4Color.Create(QuadCoor(PointF(0,0), PointF(ScaleW(490), ScaleH(192)),
-                              PointF(ScaleW(490), ScaleH(240)),  PointF(ScaleW(0), ScaleH(315))));
+  sky := TQuad4Color.Create(FScene);
+  sky.SetSize(QuadCoor(PointF(0,0), PointF(ScaleW(490), ScaleH(192)),
+                       PointF(ScaleW(490), ScaleH(240)),  PointF(ScaleW(0), ScaleH(315))));
   sky.SetCoordinate(ScaleW(-1), ScaleH(156));
   sky.SetTopColors(BGRA(212,68,119));
   sky.SetBottomColors(BGRA(57,4,37));
@@ -610,8 +616,9 @@ begin
                                    PointF(ScaleW(154), ScaleH(276))]);
 
   // sky behind the right window
-  sky := TQuad4Color.Create(QuadCoor(PointF(0,192), PointF(ScaleW(490), ScaleH(0)),
-                              PointF(ScaleW(490), ScaleH(315)),  PointF(ScaleW(0), ScaleH(240))));
+  sky := TQuad4Color.Create(FScene);
+  sky.SetSize(QuadCoor(PointF(0,192), PointF(ScaleW(490), ScaleH(0)),
+                       PointF(ScaleW(490), ScaleH(315)),  PointF(ScaleW(0), ScaleH(240))));
   sky.SetCoordinate(ScaleW(548), ScaleH(156));
   sky.SetTopColors(BGRA(212,68,119));
   sky.SetBottomColors(BGRA(57,4,37));
@@ -640,7 +647,8 @@ begin
   quad[cTR] := PointF(ScaleW(639), ScaleH(555)); //421
   quad[cBR] := PointF(ScaleW(639), ScaleH(577));
   quad[cBL] := PointF(ScaleW(0), ScaleH(373));
-  o := TQuad4Color.Create(quad);
+  o := TQuad4Color.Create(FScene);
+  o.SetSize(quad);
   o.SetRightColors(BGRA(111,94,35));
   o.SetLeftColors(BGRA(253,243,121));
   FScene.Add(o, LAYER_BG2);
@@ -652,7 +660,8 @@ begin
   quad[cTR] := PointF(ScaleW(640), ScaleH(0));
   quad[cBR] := PointF(ScaleW(640), ScaleH(370));
   quad[cBL] := PointF(ScaleW(0), ScaleH(575));
-  o := TQuad4Color.Create(quad);
+  o := TQuad4Color.Create(FScene);
+  o.SetSize(quad);
   o.SetLeftColors(BGRA(111,94,35));
   o.SetRightColors(BGRA(253,243,121));
   FScene.Add(o, LAYER_BG2);
@@ -664,7 +673,8 @@ begin
   quad[cTR] := PointF(ScaleW(313), ScaleH(0));
   quad[cBR] := PointF(ScaleW(507), ScaleH(441));
   quad[cBL] := PointF(ScaleW(507), ScaleH(441));
-  o := TQuad4Color.Create(quad);
+  o := TQuad4Color.Create(FScene);
+  o.SetSize(quad);
   o.SetTopColors(BGRA(255,248,193));
   o.SetBottomColors(BGRA(200,191,111));
   FScene.Add(o, LAYER_BG2);
@@ -676,7 +686,8 @@ begin
   quad[cTR] := PointF(ScaleW(509), ScaleH(0));
   quad[cBR] := PointF(ScaleW(0), ScaleH(443));
   quad[cBL] := PointF(ScaleW(0), ScaleH(443));
-  o := TQuad4Color.Create(quad);
+  o := TQuad4Color.Create(FScene);
+  o.SetSize(quad);
   o.SetTopColors(BGRA(255,248,193));
   o.SetBottomColors(BGRA(200,191,111));
   FScene.Add(o, LAYER_BG2);
@@ -688,7 +699,8 @@ begin
   quad[cTR] := PointF(ScaleW(440), ScaleH(0));
   quad[cBR] := PointF(ScaleW(247), ScaleH(441));
   quad[cBL] := PointF(ScaleW(194), ScaleH(441));
-  o := TQuad4Color.Create(quad);
+  o := TQuad4Color.Create(FScene);
+  o.SetSize(quad);
   o.SetTopColors(BGRA(70,163,221));
   o.SetBottomColors(BGRA(23,91,134));
   FScene.Add(o, LAYER_BG2);

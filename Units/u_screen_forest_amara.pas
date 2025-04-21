@@ -197,7 +197,8 @@ const CLOUDS_PRESET =
 var sky: TQuad4Color;
   clouds: TOGLCSpriteClouds;
 begin
-  sky := TQuad4Color.Create(FScene.Width, ScaleH(422));
+  sky := TQuad4Color.Create(FScene);
+  sky.SetSize(FScene.Width, ScaleH(422));
   sky.SetTopColors(BGRA(110,142,255));
   sky.SetBottomColors(BGRA(13,31,178));
   FScene.Add(sky, LAYER_BG3);
@@ -217,7 +218,7 @@ var gradient: TGradientRectangle;
   g: TGrassLarge;
 begin
   // green ground
-  gradient := TGradientRectangle.Create;
+  gradient := TGradientRectangle.Create(FScene);
   FScene.Add(gradient, LAYER_BG3);
   gradient.Gradient.CreateVertical([BGRA(3,53,0), BGRA(19,127,12), BGRA(19,127,0)], [0, 0.5, 1]);
   gradient.SetSize(FScene.Width, ScaleH(346));

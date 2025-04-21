@@ -958,7 +958,8 @@ var i: integer;
   flagPos: boolean;
   o: TCloudForStorm;
 begin
-  inherited Create(FScene.Width, FScene.Height);
+  inherited Create(FScene);
+  SetSize(FScene.Width, FScene.Height);
   FScene.Add(Self, LAYER_WEATHER);
   SetAllColorsTo(BGRA(60,0,60));
   Opacity.Value := 0;
@@ -1145,7 +1146,8 @@ end;
 procedure THammer.ProcessMessage(UserValue: TUserMessageValue);
 const TIMEBASE = 1.0;
 var i: integer;
-d, xx, yy, w, h: single;
+  d: single;
+  r: TRectF;
 begin
   case UserValue of
     // DEVELOP AND HIT
@@ -1178,13 +1180,11 @@ begin
       Paf.Opacity.Value := 255;
       Paf.Opacity.ChangeTo(0, 0.5, idcStartSlowEndFast);
       // check collision between Paf and each wolf
-      xx := Paf.X.Value;
-      yy := Paf.Y.Value;
-      w := Paf.Width;
-      h := Paf.Height;
+      r := RectF(0, 0, Paf.Width, Paf.Height);
+      r := Paf.GetMatrixSurfaceToWorld.Transform(r);
       for i:=0 to FScene.Layer[LAYER_WOLF].SurfaceCount-1 do
         with FScene.Layer[LAYER_WOLF] do
-          if Surface[i] is TWolf and TWolf(Surface[i]).CheckCollisionWith(RectF(xx, yy, xx+w, yy+h)) then
+          if Surface[i] is TWolf and TWolf(Surface[i]).CheckCollisionWith(r) then
             TWolf(Surface[i]).State := wsFalling;
     end;
     105: begin
