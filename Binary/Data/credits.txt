@@ -6,9 +6,10 @@ rchastain, circular, Charlotte, Coralie.
 Game by Lulu, written in FreePascal with the awesome Lazarus IDE.
 
 The following libraries are used for its development:
+- BGRABitmap to handle fonts, images and svg files.
 - OGLCScene a 2D framework to render graphics with OpenGL  https://github.com/Lulu04/OGLCScene
 - ALSound to render sounds and musics  https://github.com/Lulu04/ALSound
-- BGRABitmap to handle fonts, images and svg files.
+
 
 [GRAPHICS]
 

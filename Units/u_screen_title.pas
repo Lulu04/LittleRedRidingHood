@@ -31,6 +31,7 @@ private
   procedure ProcessButtonClick(aUISurface: TSimpleSurfaceWithEffect);
 public
   procedure SetMenuButtonVisible(aValue: boolean);
+  procedure DefineSubTextures(aAtlas: TAtlas); override;
   procedure CreateObjects; override;
   procedure FreeObjects; override;
   procedure ProcessMessage(UserValue: TUserMessageValue); override;
@@ -58,6 +59,40 @@ begin
   BCredits.MouseInteractionEnabled := aValue;
   BQuit.Visible := aValue;
   BQuit.MouseInteractionEnabled := aValue;
+end;
+
+procedure TScreenTitle.DefineSubTextures(aAtlas: TAtlas);
+var fd: TFontDescriptor;
+  fontName: string;
+begin
+  {$if defined(Windows)}
+  fontName := 'Comic Sans MS';
+  {$else}
+  fontName := 'Comic Sans MS'; //'Arial';
+  {$endif}
+  AdditionnalScale := 2.2;
+
+  LoadLRFaceTextures(aAtlas);
+  LoadLRFrontViewTextures(aAtlas);
+
+  LoadWolfTextures(aAtlas);
+  AdditionnalScale := 1;
+//  LoadBaseBallonTexture(aAtlas);
+  LoadCloudsTexture(aAtlas);
+  LoadGround1Texture(aAtlas);
+  texPine := aAtlas.AddFromSVG(SpriteBGFolder+'TreePine.svg', ScaleW(100), -1);
+
+  fd.Create(fontName, Round(FScene.Height/13), [], BGRA(255,128,64), BGRA(0,0,0), ScaleH(3));
+  FFontTitleSmallPart := aAtlas.AddTexturedFont(fd, TitleSmallPartCharSet);
+
+  fd.Create(fontName, Round(FScene.Height/7), [], BGRA(255,50,10), BGRA(0,0,0), ScaleH(5));
+  FFontTitleBigPart := aAtlas.AddTexturedFont(fd, TitleBigPartCharSet);
+
+  FFontText := CreateGameFontText(aAtlas);
+  FFontButton := CreateGameFontButton(aAtlas, TitleButtonCharset);
+  LoadTitleScreenIcon(aAtlas, FFontButton.Font.FontHeight);
+
+  LoadMousePointerTexture(aAtlas);
 end;
 
 procedure TScreenTitle.ProcessButtonClick(aUISurface: TSimpleSurfaceWithEffect);
@@ -94,53 +129,14 @@ end;
 procedure TScreenTitle.CreateObjects;
 var o: TLRFrontView;
   w: TWolf;
-  ima: TBGRABitmap;
   g: TGround1;
-  fd: TFontDescriptor;
   sky: TQuad4Color;
   i, xx: integer;
   yy: single;
   t: PTexture;
-  fontName: string;
+
 begin
-  {$if defined(Windows)}
-  fontName := 'Comic Sans MS';
-  {$else}
-  fontName := 'Comic Sans MS'; //'Arial';
-  {$endif}
-  FAtlas := FScene.CreateAtlas;
-  FAtlas.Spacing := 2;
-
-  AdditionnalScale := 2.2;
-
-  LoadLRFaceTextures(FAtlas);
-  LoadLRFrontViewTextures(FAtlas);
-
-//LoadTexturesForForestGame(FAtlas);
-  LoadWolfTextures(FAtlas);
-  AdditionnalScale := 1;
-  LoadBaseBallonTexture(FAtlas);
-  LoadCloudsTexture(FAtlas);
-  LoadGround1Texture(FAtlas);
-  texPine := FAtlas.AddFromSVG(SpriteBGFolder+'TreePine.svg', ScaleW(100), -1);
-
-  fd.Create(fontName, Round(FScene.Height/13), [], BGRA(255,128,64), BGRA(0,0,0), ScaleH(3));
-  FFontTitleSmallPart := FAtlas.AddTexturedFont(fd, TitleSmallPartCharSet);
-
-  fd.Create(fontName, Round(FScene.Height/7), [], BGRA(255,50,10), BGRA(0,0,0), ScaleH(5));
-  FFontTitleBigPart := FAtlas.AddTexturedFont(fd, TitleBigPartCharSet);
-
-  FFontText := CreateGameFontText(FAtlas);
-  FFontButton := CreateGameFontButton(FAtlas, TitleButtonCharset);
-  LoadTitleScreenIcon(FAtlas, FFontButton.Font.FontHeight);
-
-  LoadMousePointerTexture(FAtlas);
-
-  FAtlas.TryToPack;
-  FAtlas.Build;
-  ima := FAtlas.GetPackedImage;
-  ima.SaveToFile(Application.Location+'Atlas.png');
-  ima.Free;
+  CheckAtlas(FAtlas, 'title.atlas');
 
   // sky
   sky := TQuad4Color.Create(FScene);

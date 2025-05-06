@@ -38,6 +38,7 @@ private
   procedure CreateSky;
   procedure CreateForest;
 public
+  procedure DefineSubTextures(aAtlas: TAtlas); override;
   procedure CreateObjects; override;
   procedure FreeObjects; override;
   procedure ProcessMessage(UserValue: TUserMessageValue); override;
@@ -284,6 +285,10 @@ begin
   CreatePine(ScaleW(962), ScaleH(531), 328);
   CreatePine(ScaleW(990), ScaleH(580), 245);
 
+end;
+
+procedure TScreenForestAmara.DefineSubTextures(aAtlas: TAtlas);
+begin
 end;
 
 procedure TScreenForestAmara.CreateObjects;

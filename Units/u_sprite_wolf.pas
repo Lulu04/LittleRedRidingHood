@@ -250,15 +250,15 @@ var
 
   texCastle: PTexture;
 
-  procedure LoadWolfTextures(aAtlas: TOGLCTextureAtlas);
-  procedure LoadBaseBallonTexture(aAtlas: TOGLCTextureAtlas);
+  procedure LoadWolfTextures(aAtlas: TAtlas);
+  procedure LoadBaseBallonTexture(aAtlas: TAtlas);
   procedure LoadPenelopeTextures(aAtlas: TOGLCTextureAtlas);
   procedure LoadMarcusTextures(aAtlas: TAtlas);
 
 implementation
 uses u_app, BGRAPath, GeometricShapes;
 
-procedure LoadWolfTextures(aAtlas: TOGLCTextureAtlas);
+procedure LoadWolfTextures(aAtlas: TAtlas);
 var path: string;
   ima: TBGRABitmap;
 begin
@@ -279,16 +279,21 @@ begin
   texWolfAbdomen := aAtlas.AddFromSVG(path+'WolfAbdomen.svg', -1, ScaleH(52));
   texWolfTail := aAtlas.AddFromSVG(path+'WolfTail.svg', ScaleW(50), -1);
 
-  ima := TBGRABitmap.Create(ScaleW(16), ScaleH(20));
-  FGeometricShapes := TGeometricShapes.Create;
-  FGeometricShapes.GlobalColor := BGRA(255,255,0);
-  FGeometricShapes.DrawStar(ima);
-  texWolfStarWhenStunned := aAtlas.Add(ima);
-  FGeometricShapes.Free;
-  FGeometricShapes := NIL;
+  if aAtlas.LoadedFromFile then
+    texWolfStarWhenStunned := aAtlas.RetrieveTextureByFileName('WolfStarWhenStunned')
+  else begin
+    ima := TBGRABitmap.Create(ScaleW(16), ScaleH(20));
+    FGeometricShapes := TGeometricShapes.Create;
+    FGeometricShapes.GlobalColor := BGRA(255,255,0);
+    FGeometricShapes.DrawStar(ima);
+    texWolfStarWhenStunned := aAtlas.Add(ima);
+    texWolfStarWhenStunned^.Filename := 'WolfStarWhenStunned';
+    FGeometricShapes.Free;
+    FGeometricShapes := NIL;
+  end;
 end;
 
-procedure LoadBaseBallonTexture(aAtlas: TOGLCTextureAtlas);
+procedure LoadBaseBallonTexture(aAtlas: TAtlas);
 var path: String;
 begin
   path := SpriteFolder+'Common'+DirectorySeparator;

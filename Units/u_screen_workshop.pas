@@ -25,6 +25,7 @@ type
     procedure ProcessButtonClick(Sender: TSimpleSurfaceWithEffect);
     procedure ProcessOnUpgradeRequestEvent(Sender: TSimpleSurfaceWithEffect);
   public
+    procedure DefineSubTextures(aAtlas: TAtlas); override;
     procedure CreateObjects; override;
     procedure FreeObjects; override;
     procedure ProcessMessage({%H-}UserValue: TUserMessageValue); override;
@@ -174,7 +175,7 @@ begin
     else raise exception.Create('forgot to implement');
   end;
 
-  FLabelNextLevel.Visible := FItemDescriptor.CanDisplayPriceAndHint; // FItemDescriptor.LevelCanBeUpgraded;
+  FLabelNextLevel.Visible := FItemDescriptor.CanDisplayPrice; // FItemDescriptor.LevelCanBeUpgraded;
   if FLabelNextLevel.Visible then FLabelNextLevel.Caption := s;
 end;
 
@@ -194,7 +195,7 @@ begin
     for i:=0 to High(FPriceItems) do FPriceItems[i].Kill;
   FPriceItems := NIL;
 
-  if not FItemDescriptor.CanDisplayPriceAndHint then exit; // .LevelCanBeUpgraded then exit;
+  if not FItemDescriptor.CanDisplayPrice then exit; // .LevelCanBeUpgraded then exit;
 
   A := FItemDescriptor.PriceForNextLevel;
   if Length(A) = 0 then exit;
@@ -344,6 +345,42 @@ begin
   PostMessage(0); // anim LR is happy
 end;
 
+procedure TScreenWorkShop.DefineSubTextures(aAtlas: TAtlas);
+begin
+  texHomeBG := aAtlas.AddFromSVG(SpriteBGFolder+'LRHomeInner.svg', FScene.Width, -1);
+  texFireBG := aAtlas.AddFromSVG(SpriteBGFolder+'LRHomeInnerFireBG.svg', Round(FScene.Width*0.1354), -1);
+  AddFlameParticleToAtlas(aAtlas);
+  AddSphereParticleToAtlas(aAtlas);
+
+  FFontText := CreateGameFontText(aAtlas);
+
+  CreateGameFontNumber(aAtlas);
+  LoadCoinTexture(aAtlas);
+  LoadCristalGrayTexture(aAtlas);
+  LoadWatchTexture(aAtlas);
+
+  texDoor := aAtlas.AddFromSVG(SpriteBGFolder+'LRHomeInnerDoor.svg', Round(FScene.Width*0.1585), -1);
+  texDoorFrame := aAtlas.AddFromSVG(SpriteBGFolder+'LRHomeInnerDoorFrame.svg', Round(FScene.Width*0.1854), -1);
+  LoadMousePointerTexture(aAtlas);
+
+  LoadLRFaceTextures(aAtlas);
+  LoadLRFrontViewTextures(aAtlas);
+
+  FItemHeight := ScaleH(70);
+  texCoin := aAtlas.AddFromSVG(SpriteUIFolder+'Coin.svg', -1, Round(FFontText.Font.FontHeight*0.8));
+  texSmallCristalGray := aAtlas.AddFromSVG(SpriteUIFolder+'CristalGray.svg', -1, Round(FFontText.Font.FontHeight*0.8));
+
+  texBow := aAtlas.AddFromSVG(SpriteUIFolder+'Bow.svg', -1, FItemHeight);
+  texElevator := aAtlas.AddFromSVG(SpriteUIFolder+'ElevatorEngine.svg', -1, FItemHeight);
+  texHammer := aAtlas.AddFromSVG(SpriteCommonFolder+'HammerHead.svg', -1, FItemHeight);
+  texStormCloud := aAtlas.AddFromSVG(SpriteCommonFolder+'StormCloud.svg', -1, FItemHeight);
+  texZipLine := aAtlas.AddFromSVG(SpriteUIFolder+'ZipLine.svg', -1, FItemHeight);
+  texDigicodeDecoder := aAtlas.AddFromSVG(SpriteUIFolder+'DigicodeDecoder.svg', -1, FItemHeight);
+  texDorsalThruster := aAtlas.AddFromSVG(SpriteUIFolder+'DorsalThruster.svg', -1, FItemHeight);
+  texLaserGun := aAtlas.AddFromSVG(SpriteUIFolder+'LaserGun.svg', -1, FItemHeight);
+  texSubmarine := aAtlas.AddFromSVG(SpriteUIFolder+'Submarine.svg', -1, FItemHeight);
+end;
+
 procedure TScreenWorkShop.CreateObjects;
 var pe, smoke: TParticleEmitter;
   home, o2, frameDoor: TSprite;
@@ -353,51 +390,7 @@ begin
   FFireSound.Loop := True;
   FFireSound.FadeIn(1.0, 2.0);
 
-  FAtlas := FScene.CreateAtlas;
-  FAtlas.Spacing := 2;
-  texHomeBG := FAtlas.AddFromSVG(SpriteBGFolder+'LRHomeInner.svg', FScene.Width, -1);
-  texFireBG := FAtlas.AddFromSVG(SpriteBGFolder+'LRHomeInnerFireBG.svg', Round(FScene.Width*0.1354), -1);
-  with FAtlas.AddFromSVG(ParticleFolder+'Flame.svg', PPIScale(32), -1)^ do
-    Filename := 'Flame.png';
-  //FAtlas.Add(ParticleFolder+'Flame.png');
-  with FAtlas.AddFromSVG(ParticleFolder+'sphere_particle.svg', PPIScale(32), -1)^ do
-    Filename := 'sphere_particle.png';
-  //FAtlas.Add(ParticleFolder+'sphere_particle.png');
-
-  FFontText := CreateGameFontText(FAtlas);
-
-  CreateGameFontNumber(FAtlas);
-  LoadCoinTexture(FAtlas);
-  LoadCristalGrayTexture(FAtlas);
-  LoadWatchTexture(FAtlas);
-
-  texDoor := FAtlas.AddFromSVG(SpriteBGFolder+'LRHomeInnerDoor.svg', Round(FScene.Width*0.1585), -1);
-  texDoorFrame := FAtlas.AddFromSVG(SpriteBGFolder+'LRHomeInnerDoorFrame.svg', Round(FScene.Width*0.1854), -1);
-  LoadMousePointerTexture(FAtlas);
-
-  LoadLRFaceTextures(FAtlas);
-  LoadLRFrontViewTextures(FAtlas);
-
-  FItemHeight := ScaleH(70);
-  texCoin := FAtlas.AddFromSVG(SpriteUIFolder+'Coin.svg', -1, Round(FFontText.Font.FontHeight*0.8));
-  texSmallCristalGray := FAtlas.AddFromSVG(SpriteUIFolder+'CristalGray.svg', -1, Round(FFontText.Font.FontHeight*0.8));
-
-  texBow := FAtlas.AddFromSVG(SpriteUIFolder+'Bow.svg', -1, FItemHeight);
-  texElevator := FAtlas.AddFromSVG(SpriteUIFolder+'ElevatorEngine.svg', -1, FItemHeight);
-  texHammer := FAtlas.AddFromSVG(SpriteCommonFolder+'HammerHead.svg', -1, FItemHeight);
-  texStormCloud := FAtlas.AddFromSVG(SpriteCommonFolder+'StormCloud.svg', -1, FItemHeight);
-  texZipLine := FAtlas.AddFromSVG(SpriteUIFolder+'ZipLine.svg', -1, FItemHeight);
-  texDigicodeDecoder := FAtlas.AddFromSVG(SpriteUIFolder+'DigicodeDecoder.svg', -1, FItemHeight);
-  texDorsalThruster := FAtlas.AddFromSVG(SpriteUIFolder+'DorsalThruster.svg', -1, FItemHeight);
-  texLaserGun := FAtlas.AddFromSVG(SpriteUIFolder+'LaserGun.svg', -1, FItemHeight);
-  texSubmarine := FAtlas.AddFromSVG(SpriteUIFolder+'Submarine.svg', -1, FItemHeight);
-
-  FAtlas.TryToPack;
-  FAtlas.Build;
-  {ima := FAtlas.GetPackedImage;
-  ima.SaveToFile(Application.Location+'Atlas.png');
-  ima.Free;}
-
+  CheckAtlas(FAtlas, 'workshop.atlas');
 
   // home bg
   home := TSprite.Create(texHomeBG, False);

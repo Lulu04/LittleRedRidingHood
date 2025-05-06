@@ -8,7 +8,7 @@ uses
   Classes, SysUtils,
   OGLCScene, BGRABitmap, BGRABitmapTypes;
 
-procedure LoadMousePointerTexture(aAtlas: TOGLCTextureAtlas);
+procedure LoadMousePointerTexture(aAtlas: TAtlas);
 procedure CustomizeMousePointer(aShowCursor: boolean=False);
 procedure FreeMousePointer;
 
@@ -19,7 +19,7 @@ uses u_app, u_common;
 var
   texMousePointer: PTexture;
 
-procedure LoadMousePointerTexture(aAtlas: TOGLCTextureAtlas);
+procedure LoadMousePointerTexture(aAtlas: TAtlas);
 begin
   texMousePointer := aAtlas.AddFromSVG(SpriteUIFolder+'MousePointer.svg', Round(FScene.Width/30), -1);
 end;

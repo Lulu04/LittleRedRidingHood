@@ -217,8 +217,8 @@ public
   procedure SetCoordinateByFeet(aCenterX, aY: single);
 end;
 
-procedure LoadLRFaceTextures(aAtlas: TOGLCTextureAtlas);
-procedure LoadLRFrontViewTextures(aAtlas: TOGLCTextureAtlas);
+procedure LoadLRFaceTextures(aAtlas: TAtlas);
+procedure LoadLRFrontViewTextures(aAtlas: TAtlas);
 
 procedure LoadCharacterMarkTextures(aAtlas: TOGLCTextureAtlas);
 procedure LoadGameDialogTextures(aAtlas: TOGLCTextureAtlas);
@@ -248,7 +248,7 @@ var
     texLRFrontViewLeftLeg, texLRFrontViewRightLeg,
     texLRFrontViewBasket: PTexture;
 
-procedure LoadLRFaceTextures(aAtlas: TOGLCTextureAtlas);
+procedure LoadLRFaceTextures(aAtlas: TAtlas);
 begin
   texLRFace := aAtlas.AddMultiFrameImageFromSVG([SpriteFolder+'LittleRedFaceEyeOpen.svg',
                                                  SpriteFolder+'LittleRedFaceEyeClose.svg',
@@ -262,7 +262,7 @@ begin
   texLRFaceMouthSmile := aAtlas.AddFromSVG(SpriteFolder+'LittleRedFaceMouthSmile.svg', ScaleW(33), -1);
 end;
 
-procedure LoadLRFrontViewTextures(aAtlas: TOGLCTextureAtlas);
+procedure LoadLRFrontViewTextures(aAtlas: TAtlas);
 var path: string;
 begin
   path := SpriteLRPortraitFolder;
@@ -425,11 +425,13 @@ begin
   h := FPanel.Height;
 
   p := SurfaceToScene(PointF(-w*0.5, -DeltaYToTop-h-PPIScale(20)));
+  p.x := EnsureRange(p.x, 0, FScene.Width - w);
+  p.y := EnsureRange(p.y, 0, FScene.Height - h);
 
   //p := PointF(X.Value-w*0.5, BodyTopY - h - PPIScale(20));
 
-  p.x := EnsureRange(p.x, rView.Left, rView.Right - w);
-  p.y := EnsureRange(p.y, rView.Top, rView.Bottom - h);
+{  p.x := EnsureRange(p.x, rView.Left, rView.Right - w);
+  p.y := EnsureRange(p.y, rView.Top, rView.Bottom - h); }
 
 {  // message panel overlapps the character body ?
   rPanel := RectF(p.x, p.y, p.x+w, p.y+h);

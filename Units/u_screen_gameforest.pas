@@ -49,6 +49,7 @@ private
   procedure ProcessEventBallonExplode;
   property GameState: TGameState read FGameState write SetGameState;
 public
+  procedure DefineSubTextures(aAtlas: TAtlas); override;
   procedure CreateObjects; override;
   procedure FreeObjects; override;
   procedure ProcessMessage({%H-}UserValue: TUserMessageValue); override;
@@ -60,7 +61,7 @@ end;
 var ScreenGameForest: TScreenGame1;
 implementation
 uses Forms, Controls, LCLType, u_app, u_screen_map, u_utils, u_mousepointer,
-  u_screen_forest_amara, Math;
+  u_screen_forest_amara, Math, u_sprite_lrcommon;
 
 { TScreenGame1 }
 
@@ -80,12 +81,76 @@ begin
   FInGamePanel.IncBalloonExploded;
 end;
 
+procedure TScreenGame1.DefineSubTextures(aAtlas: TAtlas);
+var path: string;
+  h: integer;
+begin
+  LoadLRFaceTextures(aAtlas);
+
+  path := SpriteFolder;
+  texLRDress := aAtlas.AddFromSVG(path+'LittleRedDress.svg', ScaleW(62), -1);
+  texLRHood := aAtlas.AddFromSVG(path+'LittleRedHood.svg', ScaleW(86), -1);
+  texLRLeftLeg := aAtlas.AddFromSVG(path+'LittleRedLeftLeg.svg', ScaleW(20), -1);
+  texLRRightLeg := aAtlas.AddFromSVG(path+'LittleRedRightLeg.svg', ScaleW(19), -1);
+  texLRArmForBow := aAtlas.AddFromSVG(path+'LittleRedArmForBow.svg', ScaleW(50), -1);
+  texLRLeftCloak := aAtlas.AddFromSVG(path+'LittleRedLeftCloak.svg', ScaleW(68), -1);
+  texLERightCloak := aAtlas.AddFromSVG(path+'LittleRedRightCloak.svg', ScaleW(59), -1);
+  texLRBow := aAtlas.AddFromSVG(path+'LittleRedBow.svg', -1, ScaleH(117));
+
+  texLRArrow := aAtlas.AddFromSVG(SpriteCommonFolder+'LRArrow.svg', ScaleW(53), -1);
+
+  texPlatformLR := aAtlas.AddFromSVG(SpriteCommonFolder+'PlatformLR.svg', ScaleW(106), -1);
+  texMotorBody := aAtlas.AddFromSVG(SpriteCommonFolder+'MotorBody.svg', ScaleW(100), -1);
+  texMotorBigWheel := aAtlas.AddFromSVG(SpriteCommonFolder+'MotorBigWheel.svg', ScaleW(32), -1);
+  texMotorSmallWheel := aAtlas.AddFromSVG(SpriteCommonFolder+'MotorSmallWheel.svg', ScaleW(20), -1);
+  texMotorLeftPiston := aAtlas.AddFromSVG(SpriteCommonFolder+'MotorLeftPiston.svg', ScaleW(25), -1);
+  AddSphereParticleToAtlas(aAtlas);
+
+  texBalloonCrate := aAtlas.AddFromSVG(SpriteCommonFolder+'BalloonCrate.svg', ScaleW(70), -1);
+
+  LoadGround1Texture(aAtlas);
+
+  path := SpriteCommonFolder;
+  texEscapeDoorAboveUp := aAtlas.AddFromSVG(path+'EscapeDoorAboveUp.svg', ScaleW(68){PPIScale(68)}, -1);
+  texEscapeDoorAboveDown := aAtlas.AddFromSVG(path+'EscapeDoorAboveDown.svg', ScaleW(70){PPIScale(70)}, -1);
+  texEscapeDoorBelowUp := aAtlas.AddFromSVG(path+'EscapeDoorBelowUp.svg', -1, ScaleH(175){PPIScale(175)});
+  texEscapeDoorBelowDown := aAtlas.AddFromSVG(path+'EscapeDoorBelowDown.svg', -1, ScaleH(216){PPIScale(216)});
+  texEscapeDoorStone := aAtlas.AddFromSVG(path+'EscapeDoorStone.svg', -1, ScaleH(194){PPIScale(194)});
+
+  path := SpriteCommonFolder;
+  texHammerBox := aAtlas.AddFromSVG(path+'HammerBox.svg', ScaleW(55), -1);
+  texHammerArmPart := aAtlas.AddFromSVG(path+'HammerArmPart.svg', -1, ScaleH(25));
+  texHammerHead := aAtlas.AddFromSVG(path+'HammerHead.svg', ScaleW(46), -1);
+  texHammerPaf :=  aAtlas.AddFromSVG(path+'PafHammer.svg', ScaleW(55*3), -1);
+
+  texStormCloud := aAtlas.AddFromSVG(SpriteCommonFolder+'StormCloud.svg', Round(FScene.Width/5), -1);
+  AddRainDropParticleToAtlas(aAtlas);
+
+  LoadBaseBallonTexture(aAtlas);
+  LoadWolfTextures(aAtlas);
+  texPine := aAtlas.AddFromSVG(SpriteBGFolder+'TreePine.svg', ScaleW(234), -1);
+
+
+  CreateGameFontNumber(aAtlas);
+  LoadCoinTexture(aAtlas);
+  LoadWatchTexture(aAtlas);
+  h := IconHeight;
+  texIconBallonExploded := aAtlas.AddFromSVG(SpriteUIFolder+'IconBalloonExploded.svg', -1, h);
+  texIconHammer := aAtlas.AddFromSVG(SpriteUIFolder+'IconHammer.svg', -1, h);
+  texIconStormCloud := aAtlas.AddFromSVG(SpriteUIFolder+'IconStormCloud.svg', -1, h);
+
+  // font for button in pause panel
+  FFontText := CreateGameFontText(aAtlas);
+  // load arrow for button panels
+  AddBlueArrowToAtlas(aAtlas);
+  LoadMousePointerTexture(aAtlas);
+end;
+
 procedure TScreenGame1.CreateObjects;
-var ima: TBGRABitmap;
-  w: TWolf;
+var w: TWolf;
   g: TGround1;
   xx, yy: single;
-  i, wolfCount, gameTime, h: integer;
+  i, wolfCount, gameTime: integer;
 begin
   FGameState := gsUndefined;
   LoadSoundForForestGame;
@@ -94,33 +159,7 @@ begin
   FMusic := Audio.AddMusic('ForestInTheNight.ogg', True);
   FMusic.FadeIn(1.0, 1.0);
 
-  FAtlas := FScene.CreateAtlas;
-  FAtlas.Spacing := 2;
-
-  LoadTexturesForForestGame(FAtlas);
-  LoadBaseBallonTexture(FAtlas);
-  LoadWolfTextures(FAtlas);
-  LoadForestBGTexture(FAtlas);
-
-  CreateGameFontNumber(FAtlas);
-  LoadCoinTexture(FAtlas);
-  LoadWatchTexture(FAtlas);
-  h := IconHeight;
-  texIconBallonExploded := FAtlas.AddFromSVG(SpriteUIFolder+'IconBalloonExploded.svg', -1, h);
-  texIconHammer := FAtlas.AddFromSVG(SpriteCommonFolder+'HammerHead.svg', -1, h);
-  texIconStormCloud := FAtlas.AddFromSVG(SpriteCommonFolder+'StormCloud.svg', -1, h);
-
-  // font for button in pause panel
-  FFontText := CreateGameFontText(FAtlas);
-  // load arrow for button panels
-  AddBlueArrowToAtlas(FAtlas);
-  LoadMousePointerTexture(FAtlas);
-
-  FAtlas.TryToPack;
-  FAtlas.Build;
-  ima := FAtlas.GetPackedImage;
-  ima.SaveToFile(Application.Location+'Atlas.png');
-  ima.Free;
+  CheckAtlas(FAtlas, 'pineforest.atlas');
 
   // background
   FForestBG := TForestBG.Create;

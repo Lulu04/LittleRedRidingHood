@@ -59,6 +59,7 @@ private
   //procedure ProcessCallbackPickUpSomethingWhenBendDown(aPickUpToTheRight: boolean);
   procedure ProcessLayerLadderBeforeUpdateEvent;
 public
+  procedure DefineSubTextures(aAtlas: TAtlas); override;
   procedure CreateObjects; override;
   procedure FreeObjects; override;
   procedure ProcessMessage(UserValue: TUserMessageValue); override;
@@ -724,7 +725,7 @@ var r: TRectF;
 begin
   inherited Update(aElapsedTime);
   // check if LR collide the panel -> game win
-  r := GetRectAreaInParentSpace;
+  r := GetMatrixSurfaceToWorld.Transform(GetRectAreaInLocalSpace);
   if FLR.CheckCollisionWith(r) then begin
     ScreenGameVolcanoInner.ExitToTheRight := FExitToTheRight;
     ScreenGameVolcanoInner.GameState := gsLRWin;
@@ -1845,6 +1846,71 @@ begin
   FLR.DistanceToObjectToHandle := MaxSingle;
 end;
 
+procedure TScreenGameVolcanoInner.DefineSubTextures(aAtlas: TAtlas);
+var path: string;
+begin
+  AdditionnalScale := 0.8;
+  LoadLR4DirTextures(aAtlas, False);
+  LoadWolfTextures(aAtlas);
+
+  AdditionnalScale := 1.0;
+
+  path := SpriteGameVolcanoInnerFolder;
+  texPillar1 := aAtlas.AddFromSVG(path+'Pillar1.svg', -1, ScaleH(225)); //ScaleH(714));
+  texPillar2 := aAtlas.AddFromSVG(path+'Pillar2.svg', -1, ScaleH(225)); //ScaleH(714));
+  texBGCeilling := aAtlas.AddFromSVG(path+'BGCeilling.svg', ScaleW(167), -1);
+  texBGWall := aAtlas.AddFromSVG(path+'BGWall.svg', ScaleW(140), -1);
+  texGroundLarge := aAtlas.AddFromSVG(path+'GroundLarge.svg', ScaleW(167), -1);
+  texIronBrick := aAtlas.AddFromSVG(path+'IronBrick.svg', -1, ScaleH(75));
+  texLadderTop := aAtlas.AddFromSVG(path+'LadderTop.svg', -1, ScaleH(132));
+  texLadder := aAtlas.AddFromSVG(path+'Ladder.svg', -1, ScaleH(230));
+  texLavaLarge := aAtlas.AddFromSVG(path+'LavaLarge.svg', ScaleW(310), -1);
+  texRockMedium := aAtlas.AddFromSVG(path+'RockMedium.svg', ScaleW(82), -1);
+  texRockSmall := aAtlas.AddFromSVG(path+'RockSmall.svg', ScaleW(56), -1);
+  texLavaBall := aAtlas.AddFromSVG(path+'LavaBall.svg', ScaleW(20), -1);
+
+  AddFlameParticleToAtlas(aAtlas);
+  AddSphereParticleToAtlas(aAtlas);
+  AddCloud128x128ParticleToAtlas(aAtlas);
+  AddCrossParticleToAtlas(aAtlas);
+
+  texPanelExit := aAtlas.AddFromSVG(path+'PanelExit.svg', ScaleW(52), -1);
+
+  texPumpPipeElbow := aAtlas.AddFromSVG(path+'PumpPipeElbow.svg', ScaleW(66), -1);
+  texPumpVacuum := aAtlas.AddFromSVG(path+'PumpVacuum.svg', ScaleW(90), -1);
+  texPumpVerticalPipe := aAtlas.AddFromSVG(path+'PumpVerticalPipe.svg', -1, ScaleH(100));
+
+  TLittleRobotConstructor.LoadTexture(aAtlas);
+  TLittleRobot.LoadTexture(aAtlas);
+  TPropulsorConstructor.LoadTexture(aAtlas);
+  TPanelDecodingDigicode.LoadTextures(aAtlas);
+  TUsableComputer.LoadTexture(aAtlas);
+  TPump.LoadTexture(aAtlas);
+  TImpact1.LoadTexture(aAtlas);
+  TUsableCrateThatContainObject.LoadTexture(aAtlas);
+
+  texScannerDevice := aAtlas.AddFromSVG(path+'ScannerDevice.svg', ScaleW(12), -1);
+  texScannerBeam := aAtlas.AddFromSVG(path+'ScannerBeam.svg', ScaleW(98), -1);
+  texFootSwitch := aAtlas.AddFromSVG(path+'FootSwitch.svg', ScaleW(43), -1);
+  texWall := TPanelDecodingDigicode.texWallBG; // FAtlas.AddFromSVG(SpriteGameVolcanoEntranceFolder+'PanelDecodeWallBG.svg', ScaleW(114), -1);
+  texHalfWall := aAtlas.AddFromSVG(path+'HalfWall.svg', ScaleW(114), -1);
+  texDigicode := aAtlas.AddFromSVG(SpriteGameVolcanoEntranceFolder+'Digicode.svg', ScaleW(36), -1);
+
+  CreateGameFontNumber(aAtlas);
+  LoadKeyMetalTexture(aAtlas);
+  LoadSDCardTexture(aAtlas);
+  LoadDorsalThrusterTexture(aAtlas);
+  LoadCoinTexture(aAtlas);
+  LoadWatchTexture(aAtlas);
+  // font for button in pause panel
+  FFontText := CreateGameFontText(aAtlas);
+  LoadGameDialogTextures(aAtlas);
+
+  // load arrow for button panels
+  AddBlueArrowToAtlas(aAtlas);
+  LoadMousePointerTexture(aAtlas);
+end;
+
 procedure TScreenGameVolcanoInner.SetGameState(AValue: TGameState);
 begin
   if FGameState = AValue then Exit;
@@ -1857,9 +1923,7 @@ begin
 end;
 
 procedure TScreenGameVolcanoInner.CreateObjects;
-var path: string;
-  ima: TBGRABitmap;
-  p: TPointF;
+var p: TPointF;
 begin
   FGameState := gsUndefined;
   ResetVariables;
@@ -1878,76 +1942,7 @@ begin
   FsndBoilingLava.Loop := True;
   FsndBoilingLava.FadeIn(0.5, 1.0);
 
-  FAtlas := FScene.CreateAtlas;
-  FAtlas.Spacing := 2;
-
-  AdditionnalScale := 0.8;
-  LoadLR4DirTextures(FAtlas, False);
-  LoadWolfTextures(FAtlas);
-
-  AdditionnalScale := 1.0;
-
-  path := SpriteGameVolcanoInnerFolder;
-  texPillar1 := FAtlas.AddFromSVG(path+'Pillar1.svg', -1, ScaleH(225)); //ScaleH(714));
-  texPillar2 := FAtlas.AddFromSVG(path+'Pillar2.svg', -1, ScaleH(225)); //ScaleH(714));
-  texBGCeilling := FAtlas.AddFromSVG(path+'BGCeilling.svg', ScaleW(167), -1);
-  texBGWall := FAtlas.AddFromSVG(path+'BGWall.svg', ScaleW(140), -1);
-  texGroundLarge := FAtlas.AddFromSVG(path+'GroundLarge.svg', ScaleW(167), -1);
-  texIronBrick := FAtlas.AddFromSVG(path+'IronBrick.svg', -1, ScaleH(75));
-  texLadderTop := FAtlas.AddFromSVG(path+'LadderTop.svg', -1, ScaleH(132));
-  texLadder := FAtlas.AddFromSVG(path+'Ladder.svg', -1, ScaleH(230));
-  texLavaLarge := FAtlas.AddFromSVG(path+'LavaLarge.svg', ScaleW(310), -1);
-  texRockMedium := FAtlas.AddFromSVG(path+'RockMedium.svg', ScaleW(82), -1);
-  texRockSmall := FAtlas.AddFromSVG(path+'RockSmall.svg', ScaleW(56), -1);
-  texLavaBall := FAtlas.AddFromSVG(path+'LavaBall.svg', ScaleW(20), -1);
-
-  AddFlameParticleToAtlas(FAtlas);
-  AddSphereParticleToAtlas(FAtlas);
-  AddCloud128x128ParticleToAtlas(FAtlas);
-  AddCrossParticleToAtlas(FAtlas);
-
-  texPanelExit := FAtlas.AddFromSVG(path+'PanelExit.svg', ScaleW(52), -1);
-
-  texPumpPipeElbow := FAtlas.AddFromSVG(path+'PumpPipeElbow.svg', ScaleW(66), -1);
-  texPumpVacuum := FAtlas.AddFromSVG(path+'PumpVacuum.svg', ScaleW(90), -1);
-  texPumpVerticalPipe := FAtlas.AddFromSVG(path+'PumpVerticalPipe.svg', -1, ScaleH(100));
-
-  TLittleRobotConstructor.LoadTexture(FAtlas);
-  TLittleRobot.LoadTexture(FAtlas);
-  TPropulsorConstructor.LoadTexture(FAtlas);
-  TPanelDecodingDigicode.LoadTextures(FAtlas);
-  TUsableComputer.LoadTexture(FAtlas);
-  TPump.LoadTexture(FAtlas);
-  TImpact1.LoadTexture(FAtlas);
-  TUsableCrateThatContainObject.LoadTexture(FAtlas);
-
-  texScannerDevice := FAtlas.AddFromSVG(path+'ScannerDevice.svg', ScaleW(12), -1);
-  texScannerBeam := FAtlas.AddFromSVG(path+'ScannerBeam.svg', ScaleW(98), -1);
-  texFootSwitch := FAtlas.AddFromSVG(path+'FootSwitch.svg', ScaleW(43), -1);
-  texWall := TPanelDecodingDigicode.texWallBG; // FAtlas.AddFromSVG(SpriteGameVolcanoEntranceFolder+'PanelDecodeWallBG.svg', ScaleW(114), -1);
-  texHalfWall := FAtlas.AddFromSVG(path+'HalfWall.svg', ScaleW(114), -1);
-  texDigicode := FAtlas.AddFromSVG(SpriteGameVolcanoEntranceFolder+'Digicode.svg', ScaleW(36), -1);
-
-  CreateGameFontNumber(FAtlas);
-  LoadKeyMetalTexture(FAtlas);
-  LoadSDCardTexture(FAtlas);
-  LoadDorsalThrusterTexture(FAtlas);
-  LoadCoinTexture(FAtlas);
-  LoadWatchTexture(FAtlas);
-  // font for button in pause panel
-  FFontText := CreateGameFontText(FAtlas);
-  LoadGameDialogTextures(FAtlas);
-
-  // load arrow for button panels
-  AddBlueArrowToAtlas(FAtlas);
-  LoadMousePointerTexture(FAtlas);
-
-  FAtlas.TryToPack;
-  FAtlas.Build;
-
-  ima := FAtlas.GetPackedImage;
-  ima.SaveToFile(Application.Location+'Atlas.png');
-  ima.Free;
+  CheckAtlas(FAtlas, 'volcanoinner.atlas');
 
   // LR 4 direction
   FLR := TLRCustom.Create;
@@ -1963,7 +1958,7 @@ begin
 
   // camera
   FCamera := FScene.CreateCamera;
-  FCamera.AssignToLayerRange(LAYER_DIALOG, LAYER_BG2);
+  FCamera.AssignToLayerRange(LAYER_WEATHER, LAYER_BG2);  //LAYER_DIALOG
 
   FCameraBGWall := FScene.CreateCamera;
   FCameraBGWall.AssignToLayer(LAYER_BG3);
@@ -2038,9 +2033,12 @@ end;
 procedure TScreenGameVolcanoInner.ProcessMessage(UserValue: TUserMessageValue);
 var d: single;
   procedure ShowComputerMessage(const s: string; aUserValue: TUserMessageValue);
+  var p: TPointF;
   begin
-    with TInfoPanel.Create(sAIvoice, s, FFontText, Self, aUserValue) do
-        SetCenterCoordinate(PointF(FComputer.Center.x, GetCameraCenterView.y));
+    with TInfoPanel.Create(sAIvoice, s, FFontText, Self, aUserValue) do begin
+      p := PointF(FComputer.Width*0.5, -FComputer.Height-PPIScale(20)-Height);
+      SetCenterCoordinate(FComputer.GetMatrixSurfaceToWorld.Transform(p));
+    end;
   end;
 begin
   inherited ProcessMessage(UserValue);
@@ -2222,8 +2220,7 @@ begin
     end;
     212: begin
       FRobotConstructor.StopSoundMoveMotor;
-      with TInfoPanel.Create(sAIvoice, CorruptString(sNewAttempt), FFontText, Self, 213) do
-            SetCenterCoordinate(PointF(FComputer.Center.x, GetCameraCenterView.y));
+      ShowComputerMessage(CorruptString(sNewAttempt), 213);
     end;
 
     213: begin // machine run to the right and hurt computer

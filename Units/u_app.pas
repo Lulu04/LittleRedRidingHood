@@ -75,7 +75,7 @@ private
   FActionToOwnItem: TActionToOwnItem;
 public
   constructor Create(aMaxItemLevel: byte; aActionToOwnThisItem: TActionToOwnItem);
-  function CanDisplayPriceAndHint: boolean; virtual;
+  function CanDisplayPrice: boolean; virtual;
   // return True if player have the resources required to buy/build/upgrade the item
   function CanBePurchased: boolean;
   // Substract all resources from the player inventory
@@ -129,6 +129,7 @@ type
 
 TForestBow = class(TUpgradableItemDescriptor)
   function Owned: boolean; override;
+  function CanDisplayPrice: boolean; override;
   function NextLevelExplanation: string; override;
   function PriceForNextLevel: ArrayOfMoneyDescriptor; override;
   function ArrowRearmTimeMultiplicator: single;
@@ -139,6 +140,7 @@ end;
 
 TForestElevator = class(TUpgradableItemDescriptor)
   function Owned: boolean; override;
+  function CanDisplayPrice: boolean; override;
   function NextLevelExplanation: string; override;
   function PriceForNextLevel: ArrayOfMoneyDescriptor; override;
   function Speed: single;
@@ -147,7 +149,7 @@ end;
 { TForestHammer }
 
 TForestHammer = class(TUpgradableItemDescriptor)
-  function CanDisplayPriceAndHint: boolean; override;
+  function CanDisplayPrice: boolean; override;
   function NextLevelExplanation: string; override;
   function PriceForNextLevel: ArrayOfMoneyDescriptor; override;
   function UsesCount: integer;
@@ -156,7 +158,7 @@ end;
 { TForestStormCloud }
 
 TForestStormCloud = class(TUpgradableItemDescriptor)
-  function CanDisplayPriceAndHint: boolean; override;
+  function CanDisplayPrice: boolean; override;
   function NextLevelExplanation: string; override;
   function PriceForNextLevel: ArrayOfMoneyDescriptor; override;
   function UsesCount: integer;
@@ -204,7 +206,7 @@ type
 { TMountainPeakZipLine }
 
 TMountainPeakZipLine = class(TUpgradableItemDescriptor)
-  function CanDisplayPriceAndHint: boolean; override;
+  function CanDisplayPrice: boolean; override;
   function NextLevelExplanation: string; override;
   function PriceForNextLevel: ArrayOfMoneyDescriptor; override;
 end;
@@ -232,7 +234,7 @@ end;
 { TDigicodeDecoder }
 
 TDigicodeDecoder = class(TUpgradableItemDescriptor)
-  function CanDisplayPriceAndHint: boolean; override;
+  function CanDisplayPrice: boolean; override;
   function NextLevelExplanation: string; override;
   function PriceForNextLevel: ArrayOfMoneyDescriptor; override;
 end;
@@ -240,7 +242,7 @@ end;
 { TDorsalThruster }
 
 TDorsalThruster = class(TUpgradableItemDescriptor)
-  function CanDisplayPriceAndHint: boolean; override;
+  function CanDisplayPrice: boolean; override;
   function NextLevelExplanation: string; override;
   function PriceForNextLevel: ArrayOfMoneyDescriptor; override;
 end;
@@ -281,7 +283,7 @@ end;
 { TLaserGun }
 
 TLaserGun = class(TUpgradableItemDescriptor)
-  function CanDisplayPriceAndHint: boolean; override;
+  function CanDisplayPrice: boolean; override;
   function NextLevelExplanation: string; override;
   function PriceForNextLevel: ArrayOfMoneyDescriptor; override;
 end;
@@ -318,7 +320,7 @@ end;
 { TPocketSubmarine }
 
 TPocketSubmarine = class(TUpgradableItemDescriptor)
-  function CanDisplayPriceAndHint: boolean; override;
+  function CanDisplayPrice: boolean; override;
   function NextLevelExplanation: string; override;
   function PriceForNextLevel: ArrayOfMoneyDescriptor; override;
 end;
@@ -579,7 +581,7 @@ end;
 
 { TDorsalThruster }
 
-function TDorsalThruster.CanDisplayPriceAndHint: boolean;
+function TDorsalThruster.CanDisplayPrice: boolean;
 begin
   Result := PlayerInfo.Volcano.DorsalThruster.Owned;
 end;
@@ -599,17 +601,15 @@ end;
 
 { TDigicodeDecoder }
 
-function TDigicodeDecoder.CanDisplayPriceAndHint: boolean;
+function TDigicodeDecoder.CanDisplayPrice: boolean;
 begin
   Result := PlayerInfo.Volcano.HaveDecoderPlan;
 end;
 
 function TDigicodeDecoder.NextLevelExplanation: string;
 begin
-  case Level of
-    0: Result := '?';
-    else Result := sDecoderExplanation;
-  end;
+  if PlayerInfo.Volcano.HaveDecoderPlan then Result := sDecoderExplanation
+  else Result := '?';
 end;
 
 function TDigicodeDecoder.PriceForNextLevel: ArrayOfMoneyDescriptor;
@@ -632,9 +632,9 @@ end;
 
 { TMountainPeakZipLine }
 
-function TMountainPeakZipLine.CanDisplayPriceAndHint: boolean;
+function TMountainPeakZipLine.CanDisplayPrice: boolean;
 begin
-  Result := PlayerInfo.Forest.IsTerminated;
+  Result := Owned and (Level < MaxLevel);
 end;
 
 function TMountainPeakZipLine.NextLevelExplanation: string;
@@ -658,16 +658,16 @@ end;
 
 { TForestStormCloud }
 
-function TForestStormCloud.CanDisplayPriceAndHint: boolean;
+function TForestStormCloud.CanDisplayPrice: boolean;
 begin
-  Result := Owned;
+  Result := Owned and (Level < MaxLevel);
 end;
 
 function TForestStormCloud.NextLevelExplanation: string;
 begin
   case Level of
     0: Result := '?';
-    1..3: Result := sStormCloudUpgradeHint;
+    1..2: Result := sStormCloudUpgradeHint;
     else Result := sStormCloudExplanation;
   end;
 end;
@@ -707,16 +707,16 @@ end;
 
 { TForestHammer }
 
-function TForestHammer.CanDisplayPriceAndHint: boolean;
+function TForestHammer.CanDisplayPrice: boolean;
 begin
-  Result := Owned;
+  Result := Owned and (Level < MaxLevel);
 end;
 
 function TForestHammer.NextLevelExplanation: string;
 begin
   case Level of
     0: Result := '?';
-    1..5: Result := sHammerUpgradeHint;
+    1..4: Result := sHammerUpgradeHint;
     else Result := sHammerExplanation;
   end;
 end;
@@ -753,6 +753,11 @@ end;
 function TForestElevator.Owned: boolean;
 begin
   Result := True;
+end;
+
+function TForestElevator.CanDisplayPrice: boolean;
+begin
+  Result := Owned and (Level < MaxLevel);
 end;
 
 function TForestElevator.NextLevelExplanation: string;
@@ -794,6 +799,11 @@ end;
 function TForestBow.Owned: boolean;
 begin
   Result := True;
+end;
+
+function TForestBow.CanDisplayPrice: boolean;
+begin
+  Result := Owned and (Level < MaxLevel);
 end;
 
 function TForestBow.NextLevelExplanation: string;
@@ -853,7 +863,7 @@ begin
   FActionToOwnItem := aActionToOwnThisItem;
 end;
 
-function TUpgradableItemDescriptor.CanDisplayPriceAndHint: boolean;
+function TUpgradableItemDescriptor.CanDisplayPrice: boolean;
 begin
   Result := True;
 end;
@@ -970,7 +980,7 @@ end;
 
 { TLaserGun }
 
-function TLaserGun.CanDisplayPriceAndHint: boolean;
+function TLaserGun.CanDisplayPrice: boolean;
 begin
   Result := PlayerInfo.FPlainMoon.LaserGun.Owned;
 end;
@@ -1032,7 +1042,7 @@ end;
 
 { TPocketSubmarine }
 
-function TPocketSubmarine.CanDisplayPriceAndHint: boolean;
+function TPocketSubmarine.CanDisplayPrice: boolean;
 begin
   Result := PlayerInfo.MermaidsPort.PocketSubmarine.Owned;
 end;

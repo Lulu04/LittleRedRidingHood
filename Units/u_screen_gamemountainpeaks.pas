@@ -46,6 +46,7 @@ private
   procedure CreatePerspectiveLine(aIndex: integer; aPointFar, aPointNear: TPointF);
   property GameState: TGameState read FGameState write SetGameState;
 public
+  procedure DefineSubTextures(aAtlas: TAtlas); override;
   procedure CreateObjects; override;
   procedure FreeObjects; override;
   procedure ProcessMessage({%H-}UserValue: TUserMessageValue); override;
@@ -1168,10 +1169,63 @@ begin
   FLines[aIndex].SetLine(aPointFar, aPointNear);  }
 end;
 
+procedure TScreenGameZipLine.DefineSubTextures(aAtlas: TAtlas);
+begin
+  // textures for LR front view (end of the game, win or lost)
+  AdditionnalScale := 1.5483;
+  LoadLRFaceTextures(aAtlas);
+  LoadLRFrontViewTextures(aAtlas);
+  AdditionnalScale := 1.0;
+
+  texLRCloak := aAtlas.AddFromSVG(SpriteGameMountainPeaksFolder+'LRCloakBack.svg', ScaleW(127), -1);
+  texLRLeftArm := aAtlas.AddFromSVG(SpriteGameMountainPeaksFolder+'LRLeftArm.svg', ScaleW(53), -1);
+  texLRRightArm := aAtlas.AddFromSVG(SpriteGameMountainPeaksFolder+'LRRightArm.svg', ScaleW(53), -1);
+  texLRLeg := aAtlas.AddFromSVG(SpriteGameMountainPeaksFolder+'LRLeg.svg', ScaleW(30), -1);
+  texLRDress := aAtlas.AddFromSVG(SpriteGameMountainPeaksFolder+'LRDress.svg', ScaleW(96), -1);
+  texLROutch := aAtlas.AddFromSVG(SpriteGameMountainPeaksFolder+'LROutch.svg', ScaleW(218), -1);
+
+  texMecanism := aAtlas.AddFromSVG(SpriteGameMountainPeaksFolder+'ZipLineMecanism.svg', ScaleW(180), -1);
+  texMecanismBreak := aAtlas.AddFromSVG(SpriteGameMountainPeaksFolder+'MecanismBreak.svg', ScaleW(31), -1);
+  //aAtlas.Add(ParticleFolder+'Cross.png');
+  AddCrossParticleToAtlas(aAtlas);
+  texCableForward := aAtlas.AddFromSVG(SpriteGameMountainPeaksFolder+'CableForward.svg', -1, ScaleH(476));
+  texCableBackward := aAtlas.AddFromSVG(SpriteGameMountainPeaksFolder+'CableBackward.svg', -1, ScaleH(246));
+
+  texTargetVolcano := aAtlas.AddFromSVG(SpriteGameMountainPeaksFolder+'TargetVolcano.svg', ScaleW(417), -1);
+  //aAtlas.Add(ParticleFolder+'sphere_particle.png');
+  AddSphereParticleToAtlas(aAtlas);
+  texCloud1 := aAtlas.AddFromSVG(SpriteGameMountainPeaksFolder+'CloudLeftBehindVolcano.svg', ScaleW(351), -1);
+  texCloud2 := aAtlas.AddFromSVG(SpriteGameMountainPeaksFolder+'CloudCenterBehindVolcano.svg', ScaleW(241), -1);
+  texCloud3 := aAtlas.AddFromSVG(SpriteGameMountainPeaksFolder+'CloudRightBehindVolcano.svg', ScaleW(397), -1);
+  texBGMountainLeft := aAtlas.AddFromSVG(SpriteGameMountainPeaksFolder+'BGMountainLeft.svg', ScaleW(350), -1);
+  texBGMountainRight := aAtlas.AddFromSVG(SpriteGameMountainPeaksFolder+'BGMountainRight.svg', ScaleW(350), -1);
+
+  texScrollingPlatform1 := aAtlas.AddFromSVG(SpriteGameMountainPeaksFolder+'ScrollingPlatform1.svg', ScaleW(142), -1);
+  texScrollingPlatformDown := aAtlas.AddFromSVG(SpriteGameMountainPeaksFolder+'ScrollingPlatformDown.svg', ScaleW(125), -1);
+  texScrollingCloud := aAtlas.AddFromSVG(SpriteGameMountainPeaksFolder+'ScrollingCloud.svg', ScaleW(469), -1);
+  texWarningSignal := aAtlas.AddFromSVG(SpriteGameMountainPeaksFolder+'WarningSignal.svg', ScaleW(62), -1);
+  texWall := aAtlas.AddFromSVG(SpriteGameMountainPeaksFolder+'Wall.svg', ScaleW(146), -1);
+  texWallBreak := aAtlas.AddFromSVG(SpriteGameMountainPeaksFolder+'WallBreak.svg', ScaleW(117), -1);
+
+  texPlatformCoin10 := aAtlas.AddFromSVG(SpriteUIFolder+'Coin10.svg', ScaleW(56), -1);
+  texPlatformCoin100 := aAtlas.AddFromSVG(SpriteUIFolder+'Coin100.svg', ScaleW(56), -1);
+
+  CreateGameFontNumber(aAtlas);
+  LoadCoinTexture(aAtlas);
+  LoadCristalGrayTexture(aAtlas);
+  LoadWatchTexture(aAtlas);
+  TProgressLine.LoadTexture(aAtlas);
+
+  // font for button in pause panel
+  FFontText := CreateGameFontText(aAtlas);
+  // load arrow for button panels
+  AddBlueArrowToAtlas(aAtlas);
+  LoadMousePointerTexture(aAtlas);
+end;
+
 procedure TScreenGameZipLine.CreateObjects;
 var sky1, sky2: TQuad4Color;
   o: TSprite;
-  ima: TBGRABitmap;
   farPoint, nearPoint: TPointF;
   pe: TParticleEmitter;
   yy: Single;
@@ -1189,63 +1243,8 @@ begin
   FsndZipLineBreak.Loop := True;
   FsndZipLineBreak.Volume.Value := ZIP_LINE_BREAK_VOLUME;
 
-  FAtlas := FScene.CreateAtlas;
-  FAtlas.Spacing := 2;
+  CheckAtlas(FAtlas, 'mountainpeaks.atlas');
 
-  // textures for LR front view (end of the game, win or lost)
-  AdditionnalScale := 1.5483;
-  LoadLRFaceTextures(FAtlas);
-  LoadLRFrontViewTextures(FAtlas);
-  AdditionnalScale := 1.0;
-
-  texLRCloak := FAtlas.AddFromSVG(SpriteGameMountainPeaksFolder+'LRCloakBack.svg', ScaleW(127), -1);
-  texLRLeftArm := FAtlas.AddFromSVG(SpriteGameMountainPeaksFolder+'LRLeftArm.svg', ScaleW(53), -1);
-  texLRRightArm := FAtlas.AddFromSVG(SpriteGameMountainPeaksFolder+'LRRightArm.svg', ScaleW(53), -1);
-  texLRLeg := FAtlas.AddFromSVG(SpriteGameMountainPeaksFolder+'LRLeg.svg', ScaleW(30), -1);
-  texLRDress := FAtlas.AddFromSVG(SpriteGameMountainPeaksFolder+'LRDress.svg', ScaleW(96), -1);
-  texLROutch := FAtlas.AddFromSVG(SpriteGameMountainPeaksFolder+'LROutch.svg', ScaleW(218), -1);
-
-  texMecanism := FAtlas.AddFromSVG(SpriteGameMountainPeaksFolder+'ZipLineMecanism.svg', ScaleW(180), -1);
-  texMecanismBreak := FAtlas.AddFromSVG(SpriteGameMountainPeaksFolder+'MecanismBreak.svg', ScaleW(31), -1);
-  FAtlas.Add(ParticleFolder+'Cross.png');
-  texCableForward := FAtlas.AddFromSVG(SpriteGameMountainPeaksFolder+'CableForward.svg', -1, ScaleH(476));
-  texCableBackward := FAtlas.AddFromSVG(SpriteGameMountainPeaksFolder+'CableBackward.svg', -1, ScaleH(246));
-
-  texTargetVolcano := FAtlas.AddFromSVG(SpriteGameMountainPeaksFolder+'TargetVolcano.svg', ScaleW(417), -1);
-  FAtlas.Add(ParticleFolder+'sphere_particle.png');
-  texCloud1 := FAtlas.AddFromSVG(SpriteGameMountainPeaksFolder+'CloudLeftBehindVolcano.svg', ScaleW(351), -1);
-  texCloud2 := FAtlas.AddFromSVG(SpriteGameMountainPeaksFolder+'CloudCenterBehindVolcano.svg', ScaleW(241), -1);
-  texCloud3 := FAtlas.AddFromSVG(SpriteGameMountainPeaksFolder+'CloudRightBehindVolcano.svg', ScaleW(397), -1);
-  texBGMountainLeft := FAtlas.AddFromSVG(SpriteGameMountainPeaksFolder+'BGMountainLeft.svg', ScaleW(350), -1);
-  texBGMountainRight := FAtlas.AddFromSVG(SpriteGameMountainPeaksFolder+'BGMountainRight.svg', ScaleW(350), -1);
-
-  texScrollingPlatform1 := FAtlas.AddFromSVG(SpriteGameMountainPeaksFolder+'ScrollingPlatform1.svg', ScaleW(142), -1);
-  texScrollingPlatformDown := FAtlas.AddFromSVG(SpriteGameMountainPeaksFolder+'ScrollingPlatformDown.svg', ScaleW(125), -1);
-  texScrollingCloud := FAtlas.AddFromSVG(SpriteGameMountainPeaksFolder+'ScrollingCloud.svg', ScaleW(469), -1);
-  texWarningSignal := FAtlas.AddFromSVG(SpriteGameMountainPeaksFolder+'WarningSignal.svg', ScaleW(62), -1);
-  texWall := FAtlas.AddFromSVG(SpriteGameMountainPeaksFolder+'Wall.svg', ScaleW(146), -1);
-  texWallBreak := FAtlas.AddFromSVG(SpriteGameMountainPeaksFolder+'WallBreak.svg', ScaleW(117), -1);
-
-  texPlatformCoin10 := FAtlas.AddFromSVG(SpriteUIFolder+'Coin10.svg', ScaleW(56), -1);
-  texPlatformCoin100 := FAtlas.AddFromSVG(SpriteUIFolder+'Coin100.svg', ScaleW(56), -1);
-
-  CreateGameFontNumber(FAtlas);
-  LoadCoinTexture(FAtlas);
-  LoadCristalGrayTexture(FAtlas);
-  LoadWatchTexture(FAtlas);
-  TProgressLine.LoadTexture(FAtlas);
-
-  // font for button in pause panel
-  FFontText := CreateGameFontText(FAtlas);
-  // load arrow for button panels
-  AddBlueArrowToAtlas(FAtlas);
-  LoadMousePointerTexture(FAtlas);
-
-  FAtlas.TryToPack;
-  FAtlas.Build;
-  ima := FAtlas.GetPackedImage;
-  ima.SaveToFile(Application.Location+'Atlas.png');
-  ima.Free;
 
   // clouds behind volcano
   o := TSprite.Create(texCloud1, False);

@@ -57,18 +57,12 @@ var
 texPine,
 texCloudTitle: PTexture;
 
-procedure LoadForestBGTexture(aAtlas: TOGLCTextureAtlas);
-procedure LoadCloudsTexture(aAtlas: TOGLCTextureAtlas);
+procedure LoadCloudsTexture(aAtlas: TAtlas);
 
 implementation
 uses u_app, u_common, Graphics;
 
-procedure LoadForestBGTexture(aAtlas: TOGLCTextureAtlas);
-begin
-  texPine := aAtlas.AddFromSVG(SpriteBGFolder+'TreePine.svg', ScaleW(234), -1);
-end;
-
-procedure LoadCloudsTexture(aAtlas: TOGLCTextureAtlas);
+procedure LoadCloudsTexture(aAtlas: TAtlas);
 begin
   texCloudTitle := aAtlas.AddFromSVG(SpriteBGFolder+'CloudTitle.svg', ScaleW(234), -1);
 end;
