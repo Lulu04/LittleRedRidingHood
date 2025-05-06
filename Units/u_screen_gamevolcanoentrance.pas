@@ -32,6 +32,7 @@ private
   procedure OpenDoor;
   procedure CloseDoor;
 public
+  procedure DefineSubTextures(aAtlas: TAtlas); override;
   procedure CreateObjects; override;
   procedure FreeObjects; override;
   procedure ProcessMessage({%H-}UserValue: TUserMessageValue); override;
@@ -162,10 +163,43 @@ begin
   FDoorRight.DeformationSpeed.Value := PointF(-FScene.Width*0.1, 0);
 end;
 
-procedure TScreenGameVolcanoEntrance.CreateObjects;
+procedure TScreenGameVolcanoEntrance.DefineSubTextures(aAtlas: TAtlas);
 var path: string;
-  ima: TBGRABitmap;
-  o: TSprite;
+begin
+  LoadLR4DirTextures(aAtlas, False);
+  LoadWolfTextures(aAtlas);
+  AddSphereParticleToAtlas(aAtlas);
+
+  CreateGameFontNumber(aAtlas);
+  LoadCoinTexture(aAtlas);
+  LoadWatchTexture(aAtlas);
+  LoadIconManufacturingPlanTexture(aAtlas);
+  // font for button in pause panel
+  FFontText := CreateGameFontText(aAtlas);
+  LoadGameDialogTextures(aAtlas);
+
+  path := SpriteGameVolcanoEntranceFolder;
+  texBG := aAtlas.AddFromSVG(path+'BG.svg', -1, ScaleH(769));
+  texBGMountainLeft := aAtlas.AddFromSVG(SpriteGameMountainPeaksFolder+'BGMountainLeft.svg', ScaleW(350), -1);
+  texPineTree := aAtlas.AddFromSVG(SpriteBGFolder+'TreePine.svg', ScaleW(137), -1);
+  texRockForWolf := aAtlas.AddFromSVG(path+'RockToHideWolf.svg', ScaleW(68), -1);
+  texWolfCrate := aAtlas.AddFromSVG(path+'WolfCrate.svg', ScaleW(47), -1);
+  texDigicode := aAtlas.AddFromSVG(path+'Digicode.svg', ScaleW(36), -1);
+  texDoorFrame := aAtlas.AddFromSVG(path+'DoorFrame.svg', ScaleW(160), -1);
+  texDoorLeft := aAtlas.AddFromSVG(path+'DoorLeft.svg', ScaleW(80), -1);
+  texDoorRight := aAtlas.AddFromSVG(path+'DoorRight.svg', ScaleW(80), -1);
+
+  AddCloud128x128ParticleToAtlas(aAtlas);
+
+  TPanelDecodingDigicode.LoadTextures(aAtlas);
+
+  // load arrow for button panels
+  AddBlueArrowToAtlas(aAtlas);
+  LoadMousePointerTexture(aAtlas);
+end;
+
+procedure TScreenGameVolcanoEntrance.CreateObjects;
+var o: TSprite;
   sky1, sky2: TQuad4Color;
 begin
   FGameState := gsUndefined;
@@ -175,45 +209,7 @@ begin
   FsndWind.Volume.Value := 0.8;
   FsndWind.Play(True);
 
-  FAtlas := FScene.CreateAtlas;
-  FAtlas.Spacing := 2;
-
-  LoadLR4DirTextures(FAtlas, False);
-  LoadWolfTextures(FAtlas);
-  FAtlas.Add(ParticleFolder+'sphere_particle.png');
-
-  CreateGameFontNumber(FAtlas);
-  LoadCoinTexture(FAtlas);
-  LoadWatchTexture(FAtlas);
-  LoadIconManufacturingPlanTexture(FAtlas);
-  // font for button in pause panel
-  FFontText := CreateGameFontText(FAtlas);
-  LoadGameDialogTextures(FAtlas);
-
-  path := SpriteGameVolcanoEntranceFolder;
-  texBG := FAtlas.AddFromSVG(path+'BG.svg', -1, ScaleH(769));
-  texBGMountainLeft := FAtlas.AddFromSVG(SpriteGameMountainPeaksFolder+'BGMountainLeft.svg', ScaleW(350), -1);
-  texPineTree := FAtlas.AddFromSVG(SpriteBGFolder+'TreePine.svg', ScaleW(137), -1);
-  texRockForWolf := FAtlas.AddFromSVG(path+'RockToHideWolf.svg', ScaleW(68), -1);
-  texWolfCrate := FAtlas.AddFromSVG(path+'WolfCrate.svg', ScaleW(47), -1);
-  texDigicode := FAtlas.AddFromSVG(path+'Digicode.svg', ScaleW(36), -1);
-  texDoorFrame := FAtlas.AddFromSVG(path+'DoorFrame.svg', ScaleW(160), -1);
-  texDoorLeft := FAtlas.AddFromSVG(path+'DoorLeft.svg', ScaleW(80), -1);
-  texDoorRight := FAtlas.AddFromSVG(path+'DoorRight.svg', ScaleW(80), -1);
-
-  FAtlas.AddScaledPPI(ParticleFolder+'Cloud128x128.png');
-
-  TPanelDecodingDigicode.LoadTextures(FAtlas);
-
-  // load arrow for button panels
-  AddBlueArrowToAtlas(FAtlas);
-  LoadMousePointerTexture(FAtlas);
-
-  FAtlas.TryToPack;
-  FAtlas.Build;
-  ima := FAtlas.GetPackedImage;
-  ima.SaveToFile(Application.Location+'Atlas.png');
-  ima.Free;
+  CheckAtlas(FAtlas, 'volcanoentrance.atlas');
 
   // left mountain BG
   o := TSprite.Create(texBGMountainLeft, False);

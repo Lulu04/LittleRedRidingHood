@@ -1,4 +1,6 @@
 version 0.3.0 -
+> texture atlas are saved to speed up screen switching.
+> new NPC in game Pine forest that sell some stuff.
 > added custom mouse cursor.
 > rework the game map.
 > add new mini game The Plain of the Sleeping Moon.

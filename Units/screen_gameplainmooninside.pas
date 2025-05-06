@@ -31,6 +31,7 @@ private
   procedure PlayLaserShootSound;
   procedure CheckShootOnWagonWall(aWorldPos: TPointF);
 public
+  procedure DefineSubTextures(aAtlas: TAtlas); override;
   procedure CreateObjects; override;
   procedure FreeObjects; override;
   procedure ProcessMessage(UserValue: TUserMessageValue); override;
@@ -758,9 +759,35 @@ begin
   end;
 end;
 
-procedure TScreenPlainMoonInside.CreateObjects;
+procedure TScreenPlainMoonInside.DefineSubTextures(aAtlas: TAtlas);
 var path: string;
-  ima: TBGRABitmap;
+begin
+  path := FolderSpritePlainOfSleepingMoonInside;
+  texTarget := aAtlas.AddFromSVG(path+'Target.svg', ScaleW(50), -1);
+  texSeat := aAtlas.AddFromSVG(path+'Seat.svg', -1, ScaleH(307));
+  texSeatImpact := aAtlas.AddFromSVG(path+'SeatImpact.svg', ScaleW(31), -1);
+  texLeftWallWindow := aAtlas.AddFromSVG(path+'LeftWallWindow.svg', ScaleW(639), -1);
+  texWallBG := aAtlas.AddFromSVG(path+'WallBG.svg', ScaleW(58), -1);
+  texDirectionnalArrow := aAtlas.AddFromSVG(SpriteUIFolder+'ArrowYellow.svg', ScaleW(21), -1);
+  texRobotBody := aAtlas.AddFromSVG(path+'RobotBody.svg', ScaleW(119), -1);
+  texRobotWheel := aAtlas.AddFromSVG(path+'RobotWheel.svg', ScaleW(15), -1);
+  texRobotArm := aAtlas.AddFromSVG(path+'RobotArm.svg', -1, ScaleH(104));
+  //texMountain := aAtlas.AddFromSVG(GetFolderSpritePlainOfSleepingMoon+'Mountain1.svg', ScaleW(745), -1);
+
+  TAutomaticDoor.LoadTexture(aAtlas, ScaleW(52), ScaleH(64));
+
+  // ui
+  CreateGameFontNumber(aAtlas); // < must be first !
+  LoadWatchTexture(aAtlas);
+  LoadLaserGunTexture(aAtlas);
+  // font for button in pause panel
+  FFontText := CreateGameFontText(aAtlas);
+  LoadGameDialogTextures(aAtlas);
+  // load arrow for button panels
+  AddBlueArrowToAtlas(aAtlas);
+end;
+
+procedure TScreenPlainMoonInside.CreateObjects;
 begin
   FGameState := gsUndefined;
   ResetVariables;
@@ -768,39 +795,7 @@ begin
   if screen_gameplainmoon.sndTrainWheel <> NIL then
     screen_gameplainmoon.sndTrainWheel.Tone.ChangeTo(0.05, 2.0);
 
-  FAtlas := FScene.CreateAtlas;
-  FAtlas.Spacing := 2;
-
-  path := FolderSpritePlainOfSleepingMoonInside;
-  texTarget := FAtlas.AddFromSVG(path+'Target.svg', ScaleW(50), -1);
-  texSeat := FAtlas.AddFromSVG(path+'Seat.svg', -1, ScaleH(307));
-  texSeatImpact := FAtlas.AddFromSVG(path+'SeatImpact.svg', ScaleW(31), -1);
-  texLeftWallWindow := FAtlas.AddFromSVG(path+'LeftWallWindow.svg', ScaleW(639), -1);
-  texWallBG := FAtlas.AddFromSVG(path+'WallBG.svg', ScaleW(58), -1);
-  texDirectionnalArrow := FAtlas.AddFromSVG(SpriteUIFolder+'ArrowYellow.svg', ScaleW(21), -1);
-  texRobotBody := FAtlas.AddFromSVG(path+'RobotBody.svg', ScaleW(119), -1);
-  texRobotWheel := FAtlas.AddFromSVG(path+'RobotWheel.svg', ScaleW(15), -1);
-  texRobotArm := FAtlas.AddFromSVG(path+'RobotArm.svg', -1, ScaleH(104));
-  //texMountain := FAtlas.AddFromSVG(GetFolderSpritePlainOfSleepingMoon+'Mountain1.svg', ScaleW(745), -1);
-
-  TAutomaticDoor.LoadTexture(FAtlas, ScaleW(52), ScaleH(64));
-
-  // ui
-  CreateGameFontNumber(FAtlas); // < must be first !
-  LoadWatchTexture(FAtlas);
-  LoadLaserGunTexture(FAtlas);
-  // font for button in pause panel
-  FFontText := CreateGameFontText(FAtlas);
-  LoadGameDialogTextures(FAtlas);
-  // load arrow for button panels
-  AddBlueArrowToAtlas(FAtlas);
-
-  FAtlas.TryToPack;
-  FAtlas.Build;
-
-  ima := FAtlas.GetPackedImage;
-  ima.SaveToFile(Application.Location+'Atlas.png');
-  ima.Free;
+  CheckAtlas(FAtlas, 'plainmooninside.atlas');
 
   texMountain := FScene.TexMan.AddFromSVG(GetFolderSpritePlainOfSleepingMoon+'Mountain1.svg', ScaleW(745), -1);
 

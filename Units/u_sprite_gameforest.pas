@@ -293,30 +293,14 @@ sndPulley,
 sndElevator,
 sndHammer: TALSSound;
 
-procedure LoadTexturesForForestGame(aAtlas: TOGLCTextureAtlas);
-procedure LoadGround1Texture(aAtlas: TOGLCTextureAtlas);
+procedure LoadGround1Texture(aAtlas: TAtlas);
 procedure LoadSoundForForestGame;
 procedure FreeSoundForForestGame;
 
 implementation
 uses u_app, u_common, u_sprite_wolf, u_resourcestring, Math;
 
-procedure LoadPlatformLRTexture(aAtlas: TOGLCTextureAtlas);
-begin
-  texPlatformLR := aAtlas.AddFromSVG(SpriteCommonFolder+'PlatformLR.svg', ScaleW(106) {PPIScale(106)}, -1);
-  texMotorBody := aAtlas.AddFromSVG(SpriteCommonFolder+'MotorBody.svg', ScaleW(100) {PPIScale(100)}, -1);
-  texMotorBigWheel := aAtlas.AddFromSVG(SpriteCommonFolder+'MotorBigWheel.svg', ScaleW(32){PPIScale(32)}, -1);
-  texMotorSmallWheel := aAtlas.AddFromSVG(SpriteCommonFolder+'MotorSmallWheel.svg', ScaleW(20){PPIScale(20)}, -1);
-  texMotorLeftPiston := aAtlas.AddFromSVG(SpriteCommonFolder+'MotorLeftPiston.svg', ScaleW(25){PPIScale(25)}, -1);
-  aAtlas.Add(ParticleFolder+'sphere_particle.png');
-end;
-
-procedure LoadBalloonCrateTexture(aAtlas: TOGLCTextureAtlas);
-begin
-  texBalloonCrate := aAtlas.AddFromSVG(SpriteCommonFolder+'BalloonCrate.svg', ScaleW(70){PPIScale(75)}, -1);
-end;
-
-procedure LoadGround1Texture(aAtlas: TOGLCTextureAtlas);
+procedure LoadGround1Texture(aAtlas: TAtlas);
 var path: String;
 begin
   path := SpriteCommonFolder;
@@ -356,55 +340,6 @@ begin
   if sndHammer <> NIL then sndHammer.Kill;
   sndHammer := NIL;
 end;
-
-procedure LoadEscapeDoorTexture(aAtlas: TOGLCTextureAtlas);
-var path: String;
-begin
-  path := SpriteCommonFolder;
-  texEscapeDoorAboveUp := aAtlas.AddFromSVG(path+'EscapeDoorAboveUp.svg', ScaleW(68){PPIScale(68)}, -1);
-  texEscapeDoorAboveDown := aAtlas.AddFromSVG(path+'EscapeDoorAboveDown.svg', ScaleW(70){PPIScale(70)}, -1);
-  texEscapeDoorBelowUp := aAtlas.AddFromSVG(path+'EscapeDoorBelowUp.svg', -1, ScaleH(175){PPIScale(175)});
-  texEscapeDoorBelowDown := aAtlas.AddFromSVG(path+'EscapeDoorBelowDown.svg', -1, ScaleH(216){PPIScale(216)});
-  texEscapeDoorStone := aAtlas.AddFromSVG(path+'EscapeDoorStone.svg', -1, ScaleH(194){PPIScale(194)});
-end;
-
-procedure LoadHammerBoxTexture(aAtlas: TOGLCTextureAtlas);
-var path: String;
-begin
-  path := SpriteCommonFolder;
-  texHammerBox := aAtlas.AddFromSVG(path+'HammerBox.svg', ScaleW(55), -1);
-  texHammerArmPart := aAtlas.AddFromSVG(path+'HammerArmPart.svg', -1, ScaleH(25));
-  texHammerHead := aAtlas.AddFromSVG(path+'HammerHead.svg', ScaleW(46), -1);
-  texHammerPaf :=  aAtlas.AddFromSVG(path+'PafHammer.svg', ScaleW(55*3), -1);
-end;
-
-procedure LoadStormCloudTexture(aAtlas: TOGLCTextureAtlas);
-begin
-  texStormCloud := aAtlas.AddFromSVG(SpriteCommonFolder+'StormCloud.svg', Round(FScene.Width/5), -1);
-  aAtlas.Add(ParticleFolder+'RainDrop.png');
-end;
-
-procedure LoadTexturesForForestGame(aAtlas: TOGLCTextureAtlas);
-begin
-  LoadLRFaceTextures(aAtlas);
-
-  texLRDress := aAtlas.AddFromSVG(SpriteFolder+'LittleRedDress.svg', ScaleW(62), -1);
-  texLRHood := aAtlas.AddFromSVG(SpriteFolder+'LittleRedHood.svg', ScaleW(86), -1);
-  texLRLeftLeg := aAtlas.AddFromSVG(SpriteFolder+'LittleRedLeftLeg.svg', ScaleW(20), -1);
-  texLRRightLeg := aAtlas.AddFromSVG(SpriteFolder+'LittleRedRightLeg.svg', ScaleW(19), -1);
-  texLRArmForBow := aAtlas.AddFromSVG(SpriteFolder+'LittleRedArmForBow.svg', ScaleW(50), -1);
-  texLRLeftCloak := aAtlas.AddFromSVG(SpriteFolder+'LittleRedLeftCloak.svg', ScaleW(68), -1);
-  texLERightCloak := aAtlas.AddFromSVG(SpriteFolder+'LittleRedRightCloak.svg', ScaleW(59), -1);
-  texLRBow := aAtlas.AddFromSVG(SpriteFolder+'LittleRedBow.svg', -1, ScaleH(117));
-  texLRArrow := aAtlas.AddFromSVG(SpriteCommonFolder+'LRArrow.svg', ScaleW(53), -1);
-  LoadPlatformLRTexture(aAtlas);
-  LoadBalloonCrateTexture(aAtlas);
-  LoadGround1Texture(aAtlas);
-  LoadEscapeDoorTexture(aAtlas);
-  LoadHammerBoxTexture(aAtlas);
-  LoadStormCloudTexture(aAtlas);
-end;
-
 
 { TLRArrow }
 

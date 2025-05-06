@@ -38,6 +38,7 @@ private
   function CharacterBottomY: single;
   procedure PrepareGrannyKidnapped;
 public
+  procedure DefineSubTextures(aAtlas: TAtlas); override;
   procedure CreateObjects; override;
   procedure FreeObjects; override;
   procedure ProcessMessage({%H-}UserValue: TUserMessageValue); override;
@@ -50,7 +51,7 @@ var ScreenIntro: TScreenIntroCinematic;
 
 implementation
 
-uses Forms,u_app, u_gamebackground, u_resourcestring, u_screen_map, u_utils;
+uses Forms,u_app, u_gamebackground, u_resourcestring, u_screen_map;
 
 // sort the surfaces by Y value
 function SortSprite(Item1, Item2: Pointer): Integer;
@@ -256,6 +257,10 @@ begin
   FGrannyKidnapped.SetCoordinate(0, -FGrannyKidnapped.Height*0.8);
 end;
 
+procedure TScreenIntroCinematic.DefineSubTextures(aAtlas: TAtlas);
+begin
+end;
+
 procedure TScreenIntroCinematic.CreateObjects;
 var path: string;
   ima: TBGRABitmap;
@@ -321,7 +326,7 @@ begin
 
   // cameras
   FCamera := FScene.CreateCamera;
-  FCamera.AssignToLayerRange(LAYER_DIALOG, LAYER_BG3);
+  FCamera.AssignToLayerRange(LAYER_WEATHER, LAYER_BG3);
   FCamera.AutoFollow.Bounds := FCameraBounds;
   FCamera.AutoFollow.Speed := 0.03;
 
@@ -347,8 +352,6 @@ begin
 end;
 
 procedure TScreenIntroCinematic.ProcessMessage(UserValue: TUserMessageValue);
-var
-  r: TRectF;
 begin
   case UserValue of
     // intro cinematic
@@ -387,9 +390,8 @@ begin
       PostMessage(36, 1.0);
     end;
     36: begin
-      r := GetViewRect(FCamera);
       with TInfoPanel.Create(sGranny, sAhhhh, FFontText, Self, 38) do
-        SetCoordinate(r.Left + PPIScale(20), r.Height*0.5);
+        SetCoordinate(PPIScale(20), FScene.Height*0.5);
       PrepareGrannyKidnapped;
       FGranny.Visible := False;
     end;

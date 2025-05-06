@@ -64,6 +64,7 @@ private
   FDelayBeforeNextRobotAppears: single;
   procedure PlayLaserShootSound;
 public
+  procedure DefineSubTextures(aAtlas: TAtlas); override;
   procedure CreateObjects; override;
   procedure FreeObjects; override;
   procedure ProcessMessage(UserValue: TUserMessageValue); override;
@@ -496,7 +497,8 @@ var pc: TPointF;
   v: single;
 begin
   Kill;
-  pc := SurfaceToScene(PointF(TLittleRobot.texBody^.FrameWidth*0.0, TLittleRobot.texBody^.FrameHeight*0.0));
+  pc := SurfaceToScene(PointF(0, 0));
+  pc := FCamera.ControlToWorld(pc);
   ExplodeTexture(FScene, LAYER_WOLF, TLittleRobot.texBody, 3, 3, pc,
                  TLittleRobot.texBody^.FrameWidth*0.25, // center variation
                  PointF(1.0,1.0), // scale value
@@ -565,7 +567,6 @@ constructor TLaserGunThatGoInInventory.Create(aUserValue: TUserMessageValue);
 var p1, p2: TPointF;
 begin
   p1 := FLR.SurfaceToScene(PointF(0, FLR.BodyTopY));
-  p1 := FCamera.WorldToControlF(p1);
   p2 := FGameinventory.Center; //GetXY+PointF(FGameinventory.Width*0.5, FGameinventory.Height*0.5);
   p2.x := p2.x + FScene.Width;
   inherited Create(texIconLaserGun, LAYER_GAMEUI, p1, p2, ScreenPlainOfSleepingMoon, aUserValue);
@@ -646,7 +647,7 @@ begin
 
   // camera
   FCamera := FScene.CreateCamera;
-  FCamera.AssignToLayerRange(LAYER_DIALOG, LAYER_BG3);
+  FCamera.AssignToLayerRange(LAYER_WEATHER, LAYER_BG3);
   FCamera.Pivot := PointF(0.5, 1.0);  // keeps the camera aligned to the bottom of the screen
   FCamera.MoveTo(PointF(FScene.Width*2, FScene.Height*0.5));
 end;
@@ -2048,88 +2049,80 @@ begin
   Audio.PlayThenKillSound('laser-gunshot.ogg', 0.8, 0.0, 1.0+Random*0.1-0.05, Audio.FXReverbShort, 0.5);
 end;
 
-procedure TScreenPlainOfSleepingMoon.CreateObjects;
+procedure TScreenPlainOfSleepingMoon.DefineSubTextures(aAtlas: TAtlas);
 var path: string;
-  ima: TBGRABitmap;
+begin
+  AdditionnalScale := 0.8;
+  LoadLR4DirTextures(aAtlas, False);
+  texLaserGun := aAtlas.AddFromSVG(SpriteLR4DirRightFolder+'rLaserGun.svg', ScaleW(40), -1);
+  texLaserShoot := aAtlas.AddFromSVG(SpriteLR4DirRightFolder+'rLaserShoot.svg', ScaleW(20), -1);
+  LoadWolfTextures(aAtlas);
+  LoadPenelopeTextures(aAtlas);
+  AdditionnalScale := 1.0;
+
+  AdditionnalScale := 1.1;
+  TLittleRobot.LoadTexture(aAtlas);
+  texRobotMace := aAtlas.AddFromSVG(GetFolderSpritePlainOfSleepingMoon+'RobotMace.svg', ScaleW(47), -1);
+  AdditionnalScale := 1.0;
+
+  path := SpriteGameVolcanoDinoFolder;
+  texGroundDeep := aAtlas.AddFromSVG(path+'GroundDeep.svg', ScaleW(128), -1);
+  texGroundSlope := aAtlas.AddFromSVG(path+'GroundSlope.svg', ScaleW(128), -1);
+  texGroundFlat := aAtlas.AddFromSVG(path+'GroundFlat.svg', ScaleW(128), -1);
+  texGroundCorner := aAtlas.AddFromSVG(path+'GroundCorner.svg', ScaleW(64), -1);
+
+  path := SpriteCommonFolder;
+  texGround1 := aAtlas.AddFromSVG(path+'Ground1.svg', ScaleW(178), -1);
+  texGround1Right := aAtlas.AddFromSVG(path+'Ground1Right.svg', -1, ScaleH(48));
+
+  path := GetFolderSpritePlainOfSleepingMoon;
+  texMountain1 := aAtlas.AddFromSVG(path+'Mountain1.svg', ScaleW(1192), -1);
+  texMountain2 := aAtlas.AddFromSVG(path+'Mountain2.svg', ScaleW(728), -1);
+  texOakForest := aAtlas.AddFromSVG(path+'OakForest.svg', ScaleW(270), -1);
+  texRock1 := aAtlas.AddFromSVG(path+'Rock1.svg', ScaleW(194), -1);
+  texRail := aAtlas.AddFromSVG(path+'Rail.svg', ScaleW(133), -1);
+  texFactory1 := aAtlas.AddFromSVG(path+'Factory1.svg', ScaleW(555), -1);
+  texFactory2 := aAtlas.AddFromSVG(path+'Factory2.svg', ScaleW(408), -1);
+  texFactory3 := aAtlas.AddFromSVG(path+'Factory3.svg', ScaleW(270), -1);
+
+  texShootingStar := aAtlas.AddFromSVG(path+'ShootingStar.svg', ScaleW(135), -1);
+
+  texWagonRailing := aAtlas.AddFromSVG(path+'WagonRailing.svg', ScaleW(232), -1);
+  texWagonLadder := aAtlas.AddFromSVG(path+'WagonLadder.svg', -1, ScaleH(217));
+  texWagonHead := aAtlas.AddFromSVG(path+'WagonHead.svg', ScaleW(394), -1);
+  texWagonRoofAddon := aAtlas.AddFromSVG(path+'WagonRoofAddon.svg', ScaleW(103), -1);
+  texWagonHook := aAtlas.AddFromSVG(path+'WagonHook.svg', ScaleW(75), -1);
+  TAutomaticDoor.LoadTexture(aAtlas, ScaleW(120), ScaleH(145));
+  texDoorBG := aAtlas.AddFromSVG(path+'DoorBG.svg', ScaleW(111), -1);
+  texWagonMiddle := aAtlas.AddFromSVG(path+'WagonMiddle.svg', ScaleW(227), -1);
+  texLocoHead := aAtlas.AddFromSVG(path+'LocoHead.svg', ScaleW(562), -1);
+  texLocoMiddle := aAtlas.AddFromSVG(path+'LocoMiddle.svg', ScaleW(90), -1);
+  texWheel := aAtlas.AddFromSVG(path+'Wheel.svg', ScaleW(71), -1);
+  texAxle := aAtlas.AddFromSVG(path+'Axle.svg', ScaleW(328), -1);
+  texOne := aAtlas.AddFromSVG(path+'One.svg', ScaleW(29), -1);
+  texTwo := aAtlas.AddFromSVG(path+'Two.svg', ScaleW(47), -1);
+  texThree := aAtlas.AddFromSVG(path+'Three.svg', ScaleW(43), -1);
+  texFour := aAtlas.AddFromSVG(path+'Four.svg', ScaleW(46), -1);
+
+  // ui
+  CreateGameFontNumber(aAtlas); // < must be first !
+  LoadWatchTexture(aAtlas);
+  LoadLaserGunTexture(aAtlas);
+  // font for button in pause panel
+  FFontText := CreateGameFontText(aAtlas);
+  LoadGameDialogTextures(aAtlas);
+  // load arrow for button panels
+  AddBlueArrowToAtlas(aAtlas);
+  texArrowYellow := aAtlas.AddFromSVG(SpriteUIFolder+'ArrowYellow.svg', ScaleW(40), -1);
+  LoadMousePointerTexture(aAtlas);
+end;
+
+procedure TScreenPlainOfSleepingMoon.CreateObjects;
 begin
   FGameState := gsUndefined;
   ResetVariables;
 
-  //Audio.PauseMusicTitleMap(3.0);
-  FAtlas := FScene.CreateAtlas;
-  FAtlas.Spacing := 2;
-
-  AdditionnalScale := 0.8;
-  LoadLR4DirTextures(FAtlas, False);
-  texLaserGun := FAtlas.AddFromSVG(SpriteLR4DirRightFolder+'rLaserGun.svg', ScaleW(40), -1);
-  texLaserShoot := FAtlas.AddFromSVG(SpriteLR4DirRightFolder+'rLaserShoot.svg', ScaleW(20), -1);
-  LoadWolfTextures(FAtlas);
-  LoadPenelopeTextures(FAtlas);
-  AdditionnalScale := 1.0;
-
-  AdditionnalScale := 1.1;
-  TLittleRobot.LoadTexture(FAtlas);
-  texRobotMace := FAtlas.AddFromSVG(GetFolderSpritePlainOfSleepingMoon+'RobotMace.svg', ScaleW(47), -1);
-  AdditionnalScale := 1.0;
-
-  path := SpriteGameVolcanoDinoFolder;
-  texGroundDeep := FAtlas.AddFromSVG(path+'GroundDeep.svg', ScaleW(128), -1);
-  texGroundSlope := FAtlas.AddFromSVG(path+'GroundSlope.svg', ScaleW(128), -1);
-  texGroundFlat := FAtlas.AddFromSVG(path+'GroundFlat.svg', ScaleW(128), -1);
-  texGroundCorner := FAtlas.AddFromSVG(path+'GroundCorner.svg', ScaleW(64), -1);
-
-  path := SpriteCommonFolder;
-  texGround1 := FAtlas.AddFromSVG(path+'Ground1.svg', ScaleW(178), -1);
-  texGround1Right := FAtlas.AddFromSVG(path+'Ground1Right.svg', -1, ScaleH(48));
-
-  path := GetFolderSpritePlainOfSleepingMoon;
-  texMountain1 := FAtlas.AddFromSVG(path+'Mountain1.svg', ScaleW(1192), -1);
-  texMountain2 := FAtlas.AddFromSVG(path+'Mountain2.svg', ScaleW(728), -1);
-  texOakForest := FAtlas.AddFromSVG(path+'OakForest.svg', ScaleW(270), -1);
-  texRock1 := FAtlas.AddFromSVG(path+'Rock1.svg', ScaleW(194), -1);
-  //texCloud  := FAtlas.AddFromSVG(path+'Cloud.svg', ScaleW(199), -1);
-  texRail := FAtlas.AddFromSVG(path+'Rail.svg', ScaleW(133), -1);
-  texFactory1 := FAtlas.AddFromSVG(path+'Factory1.svg', ScaleW(555), -1);
-  texFactory2 := FAtlas.AddFromSVG(path+'Factory2.svg', ScaleW(408), -1);
-  texFactory3 := FAtlas.AddFromSVG(path+'Factory3.svg', ScaleW(270), -1);
-
-  texShootingStar := FAtlas.AddFromSVG(path+'ShootingStar.svg', ScaleW(135), -1);
-
-  texWagonRailing := FAtlas.AddFromSVG(path+'WagonRailing.svg', ScaleW(232), -1);
-  texWagonLadder := FAtlas.AddFromSVG(path+'WagonLadder.svg', -1, ScaleH(217));
-  texWagonHead := FAtlas.AddFromSVG(path+'WagonHead.svg', ScaleW(394), -1);
-  texWagonRoofAddon := FAtlas.AddFromSVG(path+'WagonRoofAddon.svg', ScaleW(103), -1);
-  texWagonHook := FAtlas.AddFromSVG(path+'WagonHook.svg', ScaleW(75), -1);
-  TAutomaticDoor.LoadTexture(FAtlas, ScaleW(120), ScaleH(145));
-  texDoorBG := FAtlas.AddFromSVG(path+'DoorBG.svg', ScaleW(111), -1);
-  texWagonMiddle := FAtlas.AddFromSVG(path+'WagonMiddle.svg', ScaleW(227), -1);
-  texLocoHead := FAtlas.AddFromSVG(path+'LocoHead.svg', ScaleW(562), -1);
-  texLocoMiddle := FAtlas.AddFromSVG(path+'LocoMiddle.svg', ScaleW(90), -1);
-  texWheel := FAtlas.AddFromSVG(path+'Wheel.svg', ScaleW(71), -1);
-  texAxle := FAtlas.AddFromSVG(path+'Axle.svg', ScaleW(328), -1);
-  texOne := FAtlas.AddFromSVG(path+'One.svg', ScaleW(29), -1);
-  texTwo := FAtlas.AddFromSVG(path+'Two.svg', ScaleW(47), -1);
-  texThree := FAtlas.AddFromSVG(path+'Three.svg', ScaleW(43), -1);
-  texFour := FAtlas.AddFromSVG(path+'Four.svg', ScaleW(46), -1);
-
-  // ui
-  CreateGameFontNumber(FAtlas); // < must be first !
-  LoadWatchTexture(FAtlas);
-  LoadLaserGunTexture(FAtlas);
-  // font for button in pause panel
-  FFontText := CreateGameFontText(FAtlas);
-  LoadGameDialogTextures(FAtlas);
-  // load arrow for button panels
-  AddBlueArrowToAtlas(FAtlas);
-  texArrowYellow := FAtlas.AddFromSVG(SpriteUIFolder+'ArrowYellow.svg', ScaleW(40), -1);
-  LoadMousePointerTexture(FAtlas);
-
-  FAtlas.TryToPack;
-  FAtlas.Build;
-
-  ima := FAtlas.GetPackedImage;
-  ima.SaveToFile(Application.Location+'Atlas.png');
-  ima.Free;
+  CheckAtlas(FAtlas, 'plainmoon.atlas');
 
   // pause panel
   FInGamePausePanel := TInGamePausePanel.Create(FFontText, FAtlas);
@@ -2181,7 +2174,6 @@ end;
 
 procedure TScreenPlainOfSleepingMoon.ProcessMessage(UserValue: TUserMessageValue);
 var xx: Single;
-  r: TRectF;
 begin
   if FPlainIntroductionCinematic.Activated then begin
     FPlainIntroductionCinematic.ProcessMessage(UserValue);
@@ -2219,9 +2211,8 @@ begin
     end;
     4: begin
       Audio.PlayThenKillSound('radio-static.ogg', 0.8);
-      r := GetViewRect(FCamera);
       with TInfoPanel.Create(sDriverVoice, sWeHaveReachedFullSpeed, FFontText, Self, 5) do
-        SetCoordinate(r.Right-Width, r.Height*0.45);
+        SetCoordinate(FScene.Width-Width, FScene.Height*0.45);
     end;
     5: begin
       FPenelope.LeftArm.Angle.ChangeTo(262, 0.5, idcSinusoid);

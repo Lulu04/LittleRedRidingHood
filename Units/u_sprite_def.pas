@@ -1619,7 +1619,14 @@ begin
   path := SpriteGameVolcanoEntranceFolder;
   FComputedWidth := FScene.Width/3;
   texWallBG := aAtlas.AddFromSVG(path+'PanelDecodeWallBG.svg', ScaleW(114), -1);
-  texDigicode := aAtlas.AddFromSVG(path+'Digicode.svg', Round(FComputedWidth*0.314), -1);
+
+  if aAtlas.LoadedFromFile then
+    texDigicode := aAtlas.RetrieveTextureByFileName('DigicodeForPanelDecoding')
+  else begin
+    texDigicode := aAtlas.AddFromSVG(path+'Digicode.svg', Round(FComputedWidth*0.314), -1);
+    texDigicode^.Filename := 'DigicodeForPanelDecoding';
+  end;
+
   texDecoderBody := aAtlas.AddFromSVG(path+'DecoderBody.svg', ScaleW(69), -1);
   texDecoderLightOff := aAtlas.AddFromSVG(path+'DecoderLightOff.svg', ScaleW(10), -1);
   texDecoderWheel := aAtlas.AddFromSVG(path+'DecoderWheel.svg', ScaleW(25), -1);
@@ -2087,7 +2094,6 @@ begin
   texArmAxis := aAtlas.AddFromSVG(path+'RobotConstructorArmAxis.svg', -1, ScaleH(67));
   texGear := aAtlas.AddFromSVG(path+'RobotConstructorGear.svg', ScaleW(28), -1);
   texParticle := aAtlas.AddFromSVG(ParticleFolder+'sphere_particle.svg', PPIScale(32), -1);
-  texParticle^.Filename := 'sphere_particle.png';
   FAtlas := aAtlas;
 end;
 

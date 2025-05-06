@@ -19,7 +19,6 @@ private
   FFogRightToLeft: TFogRightToLeft;
   FRain: TRain;
   FtexGrassLarge: PTexture;
-
 public // Weather
   procedure CreateFogRightToLeft(aAtlas: TOGLCTextureAtlas; aFillScreen: boolean;
                                  aCrossDuration: single=50.0; aOpacity: single=20);
@@ -58,6 +57,10 @@ public // loading particle texture in atlas
   // the arrow used to click a button with the keyboard
   procedure AddBlueArrowToAtlas(aAtlas: TOGLCTextureAtlas);
 
+public // atlas creation or loading
+  procedure DefineSubTextures(aAtlas: TAtlas); virtual; abstract;
+  procedure CheckAtlas(var aAtlas: TAtlas; const aFilenameWithoutPath: string);
+
   // Reset all scene callback to NIL. Use in FreeObjects.
   procedure ResetSceneCallbacks;
 end;
@@ -65,7 +68,7 @@ end;
 
 implementation
 
-uses u_app, u_utils, u_resourcestring;
+uses Forms, u_app, u_utils, u_resourcestring;
 
 type
 
@@ -225,8 +228,37 @@ end;
 
 procedure TGameScreenTemplate.AddBlueArrowToAtlas(aAtlas: TOGLCTextureAtlas);
 begin
-  with aAtlas.AddFromSVG(SpriteUIFolder+'RightBlueArrow.svg', ScaleW(32), -1)^ do
-   FileName := '_UItexKeyboardToButton_';
+  if not aAtlas.LoadedFromFile then
+    with aAtlas.AddFromSVG(SpriteUIFolder+'RightBlueArrow.svg', ScaleW(32), -1)^ do
+     FileName := '_UItexKeyboardToButton_';
+end;
+
+procedure TGameScreenTemplate.CheckAtlas(var aAtlas: TAtlas; const aFilenameWithoutPath: string);
+var f, atlasVersion: string;
+  ima: TBGRABitmap;
+begin
+  aAtlas := FScene.CreateAtlas;
+  aAtlas.Spacing := 2;
+
+  f := FSaveGame.SaveFolder + aFilenameWithoutPath;
+  if FileExists(f) then begin
+    // read the version in the atlas file
+    atlasVersion := TAtlas.GetAtlasFileVersion(f);
+    // if atlas and app version are equal, we can reuse the atlas
+    if atlasVersion = APP_VERSION then
+      aAtlas.LoadFromFile(f);
+  end;
+
+  DefineSubTextures(aAtlas);
+
+  if not aAtlas.LoadedFromFile then begin
+    aAtlas.TryToPack;
+    aAtlas.Build;
+    ima := aAtlas.GetPackedImage;
+    ima.SaveToFile(Application.Location+'Atlas.png');
+    ima.Free;
+    aAtlas.SaveToFile(f, APP_VERSION);
+  end;
 end;
 
 procedure TGameScreenTemplate.ResetSceneCallbacks;

@@ -39,6 +39,7 @@ private
   procedure SetGameState(AValue: TGameState);
   procedure CreateEndRaceMessage(const aMess: string; aAppearTime, aStayTime: single);
 public
+  procedure DefineSubTextures(aAtlas: TAtlas); override;
   procedure CreateObjects; override;
   procedure FreeObjects; override;
   procedure ProcessMessage({%H-}UserValue: TUserMessageValue); override;
@@ -325,6 +326,8 @@ var k: integer;
 begin
   inherited create(FScene);
   FScene.Add(Self, LAYER_FXANIM);
+  X.Value := aX;
+  BottomY := aBottomY;
 
   SetLength(FRocks, 30);
   k := 0;
@@ -333,7 +336,7 @@ begin
 
   xx := aX+texRockMedium^.FrameWidth*0.5;
   yy := aBottomY-texRockMedium^.FrameHeight*0.5;
-  FP1LineForLRCollision := PointF(xx, yy);
+  FP1LineForLRCollision := PointF(0, -texRockMedium^.FrameHeight*0.5);
   CreateRocks(xx, yy, 6, k);
   xx := aX+texRockMedium^.FrameWidth*0.5;
   yy := yy-texRockMedium^.FrameHeight*0.9;
@@ -352,19 +355,18 @@ begin
   xx := aX+texRockMedium^.FrameWidth*1.5;
   yy := yy-texRockMedium^.FrameHeight*0.9;
   CreateRocks(xx, yy, 4, k);
-  FP2LineForLRCollision := PointF(xx, yy);
-  FP3LineForLRCollision := PointF(xx+4*texRockMedium^.FrameWidth*0.8, yy);
 
-{  xx := aX+texRockMedium^.FrameWidth*2.0;
-  yy := yy-texRockMedium^.FrameHeight*0.9;
-  CreateRocks(xx, yy, 3, k);
-  xx := aX+texRockMedium^.FrameWidth*2.0;
-  yy := yy-texRockMedium^.FrameHeight*0.9;
-  CreateRocks(xx, yy, 3, k); }
+  xx := texRockMedium^.FrameWidth;
+  yy := -texRockMedium^.FrameHeight*0.9*6;
+  FP2LineForLRCollision := PointF(xx, yy);
+  xx := xx + texRockMedium^.FrameWidth*0.8*4;
+  FP3LineForLRCollision := PointF(xx, yy);
+
 end;
 
 procedure TPileOfRocks.Update(const aElapsedTime: single);
 var i: integer;
+    m: TOGLCMatrix;
 begin
   inherited Update(aElapsedTime);
 
@@ -381,20 +383,22 @@ begin
     end;
     FDino.Speed.x.Value := FDino.Speed.x.Value*0.25;
     Kill;
-  end else // check collision with LR
-  if FLR.CheckCollisionWithLine(FP1LineForLRCollision, FP2LineForLRCollision) then begin
+  end else begin// check collision with LR
+    m := GetMatrixSurfaceToWorld;
+
+  if FLR.CheckCollisionWithLine(m.Transform(FP1LineForLRCollision), m.Transform(FP2LineForLRCollision)) then begin
     // LR collide with face of rock pile
     FLR.Speed.x.Value := Max(0, FLR.Speed.x.Value - FScene.Width*0.25);
     FLR.X.Value := FLR.X.Value - FLR.BodyWidth;
     if FLR.Speed.Y.Value > 0 then FLR.Speed.Y.Value := 0;
   end else
-  if FLR.CheckCollisionWithLine(FP2LineForLRCollision, FP3LineForLRCollision) then begin
+  if FLR.CheckCollisionWithLine(m.Transform(FP2LineForLRCollision), m.Transform(FP3LineForLRCollision)) then begin
     // LR collide with top of rock pile
     FLR.Speed.x.Value := Max(0, FLR.Speed.x.Value - FScene.Width*0.25);
     if FLR.Speed.Y.Value > 0 then FLR.Speed.Y.Value := 0;
-    FLR.Y.Value := FLR.Y.Value - FLR.BodyHeight;
+    FLR.Y.Value := FLR.Y.Value - FLR.BodyHeight*0.5;
   end;
-
+  end;
 end;
 
 { TProgress }
@@ -525,7 +529,7 @@ begin
   if Min(FLR.X.Value, FDino.X.Value)-X.Value > FScene.Width*2 then Kill
   else begin
     // check collision with LR
-    r := RectF(X.Value, Y.Value, RightX, BottomY);
+    r := GetMatrixSurfaceToWorld.Transform(RectF(0, 0, Width, Height));
     if FLR.CheckCollisionWith(r) then begin
       MoveTo(FGasJauge.Center, 0.25);
       Scale.ChangeTo(PointF(0.3,0.3), 0.25);
@@ -630,6 +634,7 @@ end;
 procedure TGroundSlope.Update(const aElapsedTime: single);
 var p1, p2: TPointF;
     delta, percent: single;
+    m: TOGLCMatrix;
 begin
   inherited Update(aElapsedTime);
 
@@ -652,23 +657,24 @@ begin
   else begin
     // check collision with LR
     if FlipV and FlipH then begin  // ceil up
-      p1 := PointF(X.Value, BottomY);
-      p2 := PointF(RightX, Y.Value+Height*0.5);
+      p1 := PointF(0, Height); // PointF(X.Value, BottomY);
+      p2 := PointF(Width, Height*0.5); // PointF(RightX, Y.Value+Height*0.5);
       delta := Height*0.25;
     end else if FlipV then begin  // ceil down
-      p1 := PointF(X.Value, Y.Value+Height*0.5);
-      p2 := PointF(RightX, BottomY);
+      p1 := PointF(0, Height*0.5); // PointF(X.Value, Y.Value+Height*0.5);
+      p2 := PointF(Width, Height); // PointF(RightX, BottomY);
       delta := Height*0.25;
     end else if FlipH then begin // floor down
-      p1 := GetXY;
-      p2 := PointF(RightX, Y.Value+Height*0.5);
+      p1 := PointF(0, 0); // GetXY;
+      p2 := PointF(Width, Height*0.5); // PointF(RightX, Y.Value+Height*0.5);
       delta := -Height*0.25;
     end else begin
-      p1 := PointF(X.Value, Y.Value+Height*0.5);
-      p2 := PointF(RightX, Y.Value);
+      p1 := PointF(0, Height*0.5); // PointF(X.Value, Y.Value+Height*0.5);
+      p2 := PointF(Width, 0); // PointF(RightX, Y.Value);
       delta := -Height*0.25;
     end;
-    if FLR.CheckCollisionWithLine(p1, p2) then begin
+    m := GetMatrixSurfaceToWorld;
+    if FLR.CheckCollisionWithLine(m.Transform(p1), m.Transform(p2)) then begin
       FLR.Y.Value := FLR.Y.Value + delta;
       delta := FLR.Speed.x.Value;
       delta := delta - FScene.Width*0.25; //ScaleW(50);
@@ -728,6 +734,7 @@ end;
 procedure TGroundFlat.Update(const aElapsedTime: single);
 var p1, p2: TPointF;
     delta: single;
+    m: TOGLCMatrix;
 begin
   inherited Update(aElapsedTime);
 
@@ -744,15 +751,16 @@ begin
   else begin
     // check collision with LR
     if FlipV then begin
-      p1 := PointF(X.Value, BottomY);
-      p2 := PointF(RightX, BottomY);
+      p1 := PointF(0, Height); // PointF(X.Value, BottomY);
+      p2 := PointF(Width, Height); // PointF(RightX, BottomY);
       delta := Height*0.5;
     end else begin
-      p1 := GetXY;
-      p2 := PointF(RightX, Y.Value);
+      p1 := PointF(0, 0); // GetXY;
+      p2 := PointF(Width, 0); // PointF(RightX, Y.Value);
       delta := -Height*0.5;
     end;
-    if FLR.CheckCollisionWithLine(p1, p2) then begin
+    m := GetMatrixSurfaceToWorld;
+    if FLR.CheckCollisionWithLine(m.Transform(p1), m.Transform(p2)) then begin
       FLR.Y.Value := FLR.Y.Value + delta; // shift LR position
       delta := FLR.Speed.x.Value;
       delta := delta - FScene.Width*0.25; //ScaleW(50);
@@ -1242,9 +1250,61 @@ begin
   end;
 end;
 
-procedure TScreenGameVolcanoDino.CreateObjects;
+procedure TScreenGameVolcanoDino.DefineSubTextures(aAtlas: TAtlas);
 var path: string;
-  ima: TBGRABitmap;
+begin
+  AdditionnalScale := 0.8;
+
+  LoadLR4DirTextures(aAtlas, True);
+  LoadWolfTextures(aAtlas);
+
+  AdditionnalScale := 1.0;
+  path := SpriteGameVolcanoDinoFolder;
+  texLadder := aAtlas.AddFromSVG(SpriteGameVolcanoInnerFolder+'Ladder.svg', -1, ScaleH(230));
+  texPillar1 := aAtlas.AddFromSVG(path+'Pillar1.svg', -1, ScaleH(615));
+
+  texCeiling := aAtlas.AddFromSVG(path+'Ceiling.svg', ScaleH(310), -1);
+
+  texGroundFlat := aAtlas.AddFromSVG(path+'GroundFlat.svg', ScaleW(128), -1);
+  texGroundDeep := aAtlas.AddFromSVG(path+'GroundDeep.svg', ScaleW(128), -1);
+  texGroundSlope := aAtlas.AddFromSVG(path+'GroundSlope.svg', ScaleW(128), -1);
+  texRockMedium := aAtlas.AddFromSVG(SpriteGameVolcanoInnerFolder+'RockMedium.svg', ScaleW(82), -1);
+  texGasCan := aAtlas.AddFromSVG(path+'GasCan.svg', ScaleW(58), -1);
+  TGasJauge.LoadTexture(aAtlas);
+  TProgressLine.LoadTexture(aAtlas);
+  texDinoIcon := aAtlas.AddFromSVG(path+'DinoIcon.svg', -1, ScaleH(32));
+  texFlagFinish := aAtlas.AddFromSVG(SpriteUIFolder+'FlagFinish.svg', -1, ScaleH(32));
+  texPanelExit := aAtlas.AddFromSVG(SpriteGameVolcanoInnerFolder+'PanelExit.svg', -1, ScaleH(76));
+
+  AddCloud128x128ParticleToAtlas(aAtlas);
+  AddSphereParticleToAtlas(aAtlas);
+  AddDustParticleToAtlas(aAtlas);
+
+  TPanelUsingComputer.LoadTextures(aAtlas);
+  TUsableComputer.LoadTexture(aAtlas);
+
+  AdditionnalScale := 1.5;
+  TDino.LoadTexture(aAtlas);
+  AdditionnalScale := 1.0;
+  TCage.LoadTexture(aAtlas);
+
+  texArmoredDoor := aAtlas.AddFromSVG(path+'ArmoredDoor.svg', -1, ScaleH(714));
+  texLavaBall := aAtlas.AddFromSVG(SpriteGameVolcanoInnerFolder+'LavaBall.svg', ScaleW(20), -1);
+  texLavaOnComputer := aAtlas.AddFromSVG(path+'LavaOnComputer.svg', ScaleW(23), -1);
+
+  CreateGameFontNumber(aAtlas);
+  LoadCoinTexture(aAtlas);
+  LoadWatchTexture(aAtlas);
+  // font for button in pause panel
+  FFontText := CreateGameFontText(aAtlas);
+  LoadGameDialogTextures(aAtlas);
+
+  // load arrow for button panels
+  AddBlueArrowToAtlas(aAtlas);
+  LoadMousePointerTexture(aAtlas);
+end;
+
+procedure TScreenGameVolcanoDino.CreateObjects;
 begin
   FGameState := gsUndefined;
   Audio.PauseMusicTitleMap(3.0);
@@ -1263,65 +1323,7 @@ FsndRaceMusic.Volume.Value := 0.8;
 
   FsndEmotionMusic := NIL;
 
-  FAtlas := FScene.CreateAtlas;
-  FAtlas.Spacing := 2;
-
-  AdditionnalScale := 0.8;
-
-  LoadLR4DirTextures(FAtlas, True);
-  LoadWolfTextures(FAtlas);
-  //FAtlas.Add(ParticleFolder+'sphere_particle.png');
-
-  AdditionnalScale := 1.0;
-  path := SpriteGameVolcanoDinoFolder;
-  texLadder := FAtlas.AddFromSVG(SpriteGameVolcanoInnerFolder+'Ladder.svg', -1, ScaleH(230));
-  texPillar1 := FAtlas.AddFromSVG(path+'Pillar1.svg', -1, ScaleH(615));
-
-  texCeiling := FAtlas.AddFromSVG(path+'Ceiling.svg', ScaleH(310), -1);
-
-  texGroundFlat := FAtlas.AddFromSVG(path+'GroundFlat.svg', ScaleW(128), -1);
-  texGroundDeep := FAtlas.AddFromSVG(path+'GroundDeep.svg', ScaleW(128), -1);
-  texGroundSlope := FAtlas.AddFromSVG(path+'GroundSlope.svg', ScaleW(128), -1);
-  texRockMedium := FAtlas.AddFromSVG(SpriteGameVolcanoInnerFolder+'RockMedium.svg', ScaleW(82), -1);
-  texGasCan := FAtlas.AddFromSVG(path+'GasCan.svg', ScaleW(58), -1);
-  TGasJauge.LoadTexture(FAtlas);
-  TProgressLine.LoadTexture(FAtlas);
-  texDinoIcon := FAtlas.AddFromSVG(path+'DinoIcon.svg', -1, ScaleH(32));
-  texFlagFinish := FAtlas.AddFromSVG(SpriteUIFolder+'FlagFinish.svg', -1, ScaleH(32));
-  texPanelExit := FAtlas.AddFromSVG(SpriteGameVolcanoInnerFolder+'PanelExit.svg', -1, ScaleH(76));
-
-  AddCloud128x128ParticleToAtlas(FAtlas);
-  AddSphereParticleToAtlas(FAtlas);
-  AddDustParticleToAtlas(FAtlas);
-
-  TPanelUsingComputer.LoadTextures(FAtlas);
-  TUsableComputer.LoadTexture(FAtlas);
-
-  AdditionnalScale := 1.5;
-  TDino.LoadTexture(FAtlas);
-  AdditionnalScale := 1.0;
-  TCage.LoadTexture(FAtlas);
-
-  texArmoredDoor := FAtlas.AddFromSVG(path+'ArmoredDoor.svg', -1, ScaleH(714));
-  texLavaBall := FAtlas.AddFromSVG(SpriteGameVolcanoInnerFolder+'LavaBall.svg', ScaleW(20), -1);
-  texLavaOnComputer := FAtlas.AddFromSVG(path+'LavaOnComputer.svg', ScaleW(23), -1);
-
-  CreateGameFontNumber(FAtlas);
-  LoadCoinTexture(FAtlas);
-  LoadWatchTexture(FAtlas);
-  // font for button in pause panel
-  FFontText := CreateGameFontText(FAtlas);
-  LoadGameDialogTextures(FAtlas);
-
-  // load arrow for button panels
-  AddBlueArrowToAtlas(FAtlas);
-  LoadMousePointerTexture(FAtlas);
-
-  FAtlas.TryToPack;
-  FAtlas.Build;
-  ima := FAtlas.GetPackedImage;
-  ima.SaveToFile(Application.Location+'Atlas.png');
-  ima.Free;
+  CheckAtlas(FAtlas, 'volcanodino.atlas');
 
   // LR 4 direction
   FLR := TLR4Direction.Create;
@@ -1333,7 +1335,7 @@ FsndRaceMusic.Volume.Value := 0.8;
 
   // cameras
   FCamera := FScene.CreateCamera;
-  FCamera.AssignToLayerRange(LAYER_DIALOG, LAYER_BG2);
+  FCamera.AssignToLayerRange(LAYER_WEATHER, LAYER_BG2);
   FCameraFollowLR := True;
 
   CreateLevel;
@@ -1411,8 +1413,8 @@ var r: TRectF;
   begin
     r := FCamera.GetViewRect;
     with TInfoPanel.Create(sAIvoice, aMess, FFontText, Self, aUserValue) do begin
-      CenterX := r.Left + r.Width*0.6;
-      BottomY := r.Height*0.7;
+      CenterX := FScene.Width*0.5;
+      BottomY := FScene.Height*0.7;
     end;
   end;
 begin

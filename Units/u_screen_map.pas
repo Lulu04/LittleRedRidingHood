@@ -51,6 +51,7 @@ private
   function CheckIfASubGameWasCompleted: boolean;
   procedure SetLRIconPositionOnGameToPlay;
 public
+  procedure DefineSubTextures(aAtlas: TAtlas); override;
   procedure CreateObjects; override;
   procedure FreeObjects; override;
   procedure ProcessMessage(UserValue: TUserMessageValue); override;
@@ -627,14 +628,56 @@ begin
   else FIconLR.SetCenterCoordinate(BPineForest.CenterX, BPineForest.CenterY);
 end;
 
+procedure TScreenMap.DefineSubTextures(aAtlas: TAtlas);
+var fd: TFontDescriptor;
+begin
+  AdditionnalScale := 1.0;
+
+  texLRIcon := aAtlas.AddFromSVG(SpriteBGFolder+'LR.svg', ScaleW(33), -1);
+  texMapStep := aAtlas.AddFromSVG(SpriteMapFolder+'MapStep.svg', ScaleW(21), -1);
+  texMapStepChecked := aAtlas.AddFromSVG(SpriteMapFolder+'MapStepChecked.svg', ScaleW(34), -1);
+  texHelpKeys := aAtlas.AddFromSVG(SpriteMapFolder+'HelpKeys.svg', PPIScale(32), -1);
+  AddBlueArrowToAtlas(aAtlas);
+
+  // games map
+  texMap1FW := aAtlas.AddFromSVG(SpriteMapFolder+'Map1FW.svg', ScaleW(651), -1);
+  texMap1Outline := aAtlas.AddFromSVG(SpriteMapFolder+'Map1Outline.svg', ScaleW(651), -1);
+  texLRHome := aAtlas.AddFromSVG(SpriteBGFolder+'LRHome.svg', ScaleW(87), -1);
+  AddSphereParticleToAtlas(aAtlas);
+  texPineForest := aAtlas.AddFromSVG(SpriteMapFolder+'PineForest.svg', ScaleW(167), -1);
+  texVolcanoMountain := aAtlas.AddFromSVG(SpriteMapFolder+'VolcanoMountain.svg', ScaleW(124), -1);
+  texZipLinePeaks := aAtlas.AddFromSVG(SpriteMapFolder+'ZipLinePeaks.svg', ScaleW(100), -1);
+  texZipLinePeaksCableToVolcano := aAtlas.AddFromSVG(SpriteMapFolder+'ZipLinePeaksCableToVolcano.svg', ScaleW(137), -1);
+  texPlainOfSleepingMoon := aAtlas.AddFromSVG(SpriteMapFolder+'MapPlainOfSleepingMoon.svg', ScaleW(211), -1);
+  texFactory := aAtlas.AddFromSVG(SpriteMapFolder+'MapFactory.svg', ScaleW(159), -1);
+
+  // castle island
+  texMapCastleFW := aAtlas.AddFromSVG(SpriteMapFolder+'MapCastleFW.svg', ScaleW(170), -1);
+  texMapCastleOutline := aAtlas.AddFromSVG(SpriteMapFolder+'MapCastleOutline.svg', ScaleW(170), -1);
+  texCastle := aAtlas.AddFromSVG(SpriteBGFolder+'WolfCastle.svg', ScaleW(121), -1);
+
+  AdditionnalScale := 0.25;
+  texSeagullBody := aAtlas.AddFromSVG(SpriteMapFolder+'SeagullBody.svg', ScaleW(59), -1);
+  texSeagullWing := aAtlas.AddFromSVG(SpriteMapFolder+'SeagullWing.svg', ScaleW(23), -1);
+  AdditionnalScale := 1.0;
+
+  FFontText := CreateGameFontText(aAtlas);
+  fd.Create('Arial', Round(FScene.Height/17.5), [], BGRA(0,0,0));
+  FFontPlaceName := aAtlas.AddTexturedFont(fd, FSaveGame.LanguageCharSet);
+
+  CreateGameFontNumber(aAtlas);
+  LoadCoinTexture(aAtlas);
+  LoadCristalGrayTexture(aAtlas);
+
+  LoadMousePointerTexture(aAtlas);
+end;
+
 procedure TScreenMap.CreateObjects;
 var o, o1: TSprite;
   pe: TParticleEmitter;
   sea: TQuad4Color;
-  ima: TBGRABitmap;
   s: String;
   d, waveCount, i: Integer;
-  fd: TFontDescriptor;
 begin
 //  LastGameClicked := gomUnknow;
   FPanelChooseGameStep := NIL;
@@ -644,53 +687,7 @@ begin
   FsndSeaWave.Loop := True;
   FsndSeaWave.FadeIn(0.8, 3.0);
 
-  FAtlas := FScene.CreateAtlas;
-  FAtlas.Spacing := 2;
-  AdditionnalScale := 1.0;
-
-  texLRIcon := FAtlas.AddFromSVG(SpriteBGFolder+'LR.svg', ScaleW(33), -1);
-  texMapStep := FAtlas.AddFromSVG(SpriteMapFolder+'MapStep.svg', ScaleW(21), -1);
-  texMapStepChecked := FAtlas.AddFromSVG(SpriteMapFolder+'MapStepChecked.svg', ScaleW(34), -1);
-  texHelpKeys := FAtlas.AddFromSVG(SpriteMapFolder+'HelpKeys.svg', PPIScale(32), -1);
-  AddBlueArrowToAtlas(FAtlas);
-
-  // games map
-  texMap1FW := FAtlas.AddFromSVG(SpriteMapFolder+'Map1FW.svg', ScaleW(651), -1);
-  texMap1Outline := FAtlas.AddFromSVG(SpriteMapFolder+'Map1Outline.svg', ScaleW(651), -1);
-  texLRHome := FAtlas.AddFromSVG(SpriteBGFolder+'LRHome.svg', ScaleW(87), -1);
-  FAtlas.Add(ParticleFolder+'sphere_particle.png');
-  texPineForest := FAtlas.AddFromSVG(SpriteMapFolder+'PineForest.svg', ScaleW(167), -1);
-  texVolcanoMountain := FAtlas.AddFromSVG(SpriteMapFolder+'VolcanoMountain.svg', ScaleW(124), -1);
-  texZipLinePeaks := FAtlas.AddFromSVG(SpriteMapFolder+'ZipLinePeaks.svg', ScaleW(100), -1);
-  texZipLinePeaksCableToVolcano := FAtlas.AddFromSVG(SpriteMapFolder+'ZipLinePeaksCableToVolcano.svg', ScaleW(137), -1);
-  texPlainOfSleepingMoon := FAtlas.AddFromSVG(SpriteMapFolder+'MapPlainOfSleepingMoon.svg', ScaleW(211), -1);
-  texFactory := FAtlas.AddFromSVG(SpriteMapFolder+'MapFactory.svg', ScaleW(159), -1);
-
-  // castle island
-  texMapCastleFW := FAtlas.AddFromSVG(SpriteMapFolder+'MapCastleFW.svg', ScaleW(170), -1);
-  texMapCastleOutline := FAtlas.AddFromSVG(SpriteMapFolder+'MapCastleOutline.svg', ScaleW(170), -1);
-  texCastle := FAtlas.AddFromSVG(SpriteBGFolder+'WolfCastle.svg', ScaleW(121), -1);
-
-  AdditionnalScale := 0.25;
-  texSeagullBody := FAtlas.AddFromSVG(SpriteMapFolder+'SeagullBody.svg', ScaleW(59), -1);
-  texSeagullWing := FAtlas.AddFromSVG(SpriteMapFolder+'SeagullWing.svg', ScaleW(23), -1);
-  AdditionnalScale := 1.0;
-
-  FFontText := CreateGameFontText(FAtlas);
-  fd.Create('Arial', Round(FScene.Height/17.5), [], BGRA(0,0,0));
-  FFontPlaceName := FAtlas.AddTexturedFont(fd, FSaveGame.LanguageCharSet);
-
-  CreateGameFontNumber(FAtlas);
-  LoadCoinTexture(FAtlas);
-  LoadCristalGrayTexture(FAtlas);
-
-  LoadMousePointerTexture(FAtlas);
-
-  FAtlas.TryToPack;
-  FAtlas.Build;
-  ima := FAtlas.GetPackedImage;
-  ima.SaveToFile(Application.Location+'Atlas.png');
-  ima.Free;
+  CheckAtlas(FAtlas, 'map.atlas');
 
   // sea
   sea := TQuad4Color.Create(FScene);
