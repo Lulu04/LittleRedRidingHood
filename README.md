@@ -25,3 +25,6 @@ The directory structure should be like:
 `    |- UnitsCommon`  
   
 Now, you are able to open the Lazarus project in the directory LittleRedRidingHood or LittleRedRidingHood-main.  
+
+## For those who find the game too difficult or too long
+In the game folder, there is a file named cheatcodes.txt that contains... cheat codes! It explains where to type them and their effects.
