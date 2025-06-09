@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="102.82338"
+   height="102.82339"
+   viewBox="0 0 27.205352 27.205354"
+   version="1.1"
+   id="svg1"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#505050"
+     bordercolor="#eeeeee"
+     borderopacity="1"
+     inkscape:showpageshadow="0"
+     inkscape:pageopacity="0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#212121"
+     inkscape:document-units="px">
+    <inkscape:page
+       x="0"
+       y="0"
+       width="27.205353"
+       height="27.205355"
+       id="page2"
+       margin="0"
+       bleed="0" />
+  </sodipodi:namedview>
+  <defs
+     id="defs1">
+    <radialGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient111"
+       id="radialGradient643"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(0,1.6326765,-1.7329805,0,479.43155,-573.81836)"
+       cx="426.47025"
+       cy="254.5432"
+       fx="426.47025"
+       fy="254.5432"
+       r="13.602676" />
+    <linearGradient
+       id="linearGradient111"
+       inkscape:collect="always">
+      <stop
+         style="stop-color:#eef1da;stop-opacity:1;"
+         offset="0"
+         id="stop111" />
+      <stop
+         style="stop-color:#7d8a33;stop-opacity:1;"
+         offset="1"
+         id="stop112" />
+    </linearGradient>
+  </defs>
+  <g
+     inkscape:label="Calque 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(-31.632801,-114.47955)">
+    <circle
+       style="fill:url(#radialGradient643);fill-opacity:1;fill-rule:evenodd;stroke:#3d3d3d;stroke-width:0.264583;stroke-linecap:round;stroke-linejoin:round;stroke-opacity:1"
+       id="circle113"
+       cx="45.235477"
+       cy="128.08223"
+       r="13.470385" />
+  </g>
+</svg>

@@ -439,34 +439,22 @@ end;
 { TPropulsorSprite }
 
 constructor TPropulsorSprite.Create;
-var p1, p2: TPointF;
 begin
-  p1 := FLR.GetXY+PointF(0,-FLR.DeltaYToTop) + ScreenGameVolcanoInner.FCamera.LookAt.Value;
-  p2 := FInGameinventory.GetXY+PointF(FInGameinventory.Width*0.5, FInGameinventory.Height*0.5);
-  p2 := ScreenGameVolcanoInner.FCamera.WorldToControlF(p2);
-  inherited Create(texIconDorsalThruster, LAYER_GAMEUI, p1, p2);
+  inherited Create(texIconDorsalThruster, LAYER_GAMEUI, FLR, FInGameinventory);
 end;
 
 { TSDCardSprite }
 
 constructor TSDCardSprite.Create;
-var p1, p2: TPointF;
 begin
-  p1 := FLR.GetXY+PointF(0,-FLR.DeltaYToTop) + ScreenGameVolcanoInner.FCamera.LookAt.Value;
-  p2 := FInGameinventory.GetXY+PointF(FInGameinventory.Width*0.5, FInGameinventory.Height*0.5);
-  p2 := ScreenGameVolcanoInner.FCamera.WorldToControlF(p2);
-  inherited Create(texSDCardGreen, LAYER_GAMEUI, p1, p2);
+  inherited Create(texSDCardGreen, LAYER_GAMEUI, FLR, FInGameinventory);
 end;
 
 { TKeySprite }
 
 constructor TKeySprite.Create;
-var p1, p2: TPointF;
 begin
-  p1 := FLR.GetXY+PointF(0,-FLR.DeltaYToTop) + ScreenGameVolcanoInner.FCamera.LookAt.Value;
-  p2 := FInGameinventory.GetXY+PointF(FInGameinventory.Width*0.5, FInGameinventory.Height*0.5);
-  p2 := ScreenGameVolcanoInner.FCamera.WorldToControlF(p2);
-  inherited Create(texKeyMetal, LAYER_GAMEUI, p1, p2);
+  inherited Create(texKeyMetal, LAYER_GAMEUI, FLR, FInGameinventory);
 end;
 
 { TFallingRock }
@@ -877,8 +865,8 @@ begin
   inherited Create(aX, aFloorIndex, aPillarLayerIndex);
 
   FScannerBody := TSprite.Create(texScannerDevice, False);
-  FScene.Add(FScannerBody, LAYER_ARROW);
-  FScannerBody.SetCenterCoordinate(CenterX, Y.Value+Height*0.28);
+  AddChild(FScannerBody, 0);
+  FScannerBody.SetCenterCoordinate(Width*0.5, Height*0.28);
 
   FBeam := TSprite.Create(texScannerBeam, False);
   FScannerBody.AddChild(FBeam, -1);
@@ -1344,15 +1332,13 @@ begin
   if FLRIsInvisible then exit;
 
   // check if LR feet are on the switch
-  r.Left := X.Value;
-  r.Top := Y.Value + Height*0.25;
-  r.Width := Width;
-  r.Height := Height*0.5;
+  r := GetMatrixSurfaceToWorld.Transform(GetRectAreaInLocalSpace);
+
   if FLR.BottomFeetCollideWith(r) then begin
     Tint.Value := BGRA(255,255,0);
     if ScreenGameVolcanoInner.GameState <> gsLRCaptured then Audio.PlayUIClick;
     ScreenGameVolcanoInner.GameState := gsLRCaptured;
-  end else Tint.Alpha.Value := 0;
+  end;
 end;
 
 { TPillar }
@@ -1887,7 +1873,7 @@ begin
   TUsableComputer.LoadTexture(aAtlas);
   TPump.LoadTexture(aAtlas);
   TImpact1.LoadTexture(aAtlas);
-  TUsableCrateThatContainObject.LoadTexture(aAtlas);
+  TUsableCrateThatContainObject.LoadTexture(aAtlas, 0);
 
   texScannerDevice := aAtlas.AddFromSVG(path+'ScannerDevice.svg', ScaleW(12), -1);
   texScannerBeam := aAtlas.AddFromSVG(path+'ScannerBeam.svg', ScaleW(98), -1);
@@ -1958,7 +1944,7 @@ begin
 
   // camera
   FCamera := FScene.CreateCamera;
-  FCamera.AssignToLayerRange(LAYER_WEATHER, LAYER_BG2);  //LAYER_DIALOG
+  FCamera.AssignToLayerRange(LAYER_WEATHER, LAYER_BG2);
 
   FCameraBGWall := FScene.CreateCamera;
   FCameraBGWall.AssignToLayer(LAYER_BG3);
@@ -2531,6 +2517,7 @@ end;
 procedure TScreenGameVolcanoInner.Update(const aElapsedTime: single);
 var flagPlayerIdle: boolean;
   p: TPointF;
+  yy: single;
 //  r: TRectF;
 begin
   inherited Update(aElapsedTime);
@@ -2625,7 +2612,10 @@ begin
   // camera follow LR in the bounds of FViewArea
   if FCameraFollowLR then begin
     p.x := EnsureRange(FLR.X.Value, FViewArea.Left, FViewArea.Right);
-    p.y := EnsureRange(FLR.Y.Value, FViewArea.Top, FViewArea.Bottom);
+    if FLR.IsJumping
+      then yy := FLR.YBeforeJump
+      else yy := FLR.Y.Value;
+    p.y := EnsureRange(yy, FViewArea.Top, FViewArea.Bottom);
     MoveCameraTo(p, 0.0);
     // audio listener position follow LR position
     Audio.SetListenerPosition(FLR.X.Value, FLR.Y.Value)

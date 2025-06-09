@@ -19,6 +19,7 @@ private
   FFogRightToLeft: TFogRightToLeft;
   FRain: TRain;
   FtexGrassLarge: PTexture;
+  FGameInstructions: string;
 public // Weather
   procedure CreateFogRightToLeft(aAtlas: TOGLCTextureAtlas; aFillScreen: boolean;
                                  aCrossDuration: single=50.0; aOpacity: single=20);
@@ -34,6 +35,8 @@ public // Background object creation
 public // modal panels
   // create a modal panel with game instructions. the panel is freed when it is closed.
   procedure ShowGameInstructions(const aText: string);
+  procedure ShowGameInstructions;
+  procedure SetGameInstructions(const aText: string);
 
   // ask a question to the player. The panel is freed when it is closed.
   // NOTE: the aAtlas must have the blue arrow  (call AddBlueArrowToAtlas())
@@ -60,6 +63,7 @@ public // loading particle texture in atlas
 public // atlas creation or loading
   procedure DefineSubTextures(aAtlas: TAtlas); virtual; abstract;
   procedure CheckAtlas(var aAtlas: TAtlas; const aFilenameWithoutPath: string);
+  function GetLoadingMessageSprite: TSprite; override;
 
   // Reset all scene callback to NIL. Use in FreeObjects.
   procedure ResetSceneCallbacks;
@@ -156,7 +160,18 @@ end;
 
 procedure TGameScreenTemplate.ShowGameInstructions(const aText: string);
 begin
+  FGameInstructions := aText;
   with TDisplayGameHelp.Create(aText) do ShowModal;
+end;
+
+procedure TGameScreenTemplate.ShowGameInstructions;
+begin
+  ShowGameInstructions(FGameInstructions);
+end;
+
+procedure TGameScreenTemplate.SetGameInstructions(const aText: string);
+begin
+  FGameInstructions := aText;
 end;
 
 procedure TGameScreenTemplate.DialogQuestion(const aText, aYes, aNo: string; aFont: TTexturedFont;
@@ -240,11 +255,12 @@ begin
   aAtlas := FScene.CreateAtlas;
   aAtlas.Spacing := 2;
 
+  // check if the atlas file exists
   f := FSaveGame.SaveFolder + aFilenameWithoutPath;
   if FileExists(f) then begin
     // read the version in the atlas file
     atlasVersion := TAtlas.GetAtlasFileVersion(f);
-    // if atlas and app version are equal, we can reuse the atlas
+    // if atlas and app version are equal, we can reuse it
     if atlasVersion = APP_VERSION then
       aAtlas.LoadFromFile(f);
   end;
@@ -259,6 +275,27 @@ begin
     ima.Free;
     aAtlas.SaveToFile(f, APP_VERSION);
   end;
+end;
+
+function TGameScreenTemplate.GetLoadingMessageSprite: TSprite;
+var fd: TFontDescriptor;
+  tex: PTexture;
+  o: TSprite;
+  ima, ima1: TBGRABitmap;
+begin
+  ima := LoadBitmapFromSVG(SpriteUIFolder+'WorkSign.svg', ScaleW(183), -1);
+  ima1 := ima.FilterGrayscale;
+  ima.Free;
+  tex := FScene.TexMan.Add(ima1);
+  ima1.Free;
+  Result := TSprite.Create(tex, True);
+  Result.ParentScene := FScene;
+
+  fd.Create('Arial', Round(FScene.Height*0.03), [], BGRA(255,255,200));
+  o := TSprite.Create(FScene, fd, sLoading, NIL);
+  Result.AddChild(o, 0);
+  o.CenterX := Result.Width*0.5;
+  o.Y.Value := Result.Height;
 end;
 
 procedure TGameScreenTemplate.ResetSceneCallbacks;

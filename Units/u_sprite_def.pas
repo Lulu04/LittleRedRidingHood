@@ -6,12 +6,10 @@ interface
 
 uses
   Classes, SysUtils,
-  ALSound,OGLCScene, BGRABitmap, BGRABitmapTypes,
+  ALSound, OGLCScene, BGRABitmap, BGRABitmapTypes,
   u_audio, u_sprite_lrcommon, u_ui_panels;
 
 type
-
-{ TProgressLine }
 
 TProgressLine = class(TShapeOutline)
 private class var texLRIcon: PTexture;
@@ -28,14 +26,10 @@ public
 end;
 
 
-{ TBigFire }
-
 TBigFire = class(TParticleEmitter)
   // need texture Cloud128x128.png loaded in the atlas
   constructor Create(aX, aY: single; aLayerIndex: integer; aAtlas: TOGLCTextureAtlas);
 end;
-
-{ TFireLine }
 
 TFireLine = class(TParticleEmitter)
 private
@@ -45,21 +39,15 @@ public
   constructor Create(aX, aY: single; aLayerIndex: integer; aAtlas: TOGLCTextureAtlas);
 end;
 
-{ TSmokeLine }
-
 TSmokeLine = class(TParticleEmitter)
   // need texture sphere_particle.png loaded in the atlas
   constructor Create(aX, aY: single; aLayerIndex: integer; aAtlas: TOGLCTextureAtlas);
 end;
 
-{ TSmokePoint }
-
 TSmokePoint = class(TParticleEmitter)
   // need texture sphere_particle.png loaded in the atlas
   constructor Create(aX, aY: single; aLayerIndex: integer; aAtlas: TOGLCTextureAtlas);
 end;
-
-{ TImpact1 }
 
 TImpact1 = class(TSprite)
   // need texture sphere_particle.png loaded in the atlas
@@ -73,9 +61,21 @@ public
   procedure Update(const aElapsedTime: single); override;
 end;
 
+{ TBasePanelUsingSomething }
+
+TBasePanelUsingSomething = class(TPanelWithBGDarkness)
+private
+  FMousePointerPreviousVisibleState: boolean;
+public
+  // save the visible state of the custom mouse cursor
+  procedure Show; override;
+  // Restore the visible state of the custom mouse cursor
+  procedure Hide(aFree: boolean); override;
+end;
+
 { TPanelDecodingDigicode }
 
-TPanelDecodingDigicode = class(TPanelWithBGDarkness)
+TPanelDecodingDigicode = class(TBasePanelUsingSomething)
 public
   class var texWallBG, texDigicode, texLRArm,
             texDecoderBody, texDecoderLightOff, texDecoderWheel, texDecoderBeam: PTexture;
@@ -95,7 +95,7 @@ end;
 
 { TPanelUsingComputer }
 
-TPanelUsingComputer = class(TPanelWithBGDarkness)
+TPanelUsingComputer = class(TBasePanelUsingSomething)
 private class var texArm, texSDCard, texKeyboard, texSDSlot, texMouse,
        texIconConversation, texJuliaFace, texRomeoFace: PTexture;
 private
@@ -118,7 +118,6 @@ private // gui mode
   FMousePositionOrigin: TPointF;
   FYNext: single;
   FBOpenConversation, FBOpenArmouredDoor: TUIButton;
-  FMousePointerPreviousVisibleState: boolean;
   procedure ProcessButtonClick(Sender: TSimpleSurfaceWithEffect);
   procedure AddTextToGui(aFaceTexture: PTexture; const Name, s: string; aNameColor: TBGRAPixel; aOnLeftSide: boolean);
   procedure SetGUIMode(aClearContent: boolean);
@@ -1441,6 +1440,22 @@ begin
 
   // force smoke to go up
   FSmoke.Angle.Value := -Angle.Value;
+end;
+
+{ TBasePanelUsingSomething }
+
+procedure TBasePanelUsingSomething.Show;
+begin
+  inherited Show;
+  if FScene.Mouse.MouseSprite <> NIL then
+    FMousePointerPreviousVisibleState := FScene.Mouse.MouseSprite.Visible;
+end;
+
+procedure TBasePanelUsingSomething.Hide(aFree: boolean);
+begin
+  if FScene.Mouse.MouseSprite <> NIL then
+    FScene.Mouse.MouseSprite.Visible := FMousePointerPreviousVisibleState;
+  inherited Hide(aFree);
 end;
 
 { TSmokePoint }

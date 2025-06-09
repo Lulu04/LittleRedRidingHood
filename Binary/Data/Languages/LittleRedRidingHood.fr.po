@@ -146,6 +146,10 @@ msgstr "vous devez tout d'abord acheter la tyrolienne !"
 msgid "CANCEL"
 msgstr "ANNULER"
 
+#: u_resourcestring.schallengemode
+msgid "Challenge mode"
+msgstr "Mode défi"
+
 #: u_resourcestring.schooseplayer
 msgid "CHOOSE PLAYER"
 msgstr "CHOIX DU JOUEUR"
@@ -157,6 +161,10 @@ msgstr "FERMER"
 #: u_resourcestring.scomeonitstime
 msgid "Come on, it's time to get started."
 msgstr "Allez, il est temps de commencer."
+
+#: u_resourcestring.sconnected
+msgid "CONNECTED"
+msgstr "CONNECTÉ"
 
 #: u_resourcestring.scontinue
 msgid "CONTINUE"
@@ -170,6 +178,10 @@ msgstr "CONTINUER LE JEU"
 #: u_resourcestring.sconversation
 msgid "conversation"
 msgstr "conversation"
+
+#: u_resourcestring.scraneremotecontrolexplanation
+msgid "a crane remote control"
+msgstr "une télécommande de grue"
 
 #: u_resourcestring.scredits
 msgid "CREDITS"
@@ -275,6 +287,10 @@ msgstr "tu dois d'abord compléter la Plaine de la Lune Endormie !"
 msgid "you must first complete Volcano!"
 msgstr "vous devez d'abord compléter Volcano !"
 
+#: u_resourcestring.sforestchallengehelptext
+msgid "first, upgrade to the max the bow, the elevator, the hammer and the lightning storm then win the game"
+msgstr "d'abord, améliore au max l'arc, l'ascenseur, le marteau et la tempête d'éclair foudroyante, puis gagne le jeu"
+
 #: u_resourcestring.sforesthelptext
 msgid ""
 "Burst the balloons to prevent the wolves from climbing up.\n"
@@ -301,6 +317,10 @@ msgid ""
 msgstr ""
 "Fuyez, vite!\n"
 "Et n'oubliez pas d'emporter des chaussettes chaudes"
+
+#: u_resourcestring.sgamemode
+msgid "Game mode"
+msgstr "Mode jeu"
 
 #: u_resourcestring.sgamepaused
 msgid "paused"
@@ -346,6 +366,14 @@ msgstr "le marteau, pour protéger quelque chose"
 msgctxt "u_resourcestring.shammerupgradehint"
 msgid "increase number of uses"
 msgstr "augmente le nombre d'utilisations"
+
+#: u_resourcestring.shavefun
+msgid "Have fun!"
+msgstr "Amuses-toi bien!"
+
+#: u_resourcestring.shereyoucanexchange
+msgid "Here you can exchange your coins for certain items."
+msgstr "Ici tu peux échanger tes pièces contre certains articles."
 
 #: u_resourcestring.shey
 msgid "Hey!!"
@@ -433,9 +461,17 @@ msgstr "Il me manque aussi..."
 msgid "upgrade your equipment in the workshop"
 msgstr "améliore tes équipements dans l'atelier"
 
+#: u_resourcestring.sineedakeytoopenthisgate
+msgid "I need a key to open this gate..."
+msgstr "J'ai besoin d'une clé pour ouvrir ce portail..."
+
 #: u_resourcestring.sineedtogetthroughthisforest
 msgid "I need to get through this forest and the wolves want to stop me..."
 msgstr "Je dois traverser cette forêt et les loups veulent m'en empêcher..."
+
+#: u_resourcestring.sinstructions
+msgid "HOW TO PLAY"
+msgstr "COMMENT JOUER"
 
 #: u_resourcestring.sinvitedyoutiedher
 msgid "Invited?! You tied her up and took her by force!"
@@ -468,6 +504,10 @@ msgstr "Ça fait déjà 5 ans qu'il nous a quitté..."
 #: u_resourcestring.sitshugistooheavyforme
 msgid "His hug might be too weighing for me... I think it's time to try the dorsal thruster!"
 msgstr "Son câlin risque d'être trop pesant pour moi... Je crois que le moment est venu d'essayer le propulseur dorsal !"
+
+#: u_resourcestring.sitstoodangerousihavetofind
+msgid "It's too dangerous. I have to find another way to cross."
+msgstr "C'est trop dangereux. Je dois trouver un autre moyen de traverser."
 
 #: u_resourcestring.sivecomeformygrandmother
 msgid "I've come for my grandmother, you've kidnapped her!... Where is she? Answer me!"
@@ -522,6 +562,10 @@ msgstr "Niveau"
 msgid "Level completed"
 msgstr "Niveau terminé"
 
+#: u_resourcestring.sloading
+msgid "LOADING..."
+msgstr "CHARGEMENT..."
+
 #: u_resourcestring.smachineisnotinrightaxis
 msgid "Problem detected: machine is not in its axis"
 msgstr "Problème détecté: la machine n'est pas dans son axe"
@@ -534,6 +578,10 @@ msgstr "Maintenant que j'ai le plan, je dois fabriquer le décodeur pour ouvrir 
 msgid "manufacturing"
 msgstr "fabrication"
 
+#: u_resourcestring.smarcustransport
+msgid "MARCUS TRANSPORT"
+msgstr "TRANSPORT MARCUS"
+
 #: u_resourcestring.smax
 msgid "MAX"
 msgstr "MAX"
@@ -541,6 +589,28 @@ msgstr "MAX"
 #: u_resourcestring.smermaidsport
 msgid "The Mermaids port"
 msgstr "Le Port des Sirènes"
+
+#: u_resourcestring.smermaidsporthelptext
+msgid ""
+"Crosses the industrial zone to reach the sea.\n"
+"←→↑↓ to move\n"
+"ACTION1 : jump\n"
+"ACTION2 : use object"
+msgstr ""
+"Traverses la zone industrielle pour atteindre la mer.\n"
+"←→↑↓ se déplacer\n"
+"ACTION1 : sauter\n"
+"ACTION2 : utiliser object"
+
+#: u_resourcestring.smermaidsporthelptext2
+msgid ""
+"When you jump on a container, the remote control\n"
+"automatically connects to it\n"
+"Hold down ACTION2 and use ←→↑↓ to move it."
+msgstr ""
+"Lorsque tu sautes sur un container, la télécommande\n"
+"s'y connecte automatiquement\n"
+"Garde ACTION2 appuyé et utilise ←→↑↓ pour le déplacer."
 
 #: u_resourcestring.smermaidsporthint
 msgid "don't forget your swimsuit!"
@@ -561,6 +631,10 @@ msgstr ""
 #: u_resourcestring.smountainpeaks
 msgid "Mountain peaks"
 msgstr "Les pics montagneux"
+
+#: u_resourcestring.smountainpeakschallengehelptext
+msgid "complete the course on time"
+msgstr "termine le parcours à temps"
 
 #: u_resourcestring.smountainpeakshint
 msgid "if you're afraid of heights, don't go!"
@@ -606,6 +680,10 @@ msgstr "niveau suivant"
 #: u_resourcestring.sno
 msgid "No"
 msgstr "Non"
+
+#: u_resourcestring.snochallengehere
+msgid "no challenge here"
+msgstr "pas de défi ici"
 
 #: u_resourcestring.snocomment
 msgid "...no comment..."
@@ -673,17 +751,21 @@ msgstr "gare au loup !"
 
 #: u_resourcestring.splainmoonhelptext
 msgid ""
-"Blow up the robots as fast as you can\n"
+"Destroy the robots as fast as you can\n"
 "Outside: ←→↑↓ to move, ACTION1 to jump, ACTION2 to fire\n"
 "Inside: use the mouse to target the robots, ACTION2 to fire"
 msgstr ""
-"Détruit les robots le plus vite possible\n"
+"Détruis les robots le plus vite possible\n"
 "Extérieur: ←→↑↓ pour se déplacer, ACTION1 pour sauter, ACTION2 pour tirer\n"
 "Intérieur: utilisez la souris pour cibler les robots, ACTION2 pour tirer"
 
 #: u_resourcestring.splainofsleepingmoon
 msgid "The plain of the sleeping moon"
 msgstr "La plaine de la lune endormie"
+
+#: u_resourcestring.splainofsleepingmoonchallengehelptext
+msgid "blows up the robots in time"
+msgstr "Détruis les robots à temps"
 
 #: u_resourcestring.splainofsleepingmoonhint
 msgid "it is said that on full moon nights you can hear the train whistle..."
@@ -754,6 +836,22 @@ msgstr "Ma chère Julia, j'espère que tu vas bien. Cette carte SD est la clé p
 msgid "Oh my love, I’m so happy you replied! I can’t wait for us to be together again either, but I have to be careful, the boss is watching me closely. He says I’m daydreaming... It’s because I can’t stop thinking about you!"
 msgstr "Oh mon amour comme je suis content que tu m'ais répondu ! Moi aussi j'ai hâte qu'on se retrouve, mais je dois faire attention, le chef me surveille de prêt. Il dit que je suis dans la lune... C'est parce que je pense sans arrêt à toi !"
 
+#: u_resourcestring.ssamshut
+msgid "Sam's hut"
+msgstr "La cabane de Sam"
+
+#: u_resourcestring.ssamshuthint
+msgid "item exchange and fun games"
+msgstr "échanges d'articles et jeux rigolos"
+
+#: u_resourcestring.sscore
+msgid "SCORE"
+msgstr "SCORE"
+
+#: u_resourcestring.sselectyourprize
+msgid "Select your prize"
+msgstr "Sélectionne ton prix"
+
 #: u_resourcestring.sshhifyoumanage
 msgid "Shhh... If you manage to blow up my robots hiding in the carriages before the journey's over, I'll help you."
 msgstr "Chut... Si tu réussis à exploser mes robots qui se cachent dans les wagons avant la fin du voyage, Je t'aiderai."
@@ -798,6 +896,10 @@ msgstr "Désolé, ce jeu n'est pas encore disponible..."
 msgid "SOUNDS"
 msgstr "SONS"
 
+#: u_resourcestring.ssoundslikearemote
+msgid "Sounds like a remote control. I should be able to control something with it."
+msgstr "On dirai une télécommande. Je devrai pouvoir diriger quelque chose avec elle."
+
 #: u_resourcestring.ssoundvolume
 msgid "SOUND VOLUME"
 msgstr "VOLUME SONS"
@@ -819,6 +921,10 @@ msgstr "Les épinards c'est bon pour la santé"
 msgid "START"
 msgstr "COMMENCER"
 
+#: u_resourcestring.sstartsequence
+msgid "Start sequence"
+msgstr "Démarrer séquence"
+
 #: u_resourcestring.sstormcloudexplanation
 msgid "the lightning storm"
 msgstr "tempête d'éclairs foudroyants"
@@ -827,6 +933,14 @@ msgstr "tempête d'éclairs foudroyants"
 msgctxt "u_resourcestring.sstormcloudupgradehint"
 msgid "increase number of uses"
 msgstr "augmente le nombre d'utilisations"
+
+#: u_resourcestring.sstrikeraccooninstructions
+msgid ""
+"←→↑↓ to target\n"
+"ACTION1 : to strike"
+msgstr ""
+"←→↑↓ pour cibler\n"
+"ACTION1 : frapper"
 
 #: u_resourcestring.ssystemintrusionalert
 msgid "SYSTEM INTRUSION ALERT!"
@@ -857,6 +971,10 @@ msgstr "Merci Dino, je suis contente de te connaître. J'espère qu'on se reverr
 #: u_resourcestring.sthankyouforyourhelp
 msgid "Thank you for your help."
 msgstr "Merci pour ton aide."
+
+#: u_resourcestring.sthehigheryourscore
+msgid "The higher your score, the more articles you earn!"
+msgstr "Plus ton score est élevé, plus tu gagnes d'articles!"
 
 #: u_resourcestring.sthelittlered
 msgid "The Little Red"
@@ -906,6 +1024,10 @@ msgstr "AMÉLIORER"
 msgid "Volcano"
 msgstr "Volcano"
 
+#: u_resourcestring.svolcanochallengehelptext
+msgid "win three time the race versus Dino"
+msgstr "gagne trois fois la course contre Dino"
+
 #: u_resourcestring.svolcanodinohelptext
 msgctxt "u_resourcestring.svolcanodinohelptext"
 msgid ""
@@ -951,6 +1073,14 @@ msgstr "Nous avons atteint notre pleine vitesse. Nous arriverons dans moins de d
 #: u_resourcestring.sweirdwayofinvitingpeople
 msgid "Weird way of inviting people over... What's the hurry? What's going on?"
 msgstr "Drôle de façon d'inviter les gens... Pourquoi est-il pressé ? Qu'est-ce qu'il se passe ?"
+
+#: u_resourcestring.swelcometosam
+msgid ""
+"Welcome to Sam's!\n"
+"Click on me for explanations"
+msgstr ""
+"Bienvenue chez Sam!\n"
+"Cliques sur moi pour avoir des explications"
 
 #: u_resourcestring.swelldoneyouaremakinggood
 msgid "Well done, you're making good progress!"
@@ -1044,6 +1174,10 @@ msgstr "Oui, c'est ce que j'ai vaguement entendu."
 msgid "Yes... Time flies. I miss him..."
 msgstr "Oui... Le temps passe. Il me manque..."
 
+#: u_resourcestring.syoucanalsowinitems
+msgid "You can also win items by playing the games. A game costs 100 coins."
+msgstr "Tu peux aussi gagner des articles en jouant aux jeux. Une partie coûte 100 pièces."
+
 #: u_resourcestring.syoulose
 msgctxt "u_resourcestring.syoulose"
 msgid "YOU LOST"
@@ -1057,9 +1191,18 @@ msgstr "Tu mens ! Je suis sûre que tu sais où elle est !"
 msgid "Your grandmother was invited by my parents."
 msgstr "Ta grand-mère a été invitée par mes parents."
 
+#: u_resourcestring.syourscore
+#, object-pascal-format
+msgid "Your score: %d"
+msgstr "Ton score %d"
+
 #: u_resourcestring.syoutakeaplan
 msgid "They look like manufacturing plans. You take one discreetly."
 msgstr "Ça ressemble à des plans de fabrication. Tu en prends un discrètement."
+
+#: u_resourcestring.syouvealreadywonthischallenge
+msgid "you've already won this challenge"
+msgstr "tu as déjà gagné ce défi"
 
 #: u_resourcestring.syouvegotexactly
 #, object-pascal-format

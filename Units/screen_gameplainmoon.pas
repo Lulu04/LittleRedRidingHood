@@ -121,8 +121,6 @@ TLaserShoot = class(TSprite)  // is child of current wagon
   procedure Update(const aElapsedTime: single); override;
 end;
 
-{ TGameInventory }
-
 TGameInventory = class(TInGameInventoryPanel)
 private
   FClock: TUIClock;
@@ -566,10 +564,10 @@ end;
 constructor TLaserGunThatGoInInventory.Create(aUserValue: TUserMessageValue);
 var p1, p2: TPointF;
 begin
-  p1 := FLR.SurfaceToScene(PointF(0, FLR.BodyTopY));
+{  p1 := FLR.SurfaceToScene(PointF(0, FLR.BodyTopY));
   p2 := FGameinventory.Center; //GetXY+PointF(FGameinventory.Width*0.5, FGameinventory.Height*0.5);
-  p2.x := p2.x + FScene.Width;
-  inherited Create(texIconLaserGun, LAYER_GAMEUI, p1, p2, ScreenPlainOfSleepingMoon, aUserValue);
+  p2.x := p2.x + FScene.Width; }
+  inherited Create(texIconLaserGun, LAYER_GAMEUI, FLR, FGameinventory, ScreenPlainOfSleepingMoon, aUserValue);
 end;
 
 { TPlainGame }
@@ -1515,7 +1513,7 @@ end;
 function TTrain.CharacterToFollowIsOnPlatform: boolean;
 begin
   if FCharacterToFollow = NIL then Result := False
-    else Result := FCharacterToFollow.BodyBottomY = YFeetOnPlatform;
+    else Result := Round(FCharacterToFollow.BodyBottomY) = Round(YFeetOnPlatform);
 end;
 
 function TTrain.CharacterToFollowIsOnHeadPlatform: boolean;
@@ -2147,8 +2145,7 @@ end;
 procedure TScreenPlainOfSleepingMoon.FreeObjects;
 begin
   FreeMousePointer;
-  if FInGamePausePanel.PlayerHaveClickedBackToMapButton or
-     (FScene.RequestedScreen = ScreenMap) then begin
+  if FScene.RequestedScreen = ScreenMap then begin
     FadeOutAndKillMusicAndSounds;
     Audio.ResumeMusicTitleMap;
   end;
@@ -2160,11 +2157,7 @@ begin
   FScrollingSpeed.Free;
   FScrollingSpeed := NIL;
 
-  if FCamera <> NIL then begin
-    FCamera.Unassign;
-    FScene.KillCamera(FCamera);
-    FCamera := NIL;
-  end;
+  FScene.KillCamera(FCamera);
 
   FScene.ClearAllLayer;
   FAtlas.Free;
@@ -2487,6 +2480,8 @@ begin
 
     // LR enter a wagon
     300: begin
+      FLR.IdleUp;
+      FLR.LRBack.SetIdlePosition(True);
       PlayerInfo.PlainMoon.CurrentWagonIndex := FLR.ParentSurface.Tag1-1;
       PlayerInfo.PlainMoon.CurrentWagonJustDone := False;
       FWagonPartEntered.Door.Open;
@@ -2497,10 +2492,10 @@ begin
       FLR.TimeMultiplicator := 1.0;
       FLR.WalkSpeed := FLR.WalkSpeed*0.5;
       FLR.WalkVerticallyTo(FLR.BottomY-2, Self, 305);
+      FLR.Scale.ChangeTo(PointF(0.7,0.7), 1.2);
     end;
     305: begin
-      FLR.Y.ChangeTo(FLR.Y.Value - PPIScale(10), 1.2);
-      FLR.Scale.ChangeTo(PointF(0.7,0.7), 1.2);
+      FLR.Y.ChangeTo(FLR.Y.Value - PPIScale(5), 1.2);
       FLR.SetChildOf(FWagonPartEntered.Door, -2);
       PostMessage(307, 0.5);
     end;
@@ -2784,7 +2779,7 @@ begin
             if FTrain.CharacterToFollowIsAboveLadder then begin
               FLR.Y.Value := FLR.Y.Value + ScaleH(40); // LR 'jump' on the ladder
               FLR.State := lr4sOnLadderDown;
-              if FCamera.Scale.State = psNO_CHANGE then
+              //if FCamera.Scale.State = psNO_CHANGE then
                 FCamera.Scale.ChangeTo(PointF(1.0,1.0), 3.0, idcSinusoid);
               flagPlayerIdle := False;
             end;
@@ -2823,7 +2818,7 @@ begin
               else begin
                 FLR.State := lr4sOnLadderIdle;
                 FLR.BodyBottomY := YFeetOnTrain;
-                if FCamera.Scale.State = psNO_CHANGE then
+                //if FCamera.Scale.State = psNO_CHANGE then
                   FCamera.Scale.ChangeTo(PointF(0.5,0.5), 3.0, idcSinusoid);
               end;
             flagPlayerIdle := False;

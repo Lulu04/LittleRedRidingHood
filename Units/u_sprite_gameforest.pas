@@ -320,8 +320,7 @@ begin
   sndPulley.Pitch.Value := 0.8;
   sndPulley.Pan.Value := -0.5;
 
-  sndElevator := Audio.AddSound('EngineLoop.ogg');
-  sndElevator.Loop := True;
+  sndElevator := Audio.AddSound('EngineLoop.ogg', 0.5, True);
 
   sndHammer := Audio.AddSound('wall-bump-1.ogg');
 end;

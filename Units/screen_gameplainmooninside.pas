@@ -46,7 +46,7 @@ var ScreenPlainMoonInside: TScreenPlainMoonInside;
 
 implementation
 
-uses Forms, screen_gameplainmoon, u_app, u_utils, Math;
+uses Forms, screen_gameplainmoon, u_app, u_utils, u_screen_map, Math;
 
 type
 
@@ -833,7 +833,7 @@ begin
   FScene.TexMan.Delete(texMountain);
 
   // if player interrupts the game to return to map, we restart the map music
-  if FInGamePausePanel.PlayerHaveClickedBackToMapButton{FRobotDestroyed < FRobotCount} then begin
+  if FScene.RequestedScreen = ScreenMap then begin
     ScreenPlainOfSleepingMoon.FadeOutAndKillMusicAndSounds;
     Audio.ResumeMusicTitleMap;
   end

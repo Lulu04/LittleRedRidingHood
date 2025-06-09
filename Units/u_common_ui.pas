@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils,
-  OGLCScene, BGRABitmap, BGRABitmapTypes;
+  OGLCScene, u_sprite_lrcommon, BGRABitmap, BGRABitmapTypes;
 
 const
   ScenarioWhiteBlink= 'TintChange 255 255 255 100 0.5 0 Linear'#10+
@@ -72,6 +72,12 @@ TUIPurpleCristalCounter = class(TUIItemCounter)
   constructor Create;
 end;
 
+{ TUIRaccoonCounter }
+
+TUIRaccoonCounter = class(TUIItemCounter)
+  constructor Create;
+end;
+
 { TUIManufacturerPlan }
 
 TUIManufacturerPlan = class(TUIItem)
@@ -99,6 +105,12 @@ end;
 { TUILaserGun }
 
 TUILaserGun = class(TUIItem)
+  constructor Create;
+end;
+
+{ TUICraneRemote }
+
+TUICraneRemote = class(TUIItem)
   constructor Create;
 end;
 
@@ -173,7 +185,10 @@ private FCenterPtToAppear, FCenterPtToDisapear: TPointF;
         FTargetScreen: TScreenTemplate; FUserValue: TUserMessageValue;
 public
   constructor Create(aIconTexture: PTexture; aLayerIndex: integer; aCenterPtToAppear, aCenterPtToDisapear: TPointF;
-                     aTargetScreen: TScreenTemplate=NIL; aUserValue: TUserMessageValue=999999);
+                     aTargetScreen: TScreenTemplate=NIL; aUserValue: TUserMessageValue=999999); overload;
+  constructor Create(aIconTexture: PTexture; aLayerIndex: integer;
+    aLRInstance: TBaseComplexContainer; aInventoryPanel: TInGameInventoryPanel;
+  aTargetScreen: TScreenTemplate=NIL; aUserValue: TUserMessageValue=999999); overload;
   procedure ProcessMessage(aUserValue: TUserMessageValue); override;
 end;
 
@@ -254,7 +269,9 @@ var
   texKeyMetal,
   texSDCardGreen,
   texIconDorsalThruster,
-  texIconLaserGun: PTexture;
+  texIconLaserGun,
+  texIconCraneRemote,
+  texIconHammerRaccoon: PTexture;
   FontNumberCapLine: integer;
 
 // FONTS used by the game
@@ -272,6 +289,8 @@ procedure LoadKeyMetalTexture(aAtlas: TOGLCTextureAtlas);
 procedure LoadSDCardTexture(aAtlas: TOGLCTextureAtlas);
 procedure LoadDorsalThrusterTexture(aAtlas: TOGLCTextureAtlas);
 procedure LoadLaserGunTexture(aAtlas: TOGLCTextureAtlas);
+procedure LoadIconCraneRemoteTexture(aAtlas: TAtlas);
+procedure LoadIconHammerRaccoon(aAtlas: TAtlas);
 
 implementation
 uses u_app, u_common, u_resourcestring, Math, Graphics, LCLType;
@@ -346,6 +365,16 @@ begin
   texIconLaserGun := aAtlas.AddFromSVG(SpriteUIFolder+'LaserGun.svg', -1, IconHeight);
 end;
 
+procedure LoadIconCraneRemoteTexture(aAtlas: TAtlas);
+begin
+  texIconCraneRemote := aAtlas.AddFromSVG(SpriteUIFolder+'IconCraneRemote.svg', -1, IconHeight);
+end;
+
+procedure LoadIconHammerRaccoon(aAtlas: TAtlas);
+begin
+  texIconHammerRaccoon := aAtlas.AddFromSVG(SpriteUIFolder+'IconHammerRaccoon.svg', -1, IconHeight);
+end;
+
 { TUIManufacturerPlan }
 
 constructor TUIManufacturerPlan.Create;
@@ -369,6 +398,20 @@ begin
   if aLayerIndex <> -1 then FScene.Add(Self, aLayerIndex);
   FCenterPtToAppear := aCenterPtToAppear;
   FCenterPtToDisapear := aCenterPtToDisapear;
+  FTargetScreen := aTargetScreen;
+  FUserValue := aUserValue;
+  PostMessage(0);
+end;
+
+constructor TSpriteThatGoInInventory.Create(aIconTexture: PTexture;
+  aLayerIndex: integer; aLRInstance: TBaseComplexContainer;
+  aInventoryPanel: TInGameInventoryPanel; aTargetScreen: TScreenTemplate;
+  aUserValue: TUserMessageValue);
+begin
+  inherited Create(aIconTexture, False);
+  if aLayerIndex <> -1 then FScene.Add(Self, aLayerIndex);
+  FCenterPtToAppear := aLRInstance.SurfaceToScene(PointF(0, -aLRInstance.DeltaYToTop));
+  FCenterPtToDisapear := aInventoryPanel.Center;
   FTargetScreen := aTargetScreen;
   FUserValue := aUserValue;
   PostMessage(0);
@@ -425,6 +468,19 @@ begin
   FTotalHeight := o.Height + Round(o.Height*0.2);
 end;
 
+{ TUICraneRemote }
+
+constructor TUICraneRemote.Create;
+var o: TSprite;
+begin
+  inherited Create(FScene);
+  o := TSprite.Create(texIconCraneRemote, False);
+  AddChild(o);
+
+  FTotalWidth := o.Width;
+  FTotalHeight := o.Height;
+end;
+
 { TUISDCardGreen }
 
 constructor TUISDCardGreen.Create;
@@ -452,6 +508,13 @@ begin
   inherited Create(texCristalGray, UIFontNumber, 2);
   Icon.TintMode := tmMixColor;
   Icon.Tint.Value := BGRA(255,0,255,150);
+end;
+
+{ TUIRaccoonCounter }
+
+constructor TUIRaccoonCounter.Create;
+begin
+  inherited Create(texIconHammerRaccoon, UIFontNumber, 3);
 end;
 
 { TBaseInGamePanelWithCoinAndClock }
@@ -595,6 +658,7 @@ begin
   FTotalHeight := 0;
 
   Visible := False; // not visible until item is added
+  SetCoordinate(FScene.Width, 0);
 end;
 
 { TBasePanelEndGameScore }
@@ -1022,7 +1086,7 @@ begin
 
   Icon := TSprite.Create(aTexIcon, False);
   AddChild(Icon, 0);
-  Icon.SetCoordinate(0, FontNumberCapLine); // aFont.Font.FontHeight-aTexIcon^.FrameHeight);
+  Icon.SetCoordinate(0, FontNumberCapLine);
 
   FMaxValue := Trunc(Power(10, aMaxDigit))-1;
 

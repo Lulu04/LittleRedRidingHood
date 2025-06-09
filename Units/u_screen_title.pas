@@ -146,14 +146,13 @@ begin
   FScene.Add(sky, LAYER_BG2);
 
   // clouds
-  for i:=0 to 15 do TCloud.Create(Random*FScene.Width, Random*FScene.Height*0.2, 0.6, -1);
-  for i:=0 to 8 do TCloud.Create(Random*FScene.Width, Random*FScene.Height*0.2, 0.4, -1);
-  //for i:=0 to 4 do TCloud.Create(Random*FScene.Width, Random*FScene.Height*0.2, 0, -1);
-  TCloud.Create(0, 0, 0, -1);
-  TCloud.Create(FScene.Width*0.3, FScene.Height*0.15, 0, -1);
-  TCloud.Create(FScene.Width*0.75, FScene.Height*0.25, 0, -1);
-  TCloud.Create(FScene.Width*0.5, FScene.Height*0.05, 0, -1);
-  TCloud.Create(FScene.Width*1, FScene.Height*0.1, 0, -1);
+  for i:=0 to 15 do TCloud.Create(Random*FScene.Width, Random*FScene.Height*0.2, 0.6, -1, LAYER_BG1);
+  for i:=0 to 8 do TCloud.Create(Random*FScene.Width, Random*FScene.Height*0.2, 0.4, -1, LAYER_BG1);
+  TCloud.Create(0, 0, 0, -1, LAYER_BG1);
+  TCloud.Create(FScene.Width*0.3, FScene.Height*0.15, 0, -1, LAYER_BG1);
+  TCloud.Create(FScene.Width*0.75, FScene.Height*0.25, 0, -1, LAYER_BG1);
+  TCloud.Create(FScene.Width*0.5, FScene.Height*0.05, 0, -1, LAYER_BG1);
+  TCloud.Create(FScene.Width*1, FScene.Height*0.1, 0, -1, LAYER_BG1);
 
   // title
   FTitle1 := TFreeText.Create(FScene);
@@ -223,7 +222,7 @@ begin
   // panel continue game
   ContinuePanel := TContinuePanel.Create(FFontText);
   // panel options
-  OptionsPanel := TOptionsPanel.Create(FFontText);
+  OptionsPanel := TOptionsPanel.Create(FFontText, True);
   // panel credits
   CreditsPanel := TCreditsPanel.Create(FFontText);
 

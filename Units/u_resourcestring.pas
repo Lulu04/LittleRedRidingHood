@@ -33,6 +33,7 @@ sContinueGame='CONTINUE GAME';
 sOptions='OPTIONS';
 sCredits='CREDITS';
 sQuit='QUIT';
+sLoading='LOADING...';
 
 sThanks='Thank you for playing this game!'+LineEnding+LineEnding+
         'Participated in some way:';
@@ -83,10 +84,13 @@ sTotal='TOTAL';
 sGamePaused='paused';
 sResumeGame='RESUME GAME';
 sBackToMap='BACK TO MAP';
+sInstructions='HOW TO PLAY';
 
 sGetReady='GET READY';
 sGo='GO';
 sOutOfTime='OUT OF TIME';
+
+sConnected='CONNECTED';
 
 sYes='Yes';
 sNo='No';
@@ -110,6 +114,7 @@ sDorsalThrusterExplanation='a dorsal thruster to fly in the air';
 
 sLaserGunExplanation='a laser gun effective only against machines';
 
+sCraneRemoteControlExplanation='a crane remote control';
 sPocketSubmarineExplanation='a submarine that can shrink to fit in a pocket';
 
 // hints in the panel where player choose the step of the game
@@ -150,15 +155,27 @@ sDinoRaceInstructions='Win the race against Dino !'+ LineEnding+
                       'Don''t forget to collect gas cans to refill the tank' + LineEnding +
                       '↑↓ : move up and down' + LineEnding +
                       'ACTION1 : speed up';
-SPlainMoonHelpText='Blow up the robots as fast as you can' + LineEnding +
+SPlainMoonHelpText='Destroy the robots as fast as you can' + LineEnding +
                    'Outside: ←→↑↓ to move, ACTION1 to jump, ACTION2 to fire' + LineEnding +
                    'Inside: use the mouse to target the robots, ACTION2 to fire';
+sMermaidsPortHelpText='Crosses the industrial zone to reach the sea.' + LineEnding +
+                      '←→↑↓ to move' + LineEnding +
+                      'ACTION1 : jump' + LineEnding +
+                      'ACTION2 : use object';
+sMermaidsPortHelpText2='When you jump on a container, the remote control'+ LineEnding +
+                       'automatically connects to it'+ LineEnding +
+                       'Hold down ACTION2 and use ←→↑↓ to move it.';
+
+sStrikeRaccoonInstructions='←→↑↓ to target'+ LineEnding +
+                           'ACTION1 : to strike';
 
 sWolf='Wolf';
 sAIvoice='AI voice';
 
 // place names on the map and hints
 sWorkShopHint='home, sweet home';
+sSamsHut='Sam''s hut';
+sSamsHutHint='item exchange and fun games';
 sPinForest='The pins forest';
 sPinForestHint='beware the wolf!';
 sMountainPeaks='Mountain peaks';
@@ -169,6 +186,17 @@ sPlainOfSleepingMoon='The plain of the sleeping moon';
 sPlainOfSleepingMoonHint='it is said that on full moon nights you can hear the train whistle...';
 sMermaidsPort='The Mermaids port';
 sMermaidsPortHint='don''t forget your swimsuit!';
+
+// challenge
+sChallengeMode='Challenge mode';
+sGameMode='Game mode';
+sNoChallengeHere='no challenge here';
+sYouveAlreadyWonThisChallenge='you''ve already won this challenge';
+sForestChallengeHelpText='first, upgrade to the max the bow, the elevator, the hammer '+
+                         'and the lightning storm then win the game';
+sMountainPeaksChallengeHelpText='complete the course on time';
+sVolcanoChallengeHelpText='win three time the race versus Dino';
+sPlainOfSleepingMoonChallengeHelpText='blows up the robots in time';
 
 // dialogs intro
 sGranny='Granny';
@@ -188,6 +216,17 @@ sIPromiseToTakeGoodCare='I promise to take good care of her when she gets older!
 sAhhhh='Ahhhhh!';
 sGrannyAsk='Granny??';
 sHey='Hey!!';
+
+// dialogs Sam
+sWelcomeToSam='Welcome to Sam''s!'+LineEnding+'Click on me for explanations';
+sHereYouCanExchange='Here you can exchange your coins for certain items.';
+sYouCanAlsoWinItems='You can also win items by playing the games. A game costs 100 coins.';
+sTheHigherYourScore='The higher your score, the more articles you earn!';
+sHaveFun='Have fun!';
+sScore='SCORE';
+sYourScore='Your score: %d';
+sSelectYourPrize='Select your prize';
+
 
 // dialogs pine forest
 sSomethingTellMeYouNeedMyHelp='Something tells me you need my help.';
@@ -342,6 +381,12 @@ sWeArriveAtMermaidsPort='We arrive at Mermaids Port. No one must see you. '+
                         'As soon as the train stops, jump off and find a way to get to the island. Good luck!';
 sThankYouForYourHelp='Thank you for your help.';
 
+// dialogs Mermaids Port
+sMarcusTransport='MARCUS TRANSPORT';
+sStartSequence='Start sequence';
+sItsTooDangerousIHaveToFind='It''s too dangerous. I have to find another way to cross.';
+sSoundsLikeARemote='Sounds like a remote control. I should be able to control something with it.';
+sINeedAKeyToOpenThisGate='I need a key to open this gate...';
 
 implementation
 uses OGLCScene, LazUTF8;

@@ -31,7 +31,10 @@ uses
   function SpriteIntroductionFolder: string;
   function GetFolderSpritePlainOfSleepingMoon: string;
   function FolderSpritePlainOfSleepingMoonInside: string;
-  function SpriteGameMermaidsPort: string;
+  function FolderSpriteGameMermaidsPort: string;
+  function FolderSpriteSam: string;
+  function FolderSpriteStrikeRaccoon: string;
+  function FolderSpriteDartboard: string;
   function LanguageFolder: string;
 
   function ALSoundLibrariesSubFolder: string;
@@ -39,6 +42,8 @@ uses
   function PPIScale(AValue: integer): integer;
   function ScaleW(AValue: integer): integer;
   function ScaleH(AValue: integer): integer;
+
+  procedure DeleteAtlasFiles;
 
 var
   AdditionnalScale: single=1.0;
@@ -98,8 +103,10 @@ TGameDescriptor = class
 private
   FCurrentStep, FStepCount, FStepPlayed: integer;
   FIsTerminated, FFirstTimeTerminated: boolean;
+  FChallengeIsTerminated: boolean;
   function GetFirstTimeTerminated: boolean;
   function GetHelpText: string; virtual; abstract;
+  function GetChallengeHelpText: string; virtual;
 protected
   procedure SaveCommonProperties(var aProp: TProperties);
   procedure LoadCommonProperties(const aProp: TProperties);
@@ -120,6 +127,9 @@ public
   property StepPlayed: integer read FStepPlayed write FStepPlayed;
   // a short text that describe the keys used to play the game
   property HelpText: string read GetHelpText;
+public // challenge
+  property ChallengeHelpText: string read GetChallengeHelpText;
+  property ChallengeIsTerminated: boolean read FChallengeIsTerminated write FChallengeIsTerminated;
 end;
 
 // FOREST GAME DESCRIPTOR
@@ -183,6 +193,7 @@ private
   FAmaraHaveAlreadyAskForTheStormCloud: boolean;
 
   function GetHelpText: string; override;
+  function GetChallengeHelpText: string; override;
 public
   constructor Create;
   destructor Destroy; override;
@@ -217,6 +228,7 @@ TMountainPeakDescriptor = class(TGameDescriptor)
 private
   FZipLine: TMountainPeakZipLine;         // [0..1]
   function GetHelpText: string; override;
+  function GetChallengeHelpText: string; override;
 public const
   ZipLineMaxLevel = 1;
   MountainPeaksStepCount = 10;
@@ -259,6 +271,7 @@ private
   FDigicodeDecoder: TDigicodeDecoder;
   FDorsalThruster: TDorsalThruster;
   function GetHelpText: string; override;
+  function GetChallengeHelpText: string; override;
 private const
   VolcanoInnerStepCount = 6;  // 1..5=inner, 6=dino
   DigicodeDecoderMaxLevel = 1;
@@ -295,6 +308,7 @@ private
   FIntroAlreadySeen: boolean;
   FLaserGun: TLaserGun;
   function GetHelpText: string; override;
+  function GetChallengeHelpText: string; override;
 private // not saved
   FCurrentWagonIndex: integer;
   FCurrentWagonJustDone: boolean;
@@ -317,7 +331,13 @@ public // special item and properties
 end;
 
 
-{ TPocketSubmarine }
+{ TCraneRemoteControl }
+
+TCraneRemoteControl = class(TUpgradableItemDescriptor)
+  function CanDisplayPrice: boolean; override;
+  function NextLevelExplanation: string; override;
+  function PriceForNextLevel: ArrayOfMoneyDescriptor; override;
+end;
 
 TPocketSubmarine = class(TUpgradableItemDescriptor)
   function CanDisplayPrice: boolean; override;
@@ -332,9 +352,12 @@ private
   function GetHelpText: string; override;
 private
   FPocketSubmarine: TPocketSubmarine;
+  FCraneRemoteControl: TCraneRemoteControl;
+  FRemoteExplanationDone: boolean;
  const
-  MermaidsPortStepCount = 5;  // 1=Penelope encounter  2=train game
+  MermaidsPortStepCount = 4;  // 1,2,3=crossing the city  4=under sea
   PocketSubmarineMaxLevel = 1;
+  CraneRemoteControlMaxLevel = 1;
 public
   constructor Create;
   destructor Destroy; override;
@@ -342,6 +365,9 @@ public
   procedure LoadFromString(const s: string); override;
 public // special item and properties
   property PocketSubmarine: TPocketSubmarine read FPocketSubmarine;
+  property CraneRemoteControl: TCraneRemoteControl read FCraneRemoteControl;
+public // property not saved
+  property RemoteExplanationDone: boolean read FRemoteExplanationDone write FRemoteExplanationDone;
 end;
 
 
@@ -431,7 +457,8 @@ var
   FSaveGame: TSaveGame;
 
 implementation
-uses Forms, u_common, u_resourcestring, u_utils, LCLType, i18_utils;
+uses Forms, u_common, u_resourcestring, u_utils, u_screen_sam, LCLType,
+  i18_utils, FileUtil;
 
 function PPIScale(AValue: integer): integer;
 begin
@@ -446,6 +473,19 @@ end;
 function ScaleH(AValue: integer): integer;
 begin
   Result := Round(FScene.Height*AValue/768*AdditionnalScale);
+end;
+
+procedure DeleteAtlasFiles;
+var t: TStringList;
+  i: integer;
+begin
+  t := FindAllFiles(FSaveGame.SaveFolder, '*.atlas', False);
+  try
+    for i:=0 to t.Count-1 do
+      DeleteFile(t.Strings[i]);
+  finally
+    t.Free;
+  end;
 end;
 
 
@@ -559,9 +599,24 @@ begin
   Result := SpriteFolder+'SleepingMoonPlainInside'+DirectorySeparator;
 end;
 
-function SpriteGameMermaidsPort: string;
+function FolderSpriteGameMermaidsPort: string;
 begin
   Result := SpriteFolder+'MermaidsPort'+DirectorySeparator;
+end;
+
+function FolderSpriteSam: string;
+begin
+  Result := SpriteFolder+'Sam'+DirectorySeparator;
+end;
+
+function FolderSpriteStrikeRaccoon: string;
+begin
+  Result := FolderSpriteSam+'StrikeRaccoon'+DirectorySeparator;
+end;
+
+function FolderSpriteDartboard: string;
+begin
+  Result := FolderSpriteSam+'Dartboard'+DirectorySeparator;
 end;
 
 function LanguageFolder: string;
@@ -927,6 +982,13 @@ begin
   end else Result := SVolcanoDinoHelpText;
 end;
 
+function TVolcanoDescriptor.GetChallengeHelpText: string;
+begin
+  if not ChallengeIsTerminated
+    then Result := sVolcanoChallengeHelpText
+    else Result := sYouveAlreadyWonThisChallenge;
+end;
+
 constructor TVolcanoDescriptor.Create;
 begin
   inherited Create(VolcanoInnerStepCount);
@@ -1005,6 +1067,13 @@ begin
   Result := SPlainMoonHelpText;
 end;
 
+function TPlainMoonDescriptor.GetChallengeHelpText: string;
+begin
+  if not ChallengeIsTerminated
+    then Result := sPlainOfSleepingMoonChallengeHelpText
+    else Result := sYouveAlreadyWonThisChallenge;
+end;
+
 constructor TPlainMoonDescriptor.Create;
 begin
   inherited Create(PlainMoonStepCount);
@@ -1040,6 +1109,26 @@ begin
   prop.BooleanValueOf('IntroAlreadySeen', FIntroAlreadySeen, False);
 end;
 
+{ TCraneRemoteControl }
+
+function TCraneRemoteControl.CanDisplayPrice: boolean;
+begin
+  Result := PlayerInfo.MermaidsPort.CraneRemoteControl.Owned;
+end;
+
+function TCraneRemoteControl.NextLevelExplanation: string;
+begin
+  case level of
+    0: Result := '?';
+    else Result := sCraneRemoteControlExplanation;
+ end;
+end;
+
+function TCraneRemoteControl.PriceForNextLevel: ArrayOfMoneyDescriptor;
+begin
+  Result := NIL;
+end;
+
 { TPocketSubmarine }
 
 function TPocketSubmarine.CanDisplayPrice: boolean;
@@ -1064,18 +1153,22 @@ end;
 
 function TMermaidsPortDescriptor.GetHelpText: string;
 begin
-  Result := 'not yet implemented';
+  Result := sMermaidsPortHelpText;
+  if FCraneRemoteControl.Owned then
+    Result := Result + LineEnding + sMermaidsPortHelpText2;
 end;
 
 constructor TMermaidsPortDescriptor.Create;
 begin
   inherited Create(MermaidsPortStepCount);
   FPocketSubmarine := TPocketSubmarine.Create(PocketSubmarineMaxLevel, atoiFound);
+  FCraneRemoteControl := TCraneRemoteControl.Create(CraneRemoteControlMaxLevel, atoiFound);
 end;
 
 destructor TMermaidsPortDescriptor.Destroy;
 begin
   FreeAndNil(FPocketSubmarine);
+  FreeAndNil(FCraneRemoteControl);
   inherited Destroy;
 end;
 
@@ -1084,6 +1177,7 @@ var prop: TProperties;
 begin
   prop.Init('!');
   SaveCommonProperties(prop);
+  prop.Add('CraneRemoteControl', FCraneRemoteControl.Level);
   prop.Add('SubmarineLevel', FPocketSubmarine.Level);
   Result := prop.PackedProperty;
 end;
@@ -1095,6 +1189,8 @@ begin
   vi := 0;
   prop.Split(s, '!');
   LoadCommonProperties(prop);
+  prop.ByteValueOf('CraneRemoteControl', vi, 0);
+  FCraneRemoteControl.Level := vi;
   prop.ByteValueOf('SubmarineLevel', vi, 0);
   FPocketSubmarine.Level := vi;
 end;
@@ -1104,6 +1200,13 @@ end;
 function TMountainPeakDescriptor.GetHelpText: string;
 begin
   Result := SMountainPeakHelpText;
+end;
+
+function TMountainPeakDescriptor.GetChallengeHelpText: string;
+begin
+  if not ChallengeIsTerminated
+    then Result := sMountainPeaksChallengeHelpText
+    else Result := sYouveAlreadyWonThisChallenge;
 end;
 
 constructor TMountainPeakDescriptor.Create;
@@ -1156,6 +1259,13 @@ end;
 function TForestDescriptor.GetHelpText: string;
 begin
   Result := SForestHelpText;
+end;
+
+function TForestDescriptor.GetChallengeHelpText: string;
+begin
+  if not ChallengeIsTerminated
+    then Result := sForestChallengeHelpText
+    else Result := sYouveAlreadyWonThisChallenge;
 end;
 
 constructor TForestDescriptor.Create;
@@ -1241,16 +1351,23 @@ begin
   FFirstTimeTerminated := False;
 end;
 
+function TGameDescriptor.GetChallengeHelpText: string;
+begin
+  Result := sNoChallengeHere;
+end;
+
 procedure TGameDescriptor.SaveCommonProperties(var aProp: TProperties);
 begin
   aProp.Add('CurrentStep', CurrentStep);
   aProp.Add('IsTerminated', IsTerminated);
+  aProp.Add('ChallengeIsTerminated', ChallengeIsTerminated);
 end;
 
 procedure TGameDescriptor.LoadCommonProperties(const aProp: TProperties);
 begin
   aProp.IntegerValueOf('CurrentStep', FCurrentStep, 1);
   aProp.BooleanValueOf('IsTerminated', FIsTerminated, False);
+  aProp.BooleanValueOf('ChallengeIsTerminated', FChallengeIsTerminated, False);
 end;
 
 constructor TGameDescriptor.Create(aStepCount: integer);
@@ -1553,6 +1670,9 @@ begin
   finally
     t.Free;
   end;
+
+  // re-initialize global variables in case of player change
+  u_screen_sam.FPlayerPlaySamsGame := False;
 end;
 
 procedure TSaveGame.CreateNewPlayer(const aPlayerName: string);

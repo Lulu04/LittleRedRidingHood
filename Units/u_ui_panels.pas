@@ -125,6 +125,7 @@ public
   property Key: word read FKey write FKey;
 end;
 
+
 { TOptionsPanel }
 
 TOptionsPanel = class(TCenteredGameUIPanel)
@@ -151,12 +152,14 @@ private
 protected
   procedure ProcessButtonClick(Sender: TSimpleSurfaceWithEffect); override;
 public
-  constructor Create(aFont: TTexturedFont);
+  constructor Create(aFont: TTexturedFont; aShowLanguages: boolean);
   destructor Destroy; override;
   procedure Show; override;
   procedure Hide(aFree: boolean); override;
   procedure UpdateWidget;
 end;
+
+
 
 { TCreditsPanel }
 
@@ -177,16 +180,69 @@ public
 end;
 
 
+TModalOptionsPanel = class;
+{ TModalPressAKeyPanel }
+
+TModalPressAKeyPanel = class(TUIModalPanel)
+private
+  FClock: TFreeTextClockLabel;
+  FScanKey: boolean;
+  FParentOptionPanel: TModalOptionsPanel;
+protected
+  procedure ProcessButtonClick(Sender: TSimpleSurfaceWithEffect);
+  procedure ProcessCountDownDone(Sender: TObject);
+public
+  constructor Create(aFont: TTexturedFont; aParentOptionPanel: TModalOptionsPanel);
+  procedure Update(const AElapsedTime: single); override;
+  procedure ShowModal; override;
+  procedure Hide(aFree: boolean); override;
+end;
+
+{ TModalOptionsPanel }
+
+TModalOptionsPanel = class(TUIModalPanel)
+private
+  BClose: TUIButton;
+  CursorMusic, CursorSound: TUIScrollBar;
+  LabelCursorMusic, LabelCursorSound: TUILabel;
+  ButtonKeyUp, ButtonKeyDown, ButtonKeyLeft, ButtonKeyRight,
+  ButtonKeyAction1, ButtonKeyAction2, ButtonKeyPause: TUIButton;
+  LabelKeyUp, LabelKeyDown, LabelKeyLeft, LabelKeyRight,
+  LabelKeyAction1, LabelKeyAction2, LabelKeyPause: TUILabel;
+  FKeyboardButtonSize, FKeyboardButtonSpacing: integer;
+  texArrow: PTexture;
+  FButtonEdited: TUIButton;
+  FFont: TTexturedFont;
+  procedure ProcessCursorChange(Sender: TSimpleSurfaceWithEffect);
+  procedure FormatButtonKey(aButton: TUIButton; aIsAction: boolean=False);
+  procedure FormatLabelKey(aLabel: TUILabel);
+  procedure FormatButtonMenu(aButton: TUIButton);
+  procedure UpdateLabelKeys;
+  procedure UpdateLabelVolume;
+  procedure ProcessPressAKeyDone(aKey: word);
+protected
+  procedure ProcessButtonClick(Sender: TSimpleSurfaceWithEffect);
+public
+  constructor Create(aFont: TTexturedFont);
+  destructor Destroy; override;
+  procedure ShowModal; override;
+  procedure Hide(aFree: boolean); override;
+  procedure UpdateWidget;
+end;
+
 { TInGamePausePanel }
 TCallbackPlayerEnterCheatCode = procedure(const aCheatCode: string) of object;
+
 TInGamePausePanel = class(TUIModalPanel)
-private class var FPlayerHaveClickedBackToMapButton: boolean;
 private
   FKeyboardToButtons: TButtonsClickableByKeyboard;
-  BResumeGame, BBackToMap: TUIButton;
+  BResumeGame, BBackToMap, BOptions, BInstructions: TUIButton;
   FCheatCodeManager: TCheatCodeManager;
   FOnPlayerEnterCheatCode: TCallbackPlayerEnterCheatCode;
   FMousePointerPreviousVisibleState: Boolean;
+  FFont: TTexturedFont;
+  FAtlas: TOGLCTextureAtlas;
+  //FOptionsPanel: TModalOptionsPanel;
   procedure FormatButton(aButton: TUIButton);
   procedure ProcessButtonClick(Sender: TSimpleSurfaceWithEffect);
 public
@@ -195,7 +251,6 @@ public
   procedure ProcessMessage({%H-}UserValue: TUserMessageValue); override;
   procedure ShowModal; override;
   procedure Hide(aFree: boolean); override;
-  class property PlayerHaveClickedBackToMapButton: boolean read FPlayerHaveClickedBackToMapButton;
 public
   procedure SetCheatCodeList(const aList: TStringArray);
   property OnPlayerEnterCheatCode: TCallbackPlayerEnterCheatCode read FOnPlayerEnterCheatCode write FOnPlayerEnterCheatCode;
@@ -213,6 +268,7 @@ public
   constructor Create(const aText: string);
   procedure ProcessMessage({%H-}UserValue: TUserMessageValue); override;
   procedure ShowModal; override;
+  procedure Hide(aFree: boolean); override;
 end;
 
 { TDialogQuestion }
@@ -242,7 +298,7 @@ procedure LoadTitleScreenIcon(aAtlas: TOGLCTextureAtlas; aFontHeight: integer);
 
 implementation
 uses u_resourcestring, u_app, u_screen_title, u_screen_map, u_audio,
-  i18_utils, Math, Controls, LCLType;
+  u_gamescreentemplate, i18_utils, Math, Controls, LCLType;
 
 procedure LoadTitleScreenIcon(aAtlas: TOGLCTextureAtlas; aFontHeight: integer);
 begin
@@ -571,6 +627,12 @@ begin
 //  Audio.GlobalVolume := 0.5;
 end;
 
+procedure TDisplayGameHelp.Hide(aFree: boolean);
+begin
+  Audio.GlobalVolume := 1.0;
+  inherited Hide(aFree);
+end;
+
 { TCreditsPanel }
 
 procedure TCreditsPanel.CreateHearts;
@@ -794,13 +856,24 @@ begin
   FKeyboardToButtons.KeyboardEnabled := False;
   if Sender = BResumeGame then begin
     Hide(False);
+    Audio.GlobalVolume := 1.0;
   end else
   if Sender = BBackToMap then begin
     Hide(True);
     FScene.RunScreen(ScreenMap);
-    FPlayerHaveClickedBackToMapButton := True;
+    Audio.GlobalVolume := 1.0;
+  end else
+  if Sender = BOptions then begin
+    with TModalOptionsPanel.Create(FFont) do begin
+      ShowModal;
+    end;
+  end else
+  if Sender = BInstructions then begin
+    if FScene.CurrentScreen is TGameScreenTemplate then begin
+      Hide(False);
+      TGameScreenTemplate(FScene.CurrentScreen).ShowGameInstructions;
+    end;
   end;
-  Audio.GlobalVolume := 1.0;
 end;
 
 constructor TInGamePausePanel.Create(aFont: TTexturedFont; aAtlas: TOGLCTextureAtlas);
@@ -813,32 +886,46 @@ begin
   VMargin := aFont.Font.FontHeight div 2;
   maxWidth := 0;
 
-  BResumeGame := TUIButton.Create(FScene, sResumeGame, aFont, NIL);
-  FormatButton(BResumeGame);
-  if maxWidth < BResumeGame.Width then maxWidth := BResumeGame.Width;
-  BResumeGame.AnchorPosToParent(haCenter, haCenter, 0, vaCenter, vaCenter, 0);
+  FFont := aFont;
+  FAtlas:= aAtlas;
 
   title := TUILabel.Create(FScene, sGamePaused, aFont);
   AddChild(title);
   title.Tint.Value := BGRA(220,220,220);
   title.Blink(-1, 0.5, 0.5);
-  title.AnchorPosToSurface(BResumeGame, haCenter, haCenter, 0, vaBottom, vaTop, -VMargin);
+  title.AnchorPosToParent(haCenter, haCenter, 0, vaTop, vaTop, VMargin);
+
+  BResumeGame := TUIButton.Create(FScene, sResumeGame, aFont, NIL);
+  FormatButton(BResumeGame);
+  if maxWidth < BResumeGame.Width then maxWidth := BResumeGame.Width;
+  BResumeGame.AnchorPosToSurface(title, haCenter, haCenter, 0, vaTop, vaBottom, VMargin);
+
+  BInstructions := TUIButton.Create(FScene, sInstructions, aFont, NIL);
+  FormatButton(BInstructions);
+  BInstructions.AnchorPosToSurface(BResumeGame, haCenter, haCenter, 0, vaTop, vaBottom, VMargin);
+  if maxWidth < BInstructions.Width then maxWidth := BInstructions.Width;
+
+  BOptions := TUIButton.Create(FScene, sOptions, aFont, NIL);
+  FormatButton(BOptions);
+  BOptions.AnchorPosToSurface(BInstructions, haCenter, haCenter, 0, vaTop, vaBottom, VMargin);
+  if maxWidth < BOptions.Width then maxWidth := BOptions.Width;
 
   BBackToMap := TUIButton.Create(FScene, sBackToMap, aFont, NIL);
   FormatButton(BBackToMap);
-  BBackToMap.AnchorPosToSurface(BResumeGame, haCenter, haCenter, 0, vaTop, vaBottom, VMargin);
+  BBackToMap.AnchorPosToSurface(BOptions, haCenter, haCenter, 0, vaTop, vaBottom, VMargin);
   if maxWidth < BBackToMap.Width then maxWidth := BBackToMap.Width;
 
-  BodyShape.ResizeCurrentShape(Round(maxWidth*1.5), VMargin*4+aFont.Font.FontHeight*4, True);
+  BodyShape.ResizeCurrentShape(Round(maxWidth*1.5), VMargin*6+aFont.Font.FontHeight*6, True);
   CenterOnScene;
 
   FKeyboardToButtons := TButtonsClickableByKeyboard.Create(Self, aAtlas);
   FKeyboardToButtons.AddLineOfButtons([BResumeGame]);
+  FKeyboardToButtons.AddLineOfButtons([BInstructions]);
+  FKeyboardToButtons.AddLineOfButtons([BOptions]);
   FKeyboardToButtons.AddLineOfButtons([BBackToMap]);
   FKeyboardToButtons.Select(BResumeGame);
 
   FCheatCodeManager.InitDefault;
-  FPlayerHaveClickedBackToMapButton := False;
 end;
 
 procedure TInGamePausePanel.Update(const aElapsedTime: single);
@@ -974,6 +1061,81 @@ begin
   FScanKey := False;
 end;
 
+{ TModalPressAKeyPanel }
+
+procedure TModalPressAKeyPanel.ProcessButtonClick(Sender: TSimpleSurfaceWithEffect);
+begin
+  Audio.PlayUIClick;
+end;
+
+procedure TModalPressAKeyPanel.ProcessCountDownDone(Sender: TObject);
+begin
+  Hide(True);
+end;
+
+constructor TModalPressAKeyPanel.Create(aFont: TTexturedFont;
+  aParentOptionPanel: TModalOptionsPanel);
+var t: TFreeText;
+  h: integer;
+begin
+  h := aFont.Font.FontHeight;
+  inherited Create(FScene);
+  BodyShape.SetShapeRoundRect(Round(FScene.Width*0.6), h*4, PPIScale(8), PPIScale(8), PPIScale(3));
+  BodyShape.Fill.Color := BGRA(30,15,7);
+
+  FParentOptionPanel := aParentOptionPanel;
+
+  // title
+  t := TFreeText.Create(FScene);
+  AddChild(t);
+  t.TexturedFont := aFont;
+  t.Caption := sPressAKey;
+  t.Tint.Value := BGRA(255,255,0);
+  t.CenterX := Width*0.5;
+  t.Y.Value := h;
+
+  // count down
+  FClock := TFreeTextClockLabel.Create(FScene, True);
+  AddChild(FClock);
+  FClock.TexturedFont := aFont;
+  FClock.Countdown := True;
+  FClock.ShowFractionalPart := False;
+  FClock.Time := 5.0;
+  FClock.Tint.Value := BGRA(255,255,255);
+  FClock.CenterX := Width*0.5;
+  FClock.Y.Value := t.BottomY;
+  FClock.OnCountdownDone := @ProcessCountDownDone;
+
+  CenterOnScene;
+end;
+
+procedure TModalPressAKeyPanel.Update(const AElapsedTime: single);
+begin
+  inherited Update(AElapsedTime);
+
+  if not FScanKey then exit;
+
+  if FScene.UserPressAKey then begin
+    FParentOptionPanel.ProcessPressAKeyDone(FScene.LastKeyDown);
+    Hide(True);
+  end;
+end;
+
+procedure TModalPressAKeyPanel.ShowModal;
+begin
+  FClock.Time := 5.0;
+  FClock.Run;
+  FScanKey := True;
+  inherited ShowModal;
+end;
+
+procedure TModalPressAKeyPanel.Hide(aFree: boolean);
+begin
+  FClock.Pause;
+  FScanKey := False;
+  inherited Hide(aFree);
+end;
+
 { TOptionsPanel }
 
 procedure TOptionsPanel.ProcessButtonClick(Sender: TSimpleSurfaceWithEffect);
@@ -1102,10 +1264,11 @@ procedure TOptionsPanel.ProcessLanguageChange(Sender: TSimpleSurfaceWithEffect);
 begin
   FSaveGame.Language := AppLang.IndexToLanguageIdentifier(ListBoxLanguages.FirstSelectedIndex);
   FSaveGame.Save;
+  DeleteAtlasFiles;
   FScene.RunScreen(ScreenTitle);
 end;
 
-constructor TOptionsPanel.Create(aFont: TTexturedFont);
+constructor TOptionsPanel.Create(aFont: TTexturedFont; aShowLanguages: boolean);
 var title, lab: TUILabel;
   i, h: integer;
 begin
@@ -1173,23 +1336,25 @@ begin
 
   h := h + CursorSound.Height;
 
-  // label languages
-  lab := TUILabel.Create(FScene, sLanguage, aFont);
-  AddChild(lab, 0);
-  lab.Tint.Value := BGRA(220,220,220);
-  lab.AnchorHPosToParent(haLeft, haCenter, 0);
-  lab.AnchorVPosToSurface(title, vaTop, vaBottom, title.Height);
-  lab.MouseInteractionEnabled := False;
+  if aShowLanguages then begin
+    // label languages
+    lab := TUILabel.Create(FScene, sLanguage, aFont);
+    AddChild(lab, 0);
+    lab.Tint.Value := BGRA(220,220,220);
+    lab.AnchorHPosToParent(haLeft, haCenter, 0);
+    lab.AnchorVPosToSurface(title, vaTop, vaBottom, title.Height);
+    lab.MouseInteractionEnabled := False;
 
-  // ListBoxLanguages
-  ListBoxLanguages := TUIListBox.Create(FScene, aFont);
-  AddChild(ListBoxLanguages, 0);
-  ListBoxLanguages.BodyShape.SetShapeRoundRect(Width div 2-PPIScale(10)*2, h, PPIScale(8), PPIScale(8), PPIScale(2));
-  ListBoxLanguages.AnchorPosToSurface(lab, haLeft, haLeft, 0, vaTop, vaBottom, 0);
-  for i:=0 to Length(SupportedLanguages) div 2-1 do
-    ListBoxLanguages.Add(SupportedLanguages[i*2]);
-  ListBoxLanguages.FirstSelectedIndex := AppLang.LanguageIdentifierToIndex(FSaveGame.Language);
-  ListBoxLanguages.OnSelectionChange := @ProcessLanguageChange;
+    // ListBoxLanguages
+    ListBoxLanguages := TUIListBox.Create(FScene, aFont);
+    AddChild(ListBoxLanguages, 0);
+    ListBoxLanguages.BodyShape.SetShapeRoundRect(Width div 2-PPIScale(10)*2, h, PPIScale(8), PPIScale(8), PPIScale(2));
+    ListBoxLanguages.AnchorPosToSurface(lab, haLeft, haLeft, 0, vaTop, vaBottom, 0);
+    for i:=0 to Length(SupportedLanguages) div 2-1 do
+      ListBoxLanguages.Add(SupportedLanguages[i*2]);
+    ListBoxLanguages.FirstSelectedIndex := AppLang.LanguageIdentifierToIndex(FSaveGame.Language);
+    ListBoxLanguages.OnSelectionChange := @ProcessLanguageChange;
+  end;
 
   // label keyboard
   title := TUILabel.Create(FScene, sKeyboard, aFont);
@@ -1318,6 +1483,336 @@ begin
 end;
 
 procedure TOptionsPanel.UpdateWidget;
+begin
+  UpdateLabelKeys;
+  UpdateLabelVolume;
+end;
+
+{ TModalOptionsPanel }
+
+procedure TModalOptionsPanel.ProcessCursorChange(Sender: TSimpleSurfaceWithEffect);
+begin
+  if Sender = CursorMusic then begin
+    Audio.MusicVolume := CursorMusic.Position*0.01;
+  end;
+
+  if Sender = CursorSound then begin
+    Audio.SoundVolume := CursorSound.Position*0.01;
+    Audio.PlayUIClick;
+  end;
+
+  UpdateLabelVolume;
+end;
+
+procedure TModalOptionsPanel.FormatButtonKey(aButton: TUIButton; aIsAction: boolean);
+var w: Integer;
+begin
+  if aIsAction then w := FKeyboardButtonSize*2
+    else w := FKeyboardButtonSize;
+  aButton.AutoSize := False;
+  aButton.BodyShape.SetShapeRoundRect(w, FKeyboardButtonSize, PPIScale(8), PPIScale(8), 2);
+  aButton.OnClick := @ProcessButtonClick;
+  aButton.BodyShape.Fill.Color := BGRA(64,128,255);
+  aButton.BodyShape.Border.Color := BGRA(32,64,128);
+  aButton.Image.Tint.Value := BGRA(255,255,0);
+end;
+
+procedure TModalOptionsPanel.FormatLabelKey(aLabel: TUILabel);
+begin
+  aLabel.MouseInteractionEnabled := False;
+  aLabel.Tint.Value := BGRA(255,255,0);
+end;
+
+procedure TModalOptionsPanel.FormatButtonMenu(aButton: TUIButton);
+begin
+  aButton.AutoSize := False;
+  aButton.BodyShape.SetShapeRoundRect(Round(Width*0.28), Round(FFont.Font.FontHeight*1.5), PPIScale(8), PPIScale(8), 2);
+  aButton.BodyShape.Fill.Color := BGRA(255,128,64);
+  aButton.BodyShape.Border.Color := BGRA(128,64,32);
+  aButton.OnClick := @ProcessButtonClick;
+end;
+
+procedure TModalOptionsPanel.UpdateLabelKeys;
+begin
+  LabelKeyUp.Caption := FScene.KeyToString[Input.KeyUp];
+  LabelKeyDown.Caption := FScene.KeyToString[Input.KeyDown];
+  LabelKeyLeft.Caption := FScene.KeyToString[Input.KeyLeft];
+  LabelKeyRight.Caption := FScene.KeyToString[Input.KeyRight];
+  LabelKeyAction1.Caption := FScene.KeyToString[Input.KeyAction1];
+  LabelKeyAction2.Caption := FScene.KeyToString[Input.KeyAction2];
+  LabelKeyPause.Caption := FScene.KeyToString[Input.KeyPause];
+end;
+
+procedure TModalOptionsPanel.UpdateLabelVolume;
+begin
+  LabelCursorMusic.Caption := CursorMusic.Position.ToString+'%';
+  LabelCursorSound.Caption := CursorSound.Position.ToString+'%';
+end;
+
+procedure TModalOptionsPanel.ProcessPressAKeyDone(aKey: word);
+begin
+  if FButtonEdited = ButtonKeyUp then begin
+    FSaveGame.KeyUp := aKey;
+  end else
+  if FButtonEdited = ButtonKeyDown then begin
+    FSaveGame.KeyDown := aKey;
+  end else
+  if FButtonEdited = ButtonKeyLeft then begin
+    FSaveGame.KeyLeft := aKey;
+  end else
+  if FButtonEdited = ButtonKeyRight then begin
+    FSaveGame.KeyRight := aKey;
+  end else
+  if FButtonEdited = ButtonKeyAction1 then begin
+    FSaveGame.KeyAction1 := aKey;
+  end else
+  if FButtonEdited = ButtonKeyAction2 then begin
+    FSaveGame.KeyAction2 := aKey;
+  end else
+  if FButtonEdited = ButtonKeyPause then begin
+    FSaveGame.KeyPause := aKey;
+  end;
+  UpdateLabelKeys;
+end;
+
+procedure TModalOptionsPanel.ProcessButtonClick(Sender: TSimpleSurfaceWithEffect);
+var k: byte;
+begin
+  Audio.PlayUIClick;
+  FButtonEdited := TUIButton(Sender);
+  if Sender = BClose then begin
+    FSaveGame.Save;
+    Hide(True);
+    exit;
+  end;
+
+  k := 0;
+  if Sender = ButtonKeyUp then begin
+    k := FSaveGame.KeyUp;
+  end else
+  if Sender = ButtonKeyDown then begin
+    k := FSaveGame.KeyDown;
+  end else
+  if Sender = ButtonKeyLeft then begin
+    k := FSaveGame.KeyLeft;
+  end else
+  if Sender = ButtonKeyRight then begin
+    k := FSaveGame.KeyRight;
+  end else
+  if Sender = ButtonKeyAction1 then begin
+    k := FSaveGame.KeyAction1;
+  end else
+  if Sender = ButtonKeyAction2 then begin
+    k := FSaveGame.KeyAction2;
+  end else
+  if Sender = ButtonKeyPause then begin
+    k := FSaveGame.KeyPause;
+  end;
+
+  if k <> 0 then
+    with TModalPressAKeyPanel.Create(FFont, Self) do begin
+      ShowModal;
+    end;
+end;
+
+constructor TModalOptionsPanel.Create(aFont: TTexturedFont);
+var title, lab: TUILabel;
+  i, h: integer;
+begin
+  inherited create(FScene);
+  BodyShape.SetShapeRoundRect(Round(FScene.Width*0.7), Round(FScene.Height*0.7), PPIScale(8), PPIScale(8), PPIScale(3));
+  BodyShape.Fill.Color := BGRA(30,15,7);
+
+  FFont := aFont;
+
+  BClose := TUIButton.Create(FScene, sClose, aFont, NIL);
+  AddChild(BClose, 0);
+  FormatButtonMenu(BClose);
+  BClose.AnchorPosToParent(haRight, haRight, -ScaleW(10), vaBottom, vaBottom, -ScaleW(10));
+
+  // label title
+  title := TUILabel.Create(FScene, sOptions, aFont);
+  AddChild(title, 0);
+  title.Tint.Value := BGRA(255,255,50);
+  title.AnchorPosToParent(haLeft, haLeft, ScaleW(10), vaTop, vaTop, ScaleW(10));
+  title.MouseInteractionEnabled := False;
+
+  // label music volume
+  lab := TUILabel.Create(FScene, sMusicVolume, aFont);
+  AddChild(lab, 0);
+  lab.Tint.Value := BGRA(220,220,220);
+  lab.AnchorPosToSurface(title, haLeft, haLeft, 0, vaTop, vaBottom, title.Height);
+  lab.MouseInteractionEnabled := False;
+
+  h := lab.Height;
+
+  // cursor music volume
+  CursorMusic := TUIScrollBar.Create(FScene, uioHorizontal);
+  AddChild(CursorMusic, 0);
+  CursorMusic.OnChange := @ProcessCursorChange;
+  CursorMusic.BodyShape.SetShapeRoundRect(Width div 2-PPIScale(10)*2, lab.Height, PPIScale(8), PPIScale(8), PPIScale(2));
+  CursorMusic.SetParams(80, 0, 125, 25);
+  CursorMusic.AnchorHPosToParent(haLeft, haLeft, PPIScale(10));
+  CursorMusic.AnchorVPosToSurface(lab, vatop, vaBottom, 0);
+  LabelCursorMusic := TUILabel.Create(FScene, '', aFont);
+  AddChild(LabelCursorMusic, 0);
+  FormatLabelKey(LabelCursorMusic);
+  LabelCursorMusic.AnchorPosToSurface(CursorMusic, haRight, haRight, 0, vaBottom, vaTop, 0);
+  LabelCursorMusic.MouseInteractionEnabled := False;
+
+  h := h + CursorMusic.Height;
+
+  // label sound volume
+  lab := TUILabel.Create(FScene, sSoundVolume, aFont);
+  AddChild(lab, 0);
+  lab.Tint.Value := BGRA(220,220,220);
+  lab.AnchorPosToSurface(CursorMusic, haLeft, haLeft, 0, vaTop, vaBottom, lab.Height);
+  lab.MouseInteractionEnabled := False;
+
+  h := h + lab.Height;
+
+  // cursor sound volume
+  CursorSound := TUIScrollBar.Create(FScene, uioHorizontal);
+  AddChild(CursorSound, 0);
+  CursorSound.OnChange := @ProcessCursorChange;
+  CursorSound.BodyShape.SetShapeRoundRect(Width div 2-PPIScale(10)*2, title.Height, PPIScale(8), PPIScale(8), PPIScale(2));
+  CursorSound.SetParams(100, 0, 125, 25);
+  CursorSound.AnchorHPosToParent(haLeft, haLeft, PPIScale(10));
+  CursorSound.AnchorVPosToSurface(lab, vatop, vaBottom, 0);
+  LabelCursorSound := TUILabel.Create(FScene, '', aFont);
+  AddChild(LabelCursorSound, 0);
+  FormatLabelKey(LabelCursorSound);
+  LabelCursorSound.AnchorPosToSurface(CursorSound, haRight, haRight, 0, vaBottom, vaTop, 0);
+  LabelCursorSound.MouseInteractionEnabled := False;
+
+  h := h + CursorSound.Height;
+
+  // label keyboard
+  title := TUILabel.Create(FScene, sKeyboard, aFont);
+  AddChild(title, 0);
+  title.Tint.Value := BGRA(220,220,220);
+  title.AnchorPosToSurface(CursorSound, haLeft, haLeft, 0, vaTop, vaBottom, title.Height);
+  title.MouseInteractionEnabled := False;
+  // label change key explanation
+  lab := TUILabel.Create(FScene, sHowToChangeKey, aFont);
+  AddChild(lab, 0);
+  lab.Tint.Value := BGRA(180,180,180);
+  lab.AnchorPosToSurface(title, haLeft, haLeft, 0, vaTop, vaBottom, 0);
+  lab.MouseInteractionEnabled := False;
+
+  FKeyboardButtonSize := Round(Width*0.07);
+  FKeyboardButtonSpacing := FKeyboardButtonSize;
+  texArrow := FScene.TexMan.AddFromSVG(SpriteCommonFolder+'LRArrow.svg', ScaleW(Round(FKeyboardButtonSize*0.8)), -1);
+
+  // button key up
+  ButtonKeyUp := TUIButton.Create(FScene, '', NIL, texArrow);
+  AddChild(ButtonKeyUp, 0);
+  FormatButtonKey(ButtonKeyUp);
+  ButtonKeyUp.Image.Angle.Value := 270;
+  ButtonKeyUp.AnchorHPosToParent(haLeft, haLeft, FKeyboardButtonSpacing*3);
+  ButtonKeyUp.AnchorVPosToSurface(lab, vaTop, vaBottom, FKeyboardButtonSpacing);
+  LabelKeyUp := TUILabel.Create(FScene, '', aFont);
+  AddChild(LabelKeyUp, 0);
+  FormatLabelKey(LabelKeyUp);
+  LabelKeyUp.AnchorPosToSurface(ButtonKeyUp, haCenter, haCenter, 0, vaTop, vaBottom, 0);
+  LabelKeyUp.MouseInteractionEnabled := False;
+
+  // button key left
+  ButtonKeyLeft := TUIButton.Create(FScene, '', NIL, texArrow);
+  AddChild(ButtonKeyLeft, 0);
+  FormatButtonKey(ButtonKeyLeft);
+  ButtonKeyLeft.Image.Angle.Value := 180;
+  ButtonKeyLeft.AnchorHPosToSurface(ButtonKeyUp, haRight, haLeft, -FKeyboardButtonSize);
+  ButtonKeyLeft.AnchorVPosToSurface(ButtonKeyUp, vaTop, vaBottom, FKeyboardButtonSize div 2);
+  LabelKeyLeft := TUILabel.Create(FScene, '', aFont);
+  AddChild(LabelKeyLeft, 0);
+  FormatLabelKey(LabelKeyLeft);
+  LabelKeyLeft.AnchorPosToSurface(ButtonKeyLeft, haCenter, haCenter, 0, vaTop, vaBottom, 0);
+  LabelKeyLeft.MouseInteractionEnabled := False;
+
+  // button key right
+  ButtonKeyRight := TUIButton.Create(FScene, '', NIL, texArrow);
+  AddChild(ButtonKeyRight, 0);
+  FormatButtonKey(ButtonKeyRight);
+  ButtonKeyRight.Image.Angle.Value := 0;
+  ButtonKeyRight.AnchorHPosToSurface(ButtonKeyUp, haLeft, haRight, FKeyboardButtonSize);
+  ButtonKeyRight.AnchorVPosToSurface(ButtonKeyLeft, vaTop, vaTop, 0);
+  LabelKeyRight := TUILabel.Create(FScene, '', aFont);
+  AddChild(LabelKeyRight, 0);
+  FormatLabelKey(LabelKeyRight);
+  LabelKeyRight.AnchorPosToSurface(ButtonKeyRight, haCenter, haCenter, 0, vaTop, vaBottom, 0);
+  LabelKeyRight.MouseInteractionEnabled := False;
+
+  // button key down
+  ButtonKeyDown := TUIButton.Create(FScene, '', NIL, texArrow);
+  AddChild(ButtonKeyDown, 0);
+  FormatButtonKey(ButtonKeyDown);
+  ButtonKeyDown.Image.Angle.Value := 90;
+  ButtonKeyDown.AnchorHPosToSurface(ButtonKeyUp, haLeft, haLeft, 0);
+  ButtonKeyDown.AnchorVPosToSurface(ButtonKeyRight, vaTop, vaBottom, FKeyboardButtonSize div 2);
+  LabelKeyDown := TUILabel.Create(FScene, '', aFont);
+  AddChild(LabelKeyDown, 0);
+  FormatLabelKey(LabelKeyDown);
+  LabelKeyDown.AnchorPosToSurface(ButtonKeyDown, haCenter, haCenter, 0, vaTop, vaBottom, 0);
+  LabelKeyDown.MouseInteractionEnabled := False;
+
+  // button Action1
+  ButtonKeyAction1 := TUIButton.Create(FScene, sAction1, aFont, NIL);
+  AddChild(ButtonKeyAction1, 0);
+  FormatButtonKey(ButtonKeyAction1, True);
+  ButtonKeyAction1.AnchorHPosToSurface(ButtonKeyRight, haLeft, haRight, FKeyboardButtonSpacing*2);
+  ButtonKeyAction1.AnchorVPosToSurface(ButtonKeyUp, vaTop, vaTop, 0);
+  LabelKeyAction1 := TUILabel.Create(FScene, '', aFont);
+  AddChild(LabelKeyAction1, 0);
+  FormatLabelKey(LabelKeyAction1);
+  LabelKeyAction1.AnchorPosToSurface(ButtonKeyAction1, haCenter, haCenter, 0, vaTop, vaBottom, 0);
+  LabelKeyAction1.MouseInteractionEnabled := False;
+
+  // button Action2
+  ButtonKeyAction2 := TUIButton.Create(FScene, sAction2, aFont, NIL);
+  AddChild(ButtonKeyAction2, 0);
+  FormatButtonKey(ButtonKeyAction2, True);
+  ButtonKeyAction2.AnchorPosToSurface(ButtonKeyAction1, haLeft, haRight, FKeyboardButtonSpacing, vaTop, vaTop, 0);
+  LabelKeyAction2 := TUILabel.Create(FScene, '', aFont);
+  AddChild(LabelKeyAction2, 0);
+  FormatLabelKey(LabelKeyAction2);
+  LabelKeyAction2.AnchorPosToSurface(ButtonKeyAction2, haCenter, haCenter, 0, vaTop, vaBottom, 0);
+  LabelKeyAction2.MouseInteractionEnabled := False;
+
+  // button Pause
+  ButtonKeyPause := TUIButton.Create(FScene, sPause, aFont, NIL);
+  AddChild(ButtonKeyPause, 0);
+  FormatButtonKey(ButtonKeyPause, True);
+  ButtonKeyPause.AnchorPosToSurface(ButtonKeyAction1, haLeft, haLeft, 0, vaTop, vaBottom, FKeyboardButtonSpacing);
+  LabelKeyPause := TUILabel.Create(FScene, '', aFont);
+  AddChild(LabelKeyPause, 0);
+  FormatLabelKey(LabelKeyPause);
+  LabelKeyPause.AnchorPosToSurface(ButtonKeyPause, haCenter, haCenter, 0, vaTop, vaBottom, 0);
+  LabelKeyPause.MouseInteractionEnabled := False;
+
+  CenterOnScene;
+end;
+
+destructor TModalOptionsPanel.Destroy;
+begin
+  FScene.TexMan.Delete(texArrow);
+  inherited Destroy;
+end;
+
+procedure TModalOptionsPanel.ShowModal;
+begin
+  CursorMusic.Position := Trunc(FSaveGame.MusicVolume*100);
+  CursorSound.Position := Trunc(FSaveGame.SoundVolume*100);
+  UpdateWidget;
+  inherited ShowModal;
+end;
+
+procedure TModalOptionsPanel.Hide(aFree: boolean);
+begin
+  inherited Hide(aFree);
+end;
+
+procedure TModalOptionsPanel.UpdateWidget;
 begin
   UpdateLabelKeys;
   UpdateLabelVolume;
