@@ -50,9 +50,9 @@ uses Forms, LCLType, u_app, u_sprite_wolf, u_screen_workshop, u_resourcestring,
 
 type
 
-{ TInGameInventoryPanel }
+{ TGameInventory }
 
-TInGameInventoryPanel = class(TBaseInGamePanel)
+TGameInventory = class(TInGameInventoryPanel)
   procedure AddPlan;
 end;
 
@@ -76,7 +76,7 @@ var FAtlas: TOGLCTextureAtlas;
   FPosWolfBehindDoor, FPosLRHidden, FPosPlanCrate, FPosWolfPissing: TPointF;
   FTimeAccu: single;
 
-  FInGameinventory: TInGameInventoryPanel;
+  FGameinventory: TGameInventory;
 
 // compare function to sort sprite by BottomY values, like in rpg.
 function LayerPlayerSortCompare(Item1, Item2: Pointer): Integer;
@@ -87,9 +87,9 @@ begin
   Result := Trunc(yBottom1 - yBottom2);
 end;
 
-{ TInGameInventoryPanel }
+{ TGameInventory }
 
-procedure TInGameInventoryPanel.AddPlan;
+procedure TGameInventory.AddPlan;
 begin
   AddItem(TUIManufacturerPlan.Create);
 end;
@@ -97,11 +97,8 @@ end;
 { TManufacturingPlanSprite }
 
 constructor TManufacturingPlanSprite.Create;
-var p1, p2: TPointF;
 begin
-  p1 := FLR.GetXY+PointF(0,-FLR.DeltaYToTop);
-  p2 := FInGameinventory.GetXY+PointF(FInGameinventory.Width*0.5, FInGameinventory.Height*0.5);
-  inherited Create(texIconManufacturingPlan, LAYER_GAMEUI, p1, p2);
+  inherited Create(texIconManufacturingPlan, LAYER_GAMEUI, FLR, FGameinventory);
 end;
 
 { TScreenGameVolcanoEntrance }
@@ -333,7 +330,7 @@ begin
   FTimeAccu := 0;
 
   // in game inventory panel
-  FInGameinventory := TInGameInventoryPanel.Create;
+  FGameinventory := TGameInventory.Create;
   // pause panel
   FInGamePausePanel := TInGamePausePanel.Create(FFontText, FAtlas);
 
@@ -487,7 +484,7 @@ begin
       TInfoPanel.Create('', sYouTakeAPlan, FFontText, Self, 204);
     end;
     204: begin // anim plan goes into inventory
-      FInGameinventory.AddPlan;
+      FGameinventory.AddPlan;
       Audio.PlayMusicSuccessShort1;
       TManufacturingPlanSprite.Create;
       PostMessage(210, 3);

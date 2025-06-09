@@ -113,21 +113,15 @@ end;
 { TStormCloudThatGoToTheInventory }
 
 constructor TStormCloudThatGoToTheInventory.Create(UserValue: TUserMessageValue);
-var p1, p2: TPointF;
 begin
-  p1 := FLR.SurfaceToScene(PointF(0, -FLR.DeltaYToTop));
-  p2 := FGameinventory.Center;
-  inherited Create(texIconStormCloud, LAYER_GAMEUI, p1, p2, ScreenForestAmara, UserValue);
+  inherited Create(texIconStormCloud, LAYER_GAMEUI, FLR, FGameinventory, ScreenForestAmara, UserValue);
 end;
 
 { THammerThatGoToTheInventory }
 
 constructor THammerThatGoToTheInventory.Create(UserValue: TUserMessageValue);
-var p1, p2: TPointF;
 begin
-  p1 := FLR.SurfaceToScene(PointF(0, -FLR.DeltaYToTop));
-  p2 := FGameinventory.Center;
-  inherited Create(texIconHammer, LAYER_GAMEUI, p1, p2, ScreenForestAmara, UserValue);
+  inherited Create(texIconHammer, LAYER_GAMEUI, FLR, FGameinventory, ScreenForestAmara, UserValue);
 end;
 
 { TGameInventory }
@@ -501,7 +495,7 @@ begin
     gsRunning, gsWaitUntilLRExit: begin
       flagPlayerIdle := True;
 
-      if Input.LeftPressed and flagPlayerIdle then begin
+      if Input.LeftPressed and flagPlayerIdle and (FLR.X.Value > FLR.BodyWidth) then begin
         FLR.State := lr4sLeftWalking;
         flagPlayerIdle := False;
       end;

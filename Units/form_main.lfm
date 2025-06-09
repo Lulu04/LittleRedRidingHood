@@ -3,7 +3,6 @@ object FormMain: TFormMain
   Height = 276
   Top = 190
   Width = 371
-  Caption = 'Program name'
   ClientHeight = 276
   ClientWidth = 371
   Color = 2105376
@@ -51,7 +50,9 @@ object FormMain: TFormMain
     BevelOuter = bvNone
     ClientHeight = 276
     ClientWidth = 127
+    Color = clBlack
     ParentBackground = False
+    ParentColor = False
     TabOrder = 1
     object OpenGLControl1: TOpenGLControl
       AnchorSideLeft.Side = asrCenter

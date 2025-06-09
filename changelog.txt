@@ -1,9 +1,15 @@
 version 0.3.0 -
-> texture atlas are saved to speed up screen switching.
+> new buttons in pause menu: OPTIONS to redefine keys or change audio volume, and HOW TO PLAY to display the game instructions.
+> a loading message is displayed when the game load or construct a texture atlas.
+> texture atlas are saved to speed up screen switching. They are reconstructed:
+  - if the game version change because graphics may change between a version to another.
+  - when player change the language because font charset may change.
 > new NPC in game Pine forest that sell some stuff.
-> added custom mouse cursor.
-> rework the game map.
+> added custom mouse cursor everywhere.
+> game map redesigned.
 > add new mini game The Plain of the Sleeping Moon.
+> in Volcano, camera don't move vertically while main character is jumping: better experience for player's eyes!
+> fix a display bug in Volcano.
 > fix a camera bug in the introduction.
 > fix some dialogs appears outside their panel.
 > rework the design of the colors and grass in the introduction.

@@ -30,7 +30,7 @@ private
 public
   // aDistance range is [0..1]  0=near 1=far
   // aDirection is equal to -1, 0 or 1
-  constructor Create(aX, aY, aDistance: single; aDirection: integer);
+  constructor Create(aX, aY, aDistance: single; aDirection, aLayerIndex: integer);
   procedure Update(const aElapsedTime: single); override;
 end;
 
@@ -121,11 +121,11 @@ end;
 
 { TCloud }
 
-constructor TCloud.Create(aX, aY, aDistance: single; aDirection: integer);
+constructor TCloud.Create(aX, aY, aDistance: single; aDirection, aLayerIndex: integer);
 var v: single;
 begin
   inherited Create(texCloudTitle, False);
-  FScene.Add(Self, LAYER_BG1);
+  FScene.Add(Self, aLayerIndex);
   FScaleValue := 1-aDistance;
   v := FScene.Width*0.02;
   Speed.x.Value := (random*v+v)*aDirection*FScaleValue;

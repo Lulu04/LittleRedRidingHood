@@ -95,7 +95,8 @@ end;
 TCallbackPickUpSomethingWhenBendDown = procedure(aPickUpToTheRight: boolean) of object;
 
 TLRRightView = class(TWalkingCharacter) //(TBaseComplexContainer)
-private type TLRRightViewState = (rvsIdle, rvsWalking, rvsJumping,
+private type TLRRightViewState = (rvsIdle, rvsWalking,
+                                  rvsJumping, // jump+move
                                   rvsBendDown, rvsBendUp,
                                   rvsReceiveObjectFromNPC,
                                   rvsDorsalThrusterTakeOff,
@@ -205,7 +206,10 @@ public
   // Becomes False when LR is climbing one step on ladder. When the step is reach
   // the property is set to True.
   property CanMoveOnLadder: boolean read FCanMoveOnLadder;
-  end;
+  // sets the value as the ladder height divided by the number of ladder steps
+  // default is ScaleH(230)/10
+  property YDeltaToMoveOnLadder: single read FYDeltaMoveOnLadder write FYDeltaMoveOnLadder;
+ end;
 
 
 TLR4State = (lr4sUndefined=0,
@@ -240,19 +244,21 @@ private
   procedure SetCallbackPickUpSomethingWhenBendDown(AValue: TCallbackPickUpSomethingWhenBendDown);
   procedure SetState(AValue: TLR4State);
   procedure ProcessCallbackDoLadderMove(aMoveDelta, aMoveDuration: single);
-  procedure ProcessCallbackDoOnJumpMove(aMoveDuration: single; aJumpStep: integer);
   procedure ProcessCallbackBendUpIsFinished;
 private
   FDistanceToObjectToHandle: single;
   FLadderInUse: TSimpleSurfaceWithEffect;
   FObjectToHandle: TSimpleSurfaceWithEffect;
   function GetDorsalThruster: TLRRightDorsalThruster;
+  function GetYDeltaMoveOnLadder: single;
+  procedure SetYDeltaMoveOnLadder(AValue: single);
 protected
   procedure SetFlipH(AValue: boolean); override;
   procedure SetFlipV(AValue: boolean); override;
   procedure SetTimeMultiplicator(AValue: single); override;
   procedure SetWalkSpeed(AValue: single); override;
   procedure SetJumpDeltaX(AValue: single); override;
+  procedure ProcessCallbackDoOnJumpMove(aMoveDuration: single; aJumpStep: integer); virtual;
 public
   constructor Create(aLayerIndex: integer=LAYER_PLAYER);
   procedure ProcessMessage(UserVale: TUserMessageValue); override;
@@ -268,6 +274,9 @@ public // utils to check if LR can do some moves
   function IsOrientedFront: boolean;
   // the y coordinate before LR jump (can be usefull to avoid camera move on Y axis when LR jump)
   property YBeforeJump: single read FYBeforeJump;
+  // sets the value as the ladder height divided by the number of ladder steps
+  // default is ScaleH(230)/10
+  property YDeltaToMoveOnLadder: single read GetYDeltaMoveOnLadder write SetYDeltaMoveOnLadder;
 public // utils to check collision with part of LR
   function BottomFeetCollideWith(const r: TRectF): boolean;
 public // utils to control character during cinematics
@@ -315,6 +324,7 @@ public // direct access to child instances
   property LRRight: TLRRightView read FLRRight;
   property LRFront: TLRFrontView read FLRFront;
   property LRBack: TLRBackView read FLRBack;
+  procedure ApplyTint(const aColor: TBGRAPixel); override;
 end;
 
 
@@ -689,6 +699,16 @@ begin
   Result := FLRRight.FDorsalThruster;
 end;
 
+function TLR4Direction.GetYDeltaMoveOnLadder: single;
+begin
+  Result := LRBack.YDeltaToMoveOnLadder;
+end;
+
+procedure TLR4Direction.SetYDeltaMoveOnLadder(AValue: single);
+begin
+  LRBack.YDeltaToMoveOnLadder := AValue;
+end;
+
 procedure TLR4Direction.SetJumpDeltaX(AValue: single);
 begin
   inherited SetJumpDeltaX(AValue);
@@ -933,6 +953,14 @@ begin
   State := lr4sDTSpeedInertia;
 end;
 
+procedure TLR4Direction.ApplyTint(const aColor: TBGRAPixel);
+begin
+  inherited ApplyTint(aColor);
+  LRRight.ApplyTint(aColor);
+  LRBack.ApplyTint(aColor);
+  LRFront.ApplyTint(aColor);
+end;
+
 { TLRBackView }
 
 procedure TLRBackView.SetDeformationOnHood;
@@ -1026,7 +1054,6 @@ begin
   FLeftArmLadderDownPosition := FLeftArmOriginPosition + PointF(FLeftArm.Width*0.14, FLeftArm.Height*0.8);
   FRightArmLadderUpPosition := FRightArmOriginPosition + PointF(FRightArm.Width*0.2, FRightArm.Height*0.2);
 
-  //FYDeltaMoveOnLadder := FLeftArm.Height*0.8; //FLeftArmLadderDownPosition.y - FLeftArmLadderUpPosition.y;
   FYDeltaMoveOnLadder := ScaleH(230)/10;// the height of full ladder divided by 10 steps
 
   FLeftLeg := CreateChildSprite(texLRbLeg, -1);
@@ -1054,8 +1081,8 @@ begin
   FRightShoe.ApplySymmetryWhenFlip := True;
   FYShoeOriginPosition := FRightShoe.Y.Value;
 
-  DeltaYToTop := FDress.Height + FHood.Height*0.23;
-  DeltaYToBottom := Trunc(FLeftLeg.Height*0.63 + FLeftShoe.Height);
+  DeltaYToTop := Round(FDress.Height + FHood.Height*0.23);
+  DeltaYToBottom := Round(FLeftLeg.Height*0.63 + FLeftShoe.Height);
   BodyWidth := FDress.Width;
   BodyHeight := Trunc(DeltaYToBottom + DeltaYToTop);
 
@@ -1426,8 +1453,8 @@ begin
   FLeftLeg.SetCoordinate(0, -FLeftLeg.Height*0.25);
   FLeftLeg.Pivot := PointF(0.3,0.05);
 
-  DeltaYToTop := FDress.Height + Face.Height*1.1;
-  DeltaYToBottom := Trunc(FLeftLeg.Height*0.75);
+  DeltaYToTop := Round(FDress.Height + Face.Height*1.1);
+  DeltaYToBottom := Round(FLeftLeg.Height*0.75);
   BodyWidth := FDress.Width;
   BodyHeight := Trunc(DeltaYToBottom + DeltaYToTop);
 
@@ -1872,8 +1899,8 @@ begin
   FRightShoe.Y.Value := FRightLeg.Height*0.8;
   FRightShoe.ApplySymmetryWhenFlip := True;
 
-  DeltaYToTop := FDress.Height + Face.Height*1.2;
-  DeltaYToBottom := Trunc(FLeftLeg.Height*0.75 + FLeftShoe.Height*0.54);
+  DeltaYToTop := Round(FDress.Height + Face.Height*1.2);
+  DeltaYToBottom := Round(FLeftLeg.Height*0.75 + FLeftShoe.Height*0.54);
   BodyWidth := Trunc(FDress.Width*0.8);
   BodyHeight := Trunc(DeltaYToBottom + DeltaYToTop);
 

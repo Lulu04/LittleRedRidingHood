@@ -1,0 +1,43 @@
+E_Coor
+0 0
+E_GlobalOpacity
+255
+E_Direction
+180
+E_Spread
+81
+E_Life
+3,000
+E_LoopMode
+TRUE
+E_Emission
+11
+E_Gravity
+0 50
+E_Type
+0
+P_ParticlesPositionsRelativeToEmitterPosition
+FALSE
+P_Texture
+Cross.png
+32 32
+P_Frame
+0 0
+P_Life
+0,699 0,598
+P_ColorMode
+1
+P_BlendMode
+0
+P_Color
+4 0,00000 255 255 0 1 0,02660 255 255 0 255 0,81773 255 255 0 255 1,00000 255 255 255 1
+P_Velocity
+10 93 2 0,00000 0,00000 1,00000 0,00000
+P_AVelocity
+0 0 2 0,00000 0,00000 1,00000 0,00000
+P_Size
+0,32000 0,00000 3 0,00000 0,58120 0,28079 0,95726 1,00000 0,41026
+P_StartAngle
+8 12
+P_Spin
+16 0 4 0,00000 0,01361 0,21675 -0,47706 0,58424 0,56881 1,00000 0,01361

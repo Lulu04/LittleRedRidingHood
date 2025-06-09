@@ -82,7 +82,7 @@ public
   // // The number of pixel to shift the character when s/he jump.
   property JumpDeltaX: single read FJumpDeltaX write SetJumpDeltaX;
 public
-  procedure ApplyTint(const aColor: TBGRAPixel);
+  procedure ApplyTint(const aColor: TBGRAPixel); virtual;
 end;
 
 { TCharacterWithMark }
@@ -417,9 +417,9 @@ end;
 procedure TCharacterWithDialogPanel.PlacePanelOnView(aCameraInUse: TOGLCCamera);
 var p: TPointF;
     w, h: single;
-    rView, rPanel, r: TRectF;
+    //rView, rPanel, r: TRectF;
 begin
-  rView := GetViewRect(aCameraInUse);
+  //rView := GetViewRect(aCameraInUse);
 
   w := FPanel.Width;
   h := FPanel.Height;
@@ -698,12 +698,12 @@ end;
 
 function TBaseComplexContainer.GetBodyTopY: single;
 begin
-  Result := Y.Value - FDeltaYToTop;
+  Result := Round(Y.Value - FDeltaYToTop);
 end;
 
 function TBaseComplexContainer.GetBodyBottomY: single;
 begin
-  Result := Y.Value + FDeltaYToBottom;
+  Result := Round(Y.Value + FDeltaYToBottom);
 end;
 
 procedure TBaseComplexContainer.SetBodyBottomY(AValue: single);

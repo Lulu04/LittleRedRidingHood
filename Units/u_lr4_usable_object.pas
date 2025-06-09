@@ -35,7 +35,8 @@ public
 end;
 
 
-TObjectInCrateID = (oicIDNone, oicIDKey, oicIDSDCard, oicIDPropulsor);
+TObjectInCrateID = (oicIDNone, oicIDKey, oicIDSDCard, oicIDPropulsor,
+                    oicIDCraneRemoteControl, oicIDSubmarine);
 
 { TUsableCrateThatContainObject }
 
@@ -52,7 +53,8 @@ protected
   procedure StartBlinkScenario; override;
   procedure StopBlinkScenario; override;
 public
-  class procedure LoadTexture(aAtlas: TOGLCTextureAtlas);
+  // aStyleIndex: 0 for Volcano (wood), 1 for Mermaids Port (metal)
+  class procedure LoadTexture(aAtlas: TOGLCTextureAtlas; aStyleIndex: integer);
   constructor Create(aX, aBottomY: single; aLayerIndex: integer; aIsLocked: boolean; aLR4DirInstance: TLR4Direction);
   procedure RemoveLock;
   property IsLocked: boolean read FIsLocked write FIsLocked;
@@ -87,6 +89,16 @@ public
 end;
 
 
+{ TUsableControlPanel }
+
+TUsableControlPanel = class(TUsableObjectSprite)
+private class var texControlPanel: PTexture;
+public
+  class procedure LoadTexture(aAtlas: TOGLCTextureAtlas);
+  constructor Create(aX, aBottomY: single; aLayerIndex: integer; aLR4DirInstance: TLR4Direction);
+end;
+
+
 implementation
 uses u_common_ui, u_app, u_common;
 
@@ -111,11 +123,19 @@ begin
   end;
 end;
 
-class procedure TUsableCrateThatContainObject.LoadTexture(aAtlas: TOGLCTextureAtlas);
+class procedure TUsableCrateThatContainObject.LoadTexture(aAtlas: TOGLCTextureAtlas; aStyleIndex: integer);
 begin
   FAtlas := aAtlas;
-  texCrate := aAtlas.AddFromSVG(SpriteGameVolcanoInnerFolder+'CrateEmpty.svg', ScaleW(65), -1);
-  texLockedSymbol := aAtlas.AddFromSVG(SpriteGameVolcanoInnerFolder+'CrateLockedSymbol.svg', ScaleW(15), -1);
+  case aStyleIndex of
+    0: begin
+      texCrate := aAtlas.AddFromSVG(SpriteGameVolcanoInnerFolder+'CrateEmpty.svg', ScaleW(65), -1);
+      texLockedSymbol := aAtlas.AddFromSVG(SpriteGameVolcanoInnerFolder+'CrateLockedSymbol.svg', ScaleW(15), -1);
+    end;
+    1: begin
+      texCrate := aAtlas.AddFromSVG(FolderSpriteGameMermaidsPort+'CrateEmpty2.svg', ScaleW(65), -1);
+      texLockedSymbol := aAtlas.AddFromSVG(SpriteGameVolcanoInnerFolder+'CrateLockedSymbol.svg', ScaleW(15), -1);
+    end;
+  end;
 end;
 
 constructor TUsableCrateThatContainObject.Create(aX, aBottomY: single;
@@ -264,6 +284,22 @@ begin
   State := csRedFlash;
 end;
 
+{ TUsableControlPanel }
+
+class procedure TUsableControlPanel.LoadTexture(aAtlas: TOGLCTextureAtlas);
+begin
+  texControlPanel := aAtlas.AddFromSVG(FolderSpriteGameMermaidsPort+'ControlPanel.svg', ScaleW(73), -1);
+end;
+
+constructor TUsableControlPanel.Create(aX, aBottomY: single; aLayerIndex: integer; aLR4DirInstance: TLR4Direction);
+begin
+  inherited Create(aLR4DirInstance, texControlPanel, False);
+  if aLayerIndex <> -1 then FScene.Add(Self, aLayerIndex);
+  X.Value := aX;
+  BottomY := aBottomY;
+  WidthThresholdCoef := 1.0;
+end;
+
 { TUsableObjectSprite }
 
 procedure TUsableObjectSprite.SetEnabled(AValue: boolean);
@@ -283,7 +319,7 @@ end;
 procedure TUsableObjectSprite.StopBlinkScenario;
 begin
   StopAllScenario;
-  Tint.Alpha.ChangeTo(0, 0.7);
+  Tint.Alpha.Value := 0;
 end;
 
 constructor TUsableObjectSprite.Create(aLR4DirInstance: TLR4Direction; aTexture: PTexture; Owner: boolean);
@@ -302,8 +338,13 @@ begin
 
   // check if LR is near the crate
   if not FEnabled then exit;
+  if FLR.ParentSurface = ParentSurface
+    then d := Distance(Center, FLR.GetXY)
+    else begin
+      d := Distance(FLR.SurfaceToSceneWithoutLayerTransform(PointF(0,0)),
+                    SurfaceToSceneWithoutLayerTransform(PointF(Width*0.5, Height*0.5)));
+    end;
 
-  d := Distance(Center, FLR.GetXY);
   if (d < Width*FWidthThresholdCoef) and (d < FLR.DistanceToObjectToHandle) then begin
     StartBlinkScenario;
     FLR.ObjectToHandle := Self;

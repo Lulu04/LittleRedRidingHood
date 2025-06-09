@@ -43,7 +43,7 @@ var
   texCoin, texSmallCristalGray,
   texBow, texElevator, texHammer, texStormCloud,
   texZipLine,
-  texDigicodeDecoder, texDorsalThruster, texLaserGun, texSubmarine: PTexture;
+  texDigicodeDecoder, texDorsalThruster, texLaserGun, texCraneRemote, texSubmarine: PTexture;
   FItemHeight: integer;
   FFontText: TTexturedFont;
 
@@ -378,6 +378,7 @@ begin
   texDigicodeDecoder := aAtlas.AddFromSVG(SpriteUIFolder+'DigicodeDecoder.svg', -1, FItemHeight);
   texDorsalThruster := aAtlas.AddFromSVG(SpriteUIFolder+'DorsalThruster.svg', -1, FItemHeight);
   texLaserGun := aAtlas.AddFromSVG(SpriteUIFolder+'LaserGun.svg', -1, FItemHeight);
+  texCraneRemote := aAtlas.AddFromSVG(SpriteUIFolder+'IconCraneRemote.svg', -1, FItemHeight);
   texSubmarine := aAtlas.AddFromSVG(SpriteUIFolder+'Submarine.svg', -1, FItemHeight);
 end;
 
@@ -469,6 +470,7 @@ begin
 
   // item Mermaids port
   with PlayerInfo.MermaidsPort do begin
+    FPanelItem.AddItem(CraneRemoteControl, texCraneRemote);
     // pocket submarine
     FPanelItem.AddItem(PocketSubmarine, texSubmarine);
   end;
