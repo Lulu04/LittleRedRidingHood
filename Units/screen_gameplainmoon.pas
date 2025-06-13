@@ -33,6 +33,7 @@ uses
 
 const  PLAIN_MOON_GAME_TIME = 300;   // medium 280   hard 260
        PLAIN_MOON_WAGON_COUNT = 4;
+       PLAIN_MOON_GAME_CHALLENGE_TIME = 255;
 type
 
 { TScreenPlainOfSleepingMoon }
@@ -82,7 +83,7 @@ var ScreenPlainOfSleepingMoon: TScreenPlainOfSleepingMoon;
 
 implementation
 uses Forms, u_app, u_sprite_wolf, u_utils, u_resourcestring, u_screen_map,
-  screen_gameplainmooninside, u_mousepointer, Math;
+  screen_gameplainmooninside, u_mousepointer, u_screen_workshop, Math;
 
 
 function YFeetOnTrain: single; inline;
@@ -562,11 +563,7 @@ end;
 { TLaserGunThatGoInInventory }
 
 constructor TLaserGunThatGoInInventory.Create(aUserValue: TUserMessageValue);
-var p1, p2: TPointF;
 begin
-{  p1 := FLR.SurfaceToScene(PointF(0, FLR.BodyTopY));
-  p2 := FGameinventory.Center; //GetXY+PointF(FGameinventory.Width*0.5, FGameinventory.Height*0.5);
-  p2.x := p2.x + FScene.Width; }
   inherited Create(texIconLaserGun, LAYER_GAMEUI, FLR, FGameinventory, ScreenPlainOfSleepingMoon, aUserValue);
 end;
 
@@ -2127,16 +2124,25 @@ begin
   //FInGamePausePanel.SetCheatCodeList([VolcanoInnerCheatCode]);
   //FInGamePausePanel.OnPlayerEnterCheatCode := @ProcessPlayerEnterCheatCode;
 
-  // select which part to play
-  if not PlayerInfo.PlainMoon.IntroAlreadySeen then
-    FPlainIntroductionCinematic.Create
-  else begin
+  if ChallengeMode then begin
     FPlainGame.Create;
     FLaserGun.Visible := PlayerInfo.PlainMoon.LaserGun.Owned;
     if PlayerInfo.PlainMoon.CurrentWagonJustDone then begin
       PlayerInfo.PlainMoon.CurrentWagonJustDone := False;
       PostMessage(400);
-    end else PostMessage(0);
+    end else PostMessage(100);
+  end else begin
+    // select which part to play
+    if not PlayerInfo.PlainMoon.IntroAlreadySeen then
+      FPlainIntroductionCinematic.Create
+    else begin
+      FPlainGame.Create;
+      FLaserGun.Visible := PlayerInfo.PlainMoon.LaserGun.Owned;
+      if PlayerInfo.PlainMoon.CurrentWagonJustDone then begin
+        PlayerInfo.PlainMoon.CurrentWagonJustDone := False;
+        PostMessage(400);
+      end else PostMessage(0);
+    end;
   end;
 
   CustomizeMousePointer;
@@ -2148,6 +2154,7 @@ begin
   if FScene.RequestedScreen = ScreenMap then begin
     FadeOutAndKillMusicAndSounds;
     Audio.ResumeMusicTitleMap;
+    ChallengeMode := False;
   end;
   FTrain.DeleteSound;
 
@@ -2389,7 +2396,8 @@ begin
       FCamera.Scale.Value := PointF(0.5,0.5);
       FGameinventory.AddLaserGun;
       FGameinventory.AddClock;
-      FGameinventory.Clock.Second := PLAIN_MOON_GAME_TIME;
+      if ChallengeMode then FGameinventory.Clock.Second := PLAIN_MOON_GAME_CHALLENGE_TIME
+        else FGameinventory.Clock.Second := PLAIN_MOON_GAME_TIME;
       FWagonsIndex := PLAIN_MOON_WAGON_COUNT-1;
       //FTrain.LastWagon.AddChild(FLR, 10);
       FLR.SetChildOf(FTrain.LastWagon, 10);
@@ -2405,11 +2413,18 @@ begin
       FTrain.SetCharacterToFollow(FLR);
       FScrollingSpeed.Value := 1.0;
       FForceSpeedUpdate := True;
-      PostMessage(101, 0.1);
+      if ChallengeMode then PostMessage(150, 0.1)
+        else PostMessage(101, 0.1);
     end;
     101: begin
       ShowGameInstructions(SPlainMoonHelpText);
       PostMessage(61);
+    end;
+
+    // START CHALLENGE MODE
+    150: begin
+      with SpriteMessage(sChallenge) do KillDefered(2.0);
+      PostMessage(61, 2.0);
     end;
 
     // LR FALL BETWEEN TWO WAGON
@@ -2425,9 +2440,10 @@ begin
       FLR.SetZOrder(-100);   // LR is behind the train wheel
       FLR.Angle.Value := 90;
       FLR.Speed.x.Value := FGround.Speed;
-      PostMessage(210, 1.5);
+      if ChallengeMode then PostMessage(600, 1.5)
+        else PostMessage(210, 1.5);
     end;
-    210: begin  // show message 'Je crois que je me suis cassé un ongle...'
+    210: begin  // show message 'I think I've broken a nail...'
       with TInfoPanel.Create(FLR.DialogAuthorName, sIThinkIveBrokenANail, FFontText, Self, 215, 0, LAYER_GAMEUI) do begin
         X.Value := 0;
         BottomY := FScene.Height - PPIScale(10);
@@ -2475,7 +2491,8 @@ begin
     272: begin
       FLR.Visible := False;
       FLR.SetFaceType(lrfSmile);
-      PostMessage(215, 1.5);
+      if ChallengeMode then PostMessage(600, 1.5)
+        else PostMessage(215, 1.5);
     end;
 
     // LR enter a wagon
@@ -2564,17 +2581,20 @@ begin
 
     // ANIM END OF THE GAME
     500: begin
-      FGameinventory.Clock.PauseTime;
-      sndMusic := Audio.AddMusic('StarrySky.ogg', False);
-      sndMusic.Volume.Value := 0.8;
-      sndMusic.Play(True);
-      FTrain.HideDirectionnalArrow;
-      FLR.State := lr4sStartAnimWinner;
-      FLR.Speed.x.Value := 0;
-      FLR.TimeMultiplicator := 0.6;
-      FLR.LRRight.RemoveObjectInRightHand(True); // remove the laser gun from LR hand
-      FLR.WalkHorizontallyTo(FPenelope.X.Value-FPenelope.BodyWidth*2, Self, 502);
-      FCamera.Scale.ChangeTo(PointF(1.0, 1.0), 3.0, idcSinusoid);
+      if ChallengeMode then PostMessage(700)
+      else begin
+        FGameinventory.Clock.PauseTime;
+        sndMusic := Audio.AddMusic('StarrySky.ogg', False);
+        sndMusic.Volume.Value := 0.8;
+        sndMusic.Play(True);
+        FTrain.HideDirectionnalArrow;
+        FLR.State := lr4sStartAnimWinner;
+        FLR.Speed.x.Value := 0;
+        FLR.TimeMultiplicator := 0.6;
+        FLR.LRRight.RemoveObjectInRightHand(True); // remove the laser gun from LR hand
+        FLR.WalkHorizontallyTo(FPenelope.X.Value-FPenelope.BodyWidth*2, Self, 502);
+        FCamera.Scale.ChangeTo(PointF(1.0, 1.0), 3.0, idcSinusoid);
+      end;
     end;
     502: begin
       FLR.IdleRight;
@@ -2702,6 +2722,33 @@ begin
       if FEndOfShootingStars then exit;
       TShootingStar.Create;
       PostMessage(590, Random*5+3.0);
+    end;
+
+    // LR FAIL CHALLENGE
+    600: begin
+      if sndMusic <> NIL then sndMusic.FadeOut(0.5);
+      Audio.PlayMusicLose1;
+      with SpriteMessage(sFail) do CenterOnScene;
+      PostMessage(610, 2.0);
+    end;
+    610: FScene.RunScreen(ScreenMap);
+
+    // LR WIN CHALLENGE
+    700: begin
+      FadeOutAndKillMusicAndSounds;
+      FGameinventory.Clock.PauseTime;
+      FTrain.HideDirectionnalArrow;
+      //FLR.State := lr4sStartAnimWinner;
+      FLR.Speed.x.Value := 0;
+      FLR.IdleDown;
+      FCamera.Scale.ChangeTo(PointF(1.0, 1.0), 3.0, idcSinusoid);
+      PostMessage(705, 0.5);
+    end;
+    705: PlaySequenceWinTrophy('TrophyPlainMoon.svg', FAtlas, 710, 0);
+    710: begin
+      PlayerInfo.PlainMoon.ChallengeIsTerminated := True;
+      FSaveGame.Save;
+      FScene.RunScreen(ScreenWorkshop);
     end;
   end;
 end;

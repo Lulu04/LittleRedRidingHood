@@ -44,7 +44,8 @@ uses u_screen_title, u_screen_gameforest, BGRABitmap, BGRABitmapTypes,
   u_screen_gamevolcanoinner, u_resourcestring, u_screen_gamevolcanodino,
   u_screen_intro, screen_gameplainmoon, screen_gameplainmooninside,
   u_screen_gamemermaidsport, u_screen_forest_amara, u_screen_sam,
-  u_screen_strikeraccoon, DefaultTranslator, LCLTranslator, i18_utils;
+  u_screen_strikeraccoon, u_screen_dartboard, DefaultTranslator, LCLTranslator,
+  i18_utils;
 {$R *.lfm}
 
 { TFormMain }
@@ -124,6 +125,7 @@ begin
   ScreenWorkShop := TScreenWorkShop.Create;
   ScreenSamHome := TScreenSamHome.Create;
   ScreenStrikeRaccoon := TScreenStrikeRaccoon.Create;
+  ScreenDartboard := TScreenDartboard.Create;;
 //  FScene.RunScreen(ScreenLogo);
 
 FSaveGame.SetCurrentPlayerIndex(0);
@@ -139,6 +141,7 @@ begin
   FreeAndNil(ScreenWorkShop);
   FreeAndNil(ScreenSamHome);
   FreeAndNil(ScreenStrikeRaccoon);
+  FreeAndNil(ScreenDartboard);
   FreeAndNil(ScreenGameForest);
   FreeAndNil(ScreenForestAmara);
   FreeAndNil(ScreenGameZipLine);

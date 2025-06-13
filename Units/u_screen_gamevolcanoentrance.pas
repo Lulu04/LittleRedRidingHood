@@ -288,12 +288,12 @@ begin
 
   // LR 4 direction
   FLR := TLR4Direction.Create;
+  FLR.TimeMultiplicator := 0.8;
   FLR.SetCoordinate(FScene.Width*0.5, FScene.Height*0.8);
   FLR.SetWindSpeed(0.5);
   FLR.SetFaceType(lrfSmile);
   FLR.IdleRight;
   FLR.CallbackPickUpSomethingWhenBendDown := @ProcessCallbackPickUpSomethingWhenBendDown;
-  FLR.TimeMultiplicator := 0.8;
 
   if not PlayerInfo.Volcano.HaveDecoderPlan then begin
     FWolf := TWolf.Create(False);

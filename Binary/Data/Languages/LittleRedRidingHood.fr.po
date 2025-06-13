@@ -87,6 +87,10 @@ msgstr "RETOUR"
 msgid "BACK TO MAP"
 msgstr "RETOUR A LA CARTE"
 
+#: u_resourcestring.sbacktosam
+msgid "BACK TO SAM"
+msgstr "RETOUR CHEZ SAM"
+
 #: u_resourcestring.sbecauseyouhaveboughtitems
 msgid "Because you've bought items from me, you're entitled to a free bonus: I'm giving you the power to teleport anywhere on the map simply by clicking on the place you want to go. Isn't that nice?!"
 msgstr "Parce que tu m'as acheter des articles, tu as droit à un bonus gratuit:  je te donne le pouvoir de te téléporter n'importe où sur la carte simplement en cliquant sur le lieu ou tu veux aller. C'est pas bien ça ?!"
@@ -146,6 +150,10 @@ msgstr "vous devez tout d'abord acheter la tyrolienne !"
 msgid "CANCEL"
 msgstr "ANNULER"
 
+#: u_resourcestring.schallenge
+msgid "CHALLENGE !"
+msgstr "DÉFI !"
+
 #: u_resourcestring.schallengemode
 msgid "Challenge mode"
 msgstr "Mode défi"
@@ -190,6 +198,14 @@ msgstr "CRÉDITS"
 #: u_resourcestring.sdamnacodeddoor
 msgid "I don't have the code to open this door..."
 msgstr "Je n'ai pas le code pour ouvrir cette porte..."
+
+#: u_resourcestring.sdartboardinstructions
+msgid ""
+"←→ to move\n"
+"ACTION1 : to fly"
+msgstr ""
+"←→ : se déplacer\n"
+"ACTION1 : voler"
 
 #: u_resourcestring.sdecoderexplanation
 msgctxt "u_resourcestring.sdecoderexplanation"
@@ -258,6 +274,10 @@ msgstr "EFFACER"
 msgid "Er, I have to go"
 msgstr "Oui ben, je dois encore y aller"
 
+#: u_resourcestring.sexchange
+msgid "EXCHANGE"
+msgstr "ÉCHANGER"
+
 #: u_resourcestring.sexit
 msgid "EXIT"
 msgstr "SORTIR"
@@ -283,13 +303,25 @@ msgstr "vous devez d'abord compléter les Pics Montagneux !"
 msgid "you must first complete Plain of the Sleeping Moon!"
 msgstr "tu dois d'abord compléter la Plaine de la Lune Endormie !"
 
+#: u_resourcestring.sfirstcompletethegamemode
+msgid "first, complete the game mode"
+msgstr "d'abord, termines le mode jeu"
+
 #: u_resourcestring.sfirstcompletevolcano
 msgid "you must first complete Volcano!"
 msgstr "vous devez d'abord compléter Volcano !"
 
+#: u_resourcestring.sfirstupgradetothemaxthebowelevator
+msgid "to access the challenge, you must first, upgrade to the max the bow, the elevator, the hammer and the lightning storm"
+msgstr "pour accéder au défi tu dois d'abord améliorer au maxi l'arc, l'ascenseur, le marteau et la tempête d'éclairs foudroyants"
+
+#: u_resourcestring.sfor
+msgid "for"
+msgstr "contre"
+
 #: u_resourcestring.sforestchallengehelptext
-msgid "first, upgrade to the max the bow, the elevator, the hammer and the lightning storm then win the game"
-msgstr "d'abord, améliore au max l'arc, l'ascenseur, le marteau et la tempête d'éclair foudroyante, puis gagne le jeu"
+msgid "will you win this challenge?"
+msgstr "gagneras-tu ce défi?"
 
 #: u_resourcestring.sforesthelptext
 msgid ""
@@ -419,11 +451,6 @@ msgstr "Ça, je n'en sais rien. Je ne m'occupe pas des affaires de mes parents."
 #: u_resourcestring.sidontknowwhereitsgoing
 msgid "I don't know where it's going, but I have a feeling it's going to bring me closer to Granny. No time to lose!"
 msgstr "Je ne connaît pas sa destination mais j'ai le sentiment qu'il va me rapprocher de grand-mère. Pas de temps à perdre !"
-
-#: u_resourcestring.sifyouhaveenoughmoney
-msgctxt "u_resourcestring.sifyouhaveenoughmoney"
-msgid "if you have enough money, maybe you'll meet someone in the forest?"
-msgstr "si tu as assez d'argent, peut-être feras-tu une rencontre dans la forêt ?"
 
 #: u_resourcestring.sifyouwanttojoinyour
 msgid "If you want to join your grandmother, you'll have to go to the castle."
@@ -633,8 +660,8 @@ msgid "Mountain peaks"
 msgstr "Les pics montagneux"
 
 #: u_resourcestring.smountainpeakschallengehelptext
-msgid "complete the course on time"
-msgstr "termine le parcours à temps"
+msgid "complete the course with the smooth arrival bonus"
+msgstr "termine le parcours avec le bonus d'arrivée en douceur"
 
 #: u_resourcestring.smountainpeakshint
 msgid "if you're afraid of heights, don't go!"
@@ -764,8 +791,8 @@ msgid "The plain of the sleeping moon"
 msgstr "La plaine de la lune endormie"
 
 #: u_resourcestring.splainofsleepingmoonchallengehelptext
-msgid "blows up the robots in time"
-msgstr "Détruis les robots à temps"
+msgid "destroy the robots and get to the locomotive in time"
+msgstr "détruis les robots et rejoins la locomotive à temps"
 
 #: u_resourcestring.splainofsleepingmoonhint
 msgid "it is said that on full moon nights you can hear the train whistle..."
@@ -835,6 +862,10 @@ msgstr "Ma chère Julia, j'espère que tu vas bien. Cette carte SD est la clé p
 #: u_resourcestring.sromeo2
 msgid "Oh my love, I’m so happy you replied! I can’t wait for us to be together again either, but I have to be careful, the boss is watching me closely. He says I’m daydreaming... It’s because I can’t stop thinking about you!"
 msgstr "Oh mon amour comme je suis content que tu m'ais répondu ! Moi aussi j'ai hâte qu'on se retrouve, mais je dois faire attention, le chef me surveille de prêt. Il dit que je suis dans la lune... C'est parce que je pense sans arrêt à toi !"
+
+#: u_resourcestring.ssamgiveyou
+msgid "Sam gives you"
+msgstr "Sam te donne"
 
 #: u_resourcestring.ssamshut
 msgid "Sam's hut"
@@ -1012,6 +1043,11 @@ msgstr "Trop de lave c'est pas bon pour la santé"
 msgid "TOTAL"
 msgstr "TOTAL"
 
+#: u_resourcestring.sturn
+#, object-pascal-format
+msgid "Turn %d/%d"
+msgstr "Tour %d/%d"
+
 #: u_resourcestring.suhialreadydid
 msgid "Uh... I already did..."
 msgstr "Heu... je le faisais déjà..."
@@ -1025,8 +1061,8 @@ msgid "Volcano"
 msgstr "Volcano"
 
 #: u_resourcestring.svolcanochallengehelptext
-msgid "win three time the race versus Dino"
-msgstr "gagne trois fois la course contre Dino"
+msgid "win the race versus Dino"
+msgstr "gagne la course contre Dino"
 
 #: u_resourcestring.svolcanodinohelptext
 msgctxt "u_resourcestring.svolcanodinohelptext"
@@ -1208,6 +1244,10 @@ msgstr "tu as déjà gagné ce défi"
 #, object-pascal-format
 msgid "You've got exactly %d seconds and there are %d carriages: if you succeed, join me on the locomotive. If you fail, you'll be ejected from the train... Good luck!"
 msgstr "Tu as exactement %d secondes et il y a %d wagons: si tu réussis, rejoint moi sur la locomotive. Si tu échoues, tu seras éjectée du train… Bonne chance !"
+
+#: u_resourcestring.syouvewon
+msgid "You've won!"
+msgstr "Tu as gagné !"
 
 #: u_resourcestring.syouwhatareyoudoingonmytrain
 msgid "You! What are you doing on my train?"

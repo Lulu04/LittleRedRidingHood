@@ -6,7 +6,7 @@ unit u_app;
 interface
 
 uses
-  Classes, SysUtils, OGLCScene;
+  Classes, SysUtils, OGLCScene, fgl;
 
   function MusicsFolder: string;
   function SoundsFolder: string;
@@ -35,6 +35,7 @@ uses
   function FolderSpriteSam: string;
   function FolderSpriteStrikeRaccoon: string;
   function FolderSpriteDartboard: string;
+  function FolderSpriteTrophy: string;
   function LanguageFolder: string;
 
   function ALSoundLibrariesSubFolder: string;
@@ -89,6 +90,7 @@ public
   function NextLevelExplanation: string; virtual; abstract;
   function PriceForNextLevel: ArrayOfMoneyDescriptor; virtual; abstract;
   function LevelCanBeUpgraded: boolean;
+  function LevelIsMaximized: boolean;
   // Increment the level of the item
   procedure IncLevel;
 
@@ -103,10 +105,12 @@ TGameDescriptor = class
 private
   FCurrentStep, FStepCount, FStepPlayed: integer;
   FIsTerminated, FFirstTimeTerminated: boolean;
-  FChallengeIsTerminated: boolean;
+  FChallengeIsTerminated, FFirstTimeChallengeIsTerminated: boolean;
   function GetFirstTimeTerminated: boolean;
+  function GetChallengeFirstTimeTerminated: boolean;
   function GetHelpText: string; virtual; abstract;
   function GetChallengeHelpText: string; virtual;
+  procedure SetChallengeIsTerminated(AValue: boolean);
 protected
   procedure SaveCommonProperties(var aProp: TProperties);
   procedure LoadCommonProperties(const aProp: TProperties);
@@ -129,7 +133,8 @@ public
   property HelpText: string read GetHelpText;
 public // challenge
   property ChallengeHelpText: string read GetChallengeHelpText;
-  property ChallengeIsTerminated: boolean read FChallengeIsTerminated write FChallengeIsTerminated;
+  property ChallengeIsTerminated: boolean read FChallengeIsTerminated write SetChallengeIsTerminated;
+  property ChallengeFirstTimeTerminated: boolean read GetChallengeFirstTimeTerminated;
 end;
 
 // FOREST GAME DESCRIPTOR
@@ -183,7 +188,7 @@ private const
   ElevatorMaxLevel = 5;
   HammerMaxLevel = 5;       // [0..5]   0 is not available  buyable in workshop
   StormCloudMaxLevel = 3;   // [0..3]   0 is not available  buyable in workshop
-  ForestStepCount = 10;
+  ForestStepCount = 5;
 private
   FBow: TForestBow;
   FElevator: TForestElevator;
@@ -231,7 +236,7 @@ private
   function GetChallengeHelpText: string; override;
 public const
   ZipLineMaxLevel = 1;
-  MountainPeaksStepCount = 10;
+  MountainPeaksStepCount = 5;
 public
   constructor Create;
   destructor Destroy; override;
@@ -270,6 +275,7 @@ private
   FAnimDinoOpenCageAndDoorAlreadySeen: boolean;
   FDigicodeDecoder: TDigicodeDecoder;
   FDorsalThruster: TDorsalThruster;
+  FDinoRaceWinCount: integer;
   function GetHelpText: string; override;
   function GetChallengeHelpText: string; override;
 private const
@@ -290,6 +296,8 @@ public // special volcano item
   property VolcanoEntranceIsDone: boolean read FVolcanoEntranceIsDone write FVolcanoEntranceIsDone;
   property VolcanoInnerIsDone: boolean read FVolcanoInnerIsDone write FVolcanoInnerIsDone;
   property VolcanoDinoIsDone: boolean read FVolcanoDinoIsDone write FVolcanoDinoIsDone;
+public // challenge
+  property DinoRaceWinCount: integer read FDinoRaceWinCount write FDinoRaceWinCount;
 end;
 
 
@@ -400,6 +408,8 @@ public
   property MermaidsPort: TMermaidsPortDescriptor read FMermaidsPort;
 end;
 
+TPlayerList = class(specialize TFPGObjectList<TPlayerInfo>);
+
 { TSaveGame }
 
 TSaveGame = class(TOGLCSaveDirectory)
@@ -407,7 +417,7 @@ private
   FKeyAction1, FKeyAction2, FKeyDown, FKeyLeft, FKeyUp, FKeyRight: byte;
   FKeyPause: byte;
   FLanguage: string;
-  FPlayers: array of TPlayerInfo;
+  FPlayers: TPlayerList; //array of TPlayerInfo;
   FCurrentPlayerIndex: integer;
   FMusicVolume, FSoundVolume: single;
   procedure SavePlayersTo(t: TStringList);
@@ -431,7 +441,7 @@ public
   procedure CreateNewPlayer(const aPlayerName: string);
   procedure DeletePlayer(aIndex: integer);
   // return an array of string 'player_name  level-sublevel'
-  function GetPlayersInfo: TStringArray;
+  function GetPlayerNames: TStringArray;
 
   procedure SetCurrentPlayerIndex(aIndex: integer);
   function CurrentPlayer: TPlayerInfo;
@@ -619,6 +629,11 @@ begin
   Result := FolderSpriteSam+'Dartboard'+DirectorySeparator;
 end;
 
+function FolderSpriteTrophy: string;
+begin
+  Result := SpriteFolder+'Trophy'+DirectorySeparator;
+end;
+
 function LanguageFolder: string;
 begin
   Result := FScene.App.DataFolder+'Languages'+DirectorySeparator;
@@ -689,15 +704,12 @@ end;
 
 function TMountainPeakZipLine.CanDisplayPrice: boolean;
 begin
-  Result := Owned and (Level < MaxLevel);
+  Result := Level < MaxLevel;
 end;
 
 function TMountainPeakZipLine.NextLevelExplanation: string;
 begin
-  case Level of
-    0: Result := '?';
-    else Result := sZipLineHint;
-  end;
+  Result := sZipLineHint;
 end;
 
 function TMountainPeakZipLine.PriceForNextLevel: ArrayOfMoneyDescriptor;
@@ -715,13 +727,12 @@ end;
 
 function TForestStormCloud.CanDisplayPrice: boolean;
 begin
-  Result := Owned and (Level < MaxLevel);
+  Result := Level < MaxLevel;
 end;
 
 function TForestStormCloud.NextLevelExplanation: string;
 begin
   case Level of
-    0: Result := '?';
     1..2: Result := sStormCloudUpgradeHint;
     else Result := sStormCloudExplanation;
   end;
@@ -764,13 +775,12 @@ end;
 
 function TForestHammer.CanDisplayPrice: boolean;
 begin
-  Result := Owned and (Level < MaxLevel);
+  Result := Level < MaxLevel;
 end;
 
 function TForestHammer.NextLevelExplanation: string;
 begin
   case Level of
-    0: Result := '?';
     1..4: Result := sHammerUpgradeHint;
     else Result := sHammerExplanation;
   end;
@@ -830,9 +840,9 @@ begin
   Result[0].MoneyType := mtCoin;
   case Level of
     1: Result[0].Count := 100;
-    2: Result[0].Count := 250;
-    3: Result[0].Count := 300;
-    4: Result[0].Count := 350;
+    2: Result[0].Count := 150;
+    3: Result[0].Count := 250;
+    4: Result[0].Count := 300;
     else Result[0].Count := 0;
   end;
 end;
@@ -878,8 +888,8 @@ begin
     1: Result[0].Count := 100;
     2: Result[0].Count := 150;
     3: Result[0].Count := 200;
-    4: Result[0].Count := 400;
-    5: Result[0].Count := 600;
+    4: Result[0].Count := 300;
+    5: Result[0].Count := 400;
     else Result[0].Count := 0;
   end;
 end;
@@ -964,6 +974,11 @@ begin
   Result := Level < MaxLevel;
 end;
 
+function TUpgradableItemDescriptor.LevelIsMaximized: boolean;
+begin
+  Result := FLevel = FMaxLevel;
+end;
+
 procedure TUpgradableItemDescriptor.IncLevel;
 begin
   if FLevel < FMaxLevel then
@@ -984,6 +999,8 @@ end;
 
 function TVolcanoDescriptor.GetChallengeHelpText: string;
 begin
+  if not IsTerminated then Result := sFirstCompleteTheGameMode
+  else
   if not ChallengeIsTerminated
     then Result := sVolcanoChallengeHelpText
     else Result := sYouveAlreadyWonThisChallenge;
@@ -1018,6 +1035,7 @@ begin
   prop.Add('VolcanoInnerIsDone', FVolcanoInnerIsDone);
   prop.Add('AnimDinoOpenCageAndDoorAlreadySeen', FAnimDinoOpenCageAndDoorAlreadySeen);
   prop.Add('VolcanoDinoIsDone', FVolcanoDinoIsDone);
+  prop.Add('DinoRaceWinCount', FDinoRaceWinCount);
   Result := prop.PackedProperty;
 end;
 
@@ -1038,6 +1056,7 @@ begin
   prop.BooleanValueOf('VolcanoInnerIsDone', FVolcanoInnerIsDone, False);
   prop.BooleanValueOf('VolcanoDinoIsDone', FVolcanoDinoIsDone, False);
   prop.BooleanValueOf('AnimDinoOpenCageAndDoorAlreadySeen', FAnimDinoOpenCageAndDoorAlreadySeen, False);
+  prop.IntegerValueOf('DinoRaceWinCount', FDinoRaceWinCount, 0);
 end;
 
 { TLaserGun }
@@ -1069,6 +1088,8 @@ end;
 
 function TPlainMoonDescriptor.GetChallengeHelpText: string;
 begin
+  if not IsTerminated then Result := sFirstCompleteTheGameMode
+  else
   if not ChallengeIsTerminated
     then Result := sPlainOfSleepingMoonChallengeHelpText
     else Result := sYouveAlreadyWonThisChallenge;
@@ -1204,6 +1225,8 @@ end;
 
 function TMountainPeakDescriptor.GetChallengeHelpText: string;
 begin
+  if not IsTerminated then Result := sFirstCompleteTheGameMode
+  else
   if not ChallengeIsTerminated
     then Result := sMountainPeaksChallengeHelpText
     else Result := sYouveAlreadyWonThisChallenge;
@@ -1263,9 +1286,14 @@ end;
 
 function TForestDescriptor.GetChallengeHelpText: string;
 begin
-  if not ChallengeIsTerminated
-    then Result := sForestChallengeHelpText
-    else Result := sYouveAlreadyWonThisChallenge;
+  if not IsTerminated then Result := sFirstCompleteTheGameMode
+  else
+  if not Bow.LevelIsMaximized or not Elevator.LevelIsMaximized or
+     not Hammer.LevelIsMaximized or not StormCloud.LevelIsMaximized then Result := sFirstUpgradeToTheMaxTheBowElevator
+  else
+  if not ChallengeIsTerminated then Result := sForestChallengeHelpText
+  else Result := sYouveAlreadyWonThisChallenge;
+
 end;
 
 constructor TForestDescriptor.Create;
@@ -1275,8 +1303,8 @@ begin
   FBow.Level := 1;
   FElevator := TForestElevator.Create(ElevatorMaxLevel, atoiFound);
   FElevator.Level := 1;
-  FHammer := TForestHammer.Create(HammerMaxLevel, atoiFound);
-  FStormCloud := TForestStormCloud.Create(StormCloudMaxLevel, atoiFound);
+  FHammer := TForestHammer.Create(HammerMaxLevel, atoiBuy); //atoiFound);
+  FStormCloud := TForestStormCloud.Create(StormCloudMaxLevel, atoiBuy); //atoiFound);
 end;
 
 destructor TForestDescriptor.Destroy;
@@ -1333,14 +1361,16 @@ begin
 end;
 
 function TForestDescriptor.CanEncounterAmara: boolean;
-var hammerPrice, stormcloudPrice: integer;
+//var hammerPrice, stormcloudPrice: integer;
 begin
-  hammerPrice := Hammer.PriceForNextLevel[0].Count;
+  exit(False);
+
+{  hammerPrice := Hammer.PriceForNextLevel[0].Count;
   stormcloudPrice := StormCloud.PriceForNextLevel[0].Count;
 
   Result := ((not Hammer.Owned) and (CurrentStep >= 4) and (PlayerInfo.CoinCount >= hammerPrice)) or
             ((not StormCloud.Owned) and (CurrentStep >= 7) and (PlayerInfo.CoinCount >= stormcloudPrice));
-  Result := Result and not IsTerminated;
+  Result := Result and not IsTerminated; }
 end;
 
 { TGameDescriptor }
@@ -1351,9 +1381,22 @@ begin
   FFirstTimeTerminated := False;
 end;
 
+function TGameDescriptor.GetChallengeFirstTimeTerminated: boolean;
+begin
+  Result := FFirstTimeChallengeIsTerminated;
+  FFirstTimeChallengeIsTerminated := False;
+end;
+
 function TGameDescriptor.GetChallengeHelpText: string;
 begin
   Result := sNoChallengeHere;
+end;
+
+procedure TGameDescriptor.SetChallengeIsTerminated(AValue: boolean);
+begin
+  if FChallengeIsTerminated=AValue then Exit;
+  FChallengeIsTerminated := AValue;
+  if FChallengeIsTerminated then FFirstTimeChallengeIsTerminated := True;
 end;
 
 procedure TGameDescriptor.SaveCommonProperties(var aProp: TProperties);
@@ -1366,8 +1409,10 @@ end;
 procedure TGameDescriptor.LoadCommonProperties(const aProp: TProperties);
 begin
   aProp.IntegerValueOf('CurrentStep', FCurrentStep, 1);
+  if FCurrentStep > FStepCount+1 then FCurrentStep := FStepCount+1;
   aProp.BooleanValueOf('IsTerminated', FIsTerminated, False);
   aProp.BooleanValueOf('ChallengeIsTerminated', FChallengeIsTerminated, False);
+  FFirstTimeChallengeIsTerminated := False;
 end;
 
 constructor TGameDescriptor.Create(aStepCount: integer);
@@ -1455,8 +1500,8 @@ var prop: TProperties;
   i: integer;
 begin
   prop.Init('|');
-  prop.Add('Count', Length(FPlayers));
-  for i:=0 to High(FPlayers) do
+  prop.Add('Count', FPlayers.Count);
+  for i:=0 to FPlayers.Count-1 do
     prop.Add('Player'+i.ToString, FPlayers[i].SaveToString);
 
   t.Add('[PLAYERS]');
@@ -1469,19 +1514,18 @@ var prop: TProperties;
   s: string;
   o: TPlayerInfo;
 begin
-  FPlayers := NIL;
+  FPlayers.Clear;
   if not prop.SplitFrom(t, '[PLAYERS]', '|') then exit;
 
   c := 0;
   prop.IntegerValueOf('Count', c, c);
   if c = 0 then exit;
-  SetLength(FPlayers, c);
   for i:=0 to c-1 do begin
     o := TPlayerInfo.Create;
-    FPlayers[i] := o;
     s  := '';
     if prop.StringValueOf('Player'+i.ToString, s, 'Player'+(i+1).ToString) then
       o.LoadFromString(s);
+    FPlayers.Add(o);
   end;
 end;
 
@@ -1574,13 +1618,13 @@ constructor TSaveGame.Create;
 begin
   inherited CreateFolder('LuluGame');
   FLanguage := 'en';
+  FPlayers := TPlayerList.Create(True);
 end;
 
 destructor TSaveGame.Destroy;
-var i: integer;
 begin
-  for i:=0 to High(FPlayers) do
-    FPlayers[i].Free;
+  FPlayers.Free;
+  FPlayers := NIL;
   inherited Destroy;
 end;
 
@@ -1676,35 +1720,31 @@ begin
 end;
 
 procedure TSaveGame.CreateNewPlayer(const aPlayerName: string);
-var i: SizeInt;
-  newp: TPlayerInfo;
+var newp: TPlayerInfo;
 begin
   newp := TPlayerInfo.Create;
   newp.Name := aPlayerName;
 
-  i := Length(FPlayers);
-  SetLength(FPlayers, i+1);
-  FPlayers[i] := newp;
+  FPlayers.Add(newp);
 
-  FCurrentPlayerIndex := i;
+  FCurrentPlayerIndex := FPlayers.Count-1;
   Save;
   u_common.PlayerInfo := newp;
 end;
 
 procedure TSaveGame.DeletePlayer(aIndex: integer);
 begin
-  FPlayers[aIndex].Free;
-  Delete(FPlayers, aIndex, 1);
+  FPlayers.Delete(aIndex);
   Save;
 end;
 
-function TSaveGame.GetPlayersInfo: TStringArray;
+function TSaveGame.GetPlayerNames: TStringArray;
 var i: integer;
 begin
   Result := NIL;
-  if Length(FPlayers) = 0 then exit;
-  SetLength(Result, Length(FPlayers));
-  for i:=0 to High(FPlayers) do
+  if FPlayers.Count = 0 then exit;
+  SetLength(Result, FPlayers.Count);
+  for i:=0 to FPlayers.Count-1 do
     Result[i] := FPlayers[i].Name;
 end;
 
@@ -1716,7 +1756,7 @@ end;
 
 function TSaveGame.CurrentPlayer: TPlayerInfo;
 begin
-  if Length(FPlayers) > 0 then Result := FPlayers[FCurrentPlayerIndex]
+  if FPlayers.Count > 0 then Result := FPlayers[FCurrentPlayerIndex]
     else Result := NIL;
 end;
 

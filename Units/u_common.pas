@@ -33,6 +33,7 @@ var
   FScene: TOGLCScene;
 
   PlayerInfo: TPlayerInfo;
+  ChallengeMode: boolean;
 
 
 implementation

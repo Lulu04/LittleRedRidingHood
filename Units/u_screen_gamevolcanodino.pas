@@ -15,7 +15,8 @@ type
 
 TGameState=(gsUndefined=0, gsIdle, gsRunningOnGround, gsRacing,
             gsComputerAnim, gsOpenDoorAnim,
-            gsLRLost, gsOutOfGas, gsLRWin);
+            gsLRLost, gsOutOfGas, gsLRWin,
+            gsLRLostChallenge, gsLRWinChallenge);
 
 { TScreenGameVolcanoDino }
 
@@ -60,7 +61,7 @@ var ScreenGameVolcanoDino: TScreenGameVolcanoDino;
 implementation
 
 uses Forms, u_sprite_wolf, u_app, u_resourcestring, u_utils, u_screen_map,
-  u_mousepointer, LCLType, Math, BGRAPath, ALSound;
+  u_mousepointer, u_screen_workshop, LCLType, Math, BGRAPath, ALSound;
 
 {
   -  flat
@@ -298,10 +299,13 @@ begin
      (FDino.X.Value+FDino.BodyWidth*0.5 < X.Value) then exit;
 
   // check who win
-  if FLR.X.Value+FLR.BodyWidth*0.5 > FDino.X.Value+FDino.BodyWidth*0.5 then
-    ScreenGameVolcanoDino.GameState := gsLRWin
-  else
-    ScreenGameVolcanoDino.GameState := gsLRLost;
+  if FLR.X.Value+FLR.BodyWidth*0.5 > FDino.X.Value+FDino.BodyWidth*0.5 then begin
+    if ChallengeMode then ScreenGameVolcanoDino.GameState := gsLRWinChallenge
+      else ScreenGameVolcanoDino.GameState := gsLRWin;
+  end else begin
+    if ChallengeMode then ScreenGameVolcanoDino.GameState := gsLRLostChallenge
+      else ScreenGameVolcanoDino.GameState := gsLRLost;
+  end;
 end;
 
 { TPileOfRocks }
@@ -1229,6 +1233,8 @@ begin
     gsLRWin: PostMessage(500);
     gsLRLost: PostMessage(550);
     gsOutOfGas: PostMessage(530);
+    gsLRWinChallenge: PostMessage(600);
+    gsLRLostChallenge: PostMessage(700);
   end;
 end;
 
@@ -1238,6 +1244,7 @@ var fd: TFontDescriptor;
     o: TSprite;
 begin
   fd.Create('Arial', Round(FScene.Height*0.2), [], BGRA(255,255,180), BGRA(30,30,30), PPIScale(5));
+  fd.ComputeMaxHeightFor(aMess, Rect(0, 0, FScene.Width, Round(FScene.Height*0.2)));
   o := TSprite.Create(FScene, fd, aMess);
   FScene.Add(o, LAYER_DIALOG);
   with o do begin
@@ -1245,7 +1252,7 @@ begin
     Scale.ChangeTo(PointF(1.0, 1.0), aAppearTime, idcStartSlowEndFast);
     Opacity.Value :=0;
     Opacity.ChangeTo(255, aAppearTime);
-    SetCenterCoordinate(GetCameraCenterView);
+    CenterOnScene;
     KillDefered(aStayTime);
   end;
 end;
@@ -1309,9 +1316,9 @@ begin
   FGameState := gsUndefined;
   Audio.PauseMusicTitleMap(3.0);
   FsndFunnyMusic := Audio.AddMusic('Malloga_Ballinga_Mastered.ogg', True);
-  FsndFunnyMusic.Play(True);
+  if not ChallengeMode then FsndFunnyMusic.Play(True);
   FsndRaceMusic := Audio.AddMusic('PromenonsNousDansLesBois.ogg', True);
-FsndRaceMusic.Volume.Value := 0.8;
+  FsndRaceMusic.Volume.Value := 0.8;
   FsndEarthQuakeLoop := Audio.AddSound('Earthquake1_2654Loop.ogg', 1.0, True);
   FsndEarthQuakeLoop.AppLyEffect(Audio.FXReverbShort);
   FsndEarthQuakeLoop.SetEffectDryWetVolume(Audio.FXReverbShort, 0.5);
@@ -1331,7 +1338,7 @@ FsndRaceMusic.Volume.Value := 0.8;
   FLR.SetWindSpeed(0.5);
   FLR.SetFaceType(lrfSmile);
   FLR.IdleRight;
-  FLR.TimeMultiplicator := 0.7;
+  FLR.TimeMultiplicator := 0.6;
 
   // cameras
   FCamera := FScene.CreateCamera;
@@ -1363,18 +1370,26 @@ FsndRaceMusic.Volume.Value := 0.8;
   FCameraStayVerticallyCenteredOnScene := True;
   FSpriteFloorCanCheckCollisionWithLR := False;
   FIndexLevelData := 0;
-  FDinoMaxSpeed := FScene.Width*0.8;
-  FLRMaxSpeed := FDinoMaxSpeed*1.1;
-
+  if ChallengeMode then begin
+    FDinoMaxSpeed := FScene.Width*0.8;
+    FLRMaxSpeed := FDinoMaxSpeed*1.03;  // hard but feasable!
+  end else begin
+    FDinoMaxSpeed := FScene.Width*0.8;
+    FLRMaxSpeed := FDinoMaxSpeed*1.1;
+  end;
   // background color
   FScene.BackgroundColor := BGRA(68,49,63);
 
-  // don't play anim open cage and door
-  if PlayerInfo.Volcano.AnimDinoOpenCageAndDoorAlreadySeen then
-    PostMessage(300)  // ask if player want see that anim again
-  else begin
-    ShowGameInstructions(PlayerInfo.Volcano.HelpText); // show how to play
-    FGameState := gsRunningOnGround;
+  if ChallengeMode then begin
+    PostMessage(305);
+  end else begin
+    // don't play anim open cage and door
+    if PlayerInfo.Volcano.AnimDinoOpenCageAndDoorAlreadySeen then
+      PostMessage(300)  // ask if player want see that anim again
+    else begin
+      ShowGameInstructions(PlayerInfo.Volcano.HelpText); // show how to play
+      FGameState := gsRunningOnGround;
+    end;
   end;
 
   CustomizeMousePointer;
@@ -1398,12 +1413,14 @@ begin
   FSndRockPileExplode := NIL;
   if FsndEmotionMusic <> NIL then FsndEmotionMusic.FadeOutThenKill(1.0);
   FsndEmotionMusic := NIL;
+  FScene.BackgroundColor := BGRA(0,0,0);
 
   FScene.KillCamera(FCamera);
   FScene.ClearAllLayer;
   FAtlas.Free;
   FAtlas := NIL;
   ResetSceneCallbacks;
+  ChallengeMode := False;
 end;
 
 procedure TScreenGameVolcanoDino.ProcessMessage(UserValue: TUserMessageValue);
@@ -1629,7 +1646,7 @@ begin
       FGasJauge := TGasJauge.Create;
       FProgressLine := TProgress.Create;
       FProgressLine.DistanceToTravel := Length(LevelData)-TRAIL_DECORS_COUNT;
-      ShowGameInstructions(sDinoRaceInstructions);
+      if not ChallengeMode then ShowGameInstructions(sDinoRaceInstructions);
     end;
     268: begin // camera centered on LR
       FLR.FlipH := False;
@@ -1661,7 +1678,7 @@ begin
       FGameState := gsIdle;
       FArmoredDoor.Angle.Value := 90;
       FDino.MoveFromChildToScene(LAYER_WOLF);
-      FDino.SetCoordinate(FArmoredDoor.X.Value {- FDino.BodyWidth}, YStepOnFloor-FDino.DeltaYToBottom);
+      FDino.SetCoordinate(FArmoredDoor.X.Value, YStepOnFloor-FDino.DeltaYToBottom);
       FDino.State := dsIdle;
       FDino.FlipH := False;
       FLR.UseDorsalThruster;
@@ -1673,7 +1690,14 @@ begin
       FUsableComputer.SetText(sOpenCage);
       FCage.MoveCageToBottom(0, idcLinear);
       FCage.KillBarsAndCeil;
-      PostMessage(267);
+      if ChallengeMode then PostMessage(350)
+        else PostMessage(267);
+    end;
+
+    // start challenge mode
+    350: begin
+      with SpriteMessage(sChallenge) do KillDefered(2.0);
+      PostMessage(267, 2.0);
     end;
 
     // when dino is forward LR, it turn backward its head periodically
@@ -1802,8 +1826,10 @@ begin
       FLR.SetFaceType(lrfNotHappy);
       FDino.State := dsIdle;
       FDino.Speed.X.Value := 0;
-      postMessage(578, 3.25);
+      if ChallengeMode then PostMessage(535,3.25)
+        else postMessage(578, 3.25);
     end;
+    535: FScene.RunScreen(ScreenMap);
 
     // LR LOST the race
     550: begin
@@ -1894,6 +1920,43 @@ begin
     578: DialogQuestion(sWouldYouLikeToTryAgain, sYes, sNo, FFontText, Self, 579, 580, FAtlas);
     579: FScene.RunScreen(ScreenGameVolcanoDino);
     580: FScene.RunScreen(ScreenMap);
+
+    // LR WIN CHALLENGE
+    600: begin
+      FsndRaceMusic.FadeOutThenKill(1.0);
+      FsndRaceMusic := NIL;
+      FLR.Speed.Value := PointF(0, 0);
+      FLR.StandByInTheAirWithDorsalThruster;
+      FDino.StopSndRunningStep;
+      FDino.State := dsIdle;
+      FDino.Speed.Value := PointF(0, 0);
+      PostMessage(602);
+    end;
+    602: begin
+      Audio.PlayVoiceWhowhooo;
+      PostMessage(605, 1.5);
+    end;
+    605: PlaySequenceWinTrophy('TrophyDino.svg', FAtlas, 610, 0);
+    610: begin
+      PlayerInfo.Volcano.ChallengeIsTerminated := True;
+      FSaveGame.Save;
+      FScene.RunScreen(ScreenWorkshop);
+    end;
+
+    // LR LOST CHALLENGE
+    700: begin
+      FsndRaceMusic.FadeOutThenKill(1.0);
+      FsndRaceMusic := NIL;
+      FLR.Speed.Value := PointF(0, 0);
+      FLR.StandByInTheAirWithDorsalThruster;
+      PostMessage(705);
+    end;
+    705: begin
+      Audio.PlayMusicLose1;
+      with SpriteMessage(sFail) do CenterOnScene;
+      PostMessage(710, 2.0);
+    end;
+    710: FScene.RunScreen(ScreenMap);
   end;
 end;
 
