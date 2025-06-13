@@ -242,11 +242,12 @@ private
   FMousePointerPreviousVisibleState: Boolean;
   FFont: TTexturedFont;
   FAtlas: TOGLCTextureAtlas;
-  //FOptionsPanel: TModalOptionsPanel;
+  FBackScreen: TScreenTemplate;
   procedure FormatButton(aButton: TUIButton);
   procedure ProcessButtonClick(Sender: TSimpleSurfaceWithEffect);
 public
   constructor Create(aFont: TTexturedFont; aAtlas: TOGLCTextureAtlas);
+  procedure SetBackCaptionAndBackScreen(const aBackCaption: string; aBackScreen: TScreenTemplate);
   procedure Update(const aElapsedTime: single); override;
   procedure ProcessMessage({%H-}UserValue: TUserMessageValue); override;
   procedure ShowModal; override;
@@ -286,6 +287,20 @@ public
   constructor Create(const aText, aYes, aNo: string; aFont: TTexturedFont;
                      aTargetScreen: TScreenTemplate; aYesUserValue, aNoUserValue: TUserMessageValue;
                      aAtlas: TOGLCTextureAtlas);
+  procedure ShowModal; override;
+  procedure Hide(aFree: boolean); override;
+end;
+
+{ TDialogMessage }
+
+TDialogMessage = class(TUIModalPanel)
+private
+  FKeyboardToButtons: TButtonsClickableByKeyboard;
+  FTextArea: TUITextArea;
+  FMousePointerPreviousVisibleState: Boolean;
+  procedure ProcessButtonClick(Sender: TSimpleSurfaceWithEffect);
+public
+  constructor Create(const aText, aOk: string; aFont: TTexturedFont; aAtlas: TOGLCTextureAtlas);
   procedure ShowModal; override;
   procedure Hide(aFree: boolean); override;
 end;
@@ -330,18 +345,41 @@ begin
 end;
 
 procedure TButtonsClickableByKeyboard.MoveArrowToPreviousRow;
+var i, j: integer;
 begin
   if FSelectedRow > 0 then begin
-    dec(FSelectedRow);
+    i := FSelectedRow;
+    j := -1;
+    repeat
+      dec(i);
+      if FButtons[i,0].Visible then j := i;
+    until (i < 0) or (j <> -1);
+
+    if j = -1 then exit;
+    FSelectedRow := j;
     FSelectedColumn := Min(FSelectedColumn, High(GetSelectedRow));
+{    dec(FSelectedRow);
+    FSelectedColumn := Min(FSelectedColumn, High(GetSelectedRow));   }
   end;
 end;
 
 procedure TButtonsClickableByKeyboard.MoveArrowToNextRow;
+var i, j: integer;
 begin
   if FSelectedRow < High(FButtons) then begin
-    inc(FSelectedRow);
+    i := FSelectedRow;
+    j := -1;
+    repeat
+      inc(i);
+      if FButtons[i,0].Visible then j := i;
+    until (i > High(FButtons)) or (j <> -1);
+
+    if j = -1 then exit;
+    FSelectedRow := j;
     FSelectedColumn := Min(FSelectedColumn, High(GetSelectedRow));
+
+{    inc(FSelectedRow);
+    FSelectedColumn := Min(FSelectedColumn, High(GetSelectedRow)); }
   end;
 end;
 
@@ -543,6 +581,75 @@ begin
 end;
 
 procedure TDialogQuestion.Hide(aFree: boolean);
+begin
+  if FScene.Mouse.MouseSprite <> NIL then
+    FScene.Mouse.MouseSprite.Visible := FMousePointerPreviousVisibleState;
+  inherited Hide(aFree);
+end;
+
+{ TDialogMessage }
+
+procedure TDialogMessage.ProcessButtonClick(Sender: TSimpleSurfaceWithEffect);
+begin
+  FKeyboardToButtons.KeyboardEnabled := False;
+  Hide(True);
+end;
+
+constructor TDialogMessage.Create(const aText, aOk: string;
+  aFont: TTexturedFont; aAtlas: TOGLCTextureAtlas);
+var w, h: integer;
+  button: TUIButton;
+begin
+  w := FScene.Width div 2;
+  h := FScene.Height div 3;
+
+  inherited Create(FScene);
+  BodyShape.SetShapeRoundRect(w, h, PPIScale(8), PPIScale(8), PPIScale(2));
+ { BodyShape.Fill.Visible := False;
+  BodyShape.Border.Visible := False;
+  ChildClippingEnabled := False; }
+
+  button := TUIButton.Create(FScene, aOk, aFont, NIL);
+  AddChild(button, 0);
+  button._Label.Tint.Value := BGRA(255,255,150);
+  button.BodyShape.Fill.Color := BGRA(0,0,0);
+  button.BodyShape.SetShapeRoundRect(20, 20, PPIScale(8), PPIScale(8), PPIScale(2));
+  button.AnchorPosToParent(haCenter, haCenter, 0, vaBottom, vaBottom, -PPIScale(10));
+  button.OnClick := @ProcessButtonClick;
+
+  FTextArea := TUITextArea.Create(FScene);
+  AddChild(FTextArea);
+  FTextArea.HScrollBarMode := sbmNeverShow;
+  FTextArea.VScrollBarMode := sbmNeverShow;
+  FTextArea.BodyShape.SetShapeRectangle(w-PPIScale(10), h-PPIScale(10)*3, PPIScale(2));
+  FTextArea.BodyShape.Fill.Visible := False;
+  FTextArea.BodyShape.Border.Visible := False;
+  FTextArea.Text.TexturedFont := aFont;
+  FTextArea.Text.Align := taCenterCenter;
+  FTextArea.Text.Tint.Value := BGRA(255,255,255);
+  FTextArea.Text.Caption := aText;
+  FTextArea.AnchorPosToParent(haCenter, haCenter, 0, vaTop, vaTop, PPIScale(10));
+  FTextArea.BodyShape.ResizeCurrentShape(FTextArea.Text.DrawingSize.cx, FTextArea.Text.DrawingSize.cy, True);
+
+  FKeyboardToButtons := TButtonsClickableByKeyboard.Create(Self, aAtlas);
+  FKeyboardToButtons.AddLineOfButtons([button]);
+  FKeyboardToButtons.Select(button);
+
+  // resize the modal panel
+  BodyShape.ResizeCurrentShape(FTextArea.Width+PPIScale(20), FTextArea.Height+button.Height+PPIScale(30), True);
+  CenterOnScene;
+end;
+
+procedure TDialogMessage.ShowModal;
+begin
+  if FScene.Mouse.MouseSprite <> NIL then begin
+    FMousePointerPreviousVisibleState := FScene.Mouse.MouseSprite.Visible;
+    FScene.Mouse.MouseSprite.Visible := True;
+  end;
+  inherited ShowModal;
+end;
+
+procedure TDialogMessage.Hide(aFree: boolean);
 begin
   if FScene.Mouse.MouseSprite <> NIL then
     FScene.Mouse.MouseSprite.Visible := FMousePointerPreviousVisibleState;
@@ -860,7 +967,8 @@ begin
   end else
   if Sender = BBackToMap then begin
     Hide(True);
-    FScene.RunScreen(ScreenMap);
+    if FBackScreen <> NIL then
+      FScene.RunScreen(FBackScreen);
     Audio.GlobalVolume := 1.0;
   end else
   if Sender = BOptions then begin
@@ -888,6 +996,7 @@ begin
 
   FFont := aFont;
   FAtlas:= aAtlas;
+  FBackScreen := ScreenMap;
 
   title := TUILabel.Create(FScene, sGamePaused, aFont);
   AddChild(title);
@@ -926,6 +1035,13 @@ begin
   FKeyboardToButtons.Select(BResumeGame);
 
   FCheatCodeManager.InitDefault;
+end;
+
+procedure TInGamePausePanel.SetBackCaptionAndBackScreen(const aBackCaption: string;
+  aBackScreen: TScreenTemplate);
+begin
+  BBackToMap.Caption := aBackCaption;
+  FBackScreen := aBackScreen;
 end;
 
 procedure TInGamePausePanel.Update(const aElapsedTime: single);
@@ -1617,7 +1733,7 @@ end;
 
 constructor TModalOptionsPanel.Create(aFont: TTexturedFont);
 var title, lab: TUILabel;
-  i, h: integer;
+  h: integer;
 begin
   inherited create(FScene);
   BodyShape.SetShapeRoundRect(Round(FScene.Width*0.7), Round(FScene.Height*0.7), PPIScale(8), PPIScale(8), PPIScale(3));
@@ -1891,7 +2007,7 @@ end;
 procedure TContinuePanel.UpdatePlayerList;
 begin
   FLBPlayers.Clear;
-  FLBPlayers.Append(FSaveGame.GetPlayersInfo);
+  FLBPlayers.Append(FSaveGame.GetPlayerNames);
 end;
 
 { TCenteredGameUIPanel }

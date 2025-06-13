@@ -77,6 +77,10 @@ msgstr ""
 msgid "BACK TO MAP"
 msgstr ""
 
+#: u_resourcestring.sbacktosam
+msgid "BACK TO SAM"
+msgstr ""
+
 #: u_resourcestring.sbecauseyouhaveboughtitems
 msgid "Because you've bought items from me, you're entitled to a free bonus: I'm giving you the power to teleport anywhere on the map simply by clicking on the place you want to go. Isn't that nice?!"
 msgstr ""
@@ -136,6 +140,10 @@ msgstr ""
 msgid "CANCEL"
 msgstr ""
 
+#: u_resourcestring.schallenge
+msgid "CHALLENGE !"
+msgstr ""
+
 #: u_resourcestring.schallengemode
 msgid "Challenge mode"
 msgstr ""
@@ -179,6 +187,12 @@ msgstr ""
 
 #: u_resourcestring.sdamnacodeddoor
 msgid "I don't have the code to open this door..."
+msgstr ""
+
+#: u_resourcestring.sdartboardinstructions
+msgid ""
+"←→ to move\n"
+"ACTION1 : to fly"
 msgstr ""
 
 #: u_resourcestring.sdecoderexplanation
@@ -244,6 +258,10 @@ msgstr ""
 msgid "Er, I have to go"
 msgstr ""
 
+#: u_resourcestring.sexchange
+msgid "EXCHANGE"
+msgstr ""
+
 #: u_resourcestring.sexit
 msgid "EXIT"
 msgstr ""
@@ -269,12 +287,24 @@ msgstr ""
 msgid "you must first complete Plain of the Sleeping Moon!"
 msgstr ""
 
+#: u_resourcestring.sfirstcompletethegamemode
+msgid "first, complete the game mode"
+msgstr ""
+
 #: u_resourcestring.sfirstcompletevolcano
 msgid "you must first complete Volcano!"
 msgstr ""
 
+#: u_resourcestring.sfirstupgradetothemaxthebowelevator
+msgid "to access the challenge, you must first, upgrade to the max the bow, the elevator, the hammer and the lightning storm"
+msgstr ""
+
+#: u_resourcestring.sfor
+msgid "for"
+msgstr ""
+
 #: u_resourcestring.sforestchallengehelptext
-msgid "first, upgrade to the max the bow, the elevator, the hammer and the lightning storm then win the game"
+msgid "will you win this challenge?"
 msgstr ""
 
 #: u_resourcestring.sforesthelptext
@@ -395,11 +425,6 @@ msgstr ""
 
 #: u_resourcestring.sidontknowwhereitsgoing
 msgid "I don't know where it's going, but I have a feeling it's going to bring me closer to Granny. No time to lose!"
-msgstr ""
-
-#: u_resourcestring.sifyouhaveenoughmoney
-msgctxt "u_resourcestring.sifyouhaveenoughmoney"
-msgid "if you have enough money, maybe you'll meet someone in the forest?"
 msgstr ""
 
 #: u_resourcestring.sifyouwanttojoinyour
@@ -599,7 +624,7 @@ msgid "Mountain peaks"
 msgstr ""
 
 #: u_resourcestring.smountainpeakschallengehelptext
-msgid "complete the course on time"
+msgid "complete the course with the smooth arrival bonus"
 msgstr ""
 
 #: u_resourcestring.smountainpeakshint
@@ -727,7 +752,7 @@ msgid "The plain of the sleeping moon"
 msgstr ""
 
 #: u_resourcestring.splainofsleepingmoonchallengehelptext
-msgid "blows up the robots in time"
+msgid "destroy the robots and get to the locomotive in time"
 msgstr ""
 
 #: u_resourcestring.splainofsleepingmoonhint
@@ -797,6 +822,10 @@ msgstr ""
 
 #: u_resourcestring.sromeo2
 msgid "Oh my love, I’m so happy you replied! I can’t wait for us to be together again either, but I have to be careful, the boss is watching me closely. He says I’m daydreaming... It’s because I can’t stop thinking about you!"
+msgstr ""
+
+#: u_resourcestring.ssamgiveyou
+msgid "Sam gives you"
 msgstr ""
 
 #: u_resourcestring.ssamshut
@@ -970,6 +999,11 @@ msgstr ""
 msgid "TOTAL"
 msgstr ""
 
+#: u_resourcestring.sturn
+#, object-pascal-format
+msgid "Turn %d/%d"
+msgstr ""
+
 #: u_resourcestring.suhialreadydid
 msgid "Uh... I already did..."
 msgstr ""
@@ -983,7 +1017,7 @@ msgid "Volcano"
 msgstr ""
 
 #: u_resourcestring.svolcanochallengehelptext
-msgid "win three time the race versus Dino"
+msgid "win the race versus Dino"
 msgstr ""
 
 #: u_resourcestring.svolcanodinohelptext
@@ -1157,6 +1191,10 @@ msgstr ""
 #: u_resourcestring.syouvegotexactly
 #, object-pascal-format
 msgid "You've got exactly %d seconds and there are %d carriages: if you succeed, join me on the locomotive. If you fail, you'll be ejected from the train... Good luck!"
+msgstr ""
+
+#: u_resourcestring.syouvewon
+msgid "You've won!"
 msgstr ""
 
 #: u_resourcestring.syouwhatareyoudoingonmytrain

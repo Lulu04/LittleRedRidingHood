@@ -836,6 +836,7 @@ begin
   if FScene.RequestedScreen = ScreenMap then begin
     ScreenPlainOfSleepingMoon.FadeOutAndKillMusicAndSounds;
     Audio.ResumeMusicTitleMap;
+    ChallengeMode := False;
   end
   else if screen_gameplainmoon.sndTrainWheel <> NIL then
          screen_gameplainmoon.sndTrainWheel.Tone.ChangeTo(0.5, 3.0);

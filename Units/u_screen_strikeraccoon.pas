@@ -25,7 +25,7 @@ type
     FsndMusic: TALSSound;
     procedure ShowFinalScore;
   public
-    //procedure DefineSubTextures(aAtlas: TAtlas); override;
+    procedure DefineSubTextures(aAtlas: TAtlas); override;
     procedure CreateObjects; override;
     procedure FreeObjects; override;
     procedure ProcessMessage({%H-}UserValue: TUserMessageValue); override;
@@ -468,18 +468,10 @@ begin
   o.CenterOnScene;
 end;
 
-procedure TScreenStrikeRaccoon.CreateObjects;
-var ima: TBGRABitmap;
-  path: string;
-  bg: TQuad4Color;
-  o: TSprite;
+procedure TScreenStrikeRaccoon.DefineSubTextures(aAtlas: TAtlas);
+var path: string;
   fd: TFontDescriptor;
 begin
-  FsndMusic := Audio.AddMusic('fast-banjo-tune-with-acoustic-guitar.ogg', True);
-
-  FAtlas := FScene.CreateAtlas;
-  FAtlas.Spacing := 2;
-
   path := FolderSpriteStrikeRaccoon;
   texRaccoon1 := FAtlas.AddFromSVG(path+'Raccoon1.svg', ScaleW(119), -1);
   texRaccoon2 := FAtlas.AddFromSVG(path+'Raccoon2.svg', ScaleW(158), -1);
@@ -503,13 +495,16 @@ begin
   // load arrow for button panels
   AddBlueArrowToAtlas(FAtlas);
   LoadMousePointerTexture(FAtlas);
+end;
 
-  FAtlas.TryToPack;
-  FAtlas.Build;
+procedure TScreenStrikeRaccoon.CreateObjects;
+var bg: TQuad4Color;
+  o: TSprite;
+begin
+  GameState := gsUndefined;
+  FsndMusic := Audio.AddMusic('fast-banjo-tune-with-acoustic-guitar.ogg', True);
 
-  ima := FAtlas.GetPackedImage;
-  ima.SaveToFile(Application.Location+'Atlas.png');
-  ima.Free;
+  CheckAtlas(FAtlas, 'strikeraccoon.atlas');
 
   // bg
   bg := TQuad4Color.Create(FScene);
@@ -551,6 +546,7 @@ begin
 
   // pause panel
   FPausePanel := TInGamePausePanel.Create(FFontText, FAtlas);
+  FPausePanel.SetBackCaptionAndBackScreen(sBackToSam, ScreenSamHome);
 
   FAction1Released := True;
   FCurrentSuccessLevel := 0;

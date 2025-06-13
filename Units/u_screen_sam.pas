@@ -33,11 +33,37 @@ var ScreenSamHome: TScreenSamHome;
 
 implementation
 uses u_app, u_resourcestring, u_screen_map, u_mousepointer, u_sprite_def2,
-  u_sam, u_screen_strikeraccoon, u_ui_panels, Math;
+  u_sam, u_screen_strikeraccoon, u_ui_panels, u_screen_dartboard, Math;
 
 type
 
-{ TPanelChoosePrize }
+TTradeItem = class(TUIPanel)
+private
+  FIconWanted, FIconToGive: TSprite;
+  FLabelWantedCount, FLabelToGiveCount: TUILabel;
+  BTrade: TUIButton;
+  FWantedMoney, FToGiveMonney: TMoneyType;
+  FWantedAmount, FToGiveAmount: integer;
+  procedure ProcessButtonClick(Sender: TSimpleSurfaceWithEffect);
+  procedure ProcessMouseWheel(Sender: TObject; Shift: TShiftState; WheelDelta: Integer; MousePos: TPoint; var Handled: Boolean);
+public
+  constructor Create(aWidth, aHeight: integer; aWantedMoney,
+                     aToGiveMoney: TMoneyType; texItemWanted, texItemToGive: PTexture;
+                     aWantedAmount, aToGiveAmount: integer);
+  procedure UpdatePossibleTransaction;
+end;
+
+TPanelItems = class(TUIScrollBox)
+private
+  FCurrentY: single;
+public
+  constructor Create(aX, aY: single);
+  function AddItem(aWantedMoney, aToGiveMoney: TMoneyType; aWantedAmount, aToGiveAmount: integer): TTradeItem;
+
+  procedure UpdatePossibleTransactions;
+end;
+
+
 
 TPanelChoosePrize = class(TUIModalPanel)
 private
@@ -51,10 +77,13 @@ public
   constructor Create;
 end;
 
+
 TGameInventory = class(TInGameInventoryPanel)
   CoinCounter: TUICoinCounter;
   PurpleCristalCounter: TUIPurpleCristalCounter;
   constructor Create;
+  procedure Exchange(aWantedMoney, aToGiveMonney: TMoneyType; aWantedAmount,
+    aToGiveAmount: integer);
 end;
 
 TSeagull = class(TSeagullBase)
@@ -66,11 +95,145 @@ public
 end;
 
 var texSamHomeInner, texDoor, texBarrel, texDartboard,
-  texCoin, texSmallCristalGray, texLRIcon: PTexture;
+  texCoin, texSmallCristalGray,
+  texCoinBig, texSmallCristalGrayBig,
+  texLRIcon: PTexture;
   FFontText: TTexturedFont;
   FAtlas: TOGLCTextureAtlas;
   FSam: TSam;
   FGameinventory: TGameInventory;
+  FPanelItems: TPanelItems;
+  FItemHeight: integer;
+
+{ TTradeItem }
+
+procedure TTradeItem.ProcessButtonClick(Sender: TSimpleSurfaceWithEffect);
+begin
+  FGameinventory.Exchange(FWantedMoney, FToGiveMonney, FWantedAmount, FToGiveAmount);
+  FPanelItems.UpdatePossibleTransactions;
+end;
+
+procedure TTradeItem.ProcessMouseWheel(Sender: TObject; Shift: TShiftState;
+  WheelDelta: Integer; MousePos: TPoint; var Handled: Boolean);
+begin
+  FPanelItems.DoOnMouseWheel(Shift, WheelDelta, MousePos, Handled);
+end;
+
+constructor TTradeItem.Create(aWidth, aHeight: integer; aWantedMoney,
+  aToGiveMoney: TMoneyType; texItemWanted, texItemToGive: PTexture;
+  aWantedAmount, aToGiveAmount: integer);
+begin
+  inherited Create(FScene);
+  BodyShape.SetShapeRectangle(aWidth, aHeight, 0);
+  BodyShape.Fill.Color := BGRA(30,20,20);
+  OnMouseWheel := @ProcessMouseWheel;
+
+  FWantedMoney := aWantedMoney;
+  FToGiveMonney := aToGiveMoney;
+  FWantedAmount := aWantedAmount;
+  FToGiveAmount := aToGiveAmount;
+
+  //
+  FLabelWantedCount := TUILabel.Create(FScene, sSamGiveYou+' '+ aWantedAmount.ToString+' x ', FFontText);
+  AddChild(FLabelWantedCount, 0);
+  FLabelWantedCount.Tint.Value := BGRA(220,220,220);
+  FLabelWantedCount.X.Value := PPIScale(60);
+  FLabelWantedCount.CenterY := Height*0.5;
+
+  FIconWanted := TSprite.Create(texItemWanted, False);
+  AddChild(FIconWanted, 0);
+  FIconWanted.SetSize(-1, aHeight-PPIScale(20));
+  FIconWanted.X.Value := FLabelWantedCount.RightX + PPIScale(5);
+  FIconWanted.CenterY := Height*0.5;
+  if aWantedMoney = mtPurpleCristal then FIconWanted.Tint.Value := BGRA(255,0,255,150);
+
+  FLabelToGiveCount := TUILabel.Create(FScene, sFor+'  '+ aToGiveAmount.ToString+' x ', FFontText);
+  AddChild(FLabelToGiveCount, 0);
+  FLabelToGiveCount.Tint.Value := BGRA(220,220,220);
+  FLabelToGiveCount.X.Value := FIconWanted.RightX + PPIScale(15);
+  FLabelToGiveCount.CenterY := Height*0.5;
+
+  FIconToGive := TSprite.Create(texItemToGive, False);
+  AddChild(FIconToGive, 0);
+  FIconToGive.SetSize(-1, aHeight-PPIScale(20));
+  FIconToGive.X.Value := FLabelToGiveCount.RightX + PPIScale(5);
+  FIconToGive.CenterY := Height*0.5;
+  if aToGiveMoney = mtPurpleCristal then FIconToGive.Tint.Value := BGRA(255,0,255,150);
+
+  // button trade
+  BTrade := TUIButton.Create(FScene, sExchange, FFontText, NIL);
+  AddChild(BTrade, 0);
+  BTrade.BodyShape.SetShapeRoundRect(20, 20, PPIScale(8), PPIScale(8), PPIScale(2));
+  BTrade._Label.Tint.Value := BGRA(255,255,0);
+  BTrade.OnClick := @ProcessButtonClick;
+  BTrade.X.Value := Width*0.5; // FIconToGive.RightX + PPIScale(5);
+  BTrade.CenterY := Height*0.5;
+
+end;
+
+procedure TTradeItem.UpdatePossibleTransaction;
+var owned: integer;
+begin
+  case FToGiveMonney of
+    mtCoin: owned := PlayerInfo.CoinCount;
+    mtPurpleCristal: owned := PlayerInfo.PurpleCristalCount;
+    else raise exception.create('forgot to implement!');
+  end;
+
+  if owned < FToGiveAmount then begin
+    BTrade.BodyShape.Fill.Color := BGRA(255,20,20);
+    BTrade.MouseInteractionEnabled := False;
+  end else begin
+    BTrade.BodyShape.Fill.Color := BGRA(30,30,30);
+    BTrade.MouseInteractionEnabled := True;
+  end;
+end;
+
+{ TPanelItems }
+
+constructor TPanelItems.Create(aX, aY: single);
+begin
+  inherited Create(FScene, True, False);
+  FScene.Add(Self, LAYER_GAMEUI);
+  BodyShape.SetShapeRoundRect(FScene.Width, Round(FScene.Height-aY), PPIScale(8), PPIScale(8), PPIScale(2));
+  BackGradient.CreateHorizontal([BGRA(255,0,255,10), BGRA(255,0,255,40), BGRA(255,0,255,10)],[0, 0.5, 1]);
+  SetCoordinate(aX, aY);
+  VScrollBarMode := sbmAlwaysShow;
+  FCurrentY := 0;
+end;
+
+function TPanelItems.AddItem(aWantedMoney, aToGiveMoney: TMoneyType;
+  aWantedAmount, aToGiveAmount: integer): TTradeItem;
+var texWanted, texToGive: PTexture;
+begin
+  case aWantedMoney of
+    mtCoin: texWanted := texCoinBig;
+    mtPurpleCristal: texWanted := texSmallCristalGrayBig;
+    else raise exception.create('forgot to implement!');
+  end;
+
+  case aToGiveMoney of
+    mtCoin: texToGive := texCoinBig;
+    mtPurpleCristal: texToGive := texSmallCristalGrayBig;
+    else raise exception.create('forgot to implement!');
+  end;
+
+  Result := TTradeItem.Create(ClientArea.Width-PPIScale(10), FItemHeight,
+                              aWantedMoney, aToGiveMoney,
+                              texWanted, texToGive,
+                              aWantedAmount, aToGiveAmount);
+  AddChild(Result);
+  Result.SetCoordinate(0, FCurrentY);
+  FCurrentY := FCurrentY + FItemHeight + PPIScale(10);
+end;
+
+procedure TPanelItems.UpdatePossibleTransactions;
+var i: integer;
+begin
+  for i:=0 to ChildCount-1 do
+    if Childs[i] is TTradeItem then
+      TTradeItem(Childs[i]).UpdatePossibleTransaction;
+end;
 
 { TGameInventory }
 
@@ -79,15 +242,15 @@ var o: TSprite;
 begin
   inherited Create;
 
-  CoinCounter := TUICoinCounter.Create;
-  AddItem(CoinCounter);
-  CoinCounter.Count := PlayerInfo.CoinCount;
-
   if PlayerInfo.Forest.IsTerminated then begin
     PurpleCristalCounter := TUIPurpleCristalCounter.Create;
     AddItem(PurpleCristalCounter);
     PurpleCristalCounter.Count := PlayerInfo.PurpleCristalCount;
   end;
+
+  CoinCounter := TUICoinCounter.Create;
+  AddItem(CoinCounter);
+  CoinCounter.Count := PlayerInfo.CoinCount;
 
   // LR icon
   o := TSprite.Create(texLRIcon, False);
@@ -96,6 +259,42 @@ begin
 
   ResizeAndPlaceAtTopRight;
   SetCoordinate(o.RightX+PPIScale(5), o.Y.Value);
+  o.SetSize(-1, Height);
+end;
+
+procedure TGameInventory.Exchange(aWantedMoney, aToGiveMonney: TMoneyType;
+    aWantedAmount, aToGiveAmount: integer);
+var wanted, togive: TUIItemCounter;
+begin
+  Audio.PlayBlipIncrementScore;
+
+  // add
+  case aWantedMoney of
+    mtCoin: begin
+      CoinCounter.Count := CoinCounter.Count + aWantedAmount;
+      PlayerInfo.CoinCount := CoinCounter.Count;
+    end;
+    mtPurpleCristal: begin
+      PurpleCristalCounter.Count := PurpleCristalCounter.Count + aWantedAmount;
+      PlayerInfo.PurpleCristalCount := PurpleCristalCounter.Count;
+    end
+  else raise exception.create('forgot to implement');
+  end;
+
+  // substract
+  case aToGiveMonney of
+    mtCoin: begin
+      CoinCounter.Count := CoinCounter.Count - aToGiveAmount;
+      PlayerInfo.CoinCount := CoinCounter.Count;
+    end;
+    mtPurpleCristal: begin
+      PurpleCristalCounter.Count := PurpleCristalCounter.Count - aToGiveAmount;
+      PlayerInfo.PurpleCristalCount := PurpleCristalCounter.Count;
+    end;
+    else raise exception.create('forgot to implement');
+  end;
+
+  FSaveGame.Save;
 end;
 
 { TPanelChoosePrize }
@@ -251,8 +450,8 @@ begin
   if Sender = BGame1 then
     FScene.RunScreen(ScreenStrikeRaccoon);
 
-  if Sender = BGameDartboard then;
-
+  if Sender = BGameDartboard then
+    FScene.RunScreen(ScreenDartboard);
 end;
 
 procedure TScreenSamHome.ProcessClickOnScene(Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
@@ -284,8 +483,11 @@ begin
   LoadGameDialogTextures(aAtlas);
   LoadMousePointerTexture(aAtlas);
 
+  FItemHeight := ScaleH(70); // height of one row in the panel
   texCoin := aAtlas.AddFromSVG(SpriteUIFolder+'Coin.svg', -1, Round(FFontText.Font.FontHeight*0.8));
   texSmallCristalGray := aAtlas.AddFromSVG(SpriteUIFolder+'CristalGray.svg', -1, Round(FFontText.Font.FontHeight*0.8));
+  texCoinBig := aAtlas.AddFromSVG(SpriteUIFolder+'Coin.svg', -1, FItemHeight-PPIScale(20));
+  texSmallCristalGrayBig := aAtlas.AddFromSVG(SpriteUIFolder+'CristalGray.svg', -1, FItemHeight-PPIScale(20));
 end;
 
 procedure TScreenSamHome.CreateObjects;
@@ -333,12 +535,20 @@ begin
   // inventory
   FGameinventory := TGameInventory.Create;
 
+  // items to exchange
+  FPanelItems := TPanelItems.Create(0, FGameinventory.BottomY+PPIScale(3));
+  FPanelItems.AddItem(mtPurpleCristal, mtCoin, 1, 100);
+  FPanelItems.AddItem(mtCoin, mtPurpleCristal, 80, 1);
+  FPanelItems.UpdatePossibleTransactions;
+
   FScene.Mouse.OnClickOnScene := @ProcessClickOnScene;
 
   CustomizeMousePointer(True);
 
-  if FPlayerPlaySamsGame then PostMessage(300)
-    else PostMessage(100, 1.0); // dialogs Sam
+  if FPlayerPlaySamsGame then begin
+    PostMessage(300);
+    FPlayerPlaySamsGame := False;
+  end else PostMessage(100, 1.0); // dialogs Sam
 
 end;
 

@@ -46,6 +46,7 @@ public
   procedure PlayBlipIncrementScore;
   procedure PlayMusicSuccess1;
   procedure PlayMusicSuccessShort1;
+  procedure PlayMusicTrophy;
   procedure PlayMusicLose1;
   procedure PlayMusicCheatCodeEntered;
 
@@ -231,6 +232,12 @@ end;
 procedure TAudioManager.PlayMusicSuccessShort1;
 begin
   with AddMusic('SuccessShort1.ogg', False) do
+    PlayThenKill(True);
+end;
+
+procedure TAudioManager.PlayMusicTrophy;
+begin
+  with AddMusic('5-Open-Surge-score-jingle-A.ogg', False) do
     PlayThenKill(True);
 end;
 

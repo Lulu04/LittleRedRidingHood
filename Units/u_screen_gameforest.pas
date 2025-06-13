@@ -18,7 +18,8 @@ type
 TScreenGame1 = class(TGameScreenTemplate)
 private type TGameState=(gsUndefined=0, gsRunning, gsLRLost,
         gsWaitForEscapeDoorToOpen, gsWaitUntilPlatformIsAtTop, gsWaitLRWalksThroughTheDoor,
-        gsCreatePanelAddScore, gsAddingScore);
+        gsCreatePanelAddScore, gsAddingScore,
+        gsChallengeWin);
   var FGameState: TGameState;
   procedure SetGameState(AValue: TGameState);
 private
@@ -42,7 +43,6 @@ private
   FInGamePausePanel: TInGamePausePanel;
   FFontText: TTexturedFont;
 
-
   FDifficulty: integer;
   FPlatformMoveDeltaY: single;
   function CheckIfWolfLost: boolean;
@@ -61,7 +61,8 @@ end;
 var ScreenGameForest: TScreenGame1;
 implementation
 uses Forms, Controls, LCLType, u_app, u_screen_map, u_utils, u_mousepointer,
-  u_screen_forest_amara, Math, u_sprite_lrcommon;
+  u_screen_forest_amara, Math, u_sprite_lrcommon, u_resourcestring,
+  u_screen_workshop;
 
 { TScreenGame1 }
 
@@ -69,6 +70,9 @@ procedure TScreenGame1.SetGameState(AValue: TGameState);
 begin
   if FGameState = AValue then Exit;
   FGameState := AValue;
+  case AValue of
+    gsChallengeWin: PostMessage(200);
+  end;
 end;
 
 function TScreenGame1.CheckIfWolfLost: boolean;
@@ -105,6 +109,7 @@ begin
   texMotorSmallWheel := aAtlas.AddFromSVG(SpriteCommonFolder+'MotorSmallWheel.svg', ScaleW(20), -1);
   texMotorLeftPiston := aAtlas.AddFromSVG(SpriteCommonFolder+'MotorLeftPiston.svg', ScaleW(25), -1);
   AddSphereParticleToAtlas(aAtlas);
+  AddCrossParticleToAtlas(aAtlas);
 
   texBalloonCrate := aAtlas.AddFromSVG(SpriteCommonFolder+'BalloonCrate.svg', ScaleW(70), -1);
 
@@ -201,7 +206,8 @@ begin
   FEscapeDoor := TEscapeDoor.Create;
   FEscapeDoor.SetCoordinate(0, yy + g.Height*0.7);
 
-  FDifficulty := PlayerInfo.Forest.StepPlayed;
+  if ChallengeMode then FDifficulty := 10
+    else FDifficulty := PlayerInfo.Forest.StepPlayed;
 {PlayerInfo.Forest.ElevatorLevel:=5;
 PlayerInfo.Forest.BowLevel := 5;
 PlayerInfo.Forest.HammerLevel := 5;
@@ -276,7 +282,8 @@ PlayerInfo.Forest.StormCloudLevel := 3;  }
  // FScene.Mouse.SystemMouseCursorVisible := False;
   CustomizeMousePointer;
 
-  PostMessage(50); // (one frame deferred) show how to play and run game
+  if ChallengeMode then PostMessage(60) // show challenge mode then play
+    else PostMessage(50); // (one frame deferred) show how to play and run game
 end;
 
 procedure TScreenGame1.FreeObjects;
@@ -296,6 +303,7 @@ begin
   FAtlas := NIL;
   FEndGameScorePanel := NIL;
   ResetSceneCallbacks;
+  ChallengeMode := False;
 end;
 
 procedure TScreenGame1.ProcessMessage(UserValue: TUserMessageValue);
@@ -306,10 +314,7 @@ begin
     0: begin
       FMusic.FadeOutThenPause(0.5);
       sndElevator.Stop;
-      with Audio.AddSound('Explode1.ogg') do begin
-        Volume.Value := 0.5;
-        PlayThenKill(True);
-      end;
+      Audio.PlayThenKillSound('Explode1.ogg', 0.6);
       PostMessage(1, 1.5);
     end;
     1: begin
@@ -317,18 +322,60 @@ begin
       PostMessage(10, 2.0);
     end;
     10: begin
-      GameState := gsCreatePanelAddScore;
+      if ChallengeMode then PostMessage(300)
+        else GameState := gsCreatePanelAddScore;
     end;
 
-    // show how to play
+    // game mode: show how to play
     50: begin
       GameState := gsRunning;
       ShowGameInstructions(PlayerInfo.Forest.HelpText);
     end;
 
+    // challenge mode
+    60: begin
+      with SpriteMessage(sChallenge) do KillDefered(2.0);
+      PostMessage(62, 2.0);
+    end;
+    62: GameState := gsRunning;
+
     // re-introduce music after jinggle success
     100: begin
       FMusic.FadeIn(1.0, 1.0);
+    end;
+
+    // CHALLENGE WINNED
+    200: begin
+      if sndStorm <> NIL then sndStorm.FadeOut(0.5);
+      if sndPulley <> NIL then sndPulley.Stop;
+      if sndElevator <> NIL then sndElevator.Stop;
+      if FStormCloud <> NIL then FStormCloud.Hide;
+      PostMessage(202);
+    end;
+    202: PlaySequenceWinTrophy('TrophyTreePine.svg', FAtlas, 205, 0);
+    205: begin
+      PlayerInfo.Forest.ChallengeIsTerminated := True;
+      FSaveGame.Save;
+      FScene.RunScreen(ScreenWorkshop);
+    end;
+
+    // CHALLENGE LOST
+    300: begin
+      if sndStorm <> NIL then sndStorm.FadeOut(0.5);
+      if sndPulley <> NIL then sndPulley.Stop;
+      if sndElevator <> NIL then sndElevator.Stop;
+      if FStormCloud <> NIL then FStormCloud.Hide;
+      FMusic.FadeOutThenPause(0.5);
+      Audio.PlayThenKillSound('Explode1.ogg', 0.6);
+      PostMessage(305, 1.5);
+    end;
+    305: begin
+      Audio.PlayMusicLose1;
+      with SpriteMessage(sFail) do CenterOnScene;
+      PostMessage(310, 2.0);
+    end;
+    310: begin
+      FScene.RunScreen(ScreenMap);
     end;
   end;
 end;
@@ -360,22 +407,28 @@ begin
         FLR.State := lrsLoser;
         FInGamePanel.PauseTime;
         GameState := gsLRLost;
-        PostMessage(0);
+        if ChallengeMode then PostMessage(300)
+          else PostMessage(0);
         exit;
       end;
 
       // check if LR win
       if CheckIfWolfLost then begin
         FMusic.FadeOutThenPause(0.5);
-        Audio.PlayMusicSuccess1;
-        PostMessage(100, 6); // fadein FMusic
-        Audio.PlayVoiceWhowhooo;
-        FLR.State := lrsWinner;
-        FEscapeDoor.OpenTheDoor;
-        GameState := gsWaitForEscapeDoorToOpen;
-        FInGamePanel.PauseTime;
-        if FStormCloud <> NIL then FStormCloud.Hide;
-        exit;
+        if ChallengeMode then begin
+          GameState := gsChallengeWin;
+          exit;
+        end else begin
+          Audio.PlayMusicSuccess1;
+          PostMessage(100, 6); // fadein FMusic
+          Audio.PlayVoiceWhowhooo;
+          FLR.State := lrsWinner;
+          FEscapeDoor.OpenTheDoor;
+          GameState := gsWaitForEscapeDoorToOpen;
+          FInGamePanel.PauseTime;
+          if FStormCloud <> NIL then FStormCloud.Hide;
+          exit;
+        end;
       end;
 
       // shoot arrow

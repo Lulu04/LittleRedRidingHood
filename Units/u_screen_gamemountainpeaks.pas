@@ -25,7 +25,8 @@ private type TGameState=(gsUndefined=0, gsGetReady, gsRunning,
                          gsLRHurtAWall, gsWaitUntilAnimHurtAWallIsDone,
                          gsOutOfTime, gsWaitUntilAnimOutOfTimeIsDone,
                          gsCompleted, gsWaitForEndArrivalAnim,
-                         gsCreatePanelAddScore, gsAddingScore);
+                         gsCreatePanelAddScore, gsAddingScore,
+                         gsEndChallenge, gsChallengeOutOfTime);
   var FGameState: TGameState;
   procedure SetGameState(AValue: TGameState);
 private
@@ -39,7 +40,7 @@ private
 
   FCameraForPerspectiveObjects: TOGLCCamera;
 
-  FInGamePausePanel: TInGamePausePanel;
+  FPausePanel: TInGamePausePanel;
   FFontText: TTexturedFont;
 
   FDistanceToTravel, FDistanceAccu: single;
@@ -58,7 +59,7 @@ var ScreenGameZipLine: TScreenGameZipLine;
 implementation
 
 uses u_app, u_resourcestring, u_screen_map, u_sprite_def, u_utils,
-  u_mousepointer, Forms, Math, ALSound;
+  u_mousepointer, u_screen_workshop, Forms, Math, ALSound;
 
 type //L=left R=right Z=random side ZZ=random object/obstacle at random side
 TLevelObject = (LObj, RObj, ZObj, LObs,  RObs, ZObs, ZZ);
@@ -1159,6 +1160,9 @@ procedure TScreenGameZipLine.SetGameState(AValue: TGameState);
 begin
   if FGameState = AValue then Exit;
   FGameState := AValue;
+  case AValue of
+    gsEndChallenge: PostMessage(100);
+  end;
 end;
 
 procedure TScreenGameZipLine.CreatePerspectiveLine(aIndex: integer; aPointFar, aPointNear: TPointF);
@@ -1335,8 +1339,8 @@ begin
   nearPoint := PointF(farPoint.x+FScene.Width, FScene.Height);
   CreatePerspectiveLine(5, farPoint, nearPoint);
 
-  // Ingame pause panel
-  FInGamePausePanel := TInGamePausePanel.Create(FFontText, FAtlas);
+  // pause panel
+  FPausePanel := TInGamePausePanel.Create(FFontText, FAtlas);
 
   // begining platform
   TBeginEndPlatform.Create(FPerspectiveLines[2], True);
@@ -1355,8 +1359,6 @@ begin
 
   // GET READY message
   FFontDescriptor.Create('Arial', Round(FScene.Height*0.1), [], BGRA(255,255,0), BGRA(0,0,0), PPIScale(3));
-  GameState := gsGetReady; //gsRunning;
-  PostMessage(0);
 
   // in game panel
   FInGamePanel := TInGamePanel.Create;
@@ -1383,18 +1385,20 @@ begin
   CustomizeMousePointer;
 
   // show how to play
-  PostMessage(50);
+  if ChallengeMode then PostMessage(60)
+    else PostMessage(50);
 end;
 
 procedure TScreenGameZipLine.FreeObjects;
 var i: integer;
 begin
   FreeMousePointer;
-  FMusic.FadeOutThenKill(1.0);
+  if FMusic <> NIL then FMusic.FadeOutThenKill(1.0);
+  FMusic := NIL;
   FsndZipLine.FadeOutThenKill(1.0);
   FsndZipLineBreak.Kill;
-  FMusic := NIL;
-  Audio.ResumeMusicTitleMap;
+  if FScene.RequestedScreen = ScreenMap then
+    Audio.ResumeMusicTitleMap;
 
   FScene.KillCamera(FCameraForPerspectiveObjects);
 
@@ -1408,7 +1412,7 @@ begin
   FCenterPerspectiveLine.Free;
   FCenterPerspectiveLine := NIL;
   ResetSceneCallbacks;
-FScene.LogDebug('TScreenGameZipLine.FreeObjects END');
+  ChallengeMode := False;
 end;
 
 procedure TScreenGameZipLine.ProcessMessage(UserValue: TUserMessageValue);
@@ -1427,7 +1431,44 @@ begin
     end;
 
     // show instructions
-    50: ShowGameInstructions(PlayerInfo.MountainPeak.HelpText);
+    50: begin
+      PostMessage(62);
+      ShowGameInstructions(PlayerInfo.MountainPeak.HelpText);
+    end;
+
+    // challenge
+    60: begin
+      with SpriteMessage(sChallenge) do KillDefered(2.0);
+      PostMessage(62, 2.0);
+    end;
+    62: begin
+      GameState := gsGetReady;
+      PostMessage(0);
+    end;
+
+    // end challenge
+    100: begin // check if player made smooth arrival
+      FMusic.FadeOutThenKill(0.5);
+      FMusic := NIL;
+      if FArrivalIsSmooth then PostMessage(105)
+        else PostMessage(120);
+    end;
+    105: begin // win challenge
+      PlaySequenceWinTrophy('TrophyZipline.svg', FAtlas, 110, 0);
+    end;
+    110: begin
+      PlayerInfo.MountainPeak.ChallengeIsTerminated := True;
+      FSaveGame.Save;
+      FScene.RunScreen(ScreenWorkshop);
+    end;
+    120: begin // lost challenge
+      Audio.PlayMusicLose1;
+      with SpriteMessage(sFail) do CenterOnScene;
+      PostMessage(125, 2.0);
+    end;
+    125: begin
+      FScene.RunScreen(ScreenMap);
+    end;
   end;
 end;
 
@@ -1493,7 +1534,7 @@ begin
       if Input.PausePressed then begin
         FsndZipLine.Stop;
         FsndZipLineBreak.Stop;
-        FInGamePausePanel.ShowModal;
+        FPausePanel.ShowModal;
         exit;
       end;
 
@@ -1597,7 +1638,7 @@ begin
 
     gsWaitUntilAnimOutOfTimeIsDone: begin
       if FLR.State = zlmAnimOutOfTimeIsDone then begin
-        SavePlayerInfo;
+        if not ChallengeMode then SavePlayerInfo;
         FScene.RunScreen(ScreenMap);
       end;
     end;
@@ -1641,7 +1682,9 @@ begin
     end;
 
     gsWaitForEndArrivalAnim: begin
-      if FLR.State = zlmAnimArrivalIsDone then GameState := gsCreatePanelAddScore;
+      if FLR.State = zlmAnimArrivalIsDone then
+        if ChallengeMode then GameState := gsEndChallenge
+          else GameState := gsCreatePanelAddScore;
     end;
 
     gsCreatePanelAddScore: begin

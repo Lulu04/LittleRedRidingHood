@@ -276,12 +276,13 @@ public
   FHead, FJaw, FRightArm: TSprite;
   class procedure LoadTexture(aAtlas: TOGLCTextureAtlas);
   constructor Create(aX, aY: single; aLayerIndex: integer);
-  destructor destroy; override;
+  destructor Destroy; override;
   procedure Update(const aElapsedTime: single); override;
   procedure ProcessMessage(UserValue: TUserMessageValue); override;
   procedure TurnHeadBackward(aStayTime: single);
   procedure PlaySoundDinoOvertakeLR;
   procedure PlaySoundDinoOvertakenByLR;
+  procedure StopSndRunningStep;
   procedure BendDown(aDuration: single);
   procedure SetHugPosition(aDuration: single);
   property State: TDinoState read FDinoState write SetDinoState;
@@ -588,6 +589,11 @@ end;
 procedure TDino.PlaySoundDinoOvertakenByLR;
 begin
   FsndDinoOvertakenByLR.Play;
+end;
+
+procedure TDino.StopSndRunningStep;
+begin
+  FsndRunningStep.Stop;
 end;
 
 procedure TDino.BendDown(aDuration: single);

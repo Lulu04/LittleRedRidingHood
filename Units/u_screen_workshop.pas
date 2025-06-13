@@ -17,7 +17,6 @@ type
   TScreenWorkShop = class(TGameScreenTemplate)
   private
     FFireSound: TALSSound;
-    FAtlas: TOGLCTextureAtlas;
     BExit: TImageButton;
     texDoor, texDoorFrame: PTexture;
     FPlayerItemPanel: TInMapPanel;
@@ -28,7 +27,7 @@ type
     procedure DefineSubTextures(aAtlas: TAtlas); override;
     procedure CreateObjects; override;
     procedure FreeObjects; override;
-    procedure ProcessMessage({%H-}UserValue: TUserMessageValue); override;
+    procedure ProcessMessage(UserValue: TUserMessageValue); override;
   end;
 
 var ScreenWorkShop: TScreenWorkShop;
@@ -39,11 +38,13 @@ uses u_app, u_resourcestring, u_screen_map,
   u_mousepointer;
 
 var
+  FAtlas: TOGLCTextureAtlas;
   texHomeBG, texFireBG,
   texCoin, texSmallCristalGray,
   texBow, texElevator, texHammer, texStormCloud,
   texZipLine,
-  texDigicodeDecoder, texDorsalThruster, texLaserGun, texCraneRemote, texSubmarine: PTexture;
+  texDigicodeDecoder, texDorsalThruster, texLaserGun, texCraneRemote, texSubmarine,
+  texTrophyTreePine, texTrophyZipline, texTrophyDino, texTrophyPlainMoon: PTexture;
   FItemHeight: integer;
   FFontText: TTexturedFont;
 
@@ -87,7 +88,106 @@ public
 end;
 
 
+
+{ TTrophy }
+
+TTrophy = class(TSprite)
+  FCoor: TPointF; // x=X  y=BottomY
+  procedure CreateMagic;
+  procedure ProcessMessage(UserValue: TUserMessageValue); override;
+  constructor Create(aTex: PTexture; aX, aBottomY: single; aDoAnimNewTrophy: boolean);
+end;
+TTrophyTreePine = class(TTrophy)
+  constructor Create(aDoAnimNewTrophy: boolean);
+end;
+TTrophyZipline = class(TTrophy)
+  constructor Create(aDoAnimNewTrophy: boolean);
+end;
+TTrophyDino = class(TTrophy)
+  constructor Create(aDoAnimNewTrophy: boolean);
+end;
+TTrophyPlainMoon = class(TTrophy)
+  constructor Create(aDoAnimNewTrophy: boolean);
+end;
+
 var FPanelItem: TPanelItems;
+
+{ TTrophy }
+
+procedure TTrophy.CreateMagic;
+var pe: TParticleEmitter;
+begin
+  pe := TParticleEmitter.Create(FScene);
+  pe.LoadFromFile(ParticleFolder+'MagicOnTrophy.par', FAtlas);
+  pe.SetEmitterTypeRectangle(Width, Height);
+  AddChild(pe, 0);
+end;
+
+procedure TTrophy.ProcessMessage(UserValue: TUserMessageValue);
+begin
+  case UserValue of
+    // anim the trophy has just been won
+    0: begin
+      Scale.Value := PointF(3,3);
+      CenterOnScene;
+      Tint.Value := BGRA(255,255,255);
+      Tint.Alpha.ChangeTo(0, 1.0);
+      PostMessage(5, 1.0);
+    end;
+    5: begin
+      X.ChangeTo(FCoor.x, 3.0, idcSinusoid);
+      Y.ChangeTo(FCoor.y, 3.0, idcSinusoid);
+      Scale.ChangeTo(PointF(1,1), 3.0, idcSinusoid);
+      PostMessage(10, 3.0);
+    end;
+    10: begin
+      ScreenWorkShop.PostMessage(0); // LR says whoohoo
+    end;
+  end;
+end;
+
+constructor TTrophy.Create(aTex: PTexture; aX, aBottomY: single; aDoAnimNewTrophy: boolean);
+begin
+  inherited Create(aTex, False);
+  FScene.Add(Self, LAYER_TOP);
+  CreateMagic;
+  if aDoAnimNewTrophy then begin
+    CenterOnScene;
+    FCoor := PointF(aX, aBottomY-Height);
+    PostMessage(0);
+  end else begin
+    X.Value := aX;
+    BottomY := aBottomY;
+  end;
+end;
+
+{ TTrophyPlainMoon }
+
+constructor TTrophyPlainMoon.Create(aDoAnimNewTrophy: boolean);
+begin
+  inherited Create(texTrophyPlainMoon, ScaleW(717), ScaleH(110), aDoAnimNewTrophy);
+end;
+
+{ TTrophyDino }
+
+constructor TTrophyDino.Create(aDoAnimNewTrophy: boolean);
+begin
+  inherited Create(texTrophyDino, ScaleW(688), ScaleH(110), aDoAnimNewTrophy)
+end;
+
+{ TTrophyZipline }
+
+constructor TTrophyZipline.Create(aDoAnimNewTrophy: boolean);
+begin
+  inherited Create(texTrophyZipline, ScaleW(659), ScaleH(110), aDoAnimNewTrophy);
+end;
+
+{ TTrophyTreePine }
+
+constructor TTrophyTreePine.Create(aDoAnimNewTrophy: boolean);
+begin
+  inherited Create(texTrophyTreePine, ScaleW(630), ScaleH(110), aDoAnimNewTrophy);
+end;
 
 { TPanelItems }
 
@@ -380,6 +480,13 @@ begin
   texLaserGun := aAtlas.AddFromSVG(SpriteUIFolder+'LaserGun.svg', -1, FItemHeight);
   texCraneRemote := aAtlas.AddFromSVG(SpriteUIFolder+'IconCraneRemote.svg', -1, FItemHeight);
   texSubmarine := aAtlas.AddFromSVG(SpriteUIFolder+'Submarine.svg', -1, FItemHeight);
+
+  // trophies
+  AddCrossParticleToAtlas(aAtlas);
+  texTrophyTreePine := aAtlas.AddFromSVG(FolderSpriteTrophy+'TrophyTreePine.svg', ScaleW(25), -1);
+  texTrophyZipline := aAtlas.AddFromSVG(FolderSpriteTrophy+'TrophyZipline.svg', ScaleW(25), -1);
+  texTrophyDino := aAtlas.AddFromSVG(FolderSpriteTrophy+'TrophyDino.svg', ScaleW(25), -1);
+  texTrophyPlainMoon := aAtlas.AddFromSVG(FolderSpriteTrophy+'TrophyPlainMoon.svg', ScaleW(25), -1);
 end;
 
 procedure TScreenWorkShop.CreateObjects;
@@ -474,6 +581,19 @@ begin
     // pocket submarine
     FPanelItem.AddItem(PocketSubmarine, texSubmarine);
   end;
+
+  // TROPHY
+  with PlayerInfo.Forest do
+    if ChallengeIsTerminated then TTrophyTreePine.Create(ChallengeFirstTimeTerminated);
+
+  with PlayerInfo.MountainPeak do
+    if ChallengeIsTerminated then TTrophyZipline.Create(ChallengeFirstTimeTerminated);
+
+  with PlayerInfo.Volcano do
+    if ChallengeIsTerminated then TTrophyDino.Create(ChallengeFirstTimeTerminated);
+
+  with PlayerInfo.PlainMoon do
+    if ChallengeIsTerminated then TTrophyPlainMoon.Create(ChallengeFirstTimeTerminated);
 
   CustomizeMousePointer(True);
 end;

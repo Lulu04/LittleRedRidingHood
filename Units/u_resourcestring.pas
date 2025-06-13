@@ -84,6 +84,7 @@ sTotal='TOTAL';
 sGamePaused='paused';
 sResumeGame='RESUME GAME';
 sBackToMap='BACK TO MAP';
+sBackToSam='BACK TO SAM';
 sInstructions='HOW TO PLAY';
 
 sGetReady='GET READY';
@@ -91,6 +92,8 @@ sGo='GO';
 sOutOfTime='OUT OF TIME';
 
 sConnected='CONNECTED';
+
+sTurn='Turn %d/%d';
 
 sYes='Yes';
 sNo='No';
@@ -120,7 +123,6 @@ sPocketSubmarineExplanation='a submarine that can shrink to fit in a pocket';
 // hints in the panel where player choose the step of the game
 sImproveEquipment='upgrade your equipment in the workshop';
 sRedoALevel='you can redo a level to earn the end bonus';
-sIfYouHaveEnoughMoney='if you have enough money, maybe you''ll meet someone in the forest?';
 sBuyEquipment='buy new equipment in the workshop';
 
 sFirstCompleteForest='you must first complete the pine forest!';
@@ -168,6 +170,8 @@ sMermaidsPortHelpText2='When you jump on a container, the remote control'+ LineE
 
 sStrikeRaccoonInstructions='←→↑↓ to target'+ LineEnding +
                            'ACTION1 : to strike';
+sDartboardInstructions='←→ to move'+ LineEnding +
+                       'ACTION1 : to fly';
 
 sWolf='Wolf';
 sAIvoice='AI voice';
@@ -188,15 +192,18 @@ sMermaidsPort='The Mermaids port';
 sMermaidsPortHint='don''t forget your swimsuit!';
 
 // challenge
+sChallenge='CHALLENGE !';
 sChallengeMode='Challenge mode';
 sGameMode='Game mode';
 sNoChallengeHere='no challenge here';
 sYouveAlreadyWonThisChallenge='you''ve already won this challenge';
-sForestChallengeHelpText='first, upgrade to the max the bow, the elevator, the hammer '+
-                         'and the lightning storm then win the game';
-sMountainPeaksChallengeHelpText='complete the course on time';
-sVolcanoChallengeHelpText='win three time the race versus Dino';
-sPlainOfSleepingMoonChallengeHelpText='blows up the robots in time';
+sFirstCompleteTheGameMode='first, complete the game mode';
+sYouveWon='You''ve won!';
+sForestChallengeHelpText='will you win this challenge?';
+sFirstUpgradeToTheMaxTheBowElevator='to access the challenge, you must first, upgrade to the max the bow, the elevator, the hammer and the lightning storm';
+sMountainPeaksChallengeHelpText='complete the course with the smooth arrival bonus';
+sVolcanoChallengeHelpText='win the race versus Dino';
+sPlainOfSleepingMoonChallengeHelpText='destroy the robots and get to the locomotive in time';
 
 // dialogs intro
 sGranny='Granny';
@@ -226,6 +233,9 @@ sHaveFun='Have fun!';
 sScore='SCORE';
 sYourScore='Your score: %d';
 sSelectYourPrize='Select your prize';
+sSamGiveYou='Sam gives you';
+sExchange='EXCHANGE';
+sFor='for'; // exchange
 
 
 // dialogs pine forest
@@ -424,11 +434,10 @@ end;
 function GameHints: TStringArray;
 begin
   Result := NIL;
-  SetLength(Result, 4);
+  SetLength(Result, 3);
   Result[0] := sImproveEquipment;
   Result[1] := sRedoALevel;
-  Result[2] := sIfYouHaveEnoughMoney;
-  Result[3] := sBuyEquipment;
+  Result[2] := sBuyEquipment;
 end;
 
 function CorruptString(const s: string): string;

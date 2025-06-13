@@ -113,6 +113,7 @@ private
   FKeyboardToButton: TButtonsClickableByKeyboard;
   procedure SetHint(AValue: string);
   procedure SetLRIconPosition;
+  procedure ShowGameSteps(AValue: boolean);
 protected
   procedure ProcessButtonClick(Sender: TSimpleSurfaceWithEffect); override;
 public
@@ -125,7 +126,7 @@ public
 end;
 
 var FFontText: TTexturedFont;
-  texLRIcon, texMapStep, texMapStepChecked, texHelpKeys,
+  texLRIcon, texMapStep, texMapStepChecked,
   texMapCastleFW, texMapCastleOutline,
   texMap1FW, texMap1Outline, texLRHome, texSamHome, texPineForest,
   texZipLinePeaks, texZipLinePeaksCableToVolcano,
@@ -242,6 +243,20 @@ begin
   FLRIcon.BottomY := FSteps[i].CenterY;
 end;
 
+procedure TPanelChooseGameStep.ShowGameSteps(AValue: boolean);
+var i: integer;
+begin
+  FLine.Visible := AValue;
+  for i:=0 to High(FSteps) do
+    FSteps[i].Visible := AValue;
+  if AValue then begin
+    FLRIcon.Blink(-1, 0.4, 0.4);
+  end else begin
+    FLRIcon.StopBlink;
+    FLRIcon.Visible := False;
+  end;
+end;
+
 procedure TPanelChooseGameStep.SetHint(AValue: string);
 begin
   FHint.Text.Caption := AValue;
@@ -261,6 +276,7 @@ begin
     Hide(True);
     FPanelChooseGameStep := NIL;
     ScreenMap.UnableMouseInteractionOnMapObjects(True);
+    ChallengeMode := False;
   end else
   if Sender is TImageButton then begin
     Audio.PlayUIClick;
@@ -270,13 +286,15 @@ begin
   end else
   if Sender = BChallenge then begin
     Audio.PlayUIClick;
-    BChallenge.Tag2 := not BChallenge.Tag2;
-    if not BChallenge.Tag2 then begin
+    ChallengeMode := not ChallengeMode;
+    if not ChallengeMode then begin
       BChallenge.Caption := sGameMode;
       FHint.Text.Caption := FGameDescriptor.HelpText;
+      ShowGameSteps(True);
     end else begin
       BChallenge.Caption := sChallengeMode;
       FHint.Text.Caption := FGameDescriptor.ChallengeHelpText;
+      ShowGameSteps(False);
     end;
 
   end;
@@ -340,20 +358,6 @@ begin
   FormatButtonMenu(BBack);
   BBack.AnchorPosToParent(haRight, haCenter, -ScaleW(32), vaBottom, vaBottom, -PPIScale(10));
 
-  // keyboard to button
-  FKeyboardToButton := TButtonsClickableByKeyboard.Create(Self, FAtlas);
-  A := NIL;
-  for i:=0 to High(FSteps) do
-    if FSteps[i].MouseInteractionEnabled then begin
-      SetLength(A, Length(A)+1);
-      A[High(A)] := TUIButton(FSteps[i]);
-    end;
- { A := NIL;
-  SetLength(A, Length(FSteps));
-  for i:=0 to High(A) do A[i] := TUIButton(FSteps[i]);  }
-  FKeyboardToButton.AddLineOfButtons(A);
-  FKeyboardToButton.AddLineOfButtons([BBack, BStart]);
-  FKeyboardToButton.Select(BStart);
 
   // hint
   FHint := TUITextArea.Create(FScene);
@@ -370,12 +374,24 @@ begin
   FHint.Text.TexturedFont := FFontText;
   FHint.SetCoordinate(Width/2-PPIScale(10), PPIScale(10));
 
-  // button challenge        texHelpKeys
+  // button challenge
   BChallenge := TUIButton.Create(FScene, sGameMode, FFont, NIL);
   AddChild(BChallenge, 0);
   FormatButtonMenu(BChallenge);
   BChallenge.AnchorPosToSurface(FHint, haRight, haLeft, 0, vaTop, vaTop, 0);
-end;
+
+  // keyboard to button
+  A := NIL;
+  for i:=0 to High(FSteps) do
+    if FSteps[i].MouseInteractionEnabled then begin
+      SetLength(A, Length(A)+1);
+      A[High(A)] := TUIButton(FSteps[i]);
+    end;
+  FKeyboardToButton := TButtonsClickableByKeyboard.Create(Self, FAtlas);
+  FKeyboardToButton.AddLineOfButtons([BChallenge]);
+  FKeyboardToButton.AddLineOfButtons(A);
+  FKeyboardToButton.AddLineOfButtons([BBack, BStart]);
+  FKeyboardToButton.Select(BStart); end;
 
 procedure TPanelChooseGameStep.RemoveStartButton;
 begin
@@ -508,7 +524,7 @@ begin
 
   if Sender = BMountainPeaks then begin
     UnableMouseInteractionOnMapObjects(False);
-    FPanelChooseGameStep := TPanelChooseGameStep.Create(texZipLinePeaks, texLRIcon, PlayerInfo.MountainPeak, 110, '');
+    FPanelChooseGameStep := TPanelChooseGameStep.Create(texZipLinePeaks, texLRIcon, PlayerInfo.MountainPeak, 110, ' ');
     _ShowPanelChooseGameStep;
     LastGameClicked := gomZipLine;
     exit;
@@ -524,7 +540,7 @@ begin
       FScene.RunScreen(ScreenGameVolcanoEntrance);
       LastGameClicked := gomUnknow;
     end else begin
-      FPanelChooseGameStep := TPanelChooseGameStep.Create(texVolcanoMountain, texLRIcon, PlayerInfo.Volcano, 120, '');
+      FPanelChooseGameStep := TPanelChooseGameStep.Create(texVolcanoMountain, texLRIcon, PlayerInfo.Volcano, 120, ' ');
       _ShowPanelChooseGameStep;
       LastGameClicked := gomVolcano;
       exit;
@@ -605,7 +621,6 @@ begin
   texLRIcon := aAtlas.AddFromSVG(SpriteBGFolder+'LR.svg', ScaleW(33), -1);
   texMapStep := aAtlas.AddFromSVG(SpriteMapFolder+'MapStep.svg', ScaleW(21), -1);
   texMapStepChecked := aAtlas.AddFromSVG(SpriteMapFolder+'MapStepChecked.svg', ScaleW(34), -1);
-  texHelpKeys := aAtlas.AddFromSVG(SpriteMapFolder+'HelpKeys.svg', PPIScale(32), -1);
   AddBlueArrowToAtlas(aAtlas);
 
   // games map
@@ -919,7 +934,17 @@ begin
     end;
 
     // message received from the panel where player choose the game step to play
-    100: FScene.RunScreen(ScreenGameForest);
+    100: begin
+      if not ChallengeMode then FScene.RunScreen(ScreenGameForest)
+      else begin
+        // check if player have the prerequisite to play the challenge
+        with PlayerInfo.Forest do
+          if IsTerminated and Bow.LevelIsMaximized and Elevator.LevelIsMaximized and
+             Hammer.LevelIsMaximized and StormCloud.LevelIsMaximized then
+             FScene.RunScreen(ScreenGameForest)
+          else FPanelChooseGameStep.MouseInteractionEnabled := True;
+      end;
+    end;
     110: FScene.RunScreen(ScreenGameZipLine);
     120: begin
       // check if the last step was clicked, if yes start screen volcano dino

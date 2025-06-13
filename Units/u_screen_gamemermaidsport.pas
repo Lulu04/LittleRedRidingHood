@@ -2006,6 +2006,7 @@ begin
   FAtlas.Free;
   FAtlas := NIL;
   ResetSceneCallbacks;
+  ChallengeMode := False;
 end;
 
 procedure TScreenMermaidsPort.ProcessMessage(UserValue: TUserMessageValue);

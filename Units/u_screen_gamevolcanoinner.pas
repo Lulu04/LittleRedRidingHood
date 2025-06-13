@@ -1932,7 +1932,7 @@ begin
 
   // LR 4 direction
   FLR := TLRCustom.Create;
-  FLR.TimeMultiplicator := 0.7; // accelerate a little bit LR moves.
+  FLR.TimeMultiplicator := 0.6; // accelerate a little bit LR moves.
   FLR.X.Value := FLR.BodyWidth;
   FLR.CurrentFloor := 0;
   FLR.SetWindSpeed(0.5);

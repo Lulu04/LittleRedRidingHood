@@ -49,6 +49,8 @@ Tranquille.ogg composed by Lulu with Reason 3.0
 
 fast-banjo-tune-with-acoustic-guitar by Nicholas Panek -- https://pixabay.com/music/folk-fast-banjo-tune-with-acoustic-guitar-accompaniment-253946/
 
+5 Open Surge score jingle - A.ogg by jobromedia -- https://opengameart.org/content/level-finish-fanfares
+
 [SOUNDS]
 
 Fire Crackle and Flames 001 by TheWoodlandNomad -- https://freesound.org/s/363093/ -- License: Creative Commons 0
@@ -151,4 +153,8 @@ PHONE CONNECTING WITH CHARGER.wav by ShanayGroen -- https://freesound.org/s/3655
 metal hit.wav by cupido-1 -- https://freesound.org/s/560724/ -- License: Creative Commons 0
 
 Thuds on Window by zerolagtime -- https://freesound.org/s/245033/ -- License: Attribution 4.0
+
+Stick Hitting a Dreadlock (Small thud) by Rudmer_Rotteveel -- https://freesound.org/s/330997/ -- License: Creative Commons 0
+
+BirdWingFlap.wav by nicStage -- https://freesound.org/s/424463/ -- License: Attribution 4.0
 

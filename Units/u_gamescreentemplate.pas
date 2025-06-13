@@ -60,6 +60,10 @@ public // loading particle texture in atlas
   // the arrow used to click a button with the keyboard
   procedure AddBlueArrowToAtlas(aAtlas: TOGLCTextureAtlas);
 
+public // trophy
+  procedure PlaySequenceWinTrophy(const aTexTrophyFilename: string; aAtlas: TAtlas;
+                                  aMessageValueWhenDone: TUserMessageValue; aDelay: single);
+
 public // atlas creation or loading
   procedure DefineSubTextures(aAtlas: TAtlas); virtual; abstract;
   procedure CheckAtlas(var aAtlas: TAtlas; const aFilenameWithoutPath: string);
@@ -72,9 +76,24 @@ end;
 
 implementation
 
-uses Forms, u_app, u_utils, u_resourcestring;
+uses Forms, Graphics, u_app, u_utils, u_resourcestring, u_audio;
 
 type
+
+{ TWinTrophySequence }
+
+TWinTrophySequence = class(TUIModalPanel) //(TSpriteContainer)
+private
+  FTargetScreen: TGameScreenTemplate;
+  FMess: TUserMessageValue;
+  FDelay: single;
+  FTrophy: TSprite;
+public
+  constructor Create(const aTexTrophyFilename: string; aAtlas: TAtlas;
+    aTargetScreen: TGameScreenTemplate; aMessageValue: TUserMessageValue;
+  aDelay: single);
+  procedure ProcessMessage(UserValue: TUserMessageValue); override;
+end;
 
 { TGetReadyGo }
 
@@ -87,6 +106,67 @@ private
 public
   constructor Create(aTargetScreen: TGameScreenTemplate; aMessageValue: TUserMessageValue; aDelay: single);
   procedure ProcessMessage(UserValue: TUserMessageValue); override;
+end;
+
+{ TWinTrophySequence }
+
+constructor TWinTrophySequence.Create(const aTexTrophyFilename: string; aAtlas: TAtlas;
+  aTargetScreen: TGameScreenTemplate; aMessageValue: TUserMessageValue;
+  aDelay: single);
+var pe: TParticleEmitter;
+  lab: TSprite;
+  fd: TFontDescriptor;
+  tex: PTexture;
+begin
+  inherited Create(FScene);
+  //FScene.Add(Self, LAYER_TOP);
+  BodyShape.SetShapeRectangle(FScene.Width, FScene.Height, 0);
+  BodyShape.Fill.Visible := False;
+  BodyShape.Border.Visible := False;
+  ChildClippingEnabled := False;
+  MouseInteractionEnabled := False;
+
+  FTargetScreen := aTargetScreen;
+  FMess := aMessageValue;
+  FDelay := aDelay;
+
+  fd.Create('Arial', FScene.Height div 5, [fsBold], BGRA(255,255,50), BGRA(0,0,0), PPIScale(4));
+  fd.ComputeMaxHeightFor(sYouveWon, Rect(0,0,FScene.Width, FScene.Height div 5));
+  lab := TSprite.Create(FScene, fd, sYouveWon);
+  AddChild(lab, 0);
+  lab.CenterX := FScene.Width*0.5;
+  lab.Y.Value := FScene.Height div 5;
+
+  tex := FScene.TexMan.AddFromSVG(FolderSpriteTrophy+aTexTrophyFilename, -1, FScene.Height div 5*3);
+  FTrophy := TSprite.Create(tex, True);
+  AddChild(FTrophy, 0);
+  FTrophy.CenterX := FScene.Width*0.5;
+  FTrophy.Y.Value := lab.BottomY;
+  FTrophy.Scale.Value := PointF(0.1, 0.1);
+  pe := TParticleEmitter.Create(FScene);
+  pe.LoadFromFile(ParticleFolder+'MagicOnTrophy.par', aAtlas);
+  pe.SetEmitterTypeRectangle(FTrophy.Width, FTrophy.Height);
+  FTrophy.AddChild(pe, 1);
+  pe.Scale.Value := PointF(2, 2);
+  pe.ParticlesToEmit.Value := 15;
+
+  Audio.PlayMusicTrophy;
+  PostMessage(0);
+end;
+
+procedure TWinTrophySequence.ProcessMessage(UserValue: TUserMessageValue);
+begin
+  case UserValue of
+    0: begin
+      FTrophy.Scale.ChangeTo(PointF(1,1), 3.0, idcDrop);
+      FTrophy.Angle.ChangeTo(360*2, 3.0, idcStartFastEndSlow);
+      PostMessage(10, 10.0);
+    end;
+    10: begin
+      FTargetScreen.PostMessage(FMess, FDelay);
+      Hide(True);
+    end;
+  end;
 end;
 
 { TGetReadyGo }
@@ -246,6 +326,14 @@ begin
   if not aAtlas.LoadedFromFile then
     with aAtlas.AddFromSVG(SpriteUIFolder+'RightBlueArrow.svg', ScaleW(32), -1)^ do
      FileName := '_UItexKeyboardToButton_';
+end;
+
+procedure TGameScreenTemplate.PlaySequenceWinTrophy(
+  const aTexTrophyFilename: string; aAtlas: TAtlas;  aMessageValueWhenDone: TUserMessageValue;
+  aDelay: single);
+begin
+  with TWinTrophySequence.Create(aTexTrophyFilename, aAtlas, Self, aMessageValueWhenDone, aDelay) do
+    ShowModal;
 end;
 
 procedure TGameScreenTemplate.CheckAtlas(var aAtlas: TAtlas; const aFilenameWithoutPath: string);
