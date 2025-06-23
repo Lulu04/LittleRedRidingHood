@@ -30,7 +30,7 @@ type
     procedure ShowFinalScore;
     function ComputeTurnGain: integer;
   public
-    //procedure DefineSubTextures(aAtlas: TAtlas); override;
+    procedure DefineSubTextures(aAtlas: TAtlas); override;
     procedure CreateObjects; override;
     procedure FreeObjects; override;
     procedure ProcessMessage({%H-}UserValue: TUserMessageValue); override;
@@ -352,52 +352,46 @@ begin
   else Result := 5;
 end;
 
-procedure TScreenDartboard.CreateObjects;
-var ima: TBGRABitmap;
-  path: String;
+procedure TScreenDartboard.DefineSubTextures(aAtlas: TAtlas);
+var path: String;
   fd: TFontDescriptor;
+begin
+  path := FolderSpriteDartboard;
+  texDartboard := aAtlas.AddFromSVG(path+'Dartboard.svg', ScaleW(86*2), -1);
+  texHouse := aAtlas.AddFromSVG(path+'House.svg', ScaleW(715), -1);
+  texStartBoard := aAtlas.AddFromSVG(path+'StartBoard.svg', ScaleW(123), -1);
+  texHoop := aAtlas.AddFromSVG(path+'Hoop.svg', ScaleW(141), -1);
+  fd.Create('Arial', FScene.Height div 12, [fsBold], BGRA(255,200,64), BGRA(0,0,0), PPIScale(4));
+  texGain0 := aAtlas.AddString('0', fd, NIL);
+  texGain5 := aAtlas.AddString('+5', fd, NIL);
+  texGain10 := aAtlas.AddString('+10', fd, NIL);
+  texGain20 := aAtlas.AddString('+20', fd, NIL);
+  texGain30 := aAtlas.AddString('+30', fd, NIL);
+  texSam := aAtlas.AddFromSVG(path+'SamHappy.svg', ScaleW(195), -1);
+
+  texPeakBig  := aAtlas.AddFromSVG(SpriteBGFolder+'PeakMontainGrayBig.svg', ScaleW(200), -1);
+  texPeakSmall := aAtlas.AddFromSVG(SpriteBGFolder+'PeakMontainGraySmall.svg', ScaleW(200), -1);
+  texFence := aAtlas.AddFromSVG(SpriteIntroductionFolder+'Fence.svg', ScaleW(220), -1);
+  TDartboardBird.LoadTexture(aAtlas);
+
+  // ui
+  CreateGameFontNumber(aAtlas); // < must be first !
+  texIconBird := aAtlas.AddFromSVG(path+'IconBird.svg', -1, IconHeight);
+  // font for button in pause panel
+  FFontText := CreateGameFontText(aAtlas);
+  LoadGameDialogTextures(aAtlas);
+  // load arrow for button panels
+  AddBlueArrowToAtlas(aAtlas);
+  LoadMousePointerTexture(aAtlas);
+end;
+
+procedure TScreenDartboard.CreateObjects;
 begin
   GameState := gsUndefined;
   FsndMusic := Audio.AddMusic('fast-banjo-tune-with-acoustic-guitar.ogg', True);
-  FsndMusic.Volume.Value := 0.8;
+  FsndMusic.Volume.Value := 0.9;
 
-  FAtlas := FScene.CreateAtlas;
-  FAtlas.Spacing := 2;
-
-  path := FolderSpriteDartboard;
-  texDartboard := FAtlas.AddFromSVG(path+'Dartboard.svg', ScaleW(86*2), -1);
-  texHouse := FAtlas.AddFromSVG(path+'House.svg', ScaleW(715), -1);
-  texStartBoard := FAtlas.AddFromSVG(path+'StartBoard.svg', ScaleW(123), -1);
-  texHoop := FAtlas.AddFromSVG(path+'Hoop.svg', ScaleW(141), -1);
-  fd.Create('Arial', FScene.Height div 12, [fsBold], BGRA(255,200,64), BGRA(0,0,0), PPIScale(4));
-  texGain0 := FAtlas.AddString('0', fd, NIL);
-  texGain5 := FAtlas.AddString('+5', fd, NIL);
-  texGain10 := FAtlas.AddString('+10', fd, NIL);
-  texGain20 := FAtlas.AddString('+20', fd, NIL);
-  texGain30 := FAtlas.AddString('+30', fd, NIL);
-  texSam := FAtlas.AddFromSVG(path+'SamHappy.svg', ScaleW(195), -1);
-
-  texPeakBig  := FAtlas.AddFromSVG(SpriteBGFolder+'PeakMontainGrayBig.svg', ScaleW(200), -1);
-  texPeakSmall := FAtlas.AddFromSVG(SpriteBGFolder+'PeakMontainGraySmall.svg', ScaleW(200), -1);
-  texFence := FAtlas.AddFromSVG(SpriteIntroductionFolder+'Fence.svg', ScaleW(220), -1);
-  TDartboardBird.LoadTexture(FAtlas);
-
-  // ui
-  CreateGameFontNumber(FAtlas); // < must be first !
-  texIconBird := FAtlas.AddFromSVG(path+'IconBird.svg', -1, IconHeight);
-  // font for button in pause panel
-  FFontText := CreateGameFontText(FAtlas);
-  LoadGameDialogTextures(FAtlas);
-  // load arrow for button panels
-  AddBlueArrowToAtlas(FAtlas);
-  LoadMousePointerTexture(FAtlas);
-
-  FAtlas.TryToPack;
-  FAtlas.Build;
-
-  ima := FAtlas.GetPackedImage;
-  ima.SaveToFile(Application.Location+'Atlas.png');
-  ima.Free;
+  CheckAtlas(FAtlas, 'dartboard.atlas');
 
   CreateDecors;
 

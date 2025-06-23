@@ -340,7 +340,7 @@ begin
   if not FCanStrike then exit;
   FCanStrike := False;
   PostMessage(0);
-  Audio.PlayThenKillSound('thuds-on-window.ogg', 0.8);
+  Audio.PlayThenKillSound('thuds-on-window.ogg', 0.9);
 end;
 
 { TRaccoon }
@@ -378,7 +378,7 @@ begin
   case UserValue of
     // RACCOON APPEAR ANIMATION
     0: begin  // raccoon1 appear
-      Audio.PlayThenKillSound('RaccoonAppear.ogg', 0.8, 0.0, 1.0, Audio.FXReverbShort, 0.5);
+      Audio.PlayThenKillSound('RaccoonAppear.ogg', 0.7, 0.0, 1.0, Audio.FXReverbShort, 0.5);
       FRaccoon1.Visible := True;
       FRaccoon2.Visible := False;
       FRaccoon3.Visible := False;
@@ -392,7 +392,7 @@ begin
       FRaccoon1.Visible := False;
       FRaccoon2.Visible := True;
       FRaccoon3.Visible := False;
-      PostMessage(10, 1.0); //0.75+Random*2);
+      PostMessage(10, 1.0);
     end;
     10: begin  // raccoon3
       if not FEnableAnim then exit;
@@ -439,7 +439,7 @@ var p: single;
 begin
   ClearMessageList;
   p := 1.0 + semitone*FCurrentSuccessLevel;
-  Audio.PlayThenKillSound('metal-hit.ogg', 1.0, 0.0, p);
+  Audio.PlayThenKillSound('metal-hit.ogg', 0.7, 0.0, p);
   FRaccoon1.Visible := False;
   FRaccoon1.DeformationSpeed.Value := PointF(0, FDeformationSpeed);
   FRaccoon2.Visible := False;
@@ -473,28 +473,28 @@ var path: string;
   fd: TFontDescriptor;
 begin
   path := FolderSpriteStrikeRaccoon;
-  texRaccoon1 := FAtlas.AddFromSVG(path+'Raccoon1.svg', ScaleW(119), -1);
-  texRaccoon2 := FAtlas.AddFromSVG(path+'Raccoon2.svg', ScaleW(158), -1);
-  texRaccoon3 := FAtlas.AddFromSVG(path+'Raccoon3.svg', ScaleW(137), -1);
-  texTarget := FAtlas.AddFromSVG(path+'Target.svg', ScaleW(180), -1);
-  texBarrel := FAtlas.AddFromSVG(path+'Barrel.svg', ScaleW(664), -1);
-  texHammer1 := FAtlas.AddFromSVG(path+'Hammer1.svg', -1, ScaleH(381));
-  texHammer2 := FAtlas.AddFromSVG(path+'Hammer2.svg', ScaleW(201), -1);
-  texBoard := FAtlas.AddFromSVG(path+'Board.svg', FScene.Width, -1);
+  texRaccoon1 := aAtlas.AddFromSVG(path+'Raccoon1.svg', ScaleW(119), -1);
+  texRaccoon2 := aAtlas.AddFromSVG(path+'Raccoon2.svg', ScaleW(158), -1);
+  texRaccoon3 := aAtlas.AddFromSVG(path+'Raccoon3.svg', ScaleW(137), -1);
+  texTarget := aAtlas.AddFromSVG(path+'Target.svg', ScaleW(180), -1);
+  texBarrel := aAtlas.AddFromSVG(path+'Barrel.svg', ScaleW(664), -1);
+  texHammer1 := aAtlas.AddFromSVG(path+'Hammer1.svg', -1, ScaleH(381));
+  texHammer2 := aAtlas.AddFromSVG(path+'Hammer2.svg', ScaleW(201), -1);
+  texBoard := aAtlas.AddFromSVG(path+'Board.svg', FScene.Width, -1);
   fd.Create('Arial', FScene.Height div 12, [fsBold], BGRA(255,200,64), BGRA(0,0,0), PPIScale(4));
-  texGain1 := FAtlas.AddString('+1', fd, NIL);
-  texGain2 := FAtlas.AddString('+2', fd, NIL);
+  texGain1 := aAtlas.AddString('+1', fd, NIL);
+  texGain2 := aAtlas.AddString('+2', fd, NIL);
 
   // ui
-  CreateGameFontNumber(FAtlas); // < must be first !
-  LoadWatchTexture(FAtlas);
-  LoadIconHammerRaccoon(FAtlas);
+  CreateGameFontNumber(aAtlas); // < must be first !
+  LoadWatchTexture(aAtlas);
+  LoadIconHammerRaccoon(aAtlas);
   // font for button in pause panel
-  FFontText := CreateGameFontText(FAtlas);
-  LoadGameDialogTextures(FAtlas);
+  FFontText := CreateGameFontText(aAtlas);
+  LoadGameDialogTextures(aAtlas);
   // load arrow for button panels
-  AddBlueArrowToAtlas(FAtlas);
-  LoadMousePointerTexture(FAtlas);
+  AddBlueArrowToAtlas(aAtlas);
+  LoadMousePointerTexture(aAtlas);
 end;
 
 procedure TScreenStrikeRaccoon.CreateObjects;
@@ -503,6 +503,7 @@ var bg: TQuad4Color;
 begin
   GameState := gsUndefined;
   FsndMusic := Audio.AddMusic('fast-banjo-tune-with-acoustic-guitar.ogg', True);
+  FsndMusic.Volume.Value := 0.9;
 
   CheckAtlas(FAtlas, 'strikeraccoon.atlas');
 

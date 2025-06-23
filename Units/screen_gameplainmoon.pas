@@ -1998,6 +1998,7 @@ begin
   FAction2Released := True;
   FEndOfShootingStars := False;
   FSpriteMessageTimeOver := NIL;
+  FGameSequence := gsNone;
 end;
 
 procedure TScreenPlainOfSleepingMoon.SetGameSequence(AValue: TGameSequence);

@@ -49,6 +49,21 @@ public
 end;
 
 
+{ TMarcusHelicopter }
+
+TMarcusHelicopter = class(TSprite)
+private class var texBody, texMainPropeller, texQueuePropeller: PTexture;
+private
+  FMainPropeller, FQueuePropeller: TSprite;
+protected
+  procedure SetFlipH(AValue: boolean); override;
+  procedure SetFlipV(AValue: boolean); override;
+public
+  class procedure LoadTexture(aAtlas: TAtlas);
+  constructor Create(aLayerIndex: integer);
+  procedure ProcessMessage(UserValue: TUserMessageValue); override;
+end;
+
 implementation
 
 uses u_common, u_app, u_resourcestring, LazUTF8;
@@ -186,6 +201,58 @@ begin
       FLeftWing.Angle.ChangeTo(0, d, idcSinusoid);
       FRightWing.Angle.ChangeTo(0, d, idcSinusoid);
       PostMessage(0, d);
+    end;
+  end;
+end;
+
+{ TMarcusHelicopter }
+
+procedure TMarcusHelicopter.SetFlipH(AValue: boolean);
+begin
+  inherited SetFlipH(AValue);
+  FMainPropeller.FlipH := AValue;
+  FQueuePropeller.FlipH := AValue;
+end;
+
+procedure TMarcusHelicopter.SetFlipV(AValue: boolean);
+begin
+  inherited SetFlipV(AValue);
+  FMainPropeller.FlipV := AValue;
+  FQueuePropeller.FlipV := AValue;
+end;
+
+class procedure TMarcusHelicopter.LoadTexture(aAtlas: TAtlas);
+begin
+  texBody := aAtlas.AddFromSVG(FolderSpriteGameMermaidsPort+'HelicoBody.svg', ScaleW(518), -1);
+  texMainPropeller := aAtlas.AddFromSVG(FolderSpriteGameMermaidsPort+'HelicoMainPropeller.svg', ScaleW(283), -1);
+  texQueuePropeller := aAtlas.AddFromSVG(FolderSpriteGameMermaidsPort+'HelicoQueuePropeller.svg', ScaleW(79), -1);
+end;
+
+constructor TMarcusHelicopter.Create(aLayerIndex: integer);
+begin
+  inherited Create(texBody, False);
+  if aLayerIndex <> -1 then FScene.Add(Self, aLayerIndex);
+
+  FMainPropeller := CreateSpriteChild(texMainPropeller, False, -1);
+  FMainPropeller.SetCoordinate(Width*0.04, Height*0.13);
+ // FMainPropeller.ApplySymmetryWhenFlip := True;
+
+  FQueuePropeller := CreateSpriteChild(texQueuePropeller, False, 0);
+  FQueuePropeller.SetCoordinate(Width*0.8, Height*0.28);
+  FQueuePropeller.ApplySymmetryWhenFlip := True;
+  FQueuePropeller.Angle.AddConstant(360*3);
+  PostMessage(0); // propeller anim
+end;
+
+procedure TMarcusHelicopter.ProcessMessage(UserValue: TUserMessageValue);
+begin
+  case UserValue of
+    // propeller anim
+    0: begin
+     FMainPropeller.FlipH := not FMainPropeller.FlipH;
+ //    if FMainPropeller.FlipH then FMainPropeller.X.Value := Width-Width*0.04
+ //      else FMainPropeller.X.Value := Width*0.04;
+     PostMessage(0, 0.03);
     end;
   end;
 end;

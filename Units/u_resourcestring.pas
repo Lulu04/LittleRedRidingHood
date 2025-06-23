@@ -160,13 +160,17 @@ sDinoRaceInstructions='Win the race against Dino !'+ LineEnding+
 SPlainMoonHelpText='Destroy the robots as fast as you can' + LineEnding +
                    'Outside: ←→↑↓ to move, ACTION1 to jump, ACTION2 to fire' + LineEnding +
                    'Inside: use the mouse to target the robots, ACTION2 to fire';
-sMermaidsPortHelpText='Crosses the industrial zone to reach the sea.' + LineEnding +
+sMermaidsPortHelpText='Crosses the factories to reach the sea.' + LineEnding +
                       '←→↑↓ to move' + LineEnding +
                       'ACTION1 : jump' + LineEnding +
                       'ACTION2 : use object';
 sMermaidsPortHelpText2='When you jump on a container, the remote control'+ LineEnding +
                        'automatically connects to it'+ LineEnding +
                        'Hold down ACTION2 and use ←→↑↓ to move it.';
+sMermaidBossInstructions='Finds the right strategy to beat Marcus at his game'+ LineEnding +
+                         '←→↑↓ to move' + LineEnding +
+                         'ACTION1 : to shoot' + LineEnding +
+                         'ACTION2 : defensive position';
 
 sStrikeRaccoonInstructions='←→↑↓ to target'+ LineEnding +
                            'ACTION1 : to strike';
@@ -227,7 +231,7 @@ sHey='Hey!!';
 // dialogs Sam
 sWelcomeToSam='Welcome to Sam''s!'+LineEnding+'Click on me for explanations';
 sHereYouCanExchange='Here you can exchange your coins for certain items.';
-sYouCanAlsoWinItems='You can also win items by playing the games. A game costs 100 coins.';
+sYouCanAlsoWinItems='You can also win coins or items by playing the games.';
 sTheHigherYourScore='The higher your score, the more articles you earn!';
 sHaveFun='Have fun!';
 sScore='SCORE';
@@ -237,7 +241,7 @@ sSamGiveYou='Sam gives you';
 sExchange='EXCHANGE';
 sFor='for'; // exchange
 
-
+{
 // dialogs pine forest
 sSomethingTellMeYouNeedMyHelp='Something tells me you need my help.';
 sWhoAreYou='Who are you?';
@@ -268,7 +272,7 @@ sBecauseYouHaveBoughtItems='Because you''ve bought items from me, you''re entitl
                            'on the place you want to go. Isn''t that nice?!';
 sUhIAlreadyDid='Uh... I already did...';
 sWellTmOff='Well, I''m off. Good luck in your adventures!';
-
+}
 
 // dialogs volcano entrance
 sWolfInTheCave='Wolf in the cave';
@@ -397,6 +401,42 @@ sStartSequence='Start sequence';
 sItsTooDangerousIHaveToFind='It''s too dangerous. I have to find another way to cross.';
 sSoundsLikeARemote='Sounds like a remote control. I should be able to control something with it.';
 sINeedAKeyToOpenThisGate='I need a key to open this gate...';
+sWouldYouLikeToSeeMarcus='Would you like to see Marcus'' meeting again?';
+sMySisterWasRight='My sister was right, you''re very efficient!';
+sImMarcus='I''m Marcus, Penelope''s brother, the one you met on the train. '+
+                        'I know you''re looking for your grandmother.';
+sIHaveToGetToTheIsland='I have to get to the island. Your sister told me I''d find a way '+
+                        'to cross the sea over here.';
+sOfCourseThereIsBut='Of course there is, but you have to earn it...';
+sAreYouInTheHabit='Are you in the habit of asking before you give?';
+sItsMoreFunThisWay='It''s more fun this way!';
+sIKnowAGame='I know a game I love. If you beat me, I''ll give you a way to cross the sea.';
+sPfffThatsNotFairplay='Pfff! That''s not fairplay, you''re certainly already trained, I''m not!';
+sComeOnImSureWith='Come on... I''m sure with a little perseverance you''ll get there.';
+sSeeTheseEggShaped='See these egg-shaped things? They''re robots that can be controlled from the inside.';
+sRedIsForYou='Red is for you, black is for me. Whoever shoots the other first wins.';
+sErIDontWantToEndMyLife='Er... I don''t want to end my life in a tin can!';
+sDontBeAfraidYoureSafe='Don''t be afraid, you''re safe inside. Don''t move please.';
+sCongratOnceAgain='Congratulations! Once again you''ve shown that you''re up to the task!';
+sItWasFunny='It was funny!';
+sIllHelpYouToo='I''ll help you too, you deserve it. Please follow me.';
+sTakeThisTunnel='Take this tunnel, it will lead you to the seaside. '+
+                'There you''ll find a vehicle to take you to the island.';
+
+sFinally='Finally!';
+sGoodLuckSeeYouSoon='Good luck, see you soon.';
+sPfffHeCouldHave='Pfff, he could have dropped me off on the island!';
+sASubmarineIWasnt='A submarine? I wasn''t expecting that...';
+sOkLetsGo='Ok... Let''s go!';
+sWellHowToStartIt='Well... How to start it?';
+sHereThereIsAButton='Here! there''s a button marked Start';
+sCool='Cool!';
+sLetsTryDivingNow='Let''s try diving now...';
+sOups='Oups...';
+sNoTreePoint='No...';
+
+
+
 
 implementation
 uses OGLCScene, LazUTF8;
