@@ -37,7 +37,7 @@ private
   procedure StopRain;
   procedure ProcessLAYERGROUNDBeforeUpdate;
   procedure CreateClouds; // LAYER_BG3
-  procedure CreateGround; // LAYER_BG3
+  procedure CreateGround; // LAYER_BG2
   procedure CreateFactory3; // LAYER_BG2
   procedure CreateFactory2; // LAYER_BG1
   procedure CreateFactory1(var aX: single; aCount: integer); // LAYER_GROUND
@@ -48,6 +48,7 @@ private
   procedure CreateLevel3;
   procedure FadeOutAndKillMusicAndSounds;
 public
+  procedure DefineSubTextures(aAtlas: TAtlas); override;
   procedure CreateObjects; override;
   procedure FreeObjects; override;
   procedure ProcessMessage(UserValue: TUserMessageValue); override;
@@ -316,7 +317,7 @@ var
   texTruckYellow, texTruckBlue, texTruckGreen,
   texFactory1, texFactory2, texFactory3,
   texCraneHook, texCraneHookBG, texContainer, texPanelExit,
-  texControlPanel, texPlatformLeg, texPlatformGround, texPlatformGroundForLadder, texPlatformLadder,
+  texPlatformLeg, texPlatformGround, texPlatformGroundForLadder, texPlatformLadder,
   texSewerPlate, texBarrel, texGroundStain, texBGFenceVertical, texBGFenceHorizontal,
   texFence: PTexture;
 
@@ -926,7 +927,7 @@ begin
   FScene.Add(Self, LAYER_BG2);
   Scale.Value := PointF(FACTORY3_SCALE, FACTORY3_SCALE);
   ScaledX := aX;
-  ScaledBottomY := FScene.Height-ScaleH(297);
+  ScaledBottomY := FWorldArea.Bottom-ScaleH(297);   // FScene.Height-ScaleH(297);
 end;
 
 { TFactory1 }
@@ -948,7 +949,7 @@ begin
   FScene.Add(Self, LAYER_BG1);
   Scale.Value := PointF(FACTORY2_SCALE, FACTORY2_SCALE);
   ScaledX := aX;
-  ScaledBottomY := FScene.Height-ScaleH(296);
+  ScaledBottomY := FWorldArea.Bottom-ScaleH(296); // FScene.Height-ScaleH(296);
 end;
 
 { TSuspendedContainer }
@@ -1364,8 +1365,8 @@ constructor TSky.Create;
 begin
   inherited Create(FScene);
   FScene.Add(Self, LAYER_BG3);
-  Gradient.CreateVertical([BGRA(27,6,58), BGRA(87,19,194)], [0, 1]);
-  SetSize(FScene.Width, ScaleH(472));
+  Gradient.CreateVertical([BGRA(27,6,58), BGRA(87,19,194), BGRA(87,19,194)], [0, 0.5, 1.0]);
+  SetSize(Round(FWorldArea.Width), Round(FWorldArea.Height));
 end;
 
 procedure TSky.ProcessMessage(UserValue: TUserMessageValue);
@@ -1610,10 +1611,10 @@ procedure TScreenMermaidsPort.CreateGround;
 var ground: TGradientRectangle;
 begin
   ground := TGradientRectangle.Create(FScene);
-  FScene.Add(ground, LAYER_BG3);
+  FScene.Add(ground, LAYER_BG2);
   ground.Gradient.CreateVertical([BGRA(25,40,31), BGRA(55,48,39)], [0, 1]);
-  ground.SetSize(FScene.Width, ScaleH(296));
-  ground.Y.Value := FSky.Height;
+  ground.SetSize(Round(FWorldArea.Width), ScaleH(296));
+  ground.Y.Value := FWorldArea.Bottom - ScaleH(296);
 end;
 
 procedure TScreenMermaidsPort.CreateFactory3;
@@ -1713,7 +1714,7 @@ begin
   TBarrel.Create(ScaleW(1719), ScaleH(638), LAYER_ARROW);
 
   o := TSuspendedContainer.Create;
-  o.SetAutomaticPath([ScaleW(1224), 2, ScaleW(1812), 2, ScaleW(1812), 1, ScaleW(2064), 1], True);
+  o.SetAutomaticPath([ScaleW(1224), 2, ScaleW(2064), 2, ScaleW(2064), 1], True);
 
   o.SetManualPathConstraints([1, ScaleW(1812), ScaleW(2064),  // floor1
                               2, ScaleW(1224), ScaleW(3885)]); // floor2
@@ -1853,19 +1854,9 @@ begin
   FsndBuzzer := NIL;
 end;
 
-procedure TScreenMermaidsPort.CreateObjects;
+procedure TScreenMermaidsPort.DefineSubTextures(aAtlas: TAtlas);
 var path: string;
-  ima: TBGRABitmap;
 begin
-
-  FGameState := gsUndefined;
-  ResetVariables;
-  Audio.PauseMusicTitleMap(3.0);
-  FsndBuzzer := Audio.AddSound('BuzzerError.ogg', 0.4, False);
-
-  FAtlas := FScene.CreateAtlas;
-  FAtlas.Spacing := 2;
-
   AdditionnalScale := 0.8;
   LoadLR4DirTextures(FAtlas, False);
   LoadWolfTextures(FAtlas);
@@ -1884,7 +1875,6 @@ begin
   texPanelExit := FAtlas.AddFromSVG(SpriteGameVolcanoInnerFolder+'PanelExit.svg', ScaleW(52), -1);
   texFence := FAtlas.AddFromSVG(path+'Fence.svg', -1, ScaleH(186));
 
-  texControlPanel := FAtlas.AddFromSVG(path+'ControlPanel.svg', ScaleW(73), -1);
   texPlatformLeg := FAtlas.AddFromSVG(path+'PlatformLeg.svg', -1, ScaleH(229));
   texPlatformGround := FAtlas.AddFromSVG(path+'PlatformGround.svg', ScaleW(205), -1);
   texPlatformGroundForLadder := FAtlas.AddFromSVG(path+'PlatformGroundForLadder.svg', ScaleW(205), -1);
@@ -1913,13 +1903,16 @@ begin
   // load arrow for button panels
   AddBlueArrowToAtlas(FAtlas);
   LoadMousePointerTexture(FAtlas);
+end;
 
-  FAtlas.TryToPack;
-  FAtlas.Build;
+procedure TScreenMermaidsPort.CreateObjects;
+begin
+  FGameState := gsUndefined;
+  ResetVariables;
+  Audio.PauseMusicTitleMap(3.0);
+  FsndBuzzer := Audio.AddSound('BuzzerError.ogg', 0.4, False);
 
-  ima := FAtlas.GetPackedImage;
-  ima.SaveToFile(Application.Location+'Atlas.png');
-  ima.Free;
+  CheckAtlas(FAtlas, 'mermaidsport.atlas');
 
   // LAYER_GROUND callback
   FScene.Layer[LAYER_GROUND].OnBeforeUpdate := @ProcessLAYERGROUNDBeforeUpdate;
@@ -1946,16 +1939,12 @@ begin
   // level
   CreateLevel(PlayerInfo.MermaidsPort.StepPlayed);
 
-//  // install a compare function to sort the sprite in the layer LAYER_GROUND
-//  FScene.Layer[LAYER_GROUND].OnSortCompare := @LayerSortCompare;
-
   // camera
   FCamera := FScene.CreateCamera;
   FCamera.AssignToLayerRange(LAYER_ARROW, LAYER_GROUND);
   FCamera.AutoFollow.Bounds := FViewArea;
   FCamera.AutoFollow.SetTargetSurface(FLR, True);
   FCamera.AutoFollow.Speed := 0.01;
-  //FCamera.Scale.Value := PointF(2,2);
 
   FCameraFactory2 := FScene.CreateCamera;
   FCameraFactory2.AssignToLayer(LAYER_BG1);
@@ -2181,7 +2170,7 @@ procedure TScreenMermaidsPort.Update(const aElapsedTime: single);
 var flagPlayerIdle: Boolean;
   p: TPointF;
   ladder: TPlatformWithLadder;
-  deltaY: single;
+  delta: single;
 begin
   inherited Update(aElapsedTime);
 
@@ -2203,6 +2192,10 @@ begin
         GameState := gsLRFalling;
         flagPlayerIdle := False;
       end;
+
+      // check if LR is on a container and the container is changing floor
+      if (FLR.ContainerToControl <> NIL) and FLR.ContainerToControl.ChangingFloor then
+        flagPlayerIdle := False;
 
       if not FLR.IsOnLadder then begin
 
@@ -2358,40 +2351,29 @@ begin
   if FLR.IsJumping then p.y := FLR.YBeforeJump;
   FCamera.AutoFollow.SetTargetPoint(p);
 
-  // update FCameraFactory3
- { p := FCamera.LookAt.Value ;//+ FScene.Center;
-  FCameraFactory3.LookAt.x.Value := p.x * 0.25;
-  p := (FScene.Center - FCamera.LookAt.Value) * 0.25;
-  FCameraFactory3.LookAt.y.Value := FScene.Center.y-(p.y);   }
+  // parallax horizontal and vertical
+  p := FScene.Center - FCamera.LookAt.Value;  // where the camera looks in the world
+  // x
+  delta := p.x - FScene.Width*0.5;
+  delta := delta * 0.5;
+  p.x := delta + FScene.Width*0.5;
+  // y
+  delta := p.y - (FWorldArea.Bottom - FScene.Height*0.5);
+  delta := delta * 0.7;
+  p.y := delta + (FWorldArea.Bottom - FScene.Height*0.5);
+  FCameraFactory2.MoveTo(p);
 
-  //LookAt.Value := FParentScene.Center-aPt; => aPt = FParentScene.Center-LookAt.Value
-  p := FCamera.LookAt.Value;
-  FCameraFactory3.LookAt.x.Value := p.x * 0.25;
-  FCameraFactory2.LookAt.x.Value := p.x * 0.5;
+  p := FScene.Center - FCamera.LookAt.Value;  // where the camera looks in the world
+  // x
+  delta := p.x - FScene.Width*0.5;
+  delta := delta *0.25;
+  p.x := delta + FScene.Width*0.5;
+  // y
+  delta := p.y - (FWorldArea.Bottom - FScene.Height*0.5);
+  delta := delta * 0.5;
+  p.y := delta + (FWorldArea.Bottom - FScene.Height*0.5);
+  FCameraFactory3.MoveTo(p);
 
-
-
-  deltaY := FScene.Height*0.5 - p.y;
-  deltaY := FScene.Height - FWorldArea.Bottom - deltaY;
-  deltaY := FScene.Height*0.5 + deltaY;
-  FCameraFactory3.LookAt.y.Value := deltaY;
-
-
- { p := FScene.Center - p;
-  deltaY := p.y - FWorldArea.Bottom;
-  deltaY := FScene.Height*0.5 - deltaY;
-  FCameraFactory3.LookAt.y.Value := -deltaY;  }
-
-  //FCameraFactory3.LookAt.y.Value := FScene.Height*0.5 - (FWorldArea.Bottom - deltaY);
-
-
-
-  //update FCameraFactory2
- { p := FCamera.LookAt.Value; // + FScene.Center;
-  FCameraFactory2.LookAt.x.Value := p.x * 0.5;
-  p := (FScene.Center - FCamera.LookAt.Value) * 0.5;
-  FCameraFactory2.LookAt.y.Value := FScene.Center.y-(p.y);  }
-//  FCameraFactory2.LookAt.Value := FCamera.LookAt.Value * 0.5;
 
   // check if player pause the game
   if Input.PausePressed then

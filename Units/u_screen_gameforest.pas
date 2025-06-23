@@ -61,7 +61,7 @@ end;
 var ScreenGameForest: TScreenGame1;
 implementation
 uses Forms, Controls, LCLType, u_app, u_screen_map, u_utils, u_mousepointer,
-  u_screen_forest_amara, Math, u_sprite_lrcommon, u_resourcestring,
+  Math, u_sprite_lrcommon, u_resourcestring,
   u_screen_workshop;
 
 { TScreenGame1 }
@@ -492,11 +492,8 @@ begin
     end;
 
     gsAddingScore: begin
-      if FEndGameScorePanel.Done and FScene.UserPressAKey then begin
-        if PlayerInfo.Forest.CanEncounterAmara
-           then FScene.RunScreen(ScreenForestAmara)
-           else FScene.RunScreen(ScreenMap);
-      end;
+      if FEndGameScorePanel.Done and FScene.UserPressAKey then
+        FScene.RunScreen(ScreenMap);
     end;
   end;//case
 

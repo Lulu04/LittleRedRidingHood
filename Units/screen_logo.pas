@@ -71,6 +71,7 @@ begin
   FAtlas.Spacing := 2;
 
   path := FScene.App.DataFolder+'Logo'+DirectorySeparator;
+
   FTexHearth := FAtlas.AddFromSVG(path+'World.svg', -1, Round(FScene.Height*0.5));
 
   fd.Create('Arial', Round(FScene.Height/15), [], BGRA(255,255,200), BGRA(0,0,0,0), 0, BGRA(255,128,64), 0, 0, 10);
@@ -85,6 +86,7 @@ begin
   FAtlas.TryToPack;
   FAtlas.Build;
 
+  // hearth
   FHearth := TSprite.Create(FTexHearth, False);
   FScene.Add(FHearth);
   FHearth.CenterX := FScene.Width*0.5;
@@ -101,6 +103,7 @@ begin
   FHearth.AddChild(FGlow, -1);
   FGlow.CenterOnParent;
 
+  // puppet
   FBody := TSprite.Create(FTexLogoBody, False);
   FScene.Add(FBody);
   FBody.CenterX := FScene.Width*0.5;

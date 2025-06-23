@@ -13,6 +13,8 @@ uses
 function GetViewRect(aCameraInUse: TOGLCCamera): TRectF;
 function GetCenterView(aCameraInUse: TOGLCCamera): TPointF;
 
+function GetPurpleCristalTint: TBGRAPixel;
+
 type
 
 { TInput }
@@ -153,6 +155,11 @@ begin
   r := GetViewRect(aCameraInUse);
   Result.X := r.Left + r.Width * 0.5;
   Result.y := r.Top + r.Height * 0.5;
+end;
+
+function GetPurpleCristalTint: TBGRAPixel;
+begin
+  Result := BGRA(255,0,255,150);
 end;
 
 end.

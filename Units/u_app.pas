@@ -194,9 +194,6 @@ private
   FElevator: TForestElevator;
   FHammer: TForestHammer;
   FStormCloud: TForestStormCloud;
-  FAmaraHaveAlreadyAskForTheHammer,
-  FAmaraHaveAlreadyAskForTheStormCloud: boolean;
-
   function GetHelpText: string; override;
   function GetChallengeHelpText: string; override;
 public
@@ -210,10 +207,6 @@ public
   property Elevator: TForestElevator read FElevator;
   property Hammer: TForestHammer read FHammer;
   property StormCloud: TForestStormCloud read FStormCloud;
-  // return True when player reach level 4 and 8
-  function CanEncounterAmara: boolean;
-  property AmaraHaveAlreadyAskForTheHammer: boolean read FAmaraHaveAlreadyAskForTheHammer write FAmaraHaveAlreadyAskForTheHammer;
-  property AmaraHaveAlreadyAskForTheStormCloud: boolean read FAmaraHaveAlreadyAskForTheStormCloud write FAmaraHaveAlreadyAskForTheStormCloud;
 end;
 
 // MOUNTAIN PEAK GAME DESCRIPTOR
@@ -359,6 +352,7 @@ TMermaidsPortDescriptor = class(TGameDescriptor)
 private
   function GetHelpText: string; override;
 private
+  FMarcusEncounterDone: boolean;
   FPocketSubmarine: TPocketSubmarine;
   FCraneRemoteControl: TCraneRemoteControl;
   FRemoteExplanationDone: boolean;
@@ -374,6 +368,7 @@ public
 public // special item and properties
   property PocketSubmarine: TPocketSubmarine read FPocketSubmarine;
   property CraneRemoteControl: TCraneRemoteControl read FCraneRemoteControl;
+  property MarcusEncounterDone: boolean read FMarcusEncounterDone write FMarcusEncounterDone;
 public // property not saved
   property RemoteExplanationDone: boolean read FRemoteExplanationDone write FRemoteExplanationDone;
 end;
@@ -673,7 +668,7 @@ end;
 
 function TDigicodeDecoder.CanDisplayPrice: boolean;
 begin
-  Result := PlayerInfo.Volcano.HaveDecoderPlan;
+  Result := PlayerInfo.Volcano.HaveDecoderPlan and not owned;
 end;
 
 function TDigicodeDecoder.NextLevelExplanation: string;
@@ -1200,6 +1195,7 @@ begin
   SaveCommonProperties(prop);
   prop.Add('CraneRemoteControl', FCraneRemoteControl.Level);
   prop.Add('SubmarineLevel', FPocketSubmarine.Level);
+  prop.Add('MarcusEncounterDone', FMarcusEncounterDone);
   Result := prop.PackedProperty;
 end;
 
@@ -1214,6 +1210,7 @@ begin
   FCraneRemoteControl.Level := vi;
   prop.ByteValueOf('SubmarineLevel', vi, 0);
   FPocketSubmarine.Level := vi;
+  prop.BooleanValueOf('MarcusEncounterDone', FMarcusEncounterDone, False);
 end;
 
 { TMountainPeakDescriptor }
@@ -1358,19 +1355,6 @@ begin
   FCurrentStep := FStepCount + 1;
   FIsTerminated := True;
   FFirstTimeTerminated := True;
-end;
-
-function TForestDescriptor.CanEncounterAmara: boolean;
-//var hammerPrice, stormcloudPrice: integer;
-begin
-  exit(False);
-
-{  hammerPrice := Hammer.PriceForNextLevel[0].Count;
-  stormcloudPrice := StormCloud.PriceForNextLevel[0].Count;
-
-  Result := ((not Hammer.Owned) and (CurrentStep >= 4) and (PlayerInfo.CoinCount >= hammerPrice)) or
-            ((not StormCloud.Owned) and (CurrentStep >= 7) and (PlayerInfo.CoinCount >= stormcloudPrice));
-  Result := Result and not IsTerminated; }
 end;
 
 { TGameDescriptor }
@@ -1592,7 +1576,7 @@ begin
 end;
 
 function TSaveGame.GetLanguageCharSet: string;
-const symbols: string='%$*-+_/=!?:,.''()#&->|←→↑↓';
+const symbols: string='%$*-+_/=!?:,.''()#&->|←→↑↓œ';
 begin
   Result := '';
   case FLanguage of

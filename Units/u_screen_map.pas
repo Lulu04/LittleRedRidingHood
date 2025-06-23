@@ -71,7 +71,7 @@ uses u_app, u_resourcestring, u_screen_title, u_screen_gameforest,
   u_screen_workshop, u_mousepointer, u_screen_gamemountainpeaks, u_ui_panels,
   u_screen_gamevolcanoentrance, u_audio, u_screen_gamevolcanoinner,
   u_screen_gamevolcanodino, screen_gameplainmoon, u_screen_gamemermaidsport,
-  u_screen_sam, u_sprite_def2, BGRAPath, Forms, Math;
+  u_screen_sam, u_sprite_def2, u_screen_gamemermaidboss, BGRAPath, Forms, Math;
 
 const
   CLOUDS_PRESET =
@@ -628,7 +628,7 @@ begin
   texMap1Outline := aAtlas.AddFromSVG(SpriteMapFolder+'Map1Outline.svg', ScaleW(651), -1);
   texLRHome := aAtlas.AddFromSVG(SpriteBGFolder+'LRHome.svg', ScaleW(87), -1);
   AddSphereParticleToAtlas(aAtlas);
-  texSamHome := aAtlas.AddFromSVG(SpriteBGFolder+'SamHome.svg', ScaleW(83), -1);
+  texSamHome := aAtlas.AddFromSVG(FolderSpriteSam+'SamHome.svg', ScaleW(83), -1);
   texPineForest := aAtlas.AddFromSVG(SpriteMapFolder+'PineForest.svg', ScaleW(167), -1);
   texVolcanoMountain := aAtlas.AddFromSVG(SpriteMapFolder+'VolcanoMountain.svg', ScaleW(124), -1);
   texZipLinePeaks := aAtlas.AddFromSVG(SpriteMapFolder+'ZipLinePeaks.svg', ScaleW(100), -1);
@@ -954,7 +954,12 @@ begin
         FScene.RunScreen(ScreenGameVolcanoInner);
     end;
     130: FScene.RunScreen(ScreenPlainOfSleepingMoon);
-    140: FScene.RunScreen(ScreenMermaidsPort);
+    140: begin
+      case PlayerInfo.MermaidsPort.StepPlayed of
+        3: FScene.RunScreen(ScreenMermaidsBoss);
+        else FScene.RunScreen(ScreenMermaidsPort);
+      end;
+    end;
   end;
 end;
 

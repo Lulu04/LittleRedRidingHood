@@ -71,9 +71,13 @@ msgstr "MODE ARCADE"
 msgid "Are you going to help me now?"
 msgstr "Vas-tu m'aider maintenant ?"
 
-#: u_resourcestring.sasyouwishbutithink
-msgid "As you wish, but I think we'll see you soon hihihi!"
-msgstr "Comme tu voudras, mais je pense qu'on se reverra bientôt hihihi!"
+#: u_resourcestring.sareyouinthehabit
+msgid "Are you in the habit of asking before you give?"
+msgstr "C'est une habitude chez vous de demander avant de donner ?"
+
+#: u_resourcestring.sasubmarineiwasnt
+msgid "A submarine? I wasn't expecting that..."
+msgstr "Un sous-marin ? Je ne m'attendais pas à ça..."
 
 #: u_resourcestring.satrain
 msgid "A train!?"
@@ -90,10 +94,6 @@ msgstr "RETOUR A LA CARTE"
 #: u_resourcestring.sbacktosam
 msgid "BACK TO SAM"
 msgstr "RETOUR CHEZ SAM"
-
-#: u_resourcestring.sbecauseyouhaveboughtitems
-msgid "Because you've bought items from me, you're entitled to a free bonus: I'm giving you the power to teleport anywhere on the map simply by clicking on the place you want to go. Isn't that nice?!"
-msgstr "Parce que tu m'as acheter des articles, tu as droit à un bonus gratuit:  je te donne le pouvoir de te téléporter n'importe où sur la carte simplement en cliquant sur le lieu ou tu veux aller. C'est pas bien ça ?!"
 
 #: u_resourcestring.sbeforeileaveihavetosearchallcratesinthearea
 msgid "Before I leave, I have to search all the crates in the area."
@@ -112,10 +112,6 @@ msgstr "augmente la vitesse des flèches, diminue le temps de rechargement de l'
 msgid "BUILD"
 msgstr "FABRIQUER"
 
-#: u_resourcestring.sbusinessisbusiness
-msgid "Business is Business. Hihihi..."
-msgstr "Les affaires sont les affaires. Hihihi..."
-
 #: u_resourcestring.sbuthurryitsreallyurgent
 msgid "But hurry, it's really urgent, I've rarely seen my parents so worried."
 msgstr "Mais fais vite, il y a vraiment urgence, j'ai rarement vu mes parents si inquiets."
@@ -131,16 +127,6 @@ msgstr "ACHETER"
 #: u_resourcestring.sbuyequipment
 msgid "buy new equipment in the workshop"
 msgstr "achète de nouveaux équipements dans ton atelier"
-
-#: u_resourcestring.sbuythehammer
-#, object-pascal-format
-msgid "Buy the hammer for %d coins?"
-msgstr "Acheter le marteau pour %d pièces ?"
-
-#: u_resourcestring.sbuythestormcloud
-#, object-pascal-format
-msgid "Buy the Storm Cloud for %d coins?"
-msgstr "Acheter la tempête d'éclairs foudroyants pour %d pièces?"
 
 #: u_resourcestring.sbuyziplinefirst
 msgid "you need to buy the zip line first!"
@@ -166,9 +152,17 @@ msgstr "CHOIX DU JOUEUR"
 msgid "CLOSE"
 msgstr "FERMER"
 
+#: u_resourcestring.scomeonimsurewith
+msgid "Come on... I'm sure with a little perseverance you'll get there."
+msgstr "Allez quoi... Je suis sûr qu'avec un peu de persévérance tu y arriveras."
+
 #: u_resourcestring.scomeonitstime
 msgid "Come on, it's time to get started."
 msgstr "Allez, il est temps de commencer."
+
+#: u_resourcestring.scongratonceagain
+msgid "Congratulations! Once again you've shown that you're up to the task!"
+msgstr "Félicitations! Encore une fois tu t'es montrée à la hauteur!"
 
 #: u_resourcestring.sconnected
 msgid "CONNECTED"
@@ -186,6 +180,10 @@ msgstr "CONTINUER LE JEU"
 #: u_resourcestring.sconversation
 msgid "conversation"
 msgstr "conversation"
+
+#: u_resourcestring.scool
+msgid "Cool!"
+msgstr "Cool!"
 
 #: u_resourcestring.scraneremotecontrolexplanation
 msgid "a crane remote control"
@@ -240,6 +238,10 @@ msgstr ""
 msgid "Oh, a friend! You freed me from this cage, I'm going to jump into your arms and give you a hug!"
 msgstr "Oh, une copine! Tu m'as libéré de la cage, je vais sauter dans tes bras et te faire un câlin!"
 
+#: u_resourcestring.sdontbeafraidyouresafe
+msgid "Don't be afraid, you're safe inside. Don't move please."
+msgstr "N'ai pas peur, tu ne risques rien à l'intérieur. Ne bouge pas s'il te plaît."
+
 #: u_resourcestring.sdontbespotted
 msgid "Don't be spotted!"
 msgstr "Ne vous faites pas repérer !"
@@ -270,6 +272,10 @@ msgstr "ENTRE TON NOM"
 msgid "ERASE"
 msgstr "EFFACER"
 
+#: u_resourcestring.seridontwanttoendmylife
+msgid "Er... I don't want to end my life in a tin can!"
+msgstr "Heu... Je ne veux pas finir ma vie dans une boîte de conserve!"
+
 #: u_resourcestring.serihavetogo
 msgid "Er, I have to go"
 msgstr "Oui ben, je dois encore y aller"
@@ -289,6 +295,10 @@ msgstr "ÉCHEC"
 #: u_resourcestring.sfailtoopendoortrytoopencage
 msgid "Failed to open the door. I'll open the cage, so I'll still have opened something..."
 msgstr "Échec d'ouverture de la porte. Je vais ouvrir la cage, comme ça j'aurai quand même ouvert quelque chose..."
+
+#: u_resourcestring.sfinally
+msgid "Finally!"
+msgstr "Enfin!"
 
 #: u_resourcestring.sfirstcompleteforest
 msgid "you must first complete the pine forest!"
@@ -366,6 +376,10 @@ msgstr "PRÊT"
 msgid "GO"
 msgstr "GO"
 
+#: u_resourcestring.sgoodluckseeyousoon
+msgid "Good luck, see you soon."
+msgstr "Bonne chance, à bientôt."
+
 #: u_resourcestring.sgotoworkshoptoexamintheplan
 msgid "I'll take a look at this plan in the workshop and see what I can do with it. (cough)"
 msgstr "Je vais examiner ce plan dans l'atelier et voir ce que je peux en faire. (tousse)"
@@ -403,6 +417,10 @@ msgstr "augmente le nombre d'utilisations"
 msgid "Have fun!"
 msgstr "Amuses-toi bien!"
 
+#: u_resourcestring.sherethereisabutton
+msgid "Here! there's a button marked Start"
+msgstr "Ici ! Il y a un bouton marqué Démarrage"
+
 #: u_resourcestring.shereyoucanexchange
 msgid "Here you can exchange your coins for certain items."
 msgstr "Ici tu peux échanger tes pièces contre certains articles."
@@ -426,11 +444,6 @@ msgstr "CÂLIN !"
 #: u_resourcestring.sialwayskeepmyword
 msgid "I always keep my word."
 msgstr "Je tiens toujours parole."
-
-#: u_resourcestring.siamseriousthelightning
-#, object-pascal-format
-msgid "I'm serious, the lightning storm is super effective, I guarantee it! What's more, I'll sell it to you for only %d coins. What do you think?"
-msgstr "Je suis sérieuse, la tempête d'éclairs est super efficace, je te le garantie ! En plus je te la vend pour seulement %d pièces. Qu'en dis-tu ?"
 
 #: u_resourcestring.sibetterleavethisplacequickly
 msgid ""
@@ -456,10 +469,6 @@ msgstr "Je ne connaît pas sa destination mais j'ai le sentiment qu'il va me rap
 msgid "If you want to join your grandmother, you'll have to go to the castle."
 msgstr "Si tu veux rejoindre ta grand-mère, il faudra aller au château."
 
-#: u_resourcestring.sihavegotsomethingelsethatmighthelp
-msgid "I've got something else that might help: the lightning storm. You'll see, it's much more effective than the hammer."
-msgstr "J'ai autre chose qui pourrai bien t'aider: la tempête d'éclairs foudroyants. Tu verras, c'est bien plus efficace que le marteau."
-
 #: u_resourcestring.sihavegottofindawaytostopthismachine
 msgid "I've got to find a way to stop this machine!"
 msgstr "Je dois trouver un moyen de stopper cette machine !"
@@ -467,6 +476,10 @@ msgstr "Je dois trouver un moyen de stopper cette machine !"
 #: u_resourcestring.sihavenochoice
 msgid "I have no choice... I accept, but you have to help me afterwards, ok?"
 msgstr "Je n'ai pas le choix... J'accepte, mais tu m'aides après ça, ok ?"
+
+#: u_resourcestring.sihavetogettotheisland
+msgid "I have to get to the island. Your sister told me I'd find a way to cross the sea over here."
+msgstr "Je dois aller sur l'île. Ta sœur m'a dit que je trouverai un moyen de traverser la mer par ici."
 
 #: u_resourcestring.sihavetohide
 msgid "I hear someone behind the door. quick! I have to hide!"
@@ -476,6 +489,14 @@ msgstr "J'entends quelqu'un derrière la porte. Vite ! Je dois me cacher !"
 msgid "I knew you could do it, congratulations!"
 msgstr "Je savais que tu y arriverais, félicitations !"
 
+#: u_resourcestring.siknowagame
+msgid "I know a game I love. If you beat me, I'll give you a way to cross the sea."
+msgstr "Je connais un jeu que j'adore. Si tu me bats, je te donnerai un moyen de traverser la mer."
+
+#: u_resourcestring.sillhelpyoutoo
+msgid "I'll help you too, you deserve it. Please follow me."
+msgstr "Je vais t'aider à mon tour, tu le mérites. Suis-moi s'il te plaît."
+
 #: u_resourcestring.silovecommingtosee
 msgid "I love coming to see Granny..."
 msgstr "J'aime bien venir voir Mamie..."
@@ -484,6 +505,10 @@ msgstr "J'aime bien venir voir Mamie..."
 msgid "I miss him too..."
 msgstr "Il me manque aussi..."
 
+#: u_resourcestring.simmarcus
+msgid "I'm Marcus, Penelope's brother, the one you met on the train. I know you're looking for your grandmother."
+msgstr "Je suis Marcus, le frère de Pénélope, celle que tu as rencontré dans le train. Je sais que tu cherches ta grand-mère."
+
 #: u_resourcestring.simproveequipment
 msgid "upgrade your equipment in the workshop"
 msgstr "améliore tes équipements dans l'atelier"
@@ -491,10 +516,6 @@ msgstr "améliore tes équipements dans l'atelier"
 #: u_resourcestring.sineedakeytoopenthisgate
 msgid "I need a key to open this gate..."
 msgstr "J'ai besoin d'une clé pour ouvrir ce portail..."
-
-#: u_resourcestring.sineedtogetthroughthisforest
-msgid "I need to get through this forest and the wolves want to stop me..."
-msgstr "Je dois traverser cette forêt et les loups veulent m'en empêcher..."
 
 #: u_resourcestring.sinstructions
 msgid "HOW TO PLAY"
@@ -512,10 +533,6 @@ msgstr "Je fais la promesse de bien m'en occuper lorsqu'elle sera plus agée!"
 msgid "I think I've broken a nail..."
 msgstr "Je crois que je me suis cassé un ongle..."
 
-#: u_resourcestring.sitsagreatdeal
-msgid "It's a great deal!"
-msgstr "C'est une très bonne affaire !"
-
 #: u_resourcestring.sitsalasergun
 msgid "It's a laser pistol, harmless against humans and wolves but highly effective against robots."
 msgstr "C'est un pistolet laser, inoffensif contre les humains et les loups mais très efficace contre les robots."
@@ -532,9 +549,17 @@ msgstr "Ça fait déjà 5 ans qu'il nous a quitté..."
 msgid "His hug might be too weighing for me... I think it's time to try the dorsal thruster!"
 msgstr "Son câlin risque d'être trop pesant pour moi... Je crois que le moment est venu d'essayer le propulseur dorsal !"
 
+#: u_resourcestring.sitsmorefunthisway
+msgid "It's more fun this way!"
+msgstr "C'est plus amusant comme ça !"
+
 #: u_resourcestring.sitstoodangerousihavetofind
 msgid "It's too dangerous. I have to find another way to cross."
 msgstr "C'est trop dangereux. Je dois trouver un autre moyen de traverser."
+
+#: u_resourcestring.sitwasfunny
+msgid "It was funny!"
+msgstr "Finalement c'était plutôt amusant!"
 
 #: u_resourcestring.sivecomeformygrandmother
 msgid "I've come for my grandmother, you've kidnapped her!... Where is she? Answer me!"
@@ -577,6 +602,10 @@ msgstr "un pistolet laser efficace seulement contre les machines"
 msgid "Let's look at the landscape for a moment, shall we?"
 msgstr "Regardons le paysage un moment, tu veux bien ?"
 
+#: u_resourcestring.sletstrydivingnow
+msgid "Let's try diving now..."
+msgstr "Essayons de plonger maintenant..."
+
 #: u_resourcestring.slettryhackingitandseewhathappens
 msgid "Let's try hacking it and see what happens."
 msgstr "Essayons de le pirater et voyons ce qui se passe."
@@ -613,18 +642,30 @@ msgstr "TRANSPORT MARCUS"
 msgid "MAX"
 msgstr "MAX"
 
+#: u_resourcestring.smermaidbossinstructions
+msgid ""
+"Finds the right strategy to beat Marcus at his game\n"
+"←→↑↓ to move\n"
+"ACTION1 : to shoot\n"
+"ACTION2 : defensive position"
+msgstr ""
+"Trouve la bonne stratégie pour battre Marcus à son jeu\n"
+"←→↑↓ se déplacer\n"
+"ACTION1 : tirer\n"
+"ACTION2 : position de défense"
+
 #: u_resourcestring.smermaidsport
 msgid "The Mermaids port"
 msgstr "Le Port des Sirènes"
 
 #: u_resourcestring.smermaidsporthelptext
 msgid ""
-"Crosses the industrial zone to reach the sea.\n"
+"Crosses the factories to reach the sea.\n"
 "←→↑↓ to move\n"
 "ACTION1 : jump\n"
 "ACTION2 : use object"
 msgstr ""
-"Traverses la zone industrielle pour atteindre la mer.\n"
+"Traverses les usines pour atteindre la mer.\n"
 "←→↑↓ se déplacer\n"
 "ACTION1 : sauter\n"
 "ACTION2 : utiliser object"
@@ -687,9 +728,9 @@ msgstr "Mon amie, j'ai gagné la course, et toi… tu as gagné un câlin !"
 msgid "My friend, you won the race, and me... I won a hug!"
 msgstr "Mon amie, tu as gagné la course et moi... j'ai gagné un câlin !"
 
-#: u_resourcestring.smynameisamara
-msgid "My name is Amara, and I've lived here for a very long time. Where are you going?"
-msgstr "Je m'appelle Amara, je vis ici depuis très longtemps. Où va-tu comme ça ?"
+#: u_resourcestring.smysisterwasright
+msgid "My sister was right, you're very efficient!"
+msgstr "Ma soeur avait raison, tu es très efficace!"
 
 #: u_resourcestring.snewattempt
 msgctxt "u_resourcestring.snewattempt"
@@ -720,6 +761,10 @@ msgstr "...sans commentaire..."
 msgid "No idea! You're smart, you'll find a way on your own."
 msgstr "Aucune idée ! Tu es maligne, tu trouveras bien un moyen toute seule."
 
+#: u_resourcestring.snotreepoint
+msgid "No..."
+msgstr "Non..."
+
 #: u_resourcestring.snotwaiting
 msgid "I'm not waiting for you, it's going to be long"
 msgstr "Je ne t'attends pas, ça va être trop long"
@@ -727,6 +772,10 @@ msgstr "Je ne t'attends pas, ça va être trop long"
 #: u_resourcestring.snowwearebuddyforlife
 msgid "Now we're buddies for life!"
 msgstr "Maintenant on est copain pour la vie !"
+
+#: u_resourcestring.sofcoursethereisbut
+msgid "Of course there is, but you have to earn it..."
+msgstr "Bien sûr, il y en a un, mais tu dois le gagner..."
 
 #: u_resourcestring.sohdontworryicanhave
 msgid "Oh, don't worry, I can have as many as I want!"
@@ -739,6 +788,10 @@ msgstr "OK"
 #: u_resourcestring.sokdoyouknownwhereicanfindaboat
 msgid "Ok... Do you know where I can find a boat?"
 msgstr "Ok... Sais-tu où est-ce que je peux trouver un bateau ?"
+
+#: u_resourcestring.sokletsgo
+msgid "Ok... Let's go!"
+msgstr "Ok... Allons-y!"
 
 #: u_resourcestring.sokokyoulooksmart
 msgid "Ok, ok... You look smart, I'll give you a challenge."
@@ -756,6 +809,10 @@ msgstr "Ouverture de la cage"
 msgid "OPTIONS"
 msgstr "OPTIONS"
 
+#: u_resourcestring.soups
+msgid "Oups..."
+msgstr "Oups..."
+
 #: u_resourcestring.soutofgas
 msgid "OUT OF GAS"
 msgstr "PLUS DE GAZ"
@@ -767,6 +824,14 @@ msgstr "PLUS DE TEMPS"
 #: u_resourcestring.spause
 msgid "PAUSE"
 msgstr "PAUSE"
+
+#: u_resourcestring.spfffhecouldhave
+msgid "Pfff, he could have dropped me off on the island!"
+msgstr "Pfff, il aurait pu me déposer sur l'île!"
+
+#: u_resourcestring.spfffthatsnotfairplay
+msgid "Pfff! That's not fairplay, you're certainly already trained, I'm not!"
+msgstr "Pfff! Ce n'est pas fairplay, tu es déjà certainement entrainé, moi non!"
 
 #: u_resourcestring.spinforest
 msgid "The pins forest"
@@ -822,11 +887,6 @@ msgstr "Problème résolu"
 msgid "Problem solved, however it is advisable to evacuate urgently"
 msgstr "Problème résolu, toutefois il est conseillé d'évacuer d'urgence"
 
-#: u_resourcestring.sproposehammer
-#, object-pascal-format
-msgid "I've got just the thing for you: I'm offering you a rather special hammer that will protect your elevator. If a wolf comes near it, it'll get a blow on the head! I'll sell it to you for %d pieces. How about it?"
-msgstr "Ça tombe bien, j'ai justement ce qu'il te faut: je te propose un marteau un peu spécial qui protègera ton ascenseur. Si un loup s'en approche il recevra un coup sur la tête ! Je te le vend %d pièces. Qu'en dis-tu ?"
-
 #: u_resourcestring.squit
 msgid "QUIT"
 msgstr "QUITTER"
@@ -834,6 +894,10 @@ msgstr "QUITTER"
 #: u_resourcestring.srapidreturntotheaxis
 msgid "Remedy: rapid return to the axis"
 msgstr "Remède: retour rapide sur l'axe"
+
+#: u_resourcestring.sredisforyou
+msgid "Red is for you, black is for me. Whoever shoots the other first wins."
+msgstr "Le rouge est pour toi, le noir pour moi. Le premier qui abat l'autre a gagné."
 
 #: u_resourcestring.sredoalevel
 msgid "you can redo a level to earn the end bonus"
@@ -879,6 +943,10 @@ msgstr "échanges d'articles et jeux rigolos"
 msgid "SCORE"
 msgstr "SCORE"
 
+#: u_resourcestring.sseetheseeggshaped
+msgid "See these egg-shaped things? They're robots that can be controlled from the inside."
+msgstr "Tu vois ces espèces d'œufs ? Ce sont des robots que l'ont peut commander de l'intérieur."
+
 #: u_resourcestring.sselectyourprize
 msgid "Select your prize"
 msgstr "Sélectionne ton prix"
@@ -903,22 +971,6 @@ msgstr "bonus d'arrivée en douceur"
 msgid "So, are you in?"
 msgstr "Alors, tu es partante ?"
 
-#: u_resourcestring.ssohaveyouthoughtabouthammer
-msgid "So have you thought about it? Are you buying the hammer?"
-msgstr "Alors as-tu réfléchi ? Achètes-tu le marteau ?"
-
-#: u_resourcestring.ssohaveyouthoughtaboutstormcloud
-msgid "So have you thought about it? Are you buying the Storm Cloud?"
-msgstr "Alors as-tu réfléchi ? Achètes-tu la tempête d'éclairs foudroyants?"
-
-#: u_resourcestring.ssomethingtellmeyouneedmyhelp
-msgid "Something tells me you need my help."
-msgstr "Quelque chose me dit que tu as besoin de mon aide."
-
-#: u_resourcestring.ssometimeitmissesthemark
-msgid "Sometimes it misses the mark, but overall it works pretty well. See you soon!"
-msgstr "Des fois il rate son coup, mais dans l'ensemble il fonctionne pas trop mal. À bientôt !"
-
 #: u_resourcestring.ssorrynotyetavailable
 msgid "Sorry, this game is not yet available..."
 msgstr "Désolé, ce jeu n'est pas encore disponible..."
@@ -934,10 +986,6 @@ msgstr "On dirai une télécommande. Je devrai pouvoir diriger quelque chose ave
 #: u_resourcestring.ssoundvolume
 msgid "SOUND VOLUME"
 msgstr "VOLUME SONS"
-
-#: u_resourcestring.ssowhydidyousellmethehammer
-msgid "So why did you sell me the hammer in the first place?"
-msgstr "Alors pourquoi m'avoir vendu le marteau en premier ?"
 
 #: u_resourcestring.sspace
 msgid "SPACE"
@@ -985,6 +1033,10 @@ msgstr "Dysfonctionnement dû à un piratage"
 msgid "Take this."
 msgstr "Prends ça."
 
+#: u_resourcestring.stakethistunnel
+msgid "Take this tunnel, it will lead you to the seaside. There you'll find a vehicle to take you to the island."
+msgstr "Prends ce tunnel, il te mènera au bord de mer. Là tu trouveras un véhicule pour aller sur l'île."
+
 #: u_resourcestring.sthanks
 msgid ""
 "Thank you for playing this game!\n"
@@ -1015,10 +1067,6 @@ msgstr "Le Petit"
 msgid "the new story of"
 msgstr "la nouvelle histoire"
 
-#: u_resourcestring.sthenyouwillhavetoequipbetter
-msgid "Then you'll have to equip yourself better than that: your bow won't be enough!"
-msgstr "Alors tu vas devoir t'équiper mieux que ça: ton arc ne te suffira pas !"
-
 #: u_resourcestring.stheresomeoneonmytrain
 msgid "There's someone on my train!"
 msgstr "Il y a quelqu'un sur mon train !"
@@ -1047,10 +1095,6 @@ msgstr "TOTAL"
 #, object-pascal-format
 msgid "Turn %d/%d"
 msgstr "Tour %d/%d"
-
-#: u_resourcestring.suhialreadydid
-msgid "Uh... I already did..."
-msgstr "Heu... je le faisais déjà..."
 
 #: u_resourcestring.supgrade
 msgid "UPGRADE"
@@ -1118,21 +1162,13 @@ msgstr ""
 "Bienvenue chez Sam!\n"
 "Cliques sur moi pour avoir des explications"
 
-#: u_resourcestring.swelldoneyouaremakinggood
-msgid "Well done, you're making good progress!"
-msgstr "Bravo, tu progresses bien !"
-
-#: u_resourcestring.swelltmoff
-msgid "Well, I'm off. Good luck in your adventures!"
-msgstr "Aller, je m'en vais. Bonne chance dans tes aventures !"
+#: u_resourcestring.swellhowtostartit
+msgid "Well... How to start it?"
+msgstr "Bon... Comment le démarrer?"
 
 #: u_resourcestring.swhengrandfatherwashere
 msgid "When your grandpa was still around, we often had barbecues; he loved that!"
 msgstr "Quand ton papi était encore là, nous en faisions souvent des barbecues, il adorait ça!"
-
-#: u_resourcestring.swhoareyou
-msgid "Who are you?"
-msgstr "Qui êtes vous ?"
 
 #: u_resourcestring.swhy
 msgid "Why?"
@@ -1178,6 +1214,10 @@ msgstr "Tu voudrais bien cueillir quelques fleurs pour décorer la table ?"
 msgid "Would you like to see Dino's release scene again?"
 msgstr "Voulez-vous revoir la scène de la libération de Dino ?"
 
+#: u_resourcestring.swouldyouliketoseemarcus
+msgid "Would you like to see Marcus' meeting again?"
+msgstr "Voulez-vous revoir la rencontre avec Marcus?"
+
 #: u_resourcestring.swouldyouliketotryagain
 msgid "Would you like to try again ?"
 msgstr "Voulez-vous réessayer ?"
@@ -1211,8 +1251,8 @@ msgid "Yes... Time flies. I miss him..."
 msgstr "Oui... Le temps passe. Il me manque..."
 
 #: u_resourcestring.syoucanalsowinitems
-msgid "You can also win items by playing the games. A game costs 100 coins."
-msgstr "Tu peux aussi gagner des articles en jouant aux jeux. Une partie coûte 100 pièces."
+msgid "You can also win coins or items by playing the games."
+msgstr "Tu peux aussi gagner des pièces ou des articles en jouant aux jeux."
 
 #: u_resourcestring.syoulose
 msgctxt "u_resourcestring.syoulose"

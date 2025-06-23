@@ -17,9 +17,8 @@ type
   TScreenSamHome = class(TGameScreenTemplate)
   private
     BExit, BGame1, BGameDartboard: TImageButton;
-    FPlayerItemPanel: TInMapPanel;
     procedure ProcessButtonClick(Sender: TSimpleSurfaceWithEffect);
-    procedure ProcessClickOnScene(Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+    procedure ProcessClickOnScene({%H-}Button: TMouseButton; {%H-}Shift: TShiftState; X, Y: Integer);
   public
     procedure DefineSubTextures(aAtlas: TAtlas); override;
     procedure CreateObjects; override;
@@ -33,7 +32,7 @@ var ScreenSamHome: TScreenSamHome;
 
 implementation
 uses u_app, u_resourcestring, u_screen_map, u_mousepointer, u_sprite_def2,
-  u_sam, u_screen_strikeraccoon, u_ui_panels, u_screen_dartboard, Math;
+  u_sam, u_screen_strikeraccoon, u_ui_panels, u_screen_dartboard, u_utils, Math;
 
 type
 
@@ -95,7 +94,7 @@ public
 end;
 
 var texSamHomeInner, texDoor, texBarrel, texDartboard,
-  texCoin, texSmallCristalGray,
+  //texCoin, texSmallCristalGray,
   texCoinBig, texSmallCristalGrayBig,
   texLRIcon: PTexture;
   FFontText: TTexturedFont;
@@ -264,7 +263,6 @@ end;
 
 procedure TGameInventory.Exchange(aWantedMoney, aToGiveMonney: TMoneyType;
     aWantedAmount, aToGiveAmount: integer);
-var wanted, togive: TUIItemCounter;
 begin
   Audio.PlayBlipIncrementScore;
 
@@ -384,12 +382,12 @@ begin
 
   // button purple cristal
   if PlayerInfo.Forest.IsTerminated then begin
-    BPurpleCristal := TUIButton.Create(FScene, 'x '+GetPurpleCristalGain.ToString, FFontText, texSmallCristalGray);
+    BPurpleCristal := TUIButton.Create(FScene, 'x '+GetPurpleCristalGain.ToString, FFontText, texCristalGray);
     FormatButton(BPurpleCristal);
     BPurpleCristal.AnchorHPosToParent(haCenter, haCenter, 0);
     BPurpleCristal.AnchorVPosToSurface(BCoin, vaTop, vaBottom, VMargin);
     BPurpleCristal.OnClick := @ProcessButtonClick;
-    BPurpleCristal.Image.Tint.Value := BGRA(255,0,255,150);
+    BPurpleCristal.Image.Tint.Value := GetPurpleCristalTint;
     if maxWidth < BPurpleCristal.Width then maxWidth := BPurpleCristal.Width;
     maxHeight := maxHeight + VMargin + BPurpleCristal.Height;
     FKeyboardToButtons.AddLineOfButtons([BPurpleCristal]);
@@ -484,10 +482,17 @@ begin
   LoadMousePointerTexture(aAtlas);
 
   FItemHeight := ScaleH(70); // height of one row in the panel
-  texCoin := aAtlas.AddFromSVG(SpriteUIFolder+'Coin.svg', -1, Round(FFontText.Font.FontHeight*0.8));
-  texSmallCristalGray := aAtlas.AddFromSVG(SpriteUIFolder+'CristalGray.svg', -1, Round(FFontText.Font.FontHeight*0.8));
-  texCoinBig := aAtlas.AddFromSVG(SpriteUIFolder+'Coin.svg', -1, FItemHeight-PPIScale(20));
-  texSmallCristalGrayBig := aAtlas.AddFromSVG(SpriteUIFolder+'CristalGray.svg', -1, FItemHeight-PPIScale(20));
+  // we avoid the overlapp with the icon texture that are smallest
+  texCoinBig := aAtlas.RetrieveTextureByFileName('BigCoin');
+  if texCoinBig = NIL then begin
+    texCoinBig := aAtlas.AddFromSVG(SpriteUIFolder+'Coin.svg', -1, FItemHeight-PPIScale(20));
+    texCoinBig^.Filename := 'BigCoin';
+  end;
+  texSmallCristalGrayBig := aAtlas.RetrieveTextureByFileName('BigCristalGray');
+  if texSmallCristalGrayBig = NIL then begin
+    texSmallCristalGrayBig := aAtlas.AddFromSVG(SpriteUIFolder+'CristalGray.svg', -1, FItemHeight-PPIScale(20));
+    texSmallCristalGrayBig^.Filename := 'BigCristalGray';
+  end;
 end;
 
 procedure TScreenSamHome.CreateObjects;
@@ -537,8 +542,10 @@ begin
 
   // items to exchange
   FPanelItems := TPanelItems.Create(0, FGameinventory.BottomY+PPIScale(3));
-  FPanelItems.AddItem(mtPurpleCristal, mtCoin, 1, 100);
-  FPanelItems.AddItem(mtCoin, mtPurpleCristal, 80, 1);
+  if PlayerInfo.Forest.IsTerminated then begin
+    FPanelItems.AddItem(mtPurpleCristal, mtCoin, 1, 100);
+    FPanelItems.AddItem(mtCoin, mtPurpleCristal, 80, 1);
+  end;
   FPanelItems.UpdatePossibleTransactions;
 
   FScene.Mouse.OnClickOnScene := @ProcessClickOnScene;

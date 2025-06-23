@@ -29,6 +29,8 @@ Procedural Planet fragment shader is a modified version found in the article at:
 
 Trucks in the first part of Mermaids Port: https://fr.freepik.com/vecteurs-libre/vue-face-quatre-vehicules-bande-dessinee_1080051.htm#fromView=search&page=1&position=45&uuid=51caf374-3f1d-4220-99a4-f6a679a944ad&query=voiture+de+face
 
+Helicopter in Mermaids Port by brgfx: https://fr.freepik.com/vecteurs-libre/helicoptere-urgence-fond-blanc_24780613.htm
+
 [MUSICS]
 
 Malloga_Ballinga_Mastered.ogg by Joe Reynolds - Professorlamp at https://opengameart.org/content/malloga-ballinga
@@ -157,4 +159,16 @@ Thuds on Window by zerolagtime -- https://freesound.org/s/245033/ -- License: At
 Stick Hitting a Dreadlock (Small thud) by Rudmer_Rotteveel -- https://freesound.org/s/330997/ -- License: Creative Commons 0
 
 BirdWingFlap.wav by nicStage -- https://freesound.org/s/424463/ -- License: Attribution 4.0
+
+Shotgun (shoot only) by bolkmar -- https://freesound.org/s/455915/ -- License: Creative Commons 0
+
+fall #5 on floor cushion by arnaud coutancier -- https://freesound.org/s/273326/ -- License: Attribution NonCommercial 3.0
+
+Electric zap.wav by michael_grinnell -- https://freesound.org/s/512471/ -- License: Creative Commons 0
+
+MOTRSrvo_electric servo motor sound._Anton Bushinskiy_AB FX by pryanic -- https://freesound.org/s/776274/ -- License: Creative Commons 0
+
+Elevator: Button Beep by Sheyvan -- https://freesound.org/s/475223/ -- License: Creative Commons 0
+
+heavy_bubbles by freesound community -- https://pixabay.com/sound-effects/heavy-bubbles-35889/
 

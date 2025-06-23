@@ -185,6 +185,9 @@ protected
 public
   constructor Create(aIsForestGame: boolean; aLayerIndex: integer=LAYER_WOLF);
   procedure ProcessMessage(UserValue: TUserMessageValue); override;
+
+  procedure SetRunMode;
+  procedure SetWalkMode;
 end;
 
 
@@ -1728,6 +1731,18 @@ end;
 procedure TWolfMarcus.ProcessMessage(UserValue: TUserMessageValue);
 begin
   inherited ProcessMessage(UserValue);
+end;
+
+procedure TWolfMarcus.SetRunMode;
+begin
+  TimeMultiplicator := 0.3;
+  WalkSpeed := FScene.ScaleDesignToSceneF(1200);
+end;
+
+procedure TWolfMarcus.SetWalkMode;
+begin
+  TimeMultiplicator := 0.6;
+  WalkSpeed := FScene.ScaleDesignToSceneF(90+(90*(1-TimeMultiplicator)));
 end;
 
 end.

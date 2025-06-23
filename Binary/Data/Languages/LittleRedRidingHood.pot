@@ -61,8 +61,12 @@ msgstr ""
 msgid "Are you going to help me now?"
 msgstr ""
 
-#: u_resourcestring.sasyouwishbutithink
-msgid "As you wish, but I think we'll see you soon hihihi!"
+#: u_resourcestring.sareyouinthehabit
+msgid "Are you in the habit of asking before you give?"
+msgstr ""
+
+#: u_resourcestring.sasubmarineiwasnt
+msgid "A submarine? I wasn't expecting that..."
 msgstr ""
 
 #: u_resourcestring.satrain
@@ -79,10 +83,6 @@ msgstr ""
 
 #: u_resourcestring.sbacktosam
 msgid "BACK TO SAM"
-msgstr ""
-
-#: u_resourcestring.sbecauseyouhaveboughtitems
-msgid "Because you've bought items from me, you're entitled to a free bonus: I'm giving you the power to teleport anywhere on the map simply by clicking on the place you want to go. Isn't that nice?!"
 msgstr ""
 
 #: u_resourcestring.sbeforeileaveihavetosearchallcratesinthearea
@@ -102,10 +102,6 @@ msgstr ""
 msgid "BUILD"
 msgstr ""
 
-#: u_resourcestring.sbusinessisbusiness
-msgid "Business is Business. Hihihi..."
-msgstr ""
-
 #: u_resourcestring.sbuthurryitsreallyurgent
 msgid "But hurry, it's really urgent, I've rarely seen my parents so worried."
 msgstr ""
@@ -120,16 +116,6 @@ msgstr ""
 
 #: u_resourcestring.sbuyequipment
 msgid "buy new equipment in the workshop"
-msgstr ""
-
-#: u_resourcestring.sbuythehammer
-#, object-pascal-format
-msgid "Buy the hammer for %d coins?"
-msgstr ""
-
-#: u_resourcestring.sbuythestormcloud
-#, object-pascal-format
-msgid "Buy the Storm Cloud for %d coins?"
 msgstr ""
 
 #: u_resourcestring.sbuyziplinefirst
@@ -156,8 +142,16 @@ msgstr ""
 msgid "CLOSE"
 msgstr ""
 
+#: u_resourcestring.scomeonimsurewith
+msgid "Come on... I'm sure with a little perseverance you'll get there."
+msgstr ""
+
 #: u_resourcestring.scomeonitstime
 msgid "Come on, it's time to get started."
+msgstr ""
+
+#: u_resourcestring.scongratonceagain
+msgid "Congratulations! Once again you've shown that you're up to the task!"
 msgstr ""
 
 #: u_resourcestring.sconnected
@@ -175,6 +169,10 @@ msgstr ""
 
 #: u_resourcestring.sconversation
 msgid "conversation"
+msgstr ""
+
+#: u_resourcestring.scool
+msgid "Cool!"
 msgstr ""
 
 #: u_resourcestring.scraneremotecontrolexplanation
@@ -224,6 +222,10 @@ msgstr ""
 msgid "Oh, a friend! You freed me from this cage, I'm going to jump into your arms and give you a hug!"
 msgstr ""
 
+#: u_resourcestring.sdontbeafraidyouresafe
+msgid "Don't be afraid, you're safe inside. Don't move please."
+msgstr ""
+
 #: u_resourcestring.sdontbespotted
 msgid "Don't be spotted!"
 msgstr ""
@@ -254,6 +256,10 @@ msgstr ""
 msgid "ERASE"
 msgstr ""
 
+#: u_resourcestring.seridontwanttoendmylife
+msgid "Er... I don't want to end my life in a tin can!"
+msgstr ""
+
 #: u_resourcestring.serihavetogo
 msgid "Er, I have to go"
 msgstr ""
@@ -272,6 +278,10 @@ msgstr ""
 
 #: u_resourcestring.sfailtoopendoortrytoopencage
 msgid "Failed to open the door. I'll open the cage, so I'll still have opened something..."
+msgstr ""
+
+#: u_resourcestring.sfinally
+msgid "Finally!"
 msgstr ""
 
 #: u_resourcestring.sfirstcompleteforest
@@ -343,6 +353,10 @@ msgstr ""
 msgid "GO"
 msgstr ""
 
+#: u_resourcestring.sgoodluckseeyousoon
+msgid "Good luck, see you soon."
+msgstr ""
+
 #: u_resourcestring.sgotoworkshoptoexamintheplan
 msgid "I'll take a look at this plan in the workshop and see what I can do with it. (cough)"
 msgstr ""
@@ -380,6 +394,10 @@ msgstr ""
 msgid "Have fun!"
 msgstr ""
 
+#: u_resourcestring.sherethereisabutton
+msgid "Here! there's a button marked Start"
+msgstr ""
+
 #: u_resourcestring.shereyoucanexchange
 msgid "Here you can exchange your coins for certain items."
 msgstr ""
@@ -404,11 +422,6 @@ msgstr ""
 msgid "I always keep my word."
 msgstr ""
 
-#: u_resourcestring.siamseriousthelightning
-#, object-pascal-format
-msgid "I'm serious, the lightning storm is super effective, I guarantee it! What's more, I'll sell it to you for only %d coins. What do you think?"
-msgstr ""
-
 #: u_resourcestring.sibetterleavethisplacequickly
 msgid ""
 "What a mess!\n"
@@ -431,16 +444,16 @@ msgstr ""
 msgid "If you want to join your grandmother, you'll have to go to the castle."
 msgstr ""
 
-#: u_resourcestring.sihavegotsomethingelsethatmighthelp
-msgid "I've got something else that might help: the lightning storm. You'll see, it's much more effective than the hammer."
-msgstr ""
-
 #: u_resourcestring.sihavegottofindawaytostopthismachine
 msgid "I've got to find a way to stop this machine!"
 msgstr ""
 
 #: u_resourcestring.sihavenochoice
 msgid "I have no choice... I accept, but you have to help me afterwards, ok?"
+msgstr ""
+
+#: u_resourcestring.sihavetogettotheisland
+msgid "I have to get to the island. Your sister told me I'd find a way to cross the sea over here."
 msgstr ""
 
 #: u_resourcestring.sihavetohide
@@ -451,6 +464,14 @@ msgstr ""
 msgid "I knew you could do it, congratulations!"
 msgstr ""
 
+#: u_resourcestring.siknowagame
+msgid "I know a game I love. If you beat me, I'll give you a way to cross the sea."
+msgstr ""
+
+#: u_resourcestring.sillhelpyoutoo
+msgid "I'll help you too, you deserve it. Please follow me."
+msgstr ""
+
 #: u_resourcestring.silovecommingtosee
 msgid "I love coming to see Granny..."
 msgstr ""
@@ -459,16 +480,16 @@ msgstr ""
 msgid "I miss him too..."
 msgstr ""
 
+#: u_resourcestring.simmarcus
+msgid "I'm Marcus, Penelope's brother, the one you met on the train. I know you're looking for your grandmother."
+msgstr ""
+
 #: u_resourcestring.simproveequipment
 msgid "upgrade your equipment in the workshop"
 msgstr ""
 
 #: u_resourcestring.sineedakeytoopenthisgate
 msgid "I need a key to open this gate..."
-msgstr ""
-
-#: u_resourcestring.sineedtogetthroughthisforest
-msgid "I need to get through this forest and the wolves want to stop me..."
 msgstr ""
 
 #: u_resourcestring.sinstructions
@@ -487,10 +508,6 @@ msgstr ""
 msgid "I think I've broken a nail..."
 msgstr ""
 
-#: u_resourcestring.sitsagreatdeal
-msgid "It's a great deal!"
-msgstr ""
-
 #: u_resourcestring.sitsalasergun
 msgid "It's a laser pistol, harmless against humans and wolves but highly effective against robots."
 msgstr ""
@@ -507,8 +524,16 @@ msgstr ""
 msgid "His hug might be too weighing for me... I think it's time to try the dorsal thruster!"
 msgstr ""
 
+#: u_resourcestring.sitsmorefunthisway
+msgid "It's more fun this way!"
+msgstr ""
+
 #: u_resourcestring.sitstoodangerousihavetofind
 msgid "It's too dangerous. I have to find another way to cross."
+msgstr ""
+
+#: u_resourcestring.sitwasfunny
+msgid "It was funny!"
 msgstr ""
 
 #: u_resourcestring.sivecomeformygrandmother
@@ -552,6 +577,10 @@ msgstr ""
 msgid "Let's look at the landscape for a moment, shall we?"
 msgstr ""
 
+#: u_resourcestring.sletstrydivingnow
+msgid "Let's try diving now..."
+msgstr ""
+
 #: u_resourcestring.slettryhackingitandseewhathappens
 msgid "Let's try hacking it and see what happens."
 msgstr ""
@@ -588,13 +617,21 @@ msgstr ""
 msgid "MAX"
 msgstr ""
 
+#: u_resourcestring.smermaidbossinstructions
+msgid ""
+"Finds the right strategy to beat Marcus at his game\n"
+"←→↑↓ to move\n"
+"ACTION1 : to shoot\n"
+"ACTION2 : defensive position"
+msgstr ""
+
 #: u_resourcestring.smermaidsport
 msgid "The Mermaids port"
 msgstr ""
 
 #: u_resourcestring.smermaidsporthelptext
 msgid ""
-"Crosses the industrial zone to reach the sea.\n"
+"Crosses the factories to reach the sea.\n"
 "←→↑↓ to move\n"
 "ACTION1 : jump\n"
 "ACTION2 : use object"
@@ -651,8 +688,8 @@ msgstr ""
 msgid "My friend, you won the race, and me... I won a hug!"
 msgstr ""
 
-#: u_resourcestring.smynameisamara
-msgid "My name is Amara, and I've lived here for a very long time. Where are you going?"
+#: u_resourcestring.smysisterwasright
+msgid "My sister was right, you're very efficient!"
 msgstr ""
 
 #: u_resourcestring.snewattempt
@@ -684,12 +721,20 @@ msgstr ""
 msgid "No idea! You're smart, you'll find a way on your own."
 msgstr ""
 
+#: u_resourcestring.snotreepoint
+msgid "No..."
+msgstr ""
+
 #: u_resourcestring.snotwaiting
 msgid "I'm not waiting for you, it's going to be long"
 msgstr ""
 
 #: u_resourcestring.snowwearebuddyforlife
 msgid "Now we're buddies for life!"
+msgstr ""
+
+#: u_resourcestring.sofcoursethereisbut
+msgid "Of course there is, but you have to earn it..."
 msgstr ""
 
 #: u_resourcestring.sohdontworryicanhave
@@ -702,6 +747,10 @@ msgstr ""
 
 #: u_resourcestring.sokdoyouknownwhereicanfindaboat
 msgid "Ok... Do you know where I can find a boat?"
+msgstr ""
+
+#: u_resourcestring.sokletsgo
+msgid "Ok... Let's go!"
 msgstr ""
 
 #: u_resourcestring.sokokyoulooksmart
@@ -720,6 +769,10 @@ msgstr ""
 msgid "OPTIONS"
 msgstr ""
 
+#: u_resourcestring.soups
+msgid "Oups..."
+msgstr ""
+
 #: u_resourcestring.soutofgas
 msgid "OUT OF GAS"
 msgstr ""
@@ -730,6 +783,14 @@ msgstr ""
 
 #: u_resourcestring.spause
 msgid "PAUSE"
+msgstr ""
+
+#: u_resourcestring.spfffhecouldhave
+msgid "Pfff, he could have dropped me off on the island!"
+msgstr ""
+
+#: u_resourcestring.spfffthatsnotfairplay
+msgid "Pfff! That's not fairplay, you're certainly already trained, I'm not!"
 msgstr ""
 
 #: u_resourcestring.spinforest
@@ -783,17 +844,16 @@ msgstr ""
 msgid "Problem solved, however it is advisable to evacuate urgently"
 msgstr ""
 
-#: u_resourcestring.sproposehammer
-#, object-pascal-format
-msgid "I've got just the thing for you: I'm offering you a rather special hammer that will protect your elevator. If a wolf comes near it, it'll get a blow on the head! I'll sell it to you for %d pieces. How about it?"
-msgstr ""
-
 #: u_resourcestring.squit
 msgid "QUIT"
 msgstr ""
 
 #: u_resourcestring.srapidreturntotheaxis
 msgid "Remedy: rapid return to the axis"
+msgstr ""
+
+#: u_resourcestring.sredisforyou
+msgid "Red is for you, black is for me. Whoever shoots the other first wins."
 msgstr ""
 
 #: u_resourcestring.sredoalevel
@@ -840,6 +900,10 @@ msgstr ""
 msgid "SCORE"
 msgstr ""
 
+#: u_resourcestring.sseetheseeggshaped
+msgid "See these egg-shaped things? They're robots that can be controlled from the inside."
+msgstr ""
+
 #: u_resourcestring.sselectyourprize
 msgid "Select your prize"
 msgstr ""
@@ -864,22 +928,6 @@ msgstr ""
 msgid "So, are you in?"
 msgstr ""
 
-#: u_resourcestring.ssohaveyouthoughtabouthammer
-msgid "So have you thought about it? Are you buying the hammer?"
-msgstr ""
-
-#: u_resourcestring.ssohaveyouthoughtaboutstormcloud
-msgid "So have you thought about it? Are you buying the Storm Cloud?"
-msgstr ""
-
-#: u_resourcestring.ssomethingtellmeyouneedmyhelp
-msgid "Something tells me you need my help."
-msgstr ""
-
-#: u_resourcestring.ssometimeitmissesthemark
-msgid "Sometimes it misses the mark, but overall it works pretty well. See you soon!"
-msgstr ""
-
 #: u_resourcestring.ssorrynotyetavailable
 msgid "Sorry, this game is not yet available..."
 msgstr ""
@@ -894,10 +942,6 @@ msgstr ""
 
 #: u_resourcestring.ssoundvolume
 msgid "SOUND VOLUME"
-msgstr ""
-
-#: u_resourcestring.ssowhydidyousellmethehammer
-msgid "So why did you sell me the hammer in the first place?"
 msgstr ""
 
 #: u_resourcestring.sspace
@@ -944,6 +988,10 @@ msgstr ""
 msgid "Take this."
 msgstr ""
 
+#: u_resourcestring.stakethistunnel
+msgid "Take this tunnel, it will lead you to the seaside. There you'll find a vehicle to take you to the island."
+msgstr ""
+
 #: u_resourcestring.sthanks
 msgid ""
 "Thank you for playing this game!\n"
@@ -969,10 +1017,6 @@ msgstr ""
 
 #: u_resourcestring.sthenewstoryof
 msgid "the new story of"
-msgstr ""
-
-#: u_resourcestring.sthenyouwillhavetoequipbetter
-msgid "Then you'll have to equip yourself better than that: your bow won't be enough!"
 msgstr ""
 
 #: u_resourcestring.stheresomeoneonmytrain
@@ -1002,10 +1046,6 @@ msgstr ""
 #: u_resourcestring.sturn
 #, object-pascal-format
 msgid "Turn %d/%d"
-msgstr ""
-
-#: u_resourcestring.suhialreadydid
-msgid "Uh... I already did..."
 msgstr ""
 
 #: u_resourcestring.supgrade
@@ -1066,20 +1106,12 @@ msgid ""
 "Click on me for explanations"
 msgstr ""
 
-#: u_resourcestring.swelldoneyouaremakinggood
-msgid "Well done, you're making good progress!"
-msgstr ""
-
-#: u_resourcestring.swelltmoff
-msgid "Well, I'm off. Good luck in your adventures!"
+#: u_resourcestring.swellhowtostartit
+msgid "Well... How to start it?"
 msgstr ""
 
 #: u_resourcestring.swhengrandfatherwashere
 msgid "When your grandpa was still around, we often had barbecues; he loved that!"
-msgstr ""
-
-#: u_resourcestring.swhoareyou
-msgid "Who are you?"
 msgstr ""
 
 #: u_resourcestring.swhy
@@ -1126,6 +1158,10 @@ msgstr ""
 msgid "Would you like to see Dino's release scene again?"
 msgstr ""
 
+#: u_resourcestring.swouldyouliketoseemarcus
+msgid "Would you like to see Marcus' meeting again?"
+msgstr ""
+
 #: u_resourcestring.swouldyouliketotryagain
 msgid "Would you like to try again ?"
 msgstr ""
@@ -1159,7 +1195,7 @@ msgid "Yes... Time flies. I miss him..."
 msgstr ""
 
 #: u_resourcestring.syoucanalsowinitems
-msgid "You can also win items by playing the games. A game costs 100 coins."
+msgid "You can also win coins or items by playing the games."
 msgstr ""
 
 #: u_resourcestring.syoulose

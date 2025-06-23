@@ -18,8 +18,9 @@ uses
   u_utils, u_sprite_granny, u_screen_intro, screen_gameplainmoon,
   u_postprocessing_watermirror, u_procedural_starnest, u_ProceduralPlanet,
   u_proceduralcloud, screen_gameplainmooninside, u_screen_gamemermaidsport,
-  u_screen_forest_amara, u_sprite_def2, u_screen_sam, u_sam, u_dartboard_bird, 
-u_screen_strikeraccoon, u_screen_dartboard;
+  u_sprite_def2, u_screen_sam, u_sam, u_dartboard_bird, u_submarine, 
+u_screen_strikeraccoon, u_screen_dartboard, u_screen_gamemermaidboss, 
+u_screen_gamemermaidsseaside;
 
 {$R *.res}
 
