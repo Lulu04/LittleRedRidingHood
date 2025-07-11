@@ -14,6 +14,7 @@ function GetViewRect(aCameraInUse: TOGLCCamera): TRectF;
 function GetCenterView(aCameraInUse: TOGLCCamera): TPointF;
 
 function GetPurpleCristalTint: TBGRAPixel;
+function GetBlueCristalTint: TBGRAPixel;
 
 type
 
@@ -160,6 +161,11 @@ end;
 function GetPurpleCristalTint: TBGRAPixel;
 begin
   Result := BGRA(255,0,255,150);
+end;
+
+function GetBlueCristalTint: TBGRAPixel;
+begin
+  Result := BGRA(49,124,255,150);// BGRA(0,128,255,150);
 end;
 
 end.

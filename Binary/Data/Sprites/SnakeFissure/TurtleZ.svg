@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="9.0833502"
+   height="17.864553"
+   viewBox="0 0 2.403303 4.7266631"
+   version="1.1"
+   id="svg1"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#505050"
+     bordercolor="#eeeeee"
+     borderopacity="1"
+     inkscape:showpageshadow="0"
+     inkscape:pageopacity="0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#0f0f0f"
+     inkscape:document-units="px">
+    <inkscape:page
+       x="0"
+       y="0"
+       width="2.4033029"
+       height="4.7266631"
+       id="page2"
+       margin="0"
+       bleed="0" />
+  </sodipodi:namedview>
+  <defs
+     id="defs1" />
+  <g
+     inkscape:label="Calque 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(-111.125,-136.26042)">
+    <path
+       d="m 113.39601,136.39271 v 0.89297 l -0.86541,2.67614 h 0.86541 v 0.89297 h -2.13872 v -0.64768 l 0.89297,-2.92143 h -0.78823 v -0.89297 z"
+       id="text532"
+       style="font-size:21.3333px;line-height:125%;font-family:Impact;-inkscape-font-specification:Impact;text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;white-space:pre;fill:#ffffff;stroke:#000000;stroke-width:0.264583px"
+       aria-label="Z"
+       inkscape:export-filename="..\..\Binary\Data\Sprites\SnakeFissure\TurtleZ.svg"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96" />
+  </g>
+</svg>

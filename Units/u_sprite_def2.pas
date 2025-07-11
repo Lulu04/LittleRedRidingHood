@@ -48,6 +48,21 @@ public
   procedure ProcessMessage(UserValue: TUserMessageValue); override;
 end;
 
+{ TSeagullFlyInRectangle }
+
+TSeagullFlyInRectangle = class(TSeagullBase)
+  FTimeAccu, FThresholdX, FThresholdY: single;
+  constructor Create(aLayerIndex: integer);
+  procedure Update(const aElapsedTime: single); override;
+  function ComputeHSpeed: single; virtual;
+  function ComputeVSpeed: single; virtual;
+  procedure ComputeTimeToChangeY; virtual;
+  procedure ComputeLeftThresholdX; virtual;
+  procedure ComputeRightThresholdX; virtual;
+  procedure ComputeUpThresholdY; virtual;
+  procedure ComputeDownThresholdY; virtual;
+end;
+
 
 { TMarcusHelicopter }
 
@@ -64,9 +79,52 @@ public
   procedure ProcessMessage(UserValue: TUserMessageValue); override;
 end;
 
+{ TCircularGauge }
+// a circular gauge with an arrow.
+// The arrow is vertical and move from -135° (0%) to 135° (100%)
+TCircularGauge = class(TSprite)
+private
+  FArrow: TSprite;
+  FBlinkCount: integer;
+  FWantedAngle: integer;
+  function GetPercent: single;
+  procedure SetPercent(AValue: single);
+public
+  constructor Create(aTexBody, aTexArrow: PTexture);
+  procedure ProcessMessage(UserValue: TUserMessageValue); override;
+  procedure BlinkRed;
+  procedure AddDelta(aDelta: single);
+  property Percent: single read GetPercent write SetPercent;
+end;
+
+{ TLed }
+
+TLed = class(TSprite)
+private
+  FBlinkColor: TBGRAPixel;
+  FBlinking, FPlaySound: boolean;
+public
+  constructor Create(aTexBlack: PTexture);
+  procedure ProcessMessage(UserValue: TUserMessageValue); override;
+  procedure StartToBlink(aColor: TBGRAPixel; aPlayBeep: boolean);
+  procedure StopToBlink;
+end;
+
+{ TWave1 }
+
+TWave1 = class(TDeformationGrid)
+private
+  FTime: single;
+public
+  constructor Create(aTexture: PTexture; aX, aY: single; aLayerIndex: integer=-1);
+  procedure ProcessMessage(UserValue: TUserMessageValue); override;
+end;
+
+
+
 implementation
 
-uses u_common, u_app, u_resourcestring, LazUTF8;
+uses u_common, u_app, u_resourcestring, LazUTF8, Math;
 
 { TPanelUsingControlPanel0 }
 
@@ -205,6 +263,102 @@ begin
   end;
 end;
 
+{ TSeagullFlyInRectangle }
+
+constructor TSeagullFlyInRectangle.Create(aLayerIndex: integer);
+var v: single;
+begin
+  inherited Create(aLayerIndex);
+
+  SetCoordinate(ScaleW(166)+Random*ScaleW(370), ScaleH(130)+Random*ScaleH(450));
+  Speed.Value := PointF(ComputeHSpeed, ComputeVSpeed);
+  if Random>0.5 then Speed.x.Value := -Speed.x.Value;
+  if Random>0.5 then Speed.y.Value := -Speed.y.Value;
+  FlipH := Speed.X.Value > 0;
+  if Speed.X.Value > 0 then ComputeRightThresholdX
+    else ComputeLeftThresholdX;
+  ComputeTimeToChangeY;
+
+  v := 1.0+Random*0.25-0.125;
+  Scale.Value := PointF(v, v);
+
+  Update(Random);
+  Update(Random);
+  Update(Random);
+end;
+
+procedure TSeagullFlyInRectangle.Update(const aElapsedTime: single);
+var v: single;
+begin
+  inherited Update(aElapsedTime);
+
+  if (Speed.X.Value < 0) and (X.Value < FThresholdX) then begin
+    Speed.X.Value := ComputeHSpeed;
+    ComputeRightThresholdX;
+    FlipH := True;
+  end;
+
+  if (Speed.X.Value > 0) and (X.Value > FThresholdX) then begin
+    Speed.X.Value := -ComputeHSpeed;
+    ComputeLeftThresholdX;
+    FlipH := False;
+  end;
+
+  FTimeAccu := FTimeAccu - aElapsedTime;
+  if FTimeAccu <= 0 then begin
+    ComputeTimeToChangeY;
+    //Speed.Y.Value := EnsureRange(Speed.Y.Value+Random*0.5-0.25, -PPIScale(5), PPIScale(5));
+    v := ComputeVSpeed;
+    if Sign(Speed.Y.Value) = Sign(v) then v := -v;
+    Speed.Y.ChangeTo(v, FTimeAccu*0.5, idcSinusoid);
+  end;
+
+  if (Y.Value <= FThresholdY) and (Speed.Y.Value < 0) then
+    Speed.Y.Value := Random*3;       //ComputeVSpeed
+
+  if (Y.Value >= FThresholdY) and (Speed.Y.Value > 0) then
+    Speed.Y.Value := -Random*3;
+
+  if not FlipH then Angle.Value := -Speed.Y.Value*3
+    else Angle.Value := Speed.Y.Value*3;
+  Angle.Value := EnsureRange(Angle.Value, -35, 35);
+end;
+
+function TSeagullFlyInRectangle.ComputeHSpeed: single;
+begin
+  Result := FScene.Width*0.01+Random*FScene.Width*0.008;
+end;
+
+function TSeagullFlyInRectangle.ComputeVSpeed: single;
+begin
+  Result := Random * PPIScale(20) - PPIScale(10);
+end;
+
+procedure TSeagullFlyInRectangle.ComputeTimeToChangeY;
+begin
+  FTimeAccu := 3 + Random*3;
+end;
+
+procedure TSeagullFlyInRectangle.ComputeLeftThresholdX;
+begin
+  FThresholdX := ScaleW(90) + Random*ScaleW(190);
+end;
+
+procedure TSeagullFlyInRectangle.ComputeRightThresholdX;
+begin
+  FThresholdX := ScaleW(360) + Random*ScaleW(240);
+end;
+
+procedure TSeagullFlyInRectangle.ComputeUpThresholdY;
+begin
+  FThresholdY := ScaleH(70);
+end;
+
+procedure TSeagullFlyInRectangle.ComputeDownThresholdY;
+begin
+  FThresholdY := ScaleH(580);
+end;
+
 { TMarcusHelicopter }
 
 procedure TMarcusHelicopter.SetFlipH(AValue: boolean);
@@ -253,6 +407,163 @@ begin
  //    if FMainPropeller.FlipH then FMainPropeller.X.Value := Width-Width*0.04
  //      else FMainPropeller.X.Value := Width*0.04;
      PostMessage(0, 0.03);
+    end;
+  end;
+end;
+
+{ TCircularGauge }
+
+function TCircularGauge.GetPercent: single;
+begin
+  Result := (FWantedAngle + 135) / 270;
+end;
+
+procedure TCircularGauge.SetPercent(AValue: single);
+begin
+  AValue := EnsureRange(AValue, 0, 1);
+  FWantedAngle := Round(AValue * 270 - 135);
+  //FArrow.Angle.Value := FWantedAngle;
+end;
+
+constructor TCircularGauge.Create(aTexBody, aTexArrow: PTexture);
+begin
+  inherited Create(aTexBody, False);
+
+  FArrow := TSprite.Create(aTexArrow, False);
+  AddChild(FArrow, 0);
+  FArrow.CenterX := Width*0.5;
+  FArrow.BottomY := Height*0.5;
+  FArrow.Pivot := PointF(0.5, 1.0);
+
+  PostMessage(100);
+end;
+
+procedure TCircularGauge.ProcessMessage(UserValue: TUserMessageValue);
+begin
+  case UserValue of
+    // red blink anim
+    0: begin
+     if FBlinkCount <= 0 then exit;
+     dec(FBlinkCount);
+     Tint.Value := BGRA(255,50,50,200);
+     PostMessage(5, 0.2);
+    end;
+    5: begin
+     Tint.Alpha.Value := 0;
+     PostMessage(0, 0.2);
+    end;
+
+    // arrow moves
+    100: begin
+       if FWantedAngle-FArrow.Angle.Value > 2 then FArrow.Angle.Value := FArrow.Angle.Value+2
+       else
+       if FWantedAngle-FArrow.Angle.Value < -2 then FArrow.Angle.Value := FArrow.Angle.Value-2
+       else FArrow.Angle.Value := FWantedAngle;
+       PostMessage(100, 0.02);
+    end;
+  end;
+end;
+
+procedure TCircularGauge.BlinkRed;
+begin
+  if FBlinkCount > 0 then exit;
+  FBlinkCount := 4;
+  PostMessage(0);
+end;
+
+procedure TCircularGauge.AddDelta(aDelta: single);
+begin
+  Percent := Percent + aDelta;
+end;
+
+{ TLed }
+
+constructor TLed.Create(aTexBlack: PTexture);
+begin
+  inherited Create(aTexBlack, False);
+end;
+
+procedure TLed.ProcessMessage(UserValue: TUserMessageValue);
+begin
+  case UserValue of
+    0: begin
+      if not FBlinking then exit;
+      Tint.Value := FBlinkColor;
+      if FPlaySound then
+        Audio.PlayThenKillSound('button-beep_Short.ogg', 0.6, 0.0, 0.8);
+      PostMessage(5, 0.4);
+    end;
+    5: begin
+      Tint.Alpha.Value := 0;
+      PostMessage(0, 0.4);
+    end;
+  end;
+end;
+
+procedure TLed.StartToBlink(aColor: TBGRAPixel; aPlayBeep: boolean);
+begin
+  if FBlinking then exit;
+  FBlinkColor := aColor;
+  FBlinking := True;
+  FPlaySound := aPlayBeep;
+  PostMessage(0);
+end;
+
+procedure TLed.StopToBlink;
+begin
+  FBlinking := False;
+  Tint.Alpha.Value := 0;
+end;
+
+{ TWave1 }
+
+constructor TWave1.Create(aTexture: PTexture; aX, aY: single; aLayerIndex: integer);
+const SCALEMIN = 0.15;
+      SCALEMAX = 1.2;
+var sc: single;
+begin
+  inherited Create(aTexture, False);
+  if aLayerIndex <> -1 then FScene.Add(Self, aLayerIndex);
+
+  SetCoordinate(aX, aY);
+  SetGrid(2, 4);
+  ApplyDeformation(dtSnakeV);
+  FTime := Random*0.5 + 1.0;
+  SetTimeMultiplicatorOnRow(0, FTime);
+  SetTimeMultiplicatorOnRow(1, FTime);
+  SetTimeMultiplicatorOnRow(2, FTime);
+  FTime := FTime * 2;
+
+  // scale max=1.2 scale min=0.5
+  sc := (aY - ScaleH(474))/ScaleH(296) * (SCALEMAX - SCALEMIN) + SCALEMIN;
+  Scale.Value := PointF(sc, sc);
+  Update(Random);
+  Update(Random);
+  Update(Random);
+  PostMessage(0);
+  PostMessage(10);
+end;
+
+procedure TWave1.ProcessMessage(UserValue: TUserMessageValue);
+begin
+  case UserValue of
+    0: begin
+      X.ChangeTo(X.Value-ScaledWidth*0.2, FTime, Random(4)+1);
+      Y.ChangeTo(Y.Value+ScaledHeight*0.8, FTime, Random(4)+1);
+      PostMessage(5, FTime);
+    end;
+    5: begin
+      X.ChangeTo(X.Value+ScaledWidth*0.2, FTime, Random(4)+1);
+      Y.ChangeTo(Y.Value-ScaledHeight*0.8, FTime, Random(4)+1);
+      PostMessage(0, FTime);
+    end;
+    10: begin
+      Tint.Value := BGRA(255,255,255);//,Random(100)+150);
+      PostMessage(15, 1.0);
+    end;
+    15: begin
+      Tint.alpha.Value := 0;
+      PostMessage(10, Random);
     end;
   end;
 end;

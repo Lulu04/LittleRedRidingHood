@@ -23,7 +23,8 @@ private type TGameState=(gsUndefined,
                          gsLookInTheCrate,
                          gsLRCollideRoad,
                          gsLROpenGate, gsShowMessLRNeedKeyToOpenGate,
-                         gsLRUseControlPanel
+                         gsLRUseControlPanel,
+                         gsRomeoJuliaMeeting
                          );
 var FGameState: TGameState;
   procedure SetGameState(AValue: TGameState);
@@ -45,7 +46,6 @@ private
   procedure CreateLevel(aLevelIndex: integer);
   procedure CreateLevel1;
   procedure CreateLevel2;
-  procedure CreateLevel3;
   procedure FadeOutAndKillMusicAndSounds;
 public
   procedure DefineSubTextures(aAtlas: TAtlas); override;
@@ -86,6 +86,16 @@ begin
 end;
 
 type
+
+{ TRedHeart }
+
+TRedHeart = class(TSpriteContainer)
+  FCanGenerateHeart: boolean;
+  constructor Create(aX, aY: single);
+  procedure ProcessMessage(UserValue: TUserMessageValue); override;
+  procedure Start;
+  procedure Stop;
+end;
 
 { TCustomPanelUsingControlPanel0 }
 
@@ -319,10 +329,13 @@ var
   texCraneHook, texCraneHookBG, texContainer, texPanelExit,
   texPlatformLeg, texPlatformGround, texPlatformGroundForLadder, texPlatformLadder,
   texSewerPlate, texBarrel, texGroundStain, texBGFenceVertical, texBGFenceHorizontal,
-  texFence: PTexture;
+  texFence, texRedHeart: PTexture;
 
   FSky: TSky;
   FLR: TCustomLR4Direction;
+  FRomeo: TWolfRomeo;
+  FJulia: TWolfJulia;
+  FRedHeartGenerator: TRedHeart;
   FCamera, FCameraFactory2, FCameraFactory3: TOGLCCamera;
   FPanelUsingControlPanel0: TPanelUsingControlPanel0;
   FControlPanelInUse: TCustomUsableControlPanel;
@@ -332,6 +345,63 @@ var
   FGameinventory: TGameInventory;
   FWorkingGate: TFenceGate;
   FFenceGateSubSequence: boolean;
+
+{ TRedHeart }
+
+constructor TRedHeart.Create(aX, aY: single);
+begin
+  inherited Create(FScene);
+  FScene.Add(Self, LAYER_GROUND);
+  SetCoordinate(aX, aY);
+end;
+
+procedure TRedHeart.ProcessMessage(UserValue: TUserMessageValue);
+var z: TSprite;
+  v: single;
+begin
+  case UserValue of
+    // heart anim
+    0: begin
+      if not FCanGenerateHeart then exit;
+      z := TSprite.Create(texRedHeart, False);
+      FScene.Add(z, LAYER_GROUND);
+      z.SetCoordinate(GetXY);
+      z.Opacity.Value := 0;
+      z.Opacity.ChangeTo(255, 1.0);
+      v := 1.0 + Random*0.15 - 0.3;
+      z.Scale.Value := PointF(v, v);
+      z.MoveYRelative(-z.Height*3, 4.0, idcSinusoid);
+      z.KillDefered(4.0);
+      if Random > 0.5 then
+        z.AddAndPlayScenario('MoveXRelative -'+z.Width.ToString+' 1.0 idcsinusoid'#10+
+                             'Wait 1.0'#10+
+                             'MoveXRelative '+z.Width.ToString+' 1.0 idcsinusoid'#10+
+                             'Wait 1.0'#10+
+                             'Goto Here')
+      else
+        z.AddAndPlayScenario('MoveXRelative '+z.Width.ToString+' 1.0 idcsinusoid'#10+
+                             'Wait 1.0'#10+
+                             'MoveXRelative -'+z.Width.ToString+' 1.0 idcsinusoid'#10+
+                             'Wait 1.0'#10+
+                             'Loop');
+      z.AddAndPlayScenario('Wait 3.0'#10+
+                           'OpacityChange 0 1.0 idcLinear');
+      PostMessage(0, 1.8);
+    end;
+  end;
+end;
+
+procedure TRedHeart.Start;
+begin
+  if FCanGenerateHeart then exit;
+  FCanGenerateHeart := True;
+  PostMessage(0);
+end;
+
+procedure TRedHeart.Stop;
+begin
+  FCanGenerateHeart := False;
+end;
 
 { TCustomPanelUsingControlPanel0 }
 
@@ -1558,12 +1628,16 @@ begin
     gsLRFalling: PostMessage(500);
     gsShowMessLRNeedKeyToOpenGate: PostMessage(600);
     gsLROpenGate: PostMessage(700);
+    gsRomeoJuliaMeeting: PostMessage(800);
   end;
 end;
 
 procedure TScreenMermaidsPort.ResetVariables;
 begin
   FFenceGateSubSequence := False;
+  FRedHeartGenerator := NIL;
+  FRomeo := NIL;
+  FJulia := NIL;
 end;
 
 procedure TScreenMermaidsPort.StartRain(aDuration: single);
@@ -1663,7 +1737,6 @@ begin
   case aLevelIndex of
     1: CreateLevel1;   //
     2: CreateLevel2;   //
-    3: CreateLevel3;   //
   end;//case
 
   // constrained size for the camera
@@ -1746,7 +1819,7 @@ procedure TScreenMermaidsPort.CreateLevel2;
 var xx, xx1: single;
   o: TSuspendedContainer;
 begin
-  FWorldArea := RectF(0, 0, ScaleW(5130), ScaleH(768*2));
+  FWorldArea := RectF(0, 0, ScaleW(6142), ScaleH(768*2));
 
   FSky := TSky.Create;
   CreateClouds;
@@ -1762,6 +1835,8 @@ begin
   TGroundStain.Create(ScaleW(4139), ScaleH(1444));
   TGroundStain.Create(ScaleW(4563), ScaleH(1404));
   TGroundStain.Create(ScaleW(4971), ScaleH(1452));
+  TGroundStain.Create(ScaleW(5506), ScaleH(1385));
+
   CreateFactory3;
   CreateFactory2;
 
@@ -1783,6 +1858,7 @@ begin
   TSewerPlate.Create(ScaleW(3179));
   TSewerPlate.Create(ScaleW(3887));
   TSewerPlate.Create(ScaleW(4551));
+  TSewerPlate.Create(ScaleW(5235));
 
   TBarrel.Create(ScaleW(373), ScaleH(1314), LAYER_GROUND);
   TBarrel.Create(ScaleW(529), ScaleH(1416), LAYER_ARROW);
@@ -1796,6 +1872,7 @@ begin
   TBarrel.Create(ScaleW(3781), ScaleH(1437), LAYER_ARROW);
   TBarrel.Create(ScaleW(4423), ScaleH(1413), LAYER_ARROW);
   TBarrel.Create(ScaleW(4383), ScaleH(1427), LAYER_ARROW);
+  TBarrel.Create(ScaleW(5771), ScaleH(1405), LAYER_ARROW);
 
   TPlatformWithLadder.Create(ScaleW(800), 0, 0); // left
   TPlatform4Legs.Create(ScaleW(2626), 0, 1); // middle
@@ -1832,18 +1909,34 @@ begin
   end;
 
   TFenceGate.Create(ScaleW(4612), ScaleH(1162));
-  TPanelExit.Create(ScaleW(4900), 0);
+  //TPanelExit.Create(ScaleW(6316), 0);
 
   StartRain(0);
 
   FLR.X.Value := FLR.BodyWidth*2;
   FLR.BodyBottomY := GetYFloor(0);
   FLR.FloorIndex := 0;
-end;
 
-procedure TScreenMermaidsPort.CreateLevel3;
-begin
+  // container around Romeo and Julia
+  with  FScene.AddSprite(texContainer, False, LAYER_GROUND) do
+    SetCoordinate(ScaleW(5247), ScaleH(1107));
+  with  FScene.AddSprite(texContainer, False, LAYER_GROUND) do
+    SetCoordinate(ScaleW(5617), ScaleH(1107));
+  with  FScene.AddSprite(texContainer, False, LAYER_GROUND) do
+    SetCoordinate(ScaleW(5025), ScaleH(1190));
+  with  FScene.AddSprite(texContainer, False, LAYER_GROUND) do
+    SetCoordinate(ScaleW(5761), ScaleH(1190));
 
+
+  FRomeo := TWolfRomeo.Create(False, LAYER_WOLF);
+  FRomeo.X.Value := ScaleW(5567);
+  FRomeo.BodyBottomY := ScaleH(1366);
+  FRomeo.FlipH := True;
+  FJulia := TWolfJulia.Create(False, LAYER_WOLF);
+  FJulia.X.Value := ScaleW(5672);
+  FJulia.BodyBottomY := ScaleH(1366);
+  FRedHeartGenerator := TRedHeart.Create(ScaleW(5615), ScaleH(1311));
+  FRedHeartGenerator.Start;
 end;
 
 procedure TScreenMermaidsPort.FadeOutAndKillMusicAndSounds;
@@ -1858,51 +1951,55 @@ procedure TScreenMermaidsPort.DefineSubTextures(aAtlas: TAtlas);
 var path: string;
 begin
   AdditionnalScale := 0.8;
-  LoadLR4DirTextures(FAtlas, False);
-  LoadWolfTextures(FAtlas);
+  LoadLR4DirTextures(aAtlas, False);
+  LoadWolfTextures(aAtlas);
+  LoadRomeoTextures(aAtlas);
+  LoadJuliaTextures(aAtlas);
   AdditionnalScale := 1.0;
 
   path := FolderSpriteGameMermaidsPort;
-  texTruckYellow := FAtlas.AddFromSVG(path+'TruckYellow.svg', ScaleW(140), -1);
-  texTruckBlue := FAtlas.AddFromSVG(path+'TruckBlue.svg', ScaleW(140), -1);
-  texTruckGreen := FAtlas.AddFromSVG(path+'TruckGreen.svg', ScaleW(140), -1);
-  texCraneHook := FAtlas.AddFromSVG(path+'CraneHook.svg', -1, ScaleH(137));
-  texCraneHookBG := FAtlas.AddFromSVG(path+'CraneHookBG.svg', ScaleW(55), -1);
-  texContainer := FAtlas.AddFromSVG(path+'Container.svg', ScaleW(408), -1);
-  TUsableControlPanel.LoadTexture(FAtlas);
-  TUsableCrateThatContainObject.LoadTexture(FAtlas, 1);
-  TCraneRemote.LoadTexture(FAtlas);
-  texPanelExit := FAtlas.AddFromSVG(SpriteGameVolcanoInnerFolder+'PanelExit.svg', ScaleW(52), -1);
-  texFence := FAtlas.AddFromSVG(path+'Fence.svg', -1, ScaleH(186));
+  texTruckYellow := aAtlas.AddFromSVG(path+'TruckYellow.svg', ScaleW(140), -1);
+  texTruckBlue := aAtlas.AddFromSVG(path+'TruckBlue.svg', ScaleW(140), -1);
+  texTruckGreen := aAtlas.AddFromSVG(path+'TruckGreen.svg', ScaleW(140), -1);
+  texCraneHook := aAtlas.AddFromSVG(path+'CraneHook.svg', -1, ScaleH(137));
+  texCraneHookBG := aAtlas.AddFromSVG(path+'CraneHookBG.svg', ScaleW(55), -1);
+  texContainer := aAtlas.AddFromSVG(path+'Container.svg', ScaleW(408), -1);
+  TUsableControlPanel.LoadTexture(aAtlas);
+  TUsableCrateThatContainObject.LoadTexture(aAtlas, 1);
+  TCraneRemote.LoadTexture(aAtlas);
+  texPanelExit := aAtlas.AddFromSVG(SpriteGameVolcanoInnerFolder+'PanelExit.svg', ScaleW(52), -1);
+  texFence := aAtlas.AddFromSVG(path+'Fence.svg', -1, ScaleH(186));
 
-  texPlatformLeg := FAtlas.AddFromSVG(path+'PlatformLeg.svg', -1, ScaleH(229));
-  texPlatformGround := FAtlas.AddFromSVG(path+'PlatformGround.svg', ScaleW(205), -1);
-  texPlatformGroundForLadder := FAtlas.AddFromSVG(path+'PlatformGroundForLadder.svg', ScaleW(205), -1);
-  texPlatformLadder := FAtlas.AddFromSVG(path+'PlatformLadder.svg', -1, ScaleH(230));
-  texSewerPlate := FAtlas.AddFromSVG(path+'SewerPlate.svg', ScaleW(66), -1);
-  texBarrel := FAtlas.AddFromSVG(path+'Barrel.svg', ScaleW(72), -1);
-  texGroundStain := FAtlas.AddFromSVG(path+'GroundStain.svg', ScaleW(120), -1);
-  texBGFenceVertical := FAtlas.AddFromSVG(path+'BGFenceVertical.svg', -1, ScaleH(55));
-  texBGFenceHorizontal := FAtlas.AddFromSVG(path+'BGFenceHorizontal.svg', ScaleW(25), -1);
+  texPlatformLeg := aAtlas.AddFromSVG(path+'PlatformLeg.svg', -1, ScaleH(229));
+  texPlatformGround := aAtlas.AddFromSVG(path+'PlatformGround.svg', ScaleW(205), -1);
+  texPlatformGroundForLadder := aAtlas.AddFromSVG(path+'PlatformGroundForLadder.svg', ScaleW(205), -1);
+  texPlatformLadder := aAtlas.AddFromSVG(path+'PlatformLadder.svg', -1, ScaleH(230));
+  texSewerPlate := aAtlas.AddFromSVG(path+'SewerPlate.svg', ScaleW(66), -1);
+  texBarrel := aAtlas.AddFromSVG(path+'Barrel.svg', ScaleW(72), -1);
+  texGroundStain := aAtlas.AddFromSVG(path+'GroundStain.svg', ScaleW(120), -1);
+  texBGFenceVertical := aAtlas.AddFromSVG(path+'BGFenceVertical.svg', -1, ScaleH(55));
+  texBGFenceHorizontal := aAtlas.AddFromSVG(path+'BGFenceHorizontal.svg', ScaleW(25), -1);
 
   path := GetFolderSpritePlainOfSleepingMoon;
-  texFactory1 := FAtlas.AddFromSVG(path+'Factory1.svg', ScaleW(710 div 2), -1);
-  texFactory2 := FAtlas.AddFromSVG(path+'Factory2.svg', ScaleW(634 div 2), -1);
-  texFactory3 := FAtlas.AddFromSVG(path+'Factory3.svg', ScaleW(354 div 2), -1);
+  texFactory1 := aAtlas.AddFromSVG(path+'Factory1.svg', ScaleW(710 div 2), -1);
+  texFactory2 := aAtlas.AddFromSVG(path+'Factory2.svg', ScaleW(634 div 2), -1);
+  texFactory3 := aAtlas.AddFromSVG(path+'Factory3.svg', ScaleW(354 div 2), -1);
 
-  LoadCloudsTexture(FAtlas);
-  AddRainDropParticleToAtlas(FAtlas);
+
+  texRedHeart := aAtlas.AddFromSVG(SpriteUIFolder+'RedHeart.svg', PPIScale(20), PPIScale(20));
+  LoadCloudsTexture(aAtlas);
+  AddRainDropParticleToAtlas(aAtlas);
   // ui
-  CreateGameFontNumber(FAtlas); // < must be first !
-  LoadIconCraneRemoteTexture(FAtlas);
-  LoadKeyMetalTexture(FAtlas);
+  CreateGameFontNumber(aAtlas); // < must be first !
+  LoadIconCraneRemoteTexture(aAtlas);
+  LoadKeyMetalTexture(aAtlas);
   // font for button in pause panel
-  FFontText := CreateGameFontText(FAtlas);
-  LoadGameDialogTextures(FAtlas);
-  TCustomPanelUsingControlPanel0.LoadTextures(FAtlas);
+  FFontText := CreateGameFontText(aAtlas);
+  LoadGameDialogTextures(aAtlas);
+  TCustomPanelUsingControlPanel0.LoadTextures(aAtlas);
   // load arrow for button panels
-  AddBlueArrowToAtlas(FAtlas);
-  LoadMousePointerTexture(FAtlas);
+  AddBlueArrowToAtlas(aAtlas);
+  LoadMousePointerTexture(aAtlas);
 end;
 
 procedure TScreenMermaidsPort.CreateObjects;
@@ -2163,6 +2260,67 @@ begin
       FFenceGateSubSequence := False;
       GameState := gsRunning;
     end;
+
+    // Julia, Romeo, LR meeting
+    800: begin
+      FLR.IdleRight;
+      FLR.ShowQuestionMark;
+      PostMessage(805, 1.0);
+    end;
+    805: begin
+      FLR.HideMark;
+      FLR.ShowDialog(sIHearVoices, FFontText, Self, 810);
+    end;
+    810: begin
+      FLR.TimeMultiplicator := 0.8;
+      FLR.WalkHorizontallyTo(ScaleW(5296), Self, 815);
+    end;
+    815: begin
+      FLR.IdleRight;
+      FLR.ShowExclamationMark;
+      PostMessage(820, 2.0);
+    end;
+    820: begin
+      FJulia.ShowDialog(sSomeoneHere, FFontText, Self, 825);
+      FRedHeartGenerator.Stop;
+    end;
+    825: begin
+      FRomeo.IdleLeft;
+      FLR.SetFaceType(lrfWorry);
+      PostMessage(830, 0.5);
+    end;
+    830: FRomeo.ShowDialog(sWhosThereShow, FFontText, Self, 835);
+    835: FLR.WalkHorizontallyTo(ScaleW(5412), Self, 840);
+    840: begin
+      FLR.IdleRight;
+      PostMessage(845, 0.5);
+    end;
+    845: FRomeo.ShowDialog(sYouDontTellAnyone, FFontText, Self, 850);
+    850: begin
+      FLR.HideMark;
+      FLR.ShowDialog(sErAllRightIWont, FFontText, Self, 855);
+    end;
+    855: FRomeo.ShowDialog(sOkay, FFontText, Self, 860);
+    860: FLR.ShowDialog('...', FFontText, Self, 865);
+    865: FRomeo.ShowDialog('...', FFontText, Self, 867);
+    867: FJulia.ShowDialog('...', FFontText, Self, 870);
+    870: FLR.ShowDialog(sWhyAreYouHiding, FFontText, Self, 875);
+    875: FJulia.ShowDialog(sTheCompanyWeWork, FFontText, Self, 880);
+    880: FRomeo.ShowDialog(sIfTheyFoundOutWed, FFontText, Self, 885);
+    885: FLR.ShowDialog(sForbiddingPeopleToLove, FFontText, Self, 890);
+    890: FJulia.ShowDialog(sPerhapsThatWillChange, FFontText, Self, 895);
+    895: FLR.ShowDialog(sIHopeForYou, FFontText, Self, 900);
+    900: begin
+      FLR.SetFaceType(lrfSmile);
+      FLR.ShowDialog(sWellGottaGo, FFontText, Self, 905);
+    end;
+    905: FJulia.ShowDialog(sBye, FFontText, Self, 910);
+    910: begin
+      FRedHeartGenerator.Start;
+      FRomeo.IdleRight;
+      FLR.TimeMultiplicator := 0.4;
+      FLR.WalkHorizontallyTo(FWorldArea.Right+FLR.BodyWidth, Self, 202, 2.0);
+    end;
   end;
 end;
 
@@ -2335,11 +2493,18 @@ begin
         FCraneRemote.EnableDownDirection(True);
       end;
 
+      // check the encounter with Romeo and Julia
+      if (PlayerInfo.MermaidsPort.StepPlayed = 2) and
+         (FLR.X.Value >= ScaleW(5120)) then begin
+        GameState := gsRomeoJuliaMeeting;
+      end;
+
     end;// gsRunning
   end;//case
 
   // force LR in the wolrd area
-  if (ScreenMermaidsPort.GameState <> gsLRWin) and (FLR.ParentSurface = NIL) then begin
+  if not (ScreenMermaidsPort.GameState in [gsLRWin, gsRomeoJuliaMeeting]) and
+     (FLR.ParentSurface = NIL) then begin
     if FLR.X.Value < FWorldArea.Left+FLR.BodyWidth then
       FLR.X.Value := FWorldArea.Left+FLR.BodyWidth;
     if FLR.X.Value > FWorldArea.Right-FLR.BodyWidth then

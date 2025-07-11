@@ -310,7 +310,7 @@ public
 end;
 
 { TAmara }
-// need cross particle in atlad
+// need cross particle in atlas
 TAmara = class(TCharacterWithDialogPanel)
 private
   class var texSorcirella, texCrossParticle: PTexture;

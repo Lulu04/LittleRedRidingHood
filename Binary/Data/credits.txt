@@ -29,7 +29,19 @@ Procedural Planet fragment shader is a modified version found in the article at:
 
 Trucks in the first part of Mermaids Port: https://fr.freepik.com/vecteurs-libre/vue-face-quatre-vehicules-bande-dessinee_1080051.htm#fromView=search&page=1&position=45&uuid=51caf374-3f1d-4220-99a4-f6a679a944ad&query=voiture+de+face
 
+Factories in Mermaids Port by ansimuz -- https://opengameart.org/content/industrial-parallax-background
+
 Helicopter in Mermaids Port by brgfx: https://fr.freepik.com/vecteurs-libre/helicoptere-urgence-fond-blanc_24780613.htm
+
+Submarine and seaweed, fish,... by macrovector -- https://fr.freepik.com/vecteurs-libre/icones-sous-marines-ensemble-transparent-symboles-panorama-sous-marin-illustration-vectorielle-isolee-realiste_53400325.htm#fromView=search&page=1&position=5&uuid=589118fe-008b-436d-8d30-7201068eebd6&query=sous+marin
+
+Under sea tileset inspired from the work made by ansimuz -- https://opengameart.org/comment/58917
+
+explosion texture by FreePik -- https://www.freepik.com/free-vector/explosion-effect-collection-cartoon-design_4833063.htm
+
+turtle by brgfx -- https://fr.freepik.com/vecteurs-libre/tortue-mer-verte-fond-blanc_3477771.htm
+
+Palm tree by brgfx -- https://fr.freepik.com/vecteurs-libre/ensemble-plante-arbre-sa-silhouette_9180852.htm
 
 [MUSICS]
 
@@ -69,7 +81,7 @@ Storm cloud made from wind gap indoors 001 190310_1316.wav by klankbeeld -- http
 
 ZIP LINE by daveincamas -- https://freesound.org/s/208728/ -- License: Attribution NonCommercial 4.0
 
-MetalClick by Kenney Vleugels (www.kenney.nl) -- License: Creative Commons 0
+rpg sounds by Kenney Vleugels (www.kenney.nl) -- https://opengameart.org/content/50-rpg-sound-effects -- License: Creative Commons 0
 
 SFX UI Button Click by suntemple -- https://freesound.org/s/253168/ -- License: Creative Commons 0
 
@@ -171,4 +183,8 @@ MOTRSrvo_electric servo motor sound._Anton Bushinskiy_AB FX by pryanic -- https:
 Elevator: Button Beep by Sheyvan -- https://freesound.org/s/475223/ -- License: Creative Commons 0
 
 heavy_bubbles by freesound community -- https://pixabay.com/sound-effects/heavy-bubbles-35889/
+
+Rocket Launch by Jarusca -- https://freesound.org/s/521377/ -- License: Creative Commons 0
+
+Jackhammer.wav by Benboncan -- https://freesound.org/s/104998/ -- License: Attribution 4.0
 

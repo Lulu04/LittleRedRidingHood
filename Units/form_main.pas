@@ -44,8 +44,9 @@ uses u_screen_title, u_screen_gameforest, BGRABitmap, BGRABitmapTypes,
   u_screen_gamevolcanoinner, u_resourcestring, u_screen_gamevolcanodino,
   u_screen_intro, screen_gameplainmoon, screen_gameplainmooninside,
   u_screen_gamemermaidsport, u_screen_sam, u_screen_strikeraccoon,
-  u_screen_dartboard, u_screen_gamemermaidboss, u_screen_gamemermaidsseaside,
-  DefaultTranslator, LCLTranslator, i18_utils;
+  u_screen_dartboard, u_screen_gamemermaidboss, u_screen_gamesnakefissureintro,
+  u_screen_gamesnakefissure, u_screen_gamecastle, DefaultTranslator,
+  LCLTranslator, i18_utils;
 {$R *.lfm}
 
 { TFormMain }
@@ -121,7 +122,9 @@ begin
   ScreenPlainMoonInside := TScreenPlainMoonInside.Create;
   ScreenMermaidsPort := TScreenMermaidsPort.Create;
   ScreenMermaidsBoss := TScreenMermaidsBoss.Create;
-  ScreenMermaidsSeaSide := TScreenMermaidsSeaSide.Create;
+  ScreenSnakeFissureIntro := TScreenSnakeFissureIntro.Create;
+  ScreenSnakeFissure := TScreenSnakeFissure.Create;
+  ScreenWolfCastle := TScreenWolfCastle.Create;
   ScreenMap := TScreenMap.Create;
   ScreenWorkShop := TScreenWorkShop.Create;
   ScreenSamHome := TScreenSamHome.Create;
@@ -130,7 +133,7 @@ begin
 //  FScene.RunScreen(ScreenLogo);
 
 FSaveGame.SetCurrentPlayerIndex(0);
-FScene.RunScreen(ScreenMermaidsSeaSide);     //ScreenMap  ScreenIntro   ScreenPlainMoonInside
+FScene.RunScreen(ScreenMap);     //ScreenMap  ScreenIntro   ScreenPlainMoonInside
 end;
 
 procedure TFormMain.FreeCommonData;
@@ -152,7 +155,9 @@ begin
   FreeAndNil(ScreenPlainMoonInside);
   FreeAndnil(ScreenMermaidsPort);
   FreeAndNil(ScreenMermaidsBoss);
-  FreeAndNil(ScreenMermaidsSeaSide);
+  FreeAndNil(ScreenSnakeFissureIntro);
+  FreeAndNil(ScreenSnakeFissure);
+  FreeAndNil(ScreenWolfCastle);
   FreeAndNil(ScreenLogo);
   FreeAndNil(Audio);
 end;

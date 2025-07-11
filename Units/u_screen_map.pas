@@ -25,7 +25,7 @@ type
 
 // add new game here
 TGameOnMap = (gomUnknow, gomPineForest, gomZipLine, gomVolcano,
-              gomPlainOfSleepingMoon, gomMermaidPort);
+              gomPlainOfSleepingMoon, gomMermaidPort, gomSnakeFissure, gomWolfCastle);
 
 { TScreenMap }
 
@@ -33,7 +33,8 @@ TScreenMap = class(TGameScreenTemplate)
 private
   FsndSeaWave: TALSSound;
   FIconLR: TSprite;
-  BWorkShop, BSamHome, BPineForest, BMountainPeaks, BVolcano, BPlainMoon, BMermaidPort: TImageButton;
+  BWorkShop, BSamHome, BPineForest, BMountainPeaks, BVolcano, BPlainMoon, BMermaidPort,
+  BSnakeFissure, BCastle: TImageButton;
   FLabelPlaceOnTheMap: TUILabel;
   FPlaceHint: TUITextArea;
   FFontPlaceName: TTexturedFont;
@@ -71,7 +72,9 @@ uses u_app, u_resourcestring, u_screen_title, u_screen_gameforest,
   u_screen_workshop, u_mousepointer, u_screen_gamemountainpeaks, u_ui_panels,
   u_screen_gamevolcanoentrance, u_audio, u_screen_gamevolcanoinner,
   u_screen_gamevolcanodino, screen_gameplainmoon, u_screen_gamemermaidsport,
-  u_screen_sam, u_sprite_def2, u_screen_gamemermaidboss, BGRAPath, Forms, Math;
+  u_screen_sam, u_sprite_def2, u_screen_gamemermaidboss,
+  u_screen_gamesnakefissure, u_screen_gamesnakefissureintro,
+  u_screen_gamecastle, BGRAPath, Forms, Math;
 
 const
   CLOUDS_PRESET =
@@ -79,21 +82,6 @@ const
           'false|Density|0.0100|TranslationSpeed|-0.0050|ThresholdTop|0.0601|ThresholdBotto'+
           'm|0.2701|ThresholdRight|0.0501|ThresholdLeft|0.0751';
 type
-
-{ TSeagull }
-
-TSeagull = class(TSeagullBase)
-private
-  FTimeAccu, FThresholdX: single;
-  function ComputeHSpeed: single;
-  function ComputeVSpeed: single;
-  procedure ComputeTimeToChangeY;
-  procedure ComputeLeftThresholdX;
-  procedure ComputeRightThresholdX;
-public
-  constructor Create(aLayerIndex: integer);
-  procedure Update(const aElapsedTime: single); override;
-end;
 
 { TPanelChooseGameStep }
 
@@ -130,108 +118,10 @@ var FFontText: TTexturedFont;
   texMapCastleFW, texMapCastleOutline,
   texMap1FW, texMap1Outline, texLRHome, texSamHome, texPineForest,
   texZipLinePeaks, texZipLinePeaksCableToVolcano,
-  texVolcanoMountain, texPlainOfSleepingMoon, texFactory,
+  texVolcanoMountain, texPlainOfSleepingMoon, texFactory, texSnakeFissure,
   texCastle: PTexture;
   FPanelChooseGameStep: TPanelChooseGameStep=NIL;
   FAtlas: TOGLCTextureAtlas;
-
-{ TSeagull }
-
-function TSeagull.ComputeHSpeed: single;
-begin
-  Result := FScene.Width*0.01+Random*FScene.Width*0.008;
-end;
-
-function TSeagull.ComputeVSpeed: single;
-begin
-  Result := Random * PPIScale(20) - PPIScale(10);
-end;
-
-procedure TSeagull.ComputeTimeToChangeY;
-begin
-  FTimeAccu := 3 + Random*3;
-end;
-
-procedure TSeagull.ComputeLeftThresholdX;
-begin
-  FThresholdX := ScaleW(90) + Random*ScaleW(190);
-end;
-
-procedure TSeagull.ComputeRightThresholdX;
-begin
-  FThresholdX := ScaleW(360) + Random*ScaleW(240);
-end;
-
-constructor TSeagull.Create(aLayerIndex: integer);
-var v: single;
-begin
-  inherited Create(aLayerIndex);
-
-  SetCoordinate(ScaleW(166)+Random*ScaleW(370), ScaleH(130)+Random*ScaleH(450));
-  Speed.Value := PointF(ComputeHSpeed, ComputeVSpeed);
-  if Random>0.5 then Speed.x.Value := -Speed.x.Value;
-  if Random>0.5 then Speed.y.Value := -Speed.y.Value;
-  FlipH := Speed.X.Value > 0;
-  if Speed.X.Value > 0 then ComputeRightThresholdX
-    else ComputeLeftThresholdX;
-  ComputeTimeToChangeY;
-
-  v := 1.0+Random*0.25-0.125;
-  Scale.Value := PointF(v, v);
-
-  Update(Random);
-  Update(Random);
-  Update(Random);
-end;
-
-procedure TSeagull.Update(const aElapsedTime: single);
-var v: single;
-begin
-  inherited Update(aElapsedTime);
-
-  if (Speed.X.Value < 0) and (X.Value < FThresholdX) then begin
-    Speed.X.Value := ComputeHSpeed;
-    ComputeRightThresholdX;
-    FlipH := True;
-  end;
-
-  if (Speed.X.Value > 0) and (X.Value > FThresholdX) then begin
-    Speed.X.Value := -ComputeHSpeed;
-    ComputeLeftThresholdX;
-    FlipH := False;
-  end;
-
-
-{  if (X.Value < ScaleW(70)) and (Speed.X.Value < 0) then begin
-    Speed.X.Value := ComputeHSpeed;
-    FlipH := True;
-  end;
-
-  if (X.Value > ScaleW(550)) and (Speed.X.Value > 0) then begin
-    Speed.X.Value := -ComputeHSpeed;
-    FlipH := False;
-  end;   }
-
-  FTimeAccu := FTimeAccu - aElapsedTime;
-  if FTimeAccu <= 0 then begin
-    ComputeTimeToChangeY;
-    //Speed.Y.Value := EnsureRange(Speed.Y.Value+Random*0.5-0.25, -PPIScale(5), PPIScale(5));
-    v := ComputeVSpeed;
-    if Sign(Speed.Y.Value) = Sign(v) then v := -v;
-    Speed.Y.ChangeTo(v, FTimeAccu*0.5, idcSinusoid);
-  end;
-
-  if (Y.Value < ScaleH(70)) and (Speed.Y.Value < 0) then
-    Speed.Y.Value := Random*3;
-
-  if (Y.Value > ScaleH(580)) and (Speed.Y.Value > 0) then
-    Speed.Y.Value := -Random*3;
-
-  if not FlipH then Angle.Value := -Speed.Y.Value*3
-    else Angle.Value := Speed.Y.Value*3;
-end;
-
-
 
 { TPanelChooseGameStep }
 
@@ -246,7 +136,7 @@ end;
 procedure TPanelChooseGameStep.ShowGameSteps(AValue: boolean);
 var i: integer;
 begin
-  FLine.Visible := AValue;
+  FLine.Visible := AValue and (FGameDescriptor.StepCount > 1);
   for i:=0 to High(FSteps) do
     FSteps[i].Visible := AValue;
   if AValue then begin
@@ -325,6 +215,7 @@ begin
   FLine.SetShapeLine(PointF(Width*0.1, Height*0.60), PointF(Width*0.9, Height*0.60));
   FLine.LineWidth := ScaleH(4);
   FLine.LineColor := BGRA(88,65,45);
+  FLine.Visible := FGameDescriptor.StepCount > 1;
 
   // steps
   FSteps := NIL;
@@ -391,7 +282,8 @@ begin
   FKeyboardToButton.AddLineOfButtons([BChallenge]);
   FKeyboardToButton.AddLineOfButtons(A);
   FKeyboardToButton.AddLineOfButtons([BBack, BStart]);
-  FKeyboardToButton.Select(BStart); end;
+  FKeyboardToButton.Select(BStart);
+end;
 
 procedure TPanelChooseGameStep.RemoveStartButton;
 begin
@@ -451,6 +343,12 @@ begin
   end else if Sender = BMermaidPort then begin
     s := sMermaidsPort;
     hint := sMermaidsPortHint;
+  end else if Sender = BSnakeFissure then begin
+    s := sSnakeFissure;
+    hint := sSnakeFissureHint;
+  end else if Sender = BCastle then begin
+    s := sWolfCastle;
+    hint := sWolfCastleHint;
   end;
   FLabelPlaceOnTheMap.Caption := s;
   FLabelPlaceOnTheMap.CenterX := ScaleW(687);
@@ -568,6 +466,28 @@ begin
     LastGameClicked := gomMermaidPort;
     exit;
   end;
+
+  if s = '' then
+    if not PlayerInfo.MermaidsPort.IsTerminated then s := sFirstCompleteMermaidsPort;
+
+  if Sender = BSnakeFissure then begin
+    UnableMouseInteractionOnMapObjects(False);
+    FPanelChooseGameStep := TPanelChooseGameStep.Create(texSnakeFissure, texLRIcon, PlayerInfo.SnakeFissure, 150, ' ');
+    _ShowPanelChooseGameStep;
+    LastGameClicked := gomSnakeFissure;
+    exit;
+  end;
+
+  if s = '' then
+    if not PlayerInfo.SnakeFissure.IsTerminated then s := sFirstCompleteSnakeFissure;
+
+  if Sender = BCastle then begin
+    UnableMouseInteractionOnMapObjects(False);
+    FPanelChooseGameStep := TPanelChooseGameStep.Create(texCastle, texLRIcon, PlayerInfo.WolfCastle, 160, sLetsGo);
+    _ShowPanelChooseGameStep;
+    LastGameClicked := gomWolfCastle;
+    exit;
+  end;
 end;
 
 procedure TScreenMap.ShowLastGameStepPanel;
@@ -578,6 +498,8 @@ begin
     gomVolcano: ProcessButtonClick(BVolcano);
     gomPlainOfSleepingMoon: ProcessButtonClick(BPlainMoon);
     gomMermaidport: ProcessButtonClick(BMermaidPort);
+    gomSnakeFissure: ProcessButtonClick(BSnakeFissure);
+    gomWolfCastle: ProcessButtonClick(BCastle);
   end;
 end;
 
@@ -592,7 +514,11 @@ begin
   else
   if PlayerInfo.PlainMoon.FirstTimeTerminated then FTargetButtonForFireworkAnim := BPlainMoon
   else
-  if PlayerInfo.MermaidsPort.FirstTimeTerminated then FTargetButtonForFireworkAnim := BMermaidport;
+  if PlayerInfo.MermaidsPort.FirstTimeTerminated then FTargetButtonForFireworkAnim := BMermaidport
+  else
+  if PlayerInfo.SnakeFissure.FirstTimeTerminated then FTargetButtonForFireworkAnim := BSnakeFissure
+  else
+  if PlayerInfo.WolfCastle.FirstTimeTerminated then FTargetButtonForFireworkAnim := BCastle;
 
   Result := FTargetButtonForFireworkAnim <> NIL;
   if Result then begin
@@ -603,6 +529,10 @@ end;
 
 procedure TScreenMap.SetLRIconPositionOnGameToPlay;
 begin
+  if PlayerInfo.SnakeFissure.IsTerminated then FIconLR.SetCenterCoordinate(BCastle.CenterX, BCastle.CenterY)
+  else
+  if PlayerInfo.MermaidsPort.IsTerminated then FIconLR.SetCenterCoordinate(BSnakeFissure.CenterX, BSnakeFissure.CenterY)
+  else
   if PlayerInfo.PlainMoon.IsTerminated then FIconLR.SetCenterCoordinate(BMermaidPort.CenterX, BMermaidPort.CenterY)
   else
   if PlayerInfo.Volcano.IsTerminated then FIconLR.SetCenterCoordinate(BPlainMoon.CenterX, BPlainMoon.CenterY)
@@ -635,6 +565,7 @@ begin
   texZipLinePeaksCableToVolcano := aAtlas.AddFromSVG(SpriteMapFolder+'ZipLinePeaksCableToVolcano.svg', ScaleW(137), -1);
   texPlainOfSleepingMoon := aAtlas.AddFromSVG(SpriteMapFolder+'MapPlainOfSleepingMoon.svg', ScaleW(211), -1);
   texFactory := aAtlas.AddFromSVG(SpriteMapFolder+'MapFactory.svg', ScaleW(159), -1);
+  texSnakeFissure := aAtlas.AddFromSVG(SpriteMapFolder+'SnakeFissure.svg', ScaleW(107), -1);
 
   // castle island
   texMapCastleFW := aAtlas.AddFromSVG(SpriteMapFolder+'MapCastleFW.svg', ScaleW(170), -1);
@@ -729,7 +660,7 @@ begin
   // castle island
   o := TSprite.Create(texMapCastleFW, False);
   FScene.Add(o, LAYER_BG2);
-  o.SetCoordinate(ScaleW(752), ScaleH(168));
+  o.SetCoordinate(ScaleW(827), ScaleH(168));
 
   o1 := TSprite.Create(texMapCastleFW, False);
   o.AddChild(o1, -3);
@@ -761,7 +692,7 @@ begin
 
   // seagulls
   for i:=0 to 7 do
-    TSeagull.Create(LAYER_FXANIM);
+    TSeagullFlyInRectangle.Create(LAYER_FXANIM);
 
   // button workshop
   BWorkShop := CreateImageButton(texLRHome);
@@ -807,10 +738,19 @@ begin
   BMermaidPort := CreateImageButton(texFactory);
   BMermaidPort.SetCoordinate(ScaleW(516), ScaleH(184));
 
+  // button snake fissure
+  BSnakeFissure := CreateImageButton(texSnakeFissure);
+  BSnakeFissure.SetCoordinate(ScaleW(714), ScaleH(234));
+  with TQuad4Color.Create(FScene) do begin
+    SetChildOf(BSnakeFissure, 1);
+    SetSize(BSnakeFissure.Width, BSnakeFissure.Height);
+    SetAllColorsTo(BGRA(4,83,177));
+    Opacity.Value := 100;
+  end;
+
   // Wolf castle
-  o := TSprite.Create(texCastle, False);
-  FScene.Add(o, LAYER_GROUND);
-  o.SetCoordinate(ScaleW(783), ScaleH(186));
+  BCastle := CreateImageButton(texCastle);
+  BCastle.SetCoordinate(ScaleW(859), ScaleH(186));
 
   // icon LR
   FIconLR := TSprite.Create(texLRIcon, False);
@@ -960,6 +900,13 @@ begin
         else FScene.RunScreen(ScreenMermaidsPort);
       end;
     end;
+    150: begin
+      case PlayerInfo.SnakeFissure.StepPlayed of
+        1: FScene.RunScreen(ScreenSnakeFissureIntro);
+        else FScene.RunScreen(ScreenSnakeFissure);
+      end;
+    end;
+    160: FScene.RunScreen(ScreenWolfCastle);
   end;
 end;
 
@@ -1010,6 +957,8 @@ begin
   BVolcano.MouseInteractionEnabled := aValue;
   BPlainMoon.MouseInteractionEnabled := aValue;
   BMermaidPort.MouseInteractionEnabled := aValue;
+  BSnakeFissure.MouseInteractionEnabled := aValue;
+  BCastle.MouseInteractionEnabled := aValue;
   BMainMenu.MouseInteractionEnabled := aValue;
 end;
 

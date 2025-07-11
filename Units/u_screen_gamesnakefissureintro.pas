@@ -1,4 +1,4 @@
-unit u_screen_gamemermaidsseaside;
+unit u_screen_gamesnakefissureintro;
 
 {$mode ObjFPC}{$H+}
 
@@ -14,9 +14,9 @@ uses
 type
 
 
-{ TScreenMermaidsSeaSide }
+{ TScreenSnakeFissureIntro }
 
-TScreenMermaidsSeaSide = class(TGameScreenTemplate)
+TScreenSnakeFissureIntro = class(TGameScreenTemplate)
 private type TGameState=(gsUndefined, gsRunning);
 var FGameState: TGameState;
   procedure SetGameState(AValue: TGameState);
@@ -29,7 +29,7 @@ private
   procedure CreateLevel;
   procedure CreateBubbleEffect;
 public
-  //procedure DefineSubTextures(aAtlas: TAtlas); override;
+  procedure DefineSubTextures(aAtlas: TAtlas); override;
   procedure CreateObjects; override;
   procedure FreeObjects; override;
   procedure ProcessMessage(UserValue: TUserMessageValue); override;
@@ -38,13 +38,13 @@ public
   property GameState: TGameState read FGameState write SetGameState;
 end;
 
-var ScreenMermaidsSeaSide: TScreenMermaidsSeaSide;
+var ScreenSnakeFissureIntro: TScreenSnakeFissureIntro;
 
 
 implementation
 
 uses Forms, u_app, u_sprite_lr4dir, u_mousepointer, u_screen_map, u_utils,
-  u_resourcestring, u_submarine;
+  u_resourcestring, u_sprite_def2, u_submarine;
 
 type
 
@@ -57,74 +57,58 @@ TPontoon = class(TSprite)
   constructor Create(aX, aY: single; aLayerIndex: integer);
 end;
 
-TWave1 = class(TDeformationGrid)
-private
-  FTime: single;
-public
-  constructor Create(aX, aY: single);
-  procedure ProcessMessage(UserValue: TUserMessageValue); override;
-end;
+{ TSeagull }
 
+TSeagull = class(TSeagullFlyInRectangle)
+  function ComputeHSpeed: single; override;
+  function ComputeVSpeed: single; override;
+  procedure ComputeTimeToChangeY; override;
+  procedure ComputeLeftThresholdX; override;
+  procedure ComputeRightThresholdX; override;
+  procedure ComputeUpThresholdY; override;
+  procedure ComputeDownThresholdY; override;
+end;
 
 var
   texTunnel, texPontoon, texPontoonPillar, texWave1: PTexture;
-  FPausePanel: TInGamePausePanel;
   FAtlas: TAtlas;
   FFontText: TTexturedFont;
   FSubmarine: TSubmarine;
   FLR: TLR4Direction;
 
-{ TWave1 }
-
-constructor TWave1.Create(aX, aY: single);
-const SCALEMIN = 0.15;
-      SCALEMAX = 1.2;
-var sc: single;
+function TSeagull.ComputeHSpeed: single;
 begin
-  inherited Create(texWave1, False);
-  FScene.Add(Self, LAYER_BG3);
-
-  SetCoordinate(aX, aY);
-  SetGrid(2, 4);
-  ApplyDeformation(dtSnakeV);
-  FTime := Random*0.5 + 1.0;
-  SetTimeMultiplicatorOnRow(0, FTime);
-  SetTimeMultiplicatorOnRow(1, FTime);
-  SetTimeMultiplicatorOnRow(2, FTime);
-  FTime := FTime * 2;
-
-  // scale max=1.2 scale min=0.5
-  sc := (aY - ScaleH(474))/ScaleH(296) * (SCALEMAX - SCALEMIN) + SCALEMIN;
-  Scale.Value := PointF(sc, sc);
-  Update(Random);
-  Update(Random);
-  Update(Random);
-  PostMessage(0);
-  PostMessage(10);
+  Result := FScene.Width*0.05+Random*FScene.Width*0.01;
 end;
 
-procedure TWave1.ProcessMessage(UserValue: TUserMessageValue);
+function TSeagull.ComputeVSpeed: single;
 begin
-  case UserValue of
-    0: begin
-      X.ChangeTo(X.Value-ScaledWidth*0.2, FTime, Random(4)+1);
-      Y.ChangeTo(Y.Value+ScaledHeight*0.8, FTime, Random(4)+1);
-      PostMessage(5, FTime);
-    end;
-    5: begin
-      X.ChangeTo(X.Value+ScaledWidth*0.2, FTime, Random(4)+1);
-      Y.ChangeTo(Y.Value-ScaledHeight*0.8, FTime, Random(4)+1);
-      PostMessage(0, FTime);
-    end;
-    10: begin
-      Tint.Value := BGRA(255,255,255);//,Random(100)+150);
-      PostMessage(15, 1.0);
-    end;
-    15: begin
-      Tint.alpha.Value := 0;
-      PostMessage(10, Random);
-    end;
-  end;
+  Result := 0; //Random * PPIScale(30) - PPIScale(15);
+end;
+
+procedure TSeagull.ComputeTimeToChangeY;
+begin
+  FTimeAccu := 3 + Random*3;
+end;
+
+procedure TSeagull.ComputeLeftThresholdX;
+begin
+  FThresholdX := -FScene.Width*0.1;
+end;
+
+procedure TSeagull.ComputeRightThresholdX;
+begin
+  FThresholdX := FScene.Width*1.1;
+end;
+
+procedure TSeagull.ComputeUpThresholdY;
+begin
+  FThresholdY := FScene.Height*0.1;
+end;
+
+procedure TSeagull.ComputeDownThresholdY;
+begin
+  FThresholdY := FScene.Height*0.65;
 end;
 
 { TPontoon }
@@ -159,7 +143,7 @@ begin
   inherited create(FAtlas.RetrieveTextureByFileName('Cloud128x128.png'), False);
   FScene.Add(Self, LAYER_BG2);
   SetSize(ScaleW(255), ScaleH(204));
-  SetCoordinate(aX, aY);
+  SetCoordinate(aX, aY-Height*0.156);
   FlipH := Random > 0.5;
   FlipV := Random > 0.5;
   Speed.X.Value := -(FScene.Width*0.01+Random*FScene.Width*0.01);
@@ -173,24 +157,25 @@ begin
   if RightX <= 0 then X.Value := FScene.Width;
 end;
 
-{ TScreenMermaidsSeaSide }
+{ TScreenSnakeFissureIntro }
 
-procedure TScreenMermaidsSeaSide.SetGameState(AValue: TGameState);
+procedure TScreenSnakeFissureIntro.SetGameState(AValue: TGameState);
 begin
   if FGameState = AValue then exit;
   FGameState := AValue;
 end;
 
-procedure TScreenMermaidsSeaSide.ResetVariables;
+procedure TScreenSnakeFissureIntro.ResetVariables;
 begin
 
 end;
 
-procedure TScreenMermaidsSeaSide.CreateLevel;
+procedure TScreenSnakeFissureIntro.CreateLevel;
 var grad: TGradientRectangle;
   o: TSprite;
   xx, yy, deltay: single;
   wave: TWave1;
+  i: integer;
 begin
   // sky
   grad := TGradientRectangle.Create(FScene);
@@ -209,7 +194,7 @@ begin
   repeat
     xx := Random*FScene.Width*0.1;
     repeat
-      wave := TWave1.Create(xx, yy);
+      wave := TWave1.Create(texWave1, xx, yy, LAYER_BG3);
       xx := xx + ScaleW(80)+Random*wave.ScaledWidth;
     until xx > FScene.Width;
     yy := yy + deltay;
@@ -229,9 +214,12 @@ begin
   o := TSprite.Create(texTunnel, False);
   FScene.Add(o, LAYER_WOLF);
   o.SetCoordinate(ScaleW(-64), ScaleH(537));
+  // seagulls
+  for i:=0 to 15 do
+    TSeagull.Create(LAYER_BG1);
 end;
 
-procedure TScreenMermaidsSeaSide.CreateBubbleEffect;
+procedure TScreenSnakeFissureIntro.CreateBubbleEffect;
 var y: single;
 begin
   FBubbles := TParticleEmitter.Create(FScene);
@@ -239,13 +227,42 @@ begin
   FScene.Add(FBubbles, LAYER_GROUND);
   y := FSubMarine.BottomY-ScaleH(50);
   FBubbles.SetCoordinate(FSubMarine.X.Value, y);
-  FBubbles.SetEmitterTypeLine(PointF(FSubMarine.RightX, y));
+  //FBubbles.SetEmitterTypeLine(PointF(FSubMarine.RightX, y));
+  FBubbles.SetEmitterTypeRectangle(FSubMarine.Width, ScaleH(30));
 end;
 
-procedure TScreenMermaidsSeaSide.CreateObjects;
+procedure TScreenSnakeFissureIntro.DefineSubTextures(aAtlas: TAtlas);
 var path: string;
-  ima: TBGRABitmap;
-  h: integer;
+begin
+  AdditionnalScale := 0.8;
+  LoadLR4DirTextures(aAtlas, False);
+  AdditionnalScale := 1.9;
+  TSubmarine.LoadTexture(aAtlas, AdditionnalScale);
+  AdditionnalScale := 0.3;
+  TSeagull.LoadTexture(aAtlas);
+  AdditionnalScale := 1.0;
+
+  path := FolderSpriteGameMermaidsPort;
+  texTunnel := aAtlas.AddFromSVG(path+'Tunnel.svg', ScaleW(165), -1);
+  texPontoon := aAtlas.AddFromSVG(path+'WoodenPontoon.svg', ScaleW(200), -1);
+  texPontoonPillar := aAtlas.AddFromSVG(path+'WoodenPillar.svg', ScaleW(46), -1);
+  texWave1 := aAtlas.AddFromSVG(path+'SeaWave1.svg', ScaleW(81), -1);
+
+  AddCloud128x128ParticleToAtlas(aAtlas);
+  AddBubbleParticleToAtlas(aAtlas);
+
+  // ui
+  CreateGameFontNumber(aAtlas); // < must be first !
+  // font for button in pause panel
+  FFontText := CreateGameFontText(aAtlas);
+  LoadGameDialogTextures(aAtlas);
+  // load arrow for button panels
+  AddBlueArrowToAtlas(aAtlas);
+  LoadMousePointerTexture(aAtlas);
+end;
+
+procedure TScreenSnakeFissureIntro.CreateObjects;
+var h: integer;
 begin
   FGameState := gsUndefined;
   ResetVariables;
@@ -255,38 +272,7 @@ begin
   FsndSeaWave.Loop := True;
   FsndSeaWave.FadeIn(0.8, 3.0);
 
-  FAtlas := FScene.CreateAtlas;
-  FAtlas.Spacing := 2;
-
-  AdditionnalScale := 0.8;
-  LoadLR4DirTextures(FAtlas, False);
-  AdditionnalScale := 1.9;
-  TSubmarine.LoadTexture(FAtlas, AdditionnalScale);
-  AdditionnalScale := 1.0;
-
-  path := FolderSpriteGameMermaidsPort;
-  texTunnel := FAtlas.AddFromSVG(path+'Tunnel.svg', ScaleW(165), -1);
-  texPontoon := FAtlas.AddFromSVG(path+'WoodenPontoon.svg', ScaleW(200), -1);
-  texPontoonPillar := FAtlas.AddFromSVG(path+'WoodenPillar.svg', ScaleW(46), -1);
-  texWave1 := FAtlas.AddFromSVG(path+'SeaWave1.svg', ScaleW(81), -1);
-
-  AddCloud128x128ParticleToAtlas(FAtlas);
-  AddDustParticleToAtlas(FAtlas);
-
-  // ui
-  CreateGameFontNumber(FAtlas); // < must be first !
-  // font for button in pause panel
-  FFontText := CreateGameFontText(FAtlas);
-  LoadGameDialogTextures(FAtlas);
-  // load arrow for button panels
-  AddBlueArrowToAtlas(FAtlas);
-  LoadMousePointerTexture(FAtlas);
-
-  FAtlas.TryToPack;
-  FAtlas.Build;
-  ima := FAtlas.GetPackedImage;
-  ima.SaveToFile(Application.Location+'Atlas.png');
-  ima.Free;
+  CheckAtlas(FAtlas, 'snakefissureintro.atlas');
 
   CreateLevel;
 
@@ -316,7 +302,7 @@ begin
   PostMessage(50);
 end;
 
-procedure TScreenMermaidsSeaSide.FreeObjects;
+procedure TScreenSnakeFissureIntro.FreeObjects;
 begin
   if FsndSeaWave <> NIL then FsndSeaWave.FadeOutThenKill(1.0);
   FsndSeaWave := NIL;
@@ -335,7 +321,7 @@ begin
   ChallengeMode := False;
 end;
 
-procedure TScreenMermaidsSeaSide.ProcessMessage(UserValue: TUserMessageValue);
+procedure TScreenSnakeFissureIntro.ProcessMessage(UserValue: TUserMessageValue);
 begin
   case UserValue of
     // Dialogs
@@ -375,8 +361,9 @@ begin
       FLR.IdleRight;
       Audio.PlayThenKillSound('spaceship-compartment-doorCLOSE.ogg', 0.6);
       FSubMarine.Posture_Idle(1.0);
-      PostMessage(95, 2.0);
+      PostMessage(92, 2.0);
     end;
+    92: FLR.ShowDialog(sHereTheresANoteOnThe, FFontText, Self, 95);
     95: FLR.ShowDialog(sWellHowToStartIt, FFontText, Self, 100, 1.0);
     100: FLR.ShowDialog(sHereThereIsAButton, FFontText, Self, 105, 1.0);
     105: begin
@@ -445,12 +432,16 @@ begin
       FsndBubble.FadeOut(2.0);
       PostMessage(175, 3.0);
     end;
-    175: FScene.RunScreen(ScreenMap);
+    175: begin
+      PlayerInfo.SnakeFissure.IncCurrentStep;
+      FSaveGame.Save;
+      FScene.RunScreen(ScreenMap);
+    end;
 
   end;
 end;
 
-procedure TScreenMermaidsSeaSide.Update(const aElapsedTime: single);
+procedure TScreenSnakeFissureIntro.Update(const aElapsedTime: single);
 begin
   inherited Update(aElapsedTime);
   // check if player pause the game

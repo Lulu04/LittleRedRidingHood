@@ -32,6 +32,8 @@ uses
   function GetFolderSpritePlainOfSleepingMoon: string;
   function FolderSpritePlainOfSleepingMoonInside: string;
   function FolderSpriteGameMermaidsPort: string;
+  function FolderSpriteSnakeFissure: string;
+  function FolderSpriteWolfCastle: string;
   function FolderSpriteSam: string;
   function FolderSpriteStrikeRaccoon: string;
   function FolderSpriteDartboard: string;
@@ -357,7 +359,7 @@ private
   FCraneRemoteControl: TCraneRemoteControl;
   FRemoteExplanationDone: boolean;
  const
-  MermaidsPortStepCount = 4;  // 1,2,3=crossing the city  4=under sea
+  MermaidsPortStepCount = 3;  // 1,2=crossing the city  3=Marcus 4=enter submarine  5=undersea
   PocketSubmarineMaxLevel = 1;
   CraneRemoteControlMaxLevel = 1;
 public
@@ -373,6 +375,38 @@ public // property not saved
   property RemoteExplanationDone: boolean read FRemoteExplanationDone write FRemoteExplanationDone;
 end;
 
+{ TSnakeFissure }
+
+TSnakeFissure = class(TGameDescriptor)
+private
+  function GetHelpText: string; override;
+private
+ const
+  SnakeFissureStepCount = 2;  // 1=submarine discovery   2=cross the sea
+public
+  constructor Create;
+  destructor Destroy; override;
+  function SaveToString: string; override;
+  procedure LoadFromString(const s: string); override;
+end;
+
+
+{ TWolfCastle }
+
+TWolfCastle = class(TGameDescriptor)
+private
+  function GetHelpText: string; override;
+private
+ const
+  WolfCastleStepCount = 2;  // 1=encounter + dialogs + departure
+public
+  constructor Create;
+  destructor Destroy; override;
+  function SaveToString: string; override;
+  procedure LoadFromString(const s: string); override;
+end;
+
+
 
 { TPlayerInfo }
 
@@ -386,6 +420,8 @@ private
   FVolcano: TVolcanoDescriptor;
   FPlainMoon: TPlainMoonDescriptor;
   FMermaidsPort: TMermaidsPortDescriptor;
+  FSnakeFissure: TSnakeFissure;
+  FWolfCastle: TWolfCastle;
 public
   constructor Create;
   destructor Destroy; override;
@@ -401,6 +437,8 @@ public
   property Volcano: TVolcanoDescriptor read FVolcano;
   property PlainMoon: TPlainMoonDescriptor read FPlainMoon;
   property MermaidsPort: TMermaidsPortDescriptor read FMermaidsPort;
+  property SnakeFissure: TSnakeFissure read FSnakeFissure;
+  property WolfCastle: TWolfCastle read FWolfCastle;
 end;
 
 TPlayerList = class(specialize TFPGObjectList<TPlayerInfo>);
@@ -607,6 +645,16 @@ end;
 function FolderSpriteGameMermaidsPort: string;
 begin
   Result := SpriteFolder+'MermaidsPort'+DirectorySeparator;
+end;
+
+function FolderSpriteSnakeFissure: string;
+begin
+  Result := SpriteFolder+'SnakeFissure'+DirectorySeparator;
+end;
+
+function FolderSpriteWolfCastle: string;
+begin
+  Result := SpriteFolder+'WolfCastle'+DirectorySeparator;
 end;
 
 function FolderSpriteSam: string;
@@ -1213,6 +1261,70 @@ begin
   prop.BooleanValueOf('MarcusEncounterDone', FMarcusEncounterDone, False);
 end;
 
+{ TSnakeFissure }
+
+function TSnakeFissure.GetHelpText: string;
+begin
+  Result := sSnakeFissureInstructions;
+end;
+
+constructor TSnakeFissure.Create;
+begin
+  inherited Create(SnakeFissureStepCount);
+end;
+
+destructor TSnakeFissure.Destroy;
+begin
+  inherited Destroy;
+end;
+
+function TSnakeFissure.SaveToString: string;
+var prop: TProperties;
+begin
+  prop.Init('!');
+  SaveCommonProperties(prop);
+  Result := prop.PackedProperty;
+end;
+
+procedure TSnakeFissure.LoadFromString(const s: string);
+var prop: TProperties;
+begin
+  prop.Split(s, '!');
+  LoadCommonProperties(prop);
+end;
+
+{ TWolfCastle }
+
+function TWolfCastle.GetHelpText: string;
+begin
+  Result := '';
+end;
+
+constructor TWolfCastle.Create;
+begin
+  inherited Create(WolfCastleStepCount);
+end;
+
+destructor TWolfCastle.Destroy;
+begin
+  inherited Destroy;
+end;
+
+function TWolfCastle.SaveToString: string;
+var prop: TProperties;
+begin
+  prop.Init('!');
+  SaveCommonProperties(prop);
+  Result := prop.PackedProperty;
+end;
+
+procedure TWolfCastle.LoadFromString(const s: string);
+var prop: TProperties;
+begin
+  prop.Split(s, '!');
+  LoadCommonProperties(prop);
+end;
+
 { TMountainPeakDescriptor }
 
 function TMountainPeakDescriptor.GetHelpText: string;
@@ -1424,6 +1536,8 @@ begin
   FVolcano := TVolcanoDescriptor.Create;
   FPlainMoon := TPlainMoonDescriptor.Create;
   FMermaidsPort := TMermaidsPortDescriptor.Create;
+  FSnakeFissure := TSnakeFissure.Create;
+  FWolfCastle := TWolfCastle.Create;
 end;
 
 destructor TPlayerInfo.Destroy;
@@ -1438,6 +1552,10 @@ begin
   FPlainMoon := NIL;
   FMermaidsPort.Free;
   FMermaidsPort := NIL;
+  FSnakeFissure.Free;
+  FSnakeFissure := NIL;
+  FWolfCastle.Free;
+  FWolfCastle := NIL;
   inherited Destroy;
 end;
 
@@ -1453,6 +1571,8 @@ begin
   prop.Add('Volcano', Volcano.SaveToString);
   prop.Add('PlainOfSleepingMoon', PlainMoon.SaveToString);
   prop.Add('MermaidsPort', FMermaidsPort.SaveToString);
+  prop.Add('SnakeFissure', SnakeFissure.SaveToString);
+  prop.Add('WolfCastle', FWolfCastle.SaveToString);
   Result := prop.PackedProperty;
 end;
 
@@ -1475,6 +1595,10 @@ begin
   PlainMoon.LoadFromString(st);
   prop.StringValueOf('MermaidsPort', st, '');
   MermaidsPort.LoadFromString(st);
+  prop.StringValueOf('SnakeFissure', st, '');
+  SnakeFissure.LoadFromString(st);
+  prop.StringValueOf('WolfCastle', st, '');
+  WolfCastle.LoadFromString(st);
 end;
 
 { TSaveGame }
@@ -1576,7 +1700,7 @@ begin
 end;
 
 function TSaveGame.GetLanguageCharSet: string;
-const symbols: string='%$*-+_/=!?:,.''()#&->|←→↑↓œ';
+const symbols: string='%$*-+_/=!?:,.''"()#&->|←→↑↓œ';
 begin
   Result := '';
   case FLanguage of
