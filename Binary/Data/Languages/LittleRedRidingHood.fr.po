@@ -132,6 +132,10 @@ msgstr "achète de nouveaux équipements dans ton atelier"
 msgid "you need to buy the zip line first!"
 msgstr "vous devez tout d'abord acheter la tyrolienne !"
 
+#: u_resourcestring.sbye
+msgid "Bye"
+msgstr "Bye"
+
 #: u_resourcestring.scancel
 msgid "CANCEL"
 msgstr "ANNULER"
@@ -268,6 +272,10 @@ msgstr "augmente la vitesse"
 msgid "ENTER YOUR NAME"
 msgstr "ENTRE TON NOM"
 
+#: u_resourcestring.serallrightiwont
+msgid "Er... All right. And you, don't tell anyone you saw me, okay?"
+msgstr "Heu... D'accord. Et vous, ne dites à personne que vous m'avez vu, d'accord ?"
+
 #: u_resourcestring.serase
 msgid "ERASE"
 msgstr "EFFACER"
@@ -296,6 +304,10 @@ msgstr "ÉCHEC"
 msgid "Failed to open the door. I'll open the cage, so I'll still have opened something..."
 msgstr "Échec d'ouverture de la porte. Je vais ouvrir la cage, comme ça j'aurai quand même ouvert quelque chose..."
 
+#: u_resourcestring.sfatherofwolfs
+msgid "Father of wolfs"
+msgstr "Père des loups"
+
 #: u_resourcestring.sfinally
 msgid "Finally!"
 msgstr "Enfin!"
@@ -304,22 +316,30 @@ msgstr "Enfin!"
 msgid "you must first complete the pine forest!"
 msgstr "vous devez d'abord compléter la Forêt de Pins !"
 
+#: u_resourcestring.sfirstcompletemermaidsport
+msgid "you must first complete the Mermaids Port!"
+msgstr "tu dois d'abord compléter le Port des Sirènes!"
+
 #: u_resourcestring.sfirstcompletemountainpeaks
 msgctxt "u_resourcestring.sfirstcompletemountainpeaks"
 msgid "you must first complete the mountain peaks!"
 msgstr "vous devez d'abord compléter les Pics Montagneux !"
 
 #: u_resourcestring.sfirstcompleteplainmoon
-msgid "you must first complete Plain of the Sleeping Moon!"
+msgid "you must first complete the Plain of the Sleeping Moon!"
 msgstr "tu dois d'abord compléter la Plaine de la Lune Endormie !"
+
+#: u_resourcestring.sfirstcompletesnakefissure
+msgid "you must first complete the Snake Fissure!"
+msgstr "tu dois d'abord compléter la Faille du Serpent !"
 
 #: u_resourcestring.sfirstcompletethegamemode
 msgid "first, complete the game mode"
 msgstr "d'abord, termines le mode jeu"
 
 #: u_resourcestring.sfirstcompletevolcano
-msgid "you must first complete Volcano!"
-msgstr "vous devez d'abord compléter Volcano !"
+msgid "you must first complete the Volcano!"
+msgstr "tu dois d'abord compléter Volcano !"
 
 #: u_resourcestring.sfirstupgradetothemaxthebowelevator
 msgid "to access the challenge, you must first, upgrade to the max the bow, the elevator, the hammer and the lightning storm"
@@ -328,6 +348,10 @@ msgstr "pour accéder au défi tu dois d'abord améliorer au maxi l'arc, l'ascen
 #: u_resourcestring.sfor
 msgid "for"
 msgstr "contre"
+
+#: u_resourcestring.sforbiddingpeopletolove
+msgid "Forbidding people to love each other... It's a funny rule..."
+msgstr "Interdire aux gens de s'aimer... C'est un drôle de règlement..."
 
 #: u_resourcestring.sforestchallengehelptext
 msgid "will you win this challenge?"
@@ -421,6 +445,16 @@ msgstr "Amuses-toi bien!"
 msgid "Here! there's a button marked Start"
 msgstr "Ici ! Il y a un bouton marqué Démarrage"
 
+#: u_resourcestring.sheretheresanoteonthe
+msgid ""
+"There's a note on the dashboard. It says:\n"
+"\"This submarine will take you to the island. It runs with blue crystals, but its reserve is small. If you try to cross directly, you'll break down in the middle of the sea. The only way is to go through the Snake's Fissure: there you'll find crystals to refill your tank. Don't worry, there's no snake - it's the shape that gives it its name. Good luck!\"\n"
+"Signed Marcus."
+msgstr ""
+"Il y a une note sur le tableau de bord. ça dit:\n"
+"\"Ce sous-marin te mènera sur l'île. Il fonctionne avec des cristaux bleus mais sa réserve est petite. Si tu essais de traverser directement, tu tomberas en panne au milieu de la mer. Le seul moyen est de passer par la Faille du Serpent: là tu trouveras des cristaux pour remplir ton réservoir. N'est pas peur, il n'y a pas de serpent, c'est sa forme qui lui a donné son nom. Bonne chance!\"\n"
+"C'est signé Marcus."
+
 #: u_resourcestring.shereyoucanexchange
 msgid "Here you can exchange your coins for certain items."
 msgstr "Ici tu peux échanger tes pièces contre certains articles."
@@ -465,6 +499,10 @@ msgstr "Ça, je n'en sais rien. Je ne m'occupe pas des affaires de mes parents."
 msgid "I don't know where it's going, but I have a feeling it's going to bring me closer to Granny. No time to lose!"
 msgstr "Je ne connaît pas sa destination mais j'ai le sentiment qu'il va me rapprocher de grand-mère. Pas de temps à perdre !"
 
+#: u_resourcestring.siftheyfoundoutwed
+msgid "If they found out, we'd be fired and have a hard time finding another job."
+msgstr "S'ils s'en aperçoivent, nous serions virés et nous aurions beaucoup de mal pour retrouver un travail."
+
 #: u_resourcestring.sifyouwanttojoinyour
 msgid "If you want to join your grandmother, you'll have to go to the castle."
 msgstr "Si tu veux rejoindre ta grand-mère, il faudra aller au château."
@@ -485,6 +523,14 @@ msgstr "Je dois aller sur l'île. Ta sœur m'a dit que je trouverai un moyen de 
 msgid "I hear someone behind the door. quick! I have to hide!"
 msgstr "J'entends quelqu'un derrière la porte. Vite ! Je dois me cacher !"
 
+#: u_resourcestring.sihearvoices
+msgid "I hear voices..."
+msgstr "J'entends des voix..."
+
+#: u_resourcestring.sihopeforyou
+msgid "I hope for you."
+msgstr "Je vous le souhaite."
+
 #: u_resourcestring.siknewyoucoulddoit
 msgid "I knew you could do it, congratulations!"
 msgstr "Je savais que tu y arriverais, félicitations !"
@@ -500,6 +546,10 @@ msgstr "Je vais t'aider à mon tour, tu le mérites. Suis-moi s'il te plaît."
 #: u_resourcestring.silovecommingtosee
 msgid "I love coming to see Granny..."
 msgstr "J'aime bien venir voir Mamie..."
+
+#: u_resourcestring.simfinallyontheisland
+msgid "I'm finally on the island!"
+msgstr "Je suis enfin sur l'île !"
 
 #: u_resourcestring.simisshimtoo
 msgid "I miss him too..."
@@ -598,6 +648,14 @@ msgctxt "u_resourcestring.slasergunexplanation"
 msgid "a laser gun effective only against machines"
 msgstr "un pistolet laser efficace seulement contre les machines"
 
+#: u_resourcestring.sletsgo
+msgid "Let's go!"
+msgstr "Allons-y !"
+
+#: u_resourcestring.sletsgotothecastle
+msgid "Let's go to the castle..."
+msgstr "Allons au château..."
+
 #: u_resourcestring.sletslookatthelandscape
 msgid "Let's look at the landscape for a moment, shall we?"
 msgstr "Regardons le paysage un moment, tu veux bien ?"
@@ -681,8 +739,13 @@ msgstr ""
 "Garde ACTION2 appuyé et utilise ←→↑↓ pour le déplacer."
 
 #: u_resourcestring.smermaidsporthint
-msgid "don't forget your swimsuit!"
-msgstr "n'oubli pas ton maillot !"
+msgctxt "u_resourcestring.smermaidsporthint"
+msgid "factories as far as the eye can see!"
+msgstr "des usines à pertes de vue!"
+
+#: u_resourcestring.smotherofwolfs
+msgid "Mother of wolfs"
+msgstr "Mère des loups"
 
 #: u_resourcestring.smountainpeakhelptext
 msgid ""
@@ -759,7 +822,7 @@ msgstr "...sans commentaire..."
 
 #: u_resourcestring.snoideayouaresmart
 msgid "No idea! You're smart, you'll find a way on your own."
-msgstr "Aucune idée ! Tu es maligne, tu trouveras bien un moyen toute seule."
+msgstr "Aucune idée ! Tu es maline, tu trouveras bien un moyen toute seule."
 
 #: u_resourcestring.snotreepoint
 msgid "No..."
@@ -784,6 +847,10 @@ msgstr "Oh, ne t'inquiètes pas, je peux en avoir tant que je veux !"
 #: u_resourcestring.sok
 msgid "OK"
 msgstr "OK"
+
+#: u_resourcestring.sokay
+msgid "Okay..."
+msgstr "D'accord..."
 
 #: u_resourcestring.sokdoyouknownwhereicanfindaboat
 msgid "Ok... Do you know where I can find a boat?"
@@ -813,6 +880,10 @@ msgstr "OPTIONS"
 msgid "Oups..."
 msgstr "Oups..."
 
+#: u_resourcestring.soutofcristals
+msgid "OUT OF CRISTAL!"
+msgstr "RÉSERVOIR VIDE !"
+
 #: u_resourcestring.soutofgas
 msgid "OUT OF GAS"
 msgstr "PLUS DE GAZ"
@@ -824,6 +895,10 @@ msgstr "PLUS DE TEMPS"
 #: u_resourcestring.spause
 msgid "PAUSE"
 msgstr "PAUSE"
+
+#: u_resourcestring.sperhapsthatwillchange
+msgid "Perhaps that will change with time..."
+msgstr "Peut-être que cela changera avec le temps..."
 
 #: u_resourcestring.spfffhecouldhave
 msgid "Pfff, he could have dropped me off on the island!"
@@ -967,9 +1042,36 @@ msgstr "Mmm... ça sent bon!"
 msgid "smooth arrival bonus"
 msgstr "bonus d'arrivée en douceur"
 
+#: u_resourcestring.ssnakefissure
+msgid "The Snake Fissure"
+msgstr "La Faille du Serpent"
+
+#: u_resourcestring.ssnakefissurehint
+msgctxt "u_resourcestring.ssnakefissurehint"
+msgid "don't forget your swimsuit and buoy!"
+msgstr "n'oubli pas ton maillot et ta bouée !"
+
+#: u_resourcestring.ssnakefissureinstructions
+msgid ""
+"Use the submarine capabilities to cross the fissure\n"
+"Avoids contact with mines, they are fatals!\n"
+"Warning: each action consumes blue crystals!\n"
+"←→↑↓ : move the submarine\n"
+"MOUSE to press the buttons on dashboard"
+msgstr ""
+"Utilisez les capacités du sous-marin pour traverser la faille\n"
+"Évitez tout contact avec les mines !\n"
+"Attention: chaque action consomme des cristaux bleus\n"
+"←→↑↓ : déplacer le sous-marin\n"
+"SOURIS : presser les boutons du tableau de bord"
+
 #: u_resourcestring.ssoareyouin
 msgid "So, are you in?"
 msgstr "Alors, tu es partante ?"
+
+#: u_resourcestring.ssomeonehere
+msgid "Someone's here!"
+msgstr "Il y a quelqu'un !"
 
 #: u_resourcestring.ssorrynotyetavailable
 msgid "Sorry, this game is not yet available..."
@@ -1054,6 +1156,10 @@ msgstr "Merci Dino, je suis contente de te connaître. J'espère qu'on se reverr
 #: u_resourcestring.sthankyouforyourhelp
 msgid "Thank you for your help."
 msgstr "Merci pour ton aide."
+
+#: u_resourcestring.sthecompanywework
+msgid "The company we work for prohibits romantic relationships between employees."
+msgstr "L'entreprise dans laquelle nous travaillons interdit les relations amoureuses entre employés."
 
 #: u_resourcestring.sthehigheryourscore
 msgid "The higher your score, the more articles you earn!"
@@ -1162,6 +1268,10 @@ msgstr ""
 "Bienvenue chez Sam!\n"
 "Cliques sur moi pour avoir des explications"
 
+#: u_resourcestring.swellgottago
+msgid "Well... Gotta go. Bye!"
+msgstr "Bon, ben... Je dois y aller. Bye!"
+
 #: u_resourcestring.swellhowtostartit
 msgid "Well... How to start it?"
 msgstr "Bon... Comment le démarrer?"
@@ -1170,9 +1280,17 @@ msgstr "Bon... Comment le démarrer?"
 msgid "When your grandpa was still around, we often had barbecues; he loved that!"
 msgstr "Quand ton papi était encore là, nous en faisions souvent des barbecues, il adorait ça!"
 
+#: u_resourcestring.swhosthereshow
+msgid "Who's there? Show yourselves!"
+msgstr "Qui est là ? Montrez-vous!"
+
 #: u_resourcestring.swhy
 msgid "Why?"
 msgstr "Pourquoi ?"
+
+#: u_resourcestring.swhyareyouhiding
+msgid "Why are you hiding?"
+msgstr "Pourquoi vous cachez-vous?"
 
 #: u_resourcestring.swillgorightnow
 msgid "I'll go right now, Granny!"
@@ -1185,6 +1303,14 @@ msgstr "Est-ce qu'ils vont quitter le château ?"
 #: u_resourcestring.swolf
 msgid "Wolf"
 msgstr "Loup"
+
+#: u_resourcestring.swolfcastle
+msgid "The Wolf Castle"
+msgstr "Le Château des Loups"
+
+#: u_resourcestring.swolfcastlehint
+msgid "will you dare to throw yourself into the wolf's den?"
+msgstr "oseras-tu te jeter dans la gueule du loup ?"
 
 #: u_resourcestring.swolfinthecave
 msgid "Wolf in the cave"
@@ -1253,6 +1379,10 @@ msgstr "Oui... Le temps passe. Il me manque..."
 #: u_resourcestring.syoucanalsowinitems
 msgid "You can also win coins or items by playing the games."
 msgstr "Tu peux aussi gagner des pièces ou des articles en jouant aux jeux."
+
+#: u_resourcestring.syoudonttellanyone
+msgid "You?! Uh... don't tell anyone you saw us, okay?"
+msgstr "Vous ?! Heu... Ne dites à personne que vous nous avez vu, d'accord ?"
 
 #: u_resourcestring.syoulose
 msgctxt "u_resourcestring.syoulose"

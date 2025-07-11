@@ -53,11 +53,12 @@ end;
 // aJumpStep: 0=up  1=down  2=jump is done
 TCallbackDoOnJumpMove = procedure(aDuration: single; aJumpStep: integer) of object;
 
+TMovingDirection = (mdNone=0, mdLeft, mdRight, mdUp, mdDown,
+                                 mdLeftDown, mdLeftUp, mdRightDown, mdRightUp);
 { TWalkingCharacter }
 
 TWalkingCharacter = class(TBaseComplexContainer)
-private type TMovingDirection = (mdNone=0, mdLeft, mdRight, mdUp, mdDown,
-                                 mdLeftDown, mdLeftUp, mdRightDown, mdRightUp);
+//private type
 private
   FMovingDirection: TMovingDirection;
   FTargetPoint: TPointF;
@@ -72,9 +73,15 @@ protected
 public
   procedure Update(const aElapsedTime: single); override;
   procedure PostMessageToTargetObject(aTarget: TObject; aMessageValue: TUserMessageValue; aDelay: single);
+public // walk utils
   procedure CheckHorizontalMoveToX(aX: single; aMessageReceiver: TObject; aMessageValueWhenFinish: TUserMessageValue; aDelay: single=0);
   procedure CheckVerticalMoveToY(aY: single; aMessageReceiver: TObject; aMessageValueWhenFinish: TUserMessageValue; aDelay: single=0);
   procedure CheckMoveTo(aX, aY: single; aMessageReceiver: TObject; aMessageValueWhenFinish: TUserMessageValue; aDelay: single=0);
+  procedure EndOfWalk_SendMessageToScreen;
+  procedure EndOfWalk_SendMessageToSurface;
+  property MovingDirection: TMovingDirection read FMovingDirection;
+  property WalkingTargetPoint: TPointF read FTargetPoint;
+
   // allow to control the speed of arms/legs/etc... when the character moves.
   property TimeMultiplicator: single read FTimeMultiplicator write SetTimeMultiplicator;
   // in pixel/sec
@@ -651,6 +658,16 @@ begin
   FMessageReceiver := aMessageReceiver;
   FMessageValueWhenFinish := aMessageValueWhenFinish;
   FDelay := aDelay;
+end;
+
+procedure TWalkingCharacter.EndOfWalk_SendMessageToScreen;
+begin
+  TScreenTemplate(FMessageReceiver).PostMessage(FMessageValueWhenFinish, FDelay);
+end;
+
+procedure TWalkingCharacter.EndOfWalk_SendMessageToSurface;
+begin
+  TSimpleSurfaceWithEffect(FMessageReceiver).PostMessage(FMessageValueWhenFinish, FDelay);
 end;
 
 procedure TWalkingCharacter.ApplyTint(const aColor: TBGRAPixel);

@@ -50,7 +50,7 @@ implementation
 
 uses Forms, u_screen_map, u_app, u_utils, Math, u_sprite_lr4dir, u_sprite_wolf,
   u_gamebackground, u_mousepointer, u_resourcestring, u_sprite_def,
-  u_sprite_def2, u_screen_gamemermaidsseaside, Graphics;
+  u_sprite_def2, Graphics;
 
 const FACTORY1_SCALE = 2.0;
       FACTORY2_SCALE = 1.5;
@@ -1666,7 +1666,7 @@ begin
     587: begin
       PlayerInfo.MermaidsPort.IncCurrentStep;
       FSaveGame.Save;
-      FScene.RunScreen(ScreenMermaidsSeaSide);
+      FScene.RunScreen(ScreenMap); //ScreenMermaidsSeaSide);
     end;
 
     // LR LOSE

@@ -30,7 +30,7 @@ private
   procedure UpdateVolumeOnSounds;
   procedure UpdateVolumeOnMusic;
 private // effets that can be applyed to sounds/musics
-  FReverbShort, FReverbLong: TALSEffect;
+  FReverbShort, FReverbLong, FReverbUnderWater: TALSEffect;
   procedure CreateEffects;
   procedure DestroyEffects;
 private // persistent sounds
@@ -76,6 +76,7 @@ public
 
   property FXReverbShort: TALSEffect read FReverbShort;
   property FXReverbLong: TALSEffect read FReverbLong;
+  property FXReverbUnderWater: TALSEffect read FReverbUnderWater;
 
   procedure SetListenerPosition(aX, aY: single; aZ: single=0.0);
   procedure ResetPositionListener;
@@ -159,12 +160,16 @@ begin
 
   FReverbLong := FPlayback.CreateEffect(AL_EFFECT_EAXREVERB, EFX_REVERB_PRESET_CONCERTHALL);
   FReverbLong.ApplyDistanceAttenuation := True;
+
+  FReverbUnderWater := FPlayback.CreateEffect(AL_EFFECT_EAXREVERB, EFX_REVERB_PRESET_UNDERWATER);
+  FReverbUnderWater.ApplyDistanceAttenuation := True;
 end;
 
 procedure TAudioManager.DestroyEffects;
 begin
   FPlayback.DeleteEffect(FReverbShort);
   FPlayback.DeleteEffect(FReverbLong);
+  FPlayback.DeleteEffect(FReverbUnderWater);
 end;
 
 constructor TAudioManager.Create;

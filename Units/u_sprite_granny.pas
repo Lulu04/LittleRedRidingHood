@@ -26,12 +26,15 @@ public
   procedure SetMouthHurt;
 end;
 
-TGrannyState = (gsUnknown, gsIdle, gsCooking, gsKidnapped);
+TGrannyState = (gsUnknown, gsIdle, gsCooking, gsKidnapped,
+                gsWalking);
 TGranny = class(TCharacterWithDialogPanel)
 private
   FFork: TSprite;
   FState: TGrannyState;
+  FWalkingStep: integer;
   procedure SetState(AValue: TGrannyState);
+  function GetWalkingDeltaPixelPerStep: integer;
 protected
   procedure SetFlipH(AValue: boolean); override;
   procedure SetFlipV(AValue: boolean); override;
@@ -40,10 +43,18 @@ public
   Head: TGrannyHead;
   Dress, LeftArm, RightArm, LeftLeg, RightLeg: TSprite;
   constructor Create(aLayerIndex: integer);
+  procedure Update(const aElapsedTime: single); override;
   procedure ProcessMessage(UserValue: TUserMessageValue); override;
+  procedure Posture_Idle(aDuration: single=0.5);
+  procedure Posture_Walking1(aDuration: single=0.5);
+  procedure Posture_Walking2(aDuration: single=0.5);
+  procedure Posture_Walking3(aDuration: single=0.5);
+  procedure Posture_Walking4(aDuration: single=0.5);
+public
   procedure SetIdlePosition(aImmediate: boolean);
   procedure SetCookingAnim;
   procedure SetKidnapedPosition;
+  procedure WalkHorizontallyTo(aX: single; aTargetScreen: TScreenTemplate; aMessageValueWhenFinish: TUserMessageValue; aDelay: single=0);
   property State: TGrannyState read FState write SetState;
 end;
 
@@ -79,7 +90,14 @@ begin
     gsIdle: SetIdlePosition(False);
     gsCooking: PostMessage(100);
     gsKidnapped: SetKidnapedPosition;
+    gsWalking: PostMessage(200);
   end;
+end;
+
+function TGranny.GetWalkingDeltaPixelPerStep: integer;
+begin
+  Result := Round(FScene.Width*0.1);
+  if FlipH then Result := -Result;
 end;
 
 procedure TGranny.SetFlipH(AValue: boolean);
@@ -161,6 +179,20 @@ begin
   State := gsIdle;
 end;
 
+procedure TGranny.Update(const aElapsedTime: single);
+begin
+  inherited Update(aElapsedTime);
+
+  // check the end of a walk
+  if State = gsWalking then
+    if ((MovingDirection = mdLeft) and (X.Value <= WalkingTargetPoint.x)) or
+       ((MovingDirection = mdRight) and (X.Value >= WalkingTargetPoint.x)) then begin
+      X.Value := WalkingTargetPoint.x;
+      State := gsIdle;
+      EndOfWalk_SendMessageToScreen;
+    end;
+end;
+
 procedure TGranny.ProcessMessage(UserValue: TUserMessageValue);
 var d: single;
 begin
@@ -214,7 +246,136 @@ begin
       LeftArm.Angle.ChangeTo(-80+Random*2.5-5, 1.0*TimeMultiplicator, idcSinusoid);
       PostMessage(120, 0.5+Random*0.5);
     end;
+
+    // walking anim
+    200: begin
+      if State <> gsWalking then exit;
+      case FWalkingStep of
+        0: Posture_Walking1(1.0);
+        1: Posture_Walking2(1.0);
+        2: Posture_Walking3(1.0);
+        3: Posture_Walking4(1.0);
+      end;
+      inc(FWalkingStep);
+      if FWalkingStep = 4 then FWalkingStep := 0;
+      X.ChangeTo(x.Value+GetWalkingDeltaPixelPerStep, 1.0, idcSinusoid);
+      PostMessage(200, 1.0);
+    end;
+
   end;
+end;
+
+procedure TGranny.Posture_Idle(aDuration: single);
+begin
+  Dress.MoveTo(-0.509*Dress.Width, -0.985*Dress.Height, aDuration, idcSinusoid);
+  Dress.Angle.ChangeTo(0, aDuration, idcSinusoid);
+  Dress.Scale.ChangeTo(PointF(1.0, 1.0), aDuration, idcSinusoid);
+  RightArm.MoveTo(0.246*Dress.Width, 0.037*Dress.Height, aDuration, idcSinusoid);
+  RightArm.Angle.ChangeTo(0, aDuration, idcSinusoid);
+  RightArm.Scale.ChangeTo(PointF(1.0, 1.0), aDuration, idcSinusoid);
+  LeftArm.MoveTo(0.509*Dress.Width, 0.059*Dress.Height, aDuration, idcSinusoid);
+  LeftArm.Angle.ChangeTo(-45.555, aDuration, idcSinusoid);
+  LeftArm.Scale.ChangeTo(PointF(1.0, 1.0), aDuration, idcSinusoid);
+  Head.MoveTo(-0.086*Dress.Width, -1.119*Dress.Height, aDuration, idcSinusoid);
+  Head.Angle.ChangeTo(0, aDuration, idcSinusoid);
+  Head.Scale.ChangeTo(PointF(1.0, 1.0), aDuration, idcSinusoid);
+  FFork.MoveTo(0.400*RightArm.Width, 0.900*RightArm.Height, aDuration, idcSinusoid);
+  FFork.Angle.ChangeTo(0, aDuration, idcSinusoid);
+  FFork.Scale.ChangeTo(PointF(1.0, 1.0), aDuration, idcSinusoid);
+  LeftLeg.MoveTo(0.173*LeftLeg.Width, -0.246*LeftLeg.Height, aDuration, idcSinusoid);
+  LeftLeg.Angle.ChangeTo(0, aDuration, idcSinusoid);
+  LeftLeg.Scale.ChangeTo(PointF(1.0, 1.0), aDuration, idcSinusoid);
+  RightLeg.MoveTo(-0.564*RightLeg.Width, -0.223*RightLeg.Height, aDuration, idcSinusoid);
+  RightLeg.Angle.ChangeTo(0, aDuration, idcSinusoid);
+  RightLeg.Scale.ChangeTo(PointF(1.0, 1.0), aDuration, idcSinusoid);
+end;
+
+procedure TGranny.Posture_Walking1(aDuration: single);
+begin
+  Dress.MoveTo(-0.509*Dress.Width, -0.985*Dress.Height, aDuration, idcSinusoid);
+  Dress.Angle.ChangeTo(0, aDuration, idcSinusoid);
+  Dress.Scale.ChangeTo(PointF(1.0, 1.0), aDuration, idcSinusoid);
+  RightArm.MoveTo(0.246*Dress.Width, 0.037*Dress.Height, aDuration, idcSinusoid);
+  RightArm.Angle.ChangeTo(9.580, aDuration, idcSinusoid);
+  RightArm.Scale.ChangeTo(PointF(1.0, 1.0), aDuration, idcSinusoid);
+  LeftArm.MoveTo(0.509*Dress.Width, 0.059*Dress.Height, aDuration, idcSinusoid);
+  LeftArm.Angle.ChangeTo(-45.555, aDuration, idcSinusoid);
+  LeftArm.Scale.ChangeTo(PointF(1.0, 1.0), aDuration, idcSinusoid);
+  Head.MoveTo(-0.086*Dress.Width, -1.119*Dress.Height, aDuration, idcSinusoid);
+  Head.Angle.ChangeTo(0, aDuration, idcSinusoid);
+  Head.Scale.ChangeTo(PointF(1.0, 1.0), aDuration, idcSinusoid);
+  LeftLeg.MoveTo(-0.028*LeftLeg.Width, -0.370*LeftLeg.Height, aDuration, idcSinusoid);
+  LeftLeg.Angle.ChangeTo(-30.000, aDuration, idcSinusoid);
+  LeftLeg.Scale.ChangeTo(PointF(1.0, 1.0), aDuration, idcSinusoid);
+  RightLeg.MoveTo(-0.564*RightLeg.Width, -0.223*RightLeg.Height, aDuration, idcSinusoid);
+  RightLeg.Angle.ChangeTo(45.000, aDuration, idcSinusoid);
+  RightLeg.Scale.ChangeTo(PointF(1.0, 1.0), aDuration, idcSinusoid);
+end;
+
+procedure TGranny.Posture_Walking2(aDuration: single);
+begin
+  Dress.MoveTo(-0.509*Dress.Width, -0.985*Dress.Height, aDuration, idcSinusoid);
+  Dress.Angle.ChangeTo(2.134, aDuration, idcSinusoid);
+  Dress.Scale.ChangeTo(PointF(1.0, 1.0), aDuration, idcSinusoid);
+  RightArm.MoveTo(0.246*Dress.Width, 0.037*Dress.Height, aDuration, idcSinusoid);
+  RightArm.Angle.ChangeTo(-12.112, aDuration, idcSinusoid);
+  RightArm.Scale.ChangeTo(PointF(1.0, 1.0), aDuration, idcSinusoid);
+  LeftArm.MoveTo(0.509*Dress.Width, 0.059*Dress.Height, aDuration, idcSinusoid);
+  LeftArm.Angle.ChangeTo(-34.617, aDuration, idcSinusoid);
+  LeftArm.Scale.ChangeTo(PointF(1.0, 1.0), aDuration, idcSinusoid);
+  Head.MoveTo(-0.086*Dress.Width, -1.119*Dress.Height, aDuration, idcSinusoid);
+  Head.Angle.ChangeTo(0, aDuration, idcSinusoid);
+  Head.Scale.ChangeTo(PointF(1.0, 1.0), aDuration, idcSinusoid);
+  LeftLeg.MoveTo(0.173*LeftLeg.Width, -0.246*LeftLeg.Height, aDuration, idcSinusoid);
+  LeftLeg.Angle.ChangeTo(0, aDuration, idcSinusoid);
+  LeftLeg.Scale.ChangeTo(PointF(1.0, 1.0), aDuration, idcSinusoid);
+  RightLeg.MoveTo(-0.564*RightLeg.Width, -0.223*RightLeg.Height, aDuration, idcSinusoid);
+  RightLeg.Angle.ChangeTo(75.000, aDuration, idcSinusoid);
+  RightLeg.Scale.ChangeTo(PointF(1.0, 1.0), aDuration, idcSinusoid);
+end;
+
+procedure TGranny.Posture_Walking3(aDuration: single);
+begin
+  Dress.MoveTo(-0.509*Dress.Width, -0.985*Dress.Height, aDuration, idcSinusoid);
+  Dress.Angle.ChangeTo(0, aDuration, idcSinusoid);
+  Dress.Scale.ChangeTo(PointF(1.0, 1.0), aDuration, idcSinusoid);
+  RightArm.MoveTo(0.246*Dress.Width, 0.037*Dress.Height, aDuration, idcSinusoid);
+  RightArm.Angle.ChangeTo(-28.203, aDuration, idcSinusoid);
+  RightArm.Scale.ChangeTo(PointF(1.0, 1.0), aDuration, idcSinusoid);
+  LeftArm.MoveTo(0.509*Dress.Width, 0.059*Dress.Height, aDuration, idcSinusoid);
+  LeftArm.Angle.ChangeTo(-23.924, aDuration, idcSinusoid);
+  LeftArm.Scale.ChangeTo(PointF(1.0, 1.0), aDuration, idcSinusoid);
+  Head.MoveTo(-0.086*Dress.Width, -1.119*Dress.Height, aDuration, idcSinusoid);
+  Head.Angle.ChangeTo(0, aDuration, idcSinusoid);
+  Head.Scale.ChangeTo(PointF(1.0, 1.0), aDuration, idcSinusoid);
+  LeftLeg.MoveTo(0.173*LeftLeg.Width, -0.246*LeftLeg.Height, aDuration, idcSinusoid);
+  LeftLeg.Angle.ChangeTo(45.000, aDuration, idcSinusoid);
+  LeftLeg.Scale.ChangeTo(PointF(1.0, 1.0), aDuration, idcSinusoid);
+  RightLeg.MoveTo(-0.625*RightLeg.Width, -0.365*RightLeg.Height, aDuration, idcSinusoid);
+  RightLeg.Angle.ChangeTo(-30.000, aDuration, idcSinusoid);
+  RightLeg.Scale.ChangeTo(PointF(1.0, 1.0), aDuration, idcSinusoid);
+end;
+
+procedure TGranny.Posture_Walking4(aDuration: single);
+begin
+  Dress.MoveTo(-0.509*Dress.Width, -0.985*Dress.Height, aDuration, idcSinusoid);
+  Dress.Angle.ChangeTo(-1.796, aDuration, idcSinusoid);
+  Dress.Scale.ChangeTo(PointF(1.0, 1.0), aDuration, idcSinusoid);
+  RightArm.MoveTo(0.246*Dress.Width, 0.037*Dress.Height, aDuration, idcSinusoid);
+  RightArm.Angle.ChangeTo(-14.966, aDuration, idcSinusoid);
+  RightArm.Scale.ChangeTo(PointF(1.0, 1.0), aDuration, idcSinusoid);
+  LeftArm.MoveTo(0.509*Dress.Width, 0.059*Dress.Height, aDuration, idcSinusoid);
+  LeftArm.Angle.ChangeTo(-22.224, aDuration, idcSinusoid);
+  LeftArm.Scale.ChangeTo(PointF(1.0, 1.0), aDuration, idcSinusoid);
+  Head.MoveTo(-0.086*Dress.Width, -1.119*Dress.Height, aDuration, idcSinusoid);
+  Head.Angle.ChangeTo(0, aDuration, idcSinusoid);
+  Head.Scale.ChangeTo(PointF(1.0, 1.0), aDuration, idcSinusoid);
+  LeftLeg.MoveTo(0.173*LeftLeg.Width, -0.246*LeftLeg.Height, aDuration, idcSinusoid);
+  LeftLeg.Angle.ChangeTo(75.000, aDuration, idcSinusoid);
+  LeftLeg.Scale.ChangeTo(PointF(1.0, 1.0), aDuration, idcSinusoid);
+  RightLeg.MoveTo(-0.564*RightLeg.Width, -0.223*RightLeg.Height, aDuration, idcSinusoid);
+  RightLeg.Angle.ChangeTo(-15.000, aDuration, idcSinusoid);
+  RightLeg.Scale.ChangeTo(PointF(1.0, 1.0), aDuration, idcSinusoid);
 end;
 
 procedure TGranny.SetIdlePosition(aImmediate: boolean);
@@ -240,6 +401,16 @@ begin
   FFork.Visible := False;
   LeftLeg.SetCoordinate(LeftLeg.Width*0.1, -LeftLeg.Height*0.3);
   RightLeg.SetCoordinate(RightLeg.Width*0.55, LeftLeg.Y.Value);
+end;
+
+procedure TGranny.WalkHorizontallyTo(aX: single;
+  aTargetScreen: TScreenTemplate; aMessageValueWhenFinish: TUserMessageValue;
+  aDelay: single);
+begin
+  CheckHorizontalMoveToX(aX, aTargetScreen, aMessageValueWhenFinish, aDelay);
+  FWalkingStep := 0;
+  if MovingDirection <> mdNone then
+    State := gsWalking;
 end;
 
 { TGrannyHead }

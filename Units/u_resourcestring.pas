@@ -98,6 +98,10 @@ sTurn='Turn %d/%d';
 sYes='Yes';
 sNo='No';
 
+sLetsGo='Let''s go!';
+sFatherOfWolfs='Father of wolfs';
+sMotherOfWolfs='Mother of wolfs';
+
 
 // hints in the panel where player can upgrade an item (in workshop)
 sBowExplanation='your bow';
@@ -128,8 +132,10 @@ sBuyEquipment='buy new equipment in the workshop';
 sFirstCompleteForest='you must first complete the pine forest!';
 sBuyZipLineFirst='you need to buy the zip line first!';
 sFirstCompleteMountainPeaks='you must first complete the mountain peaks!';
-sFirstCompleteVolcano='you must first complete Volcano!';
-sFirstCompletePlainMoon='you must first complete Plain of the Sleeping Moon!';
+sFirstCompleteVolcano='you must first complete the Volcano!';
+sFirstCompletePlainMoon='you must first complete the Plain of the Sleeping Moon!';
+sFirstCompleteMermaidsPort='you must first complete the Mermaids Port!';
+sFirstCompleteSnakeFissure='you must first complete the Snake Fissure!';
 sSorryNotYetAvailable='Sorry, this game is not yet available...';
 
 SArcadeMode='ARCADE MODE';
@@ -171,6 +177,11 @@ sMermaidBossInstructions='Finds the right strategy to beat Marcus at his game'+ 
                          '←→↑↓ to move' + LineEnding +
                          'ACTION1 : to shoot' + LineEnding +
                          'ACTION2 : defensive position';
+sSnakeFissureInstructions='Use the submarine capabilities to cross the fissure' + LineEnding +
+                          'Avoids contact with mines, they are fatals!' + LineEnding +
+                          'Warning: each action consumes blue crystals!' + LineEnding +
+                          '←→↑↓ : move the submarine' + LineEnding +
+                          'MOUSE to press the buttons on dashboard';
 
 sStrikeRaccoonInstructions='←→↑↓ to target'+ LineEnding +
                            'ACTION1 : to strike';
@@ -193,7 +204,11 @@ sVolcanoHint='lava, it''s hot...';
 sPlainOfSleepingMoon='The plain of the sleeping moon';
 sPlainOfSleepingMoonHint='it is said that on full moon nights you can hear the train whistle...';
 sMermaidsPort='The Mermaids port';
-sMermaidsPortHint='don''t forget your swimsuit!';
+sMermaidsPortHint='factories as far as the eye can see!';
+sSnakeFissure='The Snake Fissure';
+sSnakeFissureHint='don''t forget your swimsuit and buoy!';
+sWolfCastle='The Wolf Castle';
+sWolfCastleHint='will you dare to throw yourself into the wolf''s den?';
 
 // challenge
 sChallenge='CHALLENGE !';
@@ -401,6 +416,24 @@ sStartSequence='Start sequence';
 sItsTooDangerousIHaveToFind='It''s too dangerous. I have to find another way to cross.';
 sSoundsLikeARemote='Sounds like a remote control. I should be able to control something with it.';
 sINeedAKeyToOpenThisGate='I need a key to open this gate...';
+sIHearVoices='I hear voices...';
+sSomeoneHere='Someone''s here!';
+sWhosThereShow='Who''s there? Show yourselves!';
+sYouDontTellAnyone='You?! Uh... don''t tell anyone you saw us, okay?';
+sErAllRightIWont='Er... All right. And you, don''t tell anyone you saw me, okay?';
+sOkay='Okay...';
+sWhyAreYouHiding='Why are you hiding?';
+sTheCompanyWeWork='The company we work for prohibits romantic relationships between employees.';
+sIfTheyFoundOutWed='If they found out, we''d be fired and have a hard time finding another job.';
+sForbiddingPeopleToLove='Forbidding people to love each other... It''s a funny rule...';
+sPerhapsThatWillChange='Perhaps that will change with time...';
+sIHopeForYou='I hope for you.';
+sWellGottaGo='Well... Gotta go. Bye!';
+sBye='Bye';
+
+
+
+
 sWouldYouLikeToSeeMarcus='Would you like to see Marcus'' meeting again?';
 sMySisterWasRight='My sister was right, you''re very efficient!';
 sImMarcus='I''m Marcus, Penelope''s brother, the one you met on the train. '+
@@ -426,15 +459,29 @@ sTakeThisTunnel='Take this tunnel, it will lead you to the seaside. '+
 sFinally='Finally!';
 sGoodLuckSeeYouSoon='Good luck, see you soon.';
 sPfffHeCouldHave='Pfff, he could have dropped me off on the island!';
+
+// dialogs Snake Fissure
 sASubmarineIWasnt='A submarine? I wasn''t expecting that...';
 sOkLetsGo='Ok... Let''s go!';
+sHereTheresANoteOnThe='There''s a note on the dashboard. It says:'+LineEnding+
+                '"This submarine will take you to the island. It runs with blue crystals, '+
+                'but its reserve is small. If you try to cross directly, you''ll break down '+
+                'in the middle of the sea. The only way is to go through the Snake''s Fissure: '+
+                'there you''ll find crystals to refill your tank. '+
+                'Don''t worry, there''s no snake - it''s the shape that gives it its name. '+
+                'Good luck!"'+LineEnding+
+                'Signed Marcus.';
 sWellHowToStartIt='Well... How to start it?';
 sHereThereIsAButton='Here! there''s a button marked Start';
 sCool='Cool!';
 sLetsTryDivingNow='Let''s try diving now...';
 sOups='Oups...';
 sNoTreePoint='No...';
+sOutOfCristals='OUT OF CRISTAL!';
 
+// dialogs Wolf Castle
+sImFinallyOnTheIsland='I''m finally on the island!';
+sLetsGoToTheCastle='Let''s go to the castle...';
 
 
 

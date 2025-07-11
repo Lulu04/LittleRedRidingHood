@@ -15,12 +15,12 @@ E_Emission
 E_Gravity
 0 0
 E_Type
-1 150
+2 200 50
 P_ParticlesPositionsRelativeToEmitterPosition
 FALSE
 P_Texture
-Dust.png
-32 32
+bubble_particle.svg
+9 9
 P_Frame
 0 0
 P_Life
@@ -28,9 +28,9 @@ P_Life
 P_ColorMode
 0
 P_BlendMode
-0
+1
 P_Color
-3 0,00000 151 221 255 255 0,59704 255 255 255 241 1,00000 255 255 255 1
+3 0,00000 151 221 255 255 0,74187 255 255 255 255 1,00000 255 255 255 1
 P_Velocity
 96 37 2 0,00000 -1,04587 1,00000 -0,42202
 P_AVelocity

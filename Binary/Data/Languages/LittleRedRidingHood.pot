@@ -122,6 +122,10 @@ msgstr ""
 msgid "you need to buy the zip line first!"
 msgstr ""
 
+#: u_resourcestring.sbye
+msgid "Bye"
+msgstr ""
+
 #: u_resourcestring.scancel
 msgid "CANCEL"
 msgstr ""
@@ -252,6 +256,10 @@ msgstr ""
 msgid "ENTER YOUR NAME"
 msgstr ""
 
+#: u_resourcestring.serallrightiwont
+msgid "Er... All right. And you, don't tell anyone you saw me, okay?"
+msgstr ""
+
 #: u_resourcestring.serase
 msgid "ERASE"
 msgstr ""
@@ -280,6 +288,10 @@ msgstr ""
 msgid "Failed to open the door. I'll open the cage, so I'll still have opened something..."
 msgstr ""
 
+#: u_resourcestring.sfatherofwolfs
+msgid "Father of wolfs"
+msgstr ""
+
 #: u_resourcestring.sfinally
 msgid "Finally!"
 msgstr ""
@@ -288,13 +300,21 @@ msgstr ""
 msgid "you must first complete the pine forest!"
 msgstr ""
 
+#: u_resourcestring.sfirstcompletemermaidsport
+msgid "you must first complete the Mermaids Port!"
+msgstr ""
+
 #: u_resourcestring.sfirstcompletemountainpeaks
 msgctxt "u_resourcestring.sfirstcompletemountainpeaks"
 msgid "you must first complete the mountain peaks!"
 msgstr ""
 
 #: u_resourcestring.sfirstcompleteplainmoon
-msgid "you must first complete Plain of the Sleeping Moon!"
+msgid "you must first complete the Plain of the Sleeping Moon!"
+msgstr ""
+
+#: u_resourcestring.sfirstcompletesnakefissure
+msgid "you must first complete the Snake Fissure!"
 msgstr ""
 
 #: u_resourcestring.sfirstcompletethegamemode
@@ -302,7 +322,7 @@ msgid "first, complete the game mode"
 msgstr ""
 
 #: u_resourcestring.sfirstcompletevolcano
-msgid "you must first complete Volcano!"
+msgid "you must first complete the Volcano!"
 msgstr ""
 
 #: u_resourcestring.sfirstupgradetothemaxthebowelevator
@@ -311,6 +331,10 @@ msgstr ""
 
 #: u_resourcestring.sfor
 msgid "for"
+msgstr ""
+
+#: u_resourcestring.sforbiddingpeopletolove
+msgid "Forbidding people to love each other... It's a funny rule..."
 msgstr ""
 
 #: u_resourcestring.sforestchallengehelptext
@@ -398,6 +422,13 @@ msgstr ""
 msgid "Here! there's a button marked Start"
 msgstr ""
 
+#: u_resourcestring.sheretheresanoteonthe
+msgid ""
+"There's a note on the dashboard. It says:\n"
+"\"This submarine will take you to the island. It runs with blue crystals, but its reserve is small. If you try to cross directly, you'll break down in the middle of the sea. The only way is to go through the Snake's Fissure: there you'll find crystals to refill your tank. Don't worry, there's no snake - it's the shape that gives it its name. Good luck!\"\n"
+"Signed Marcus."
+msgstr ""
+
 #: u_resourcestring.shereyoucanexchange
 msgid "Here you can exchange your coins for certain items."
 msgstr ""
@@ -440,6 +471,10 @@ msgstr ""
 msgid "I don't know where it's going, but I have a feeling it's going to bring me closer to Granny. No time to lose!"
 msgstr ""
 
+#: u_resourcestring.siftheyfoundoutwed
+msgid "If they found out, we'd be fired and have a hard time finding another job."
+msgstr ""
+
 #: u_resourcestring.sifyouwanttojoinyour
 msgid "If you want to join your grandmother, you'll have to go to the castle."
 msgstr ""
@@ -460,6 +495,14 @@ msgstr ""
 msgid "I hear someone behind the door. quick! I have to hide!"
 msgstr ""
 
+#: u_resourcestring.sihearvoices
+msgid "I hear voices..."
+msgstr ""
+
+#: u_resourcestring.sihopeforyou
+msgid "I hope for you."
+msgstr ""
+
 #: u_resourcestring.siknewyoucoulddoit
 msgid "I knew you could do it, congratulations!"
 msgstr ""
@@ -474,6 +517,10 @@ msgstr ""
 
 #: u_resourcestring.silovecommingtosee
 msgid "I love coming to see Granny..."
+msgstr ""
+
+#: u_resourcestring.simfinallyontheisland
+msgid "I'm finally on the island!"
 msgstr ""
 
 #: u_resourcestring.simisshimtoo
@@ -573,6 +620,14 @@ msgctxt "u_resourcestring.slasergunexplanation"
 msgid "a laser gun effective only against machines"
 msgstr ""
 
+#: u_resourcestring.sletsgo
+msgid "Let's go!"
+msgstr ""
+
+#: u_resourcestring.sletsgotothecastle
+msgid "Let's go to the castle..."
+msgstr ""
+
 #: u_resourcestring.sletslookatthelandscape
 msgid "Let's look at the landscape for a moment, shall we?"
 msgstr ""
@@ -645,7 +700,12 @@ msgid ""
 msgstr ""
 
 #: u_resourcestring.smermaidsporthint
-msgid "don't forget your swimsuit!"
+msgctxt "u_resourcestring.smermaidsporthint"
+msgid "factories as far as the eye can see!"
+msgstr ""
+
+#: u_resourcestring.smotherofwolfs
+msgid "Mother of wolfs"
 msgstr ""
 
 #: u_resourcestring.smountainpeakhelptext
@@ -745,6 +805,10 @@ msgstr ""
 msgid "OK"
 msgstr ""
 
+#: u_resourcestring.sokay
+msgid "Okay..."
+msgstr ""
+
 #: u_resourcestring.sokdoyouknownwhereicanfindaboat
 msgid "Ok... Do you know where I can find a boat?"
 msgstr ""
@@ -773,6 +837,10 @@ msgstr ""
 msgid "Oups..."
 msgstr ""
 
+#: u_resourcestring.soutofcristals
+msgid "OUT OF CRISTAL!"
+msgstr ""
+
 #: u_resourcestring.soutofgas
 msgid "OUT OF GAS"
 msgstr ""
@@ -783,6 +851,10 @@ msgstr ""
 
 #: u_resourcestring.spause
 msgid "PAUSE"
+msgstr ""
+
+#: u_resourcestring.sperhapsthatwillchange
+msgid "Perhaps that will change with time..."
 msgstr ""
 
 #: u_resourcestring.spfffhecouldhave
@@ -924,8 +996,30 @@ msgstr ""
 msgid "smooth arrival bonus"
 msgstr ""
 
+#: u_resourcestring.ssnakefissure
+msgid "The Snake Fissure"
+msgstr ""
+
+#: u_resourcestring.ssnakefissurehint
+msgctxt "u_resourcestring.ssnakefissurehint"
+msgid "don't forget your swimsuit and buoy!"
+msgstr ""
+
+#: u_resourcestring.ssnakefissureinstructions
+msgid ""
+"Use the submarine capabilities to cross the fissure\n"
+"Avoids contact with mines, they are fatals!\n"
+"Warning: each action consumes blue crystals!\n"
+"←→↑↓ : move the submarine\n"
+"MOUSE to press the buttons on dashboard"
+msgstr ""
+
 #: u_resourcestring.ssoareyouin
 msgid "So, are you in?"
+msgstr ""
+
+#: u_resourcestring.ssomeonehere
+msgid "Someone's here!"
 msgstr ""
 
 #: u_resourcestring.ssorrynotyetavailable
@@ -1005,6 +1099,10 @@ msgstr ""
 
 #: u_resourcestring.sthankyouforyourhelp
 msgid "Thank you for your help."
+msgstr ""
+
+#: u_resourcestring.sthecompanywework
+msgid "The company we work for prohibits romantic relationships between employees."
 msgstr ""
 
 #: u_resourcestring.sthehigheryourscore
@@ -1106,6 +1204,10 @@ msgid ""
 "Click on me for explanations"
 msgstr ""
 
+#: u_resourcestring.swellgottago
+msgid "Well... Gotta go. Bye!"
+msgstr ""
+
 #: u_resourcestring.swellhowtostartit
 msgid "Well... How to start it?"
 msgstr ""
@@ -1114,8 +1216,16 @@ msgstr ""
 msgid "When your grandpa was still around, we often had barbecues; he loved that!"
 msgstr ""
 
+#: u_resourcestring.swhosthereshow
+msgid "Who's there? Show yourselves!"
+msgstr ""
+
 #: u_resourcestring.swhy
 msgid "Why?"
+msgstr ""
+
+#: u_resourcestring.swhyareyouhiding
+msgid "Why are you hiding?"
 msgstr ""
 
 #: u_resourcestring.swillgorightnow
@@ -1128,6 +1238,14 @@ msgstr ""
 
 #: u_resourcestring.swolf
 msgid "Wolf"
+msgstr ""
+
+#: u_resourcestring.swolfcastle
+msgid "The Wolf Castle"
+msgstr ""
+
+#: u_resourcestring.swolfcastlehint
+msgid "will you dare to throw yourself into the wolf's den?"
 msgstr ""
 
 #: u_resourcestring.swolfinthecave
@@ -1196,6 +1314,10 @@ msgstr ""
 
 #: u_resourcestring.syoucanalsowinitems
 msgid "You can also win coins or items by playing the games."
+msgstr ""
+
+#: u_resourcestring.syoudonttellanyone
+msgid "You?! Uh... don't tell anyone you saw us, okay?"
 msgstr ""
 
 #: u_resourcestring.syoulose

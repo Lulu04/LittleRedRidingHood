@@ -55,6 +55,8 @@ public // loading particle texture in atlas
   procedure AddFlameParticleToAtlas(aAtlas: TOGLCTextureAtlas);
   procedure AddRainDropParticleToAtlas(aAtlas: TOGLCTextureAtlas);
   procedure AddDustParticleToAtlas(aAtlas: TOGLCTextureAtlas);
+  procedure AddBubbleParticleToAtlas(aAtlas: TOGLCTextureAtlas);
+  procedure AddBubbleLessTransparentParticleToAtlas(aAtlas: TOGLCTextureAtlas);
   procedure AddCloud128x128ParticleToAtlas(aAtlas: TOGLCTextureAtlas);
 
   // the arrow used to click a button with the keyboard
@@ -313,6 +315,18 @@ procedure TGameScreenTemplate.AddDustParticleToAtlas(aAtlas: TOGLCTextureAtlas);
 begin
   if aAtlas.RetrieveTextureByFileName('Dust.png') <> NIL then exit;
   aAtlas.AddScaledPPI(ParticleFolder+'Dust.png');
+end;
+
+procedure TGameScreenTemplate.AddBubbleParticleToAtlas(aAtlas: TOGLCTextureAtlas);
+begin
+  if aAtlas.RetrieveTextureByFileName('bubble_particle.svg') <> NIL then exit;
+  aAtlas.AddFromSVG(ParticleFolder+'bubble_particle.svg', PPIScale(32), -1);
+end;
+
+procedure TGameScreenTemplate.AddBubbleLessTransparentParticleToAtlas(aAtlas: TOGLCTextureAtlas);
+begin
+  if aAtlas.RetrieveTextureByFileName('bubble_particle_less_transparent.svg') <> NIL then exit;
+  aAtlas.AddFromSVG(ParticleFolder+'bubble_particle_less_transparent.svg', PPIScale(32), -1);
 end;
 
 procedure TGameScreenTemplate.AddCloud128x128ParticleToAtlas(aAtlas: TOGLCTextureAtlas);

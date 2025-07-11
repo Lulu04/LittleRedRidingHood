@@ -143,6 +143,8 @@ public // utils to control character during cinematics
   procedure IdleRight;
   function IsOrientedToRight: boolean;
   procedure Jump;
+  procedure SetRunMode; virtual;
+  procedure SetWalkMode; virtual;
 
   procedure SetAsCarryingAnObject(aObject: TSimpleSurfaceWithEffect);
   property ObjectToCarry: TSimpleSurfaceWithEffect read FObjectToCarry write FObjectToCarry;
@@ -169,12 +171,10 @@ protected
 public
   constructor Create(aIsForestGame: boolean; aLayerIndex: integer=LAYER_WOLF);
   procedure ProcessMessage(UserValue: TUserMessageValue); override;
-
-  procedure SetRunMode;
-  procedure SetWalkMode;
 end;
 
 { TWolfMarcus }
+// the brother
 
 TWolfMarcus = class(TWolf)
 private
@@ -185,11 +185,56 @@ protected
 public
   constructor Create(aIsForestGame: boolean; aLayerIndex: integer=LAYER_WOLF);
   procedure ProcessMessage(UserValue: TUserMessageValue); override;
-
-  procedure SetRunMode;
-  procedure SetWalkMode;
 end;
 
+{ TWolfFather }
+
+TWolfFather = class(TWolf)
+private
+  FHat, FGlasses, FBeard, FBelt: TSprite;
+protected
+  procedure SetFlipH(AValue: boolean); override;
+  procedure SetFlipV(AValue: boolean); override;
+public
+  constructor Create(aIsForestGame: boolean; aLayerIndex: integer=LAYER_WOLF);
+end;
+
+{ TWolfMother }
+
+TWolfMother = class(TWolf)
+private
+  FHat, FMouth, FPonyTail, FDress, FLeftArmStrap,
+  FLeftLegStrap, FRightLegStrap, FRightShoe, FLeftShoe: TSprite;
+protected
+  procedure SetFlipH(AValue: boolean); override;
+  procedure SetFlipV(AValue: boolean); override;
+public
+  constructor Create(aIsForestGame: boolean; aLayerIndex: integer=LAYER_WOLF);
+end;
+
+{ TWolfRomeo }
+
+TWolfRomeo = class(TWolf)
+private
+ FHat: TSprite;
+ protected
+   procedure SetFlipH(AValue: boolean); override;
+   procedure SetFlipV(AValue: boolean); override;
+ public
+   constructor Create(aIsForestGame: boolean; aLayerIndex: integer=LAYER_WOLF);
+end;
+
+{ TWolfJulia }
+
+TWolfJulia = class(TWolf)
+private
+ FNewHead, FDress: TSprite;
+protected
+  procedure SetFlipH(AValue: boolean); override;
+  procedure SetFlipV(AValue: boolean); override;
+public
+  constructor Create(aIsForestGame: boolean; aLayerIndex: integer=LAYER_WOLF);
+end;
 
 { TWolfGate }
 
@@ -251,15 +296,30 @@ var
   texMarcusShortRight,
   texMarcusHat,
 
+  texFatherHat, texFatherGlasses, texFatherBeard, texFatherBelt,
+
+  texMotherHat, texMotherMouth, texMotherPonytail, texMotherDress,
+  texMotherLeftArmStrap, texMotherLeftLegStrap, texMotherRightLegStrap,
+  texMotherShoe,
+
+  texRomeoHat,
+
+  texJuliaHead, texJuliaDress,
+
+
   texCastle: PTexture;
 
   procedure LoadWolfTextures(aAtlas: TAtlas);
   procedure LoadBaseBallonTexture(aAtlas: TAtlas);
-  procedure LoadPenelopeTextures(aAtlas: TOGLCTextureAtlas);
+  procedure LoadPenelopeTextures(aAtlas: TAtlas);
   procedure LoadMarcusTextures(aAtlas: TAtlas);
+  procedure LoadFatherTextures(aAtlas: TAtlas);
+  procedure LoadMotherTextures(aAtlas: TAtlas);
+  procedure LoadRomeoTextures(aAtlas: TAtlas);
+  procedure LoadJuliaTextures(aAtlas: TAtlas);
 
 implementation
-uses u_app, BGRAPath, GeometricShapes;
+uses u_app, BGRAPath, GeometricShapes, u_resourcestring;
 
 procedure LoadWolfTextures(aAtlas: TAtlas);
 var path: string;
@@ -328,6 +388,43 @@ begin
   texMarcusShortLeft := aAtlas.AddFromSVG(path+'MarcusLeftShort.svg', ScaleW(17), -1);
   texMarcusShortRight := aAtlas.AddFromSVG(path+'MarcusRightShort.svg', ScaleW(18), -1);
   texMarcusHat := aAtlas.AddFromSVG(path+'MarcusHat.svg', ScaleW(68), -1);
+end;
+
+procedure LoadFatherTextures(aAtlas: TAtlas);
+var path: string;
+begin
+  path := SpriteWolfFolder;
+  texFatherHat := aAtlas.AddFromSVG(path+'FatherHat.svg', ScaleW(63), -1);
+  texFatherGlasses := aAtlas.AddFromSVG(path+'FatherGlasses.svg', ScaleW(27), -1);
+  texFatherBeard := aAtlas.AddFromSVG(path+'FatherBeard.svg', ScaleW(31), -1);
+  texFatherBelt := aAtlas.AddFromSVG(path+'FatherBelt.svg', ScaleW(35), -1);
+end;
+
+procedure LoadMotherTextures(aAtlas: TAtlas);
+var path: string;
+begin
+  path := SpriteWolfFolder;
+  texMotherHat := aAtlas.AddFromSVG(path+'MotherHat.svg', ScaleW(89), -1);
+  texMotherMouth := aAtlas.AddFromSVG(path+'MotherMouth.svg', ScaleW(26), -1);
+  texMotherPonytail := aAtlas.AddFromSVG(path+'MotherPonyTail.svg', -1, ScaleH(44));
+  texMotherDress := aAtlas.AddFromSVG(path+'MotherDress.svg', ScaleW(45), -1);
+  texMotherLeftArmStrap := aAtlas.AddFromSVG(path+'MotherLeftArmStrap.svg', ScaleW(6), -1);
+  texMotherLeftLegStrap := aAtlas.AddFromSVG(path+'MotherLeftLegStrap.svg', ScaleW(11), -1);
+  texMotherRightLegStrap := aAtlas.AddFromSVG(path+'MotherRightLegStrap.svg', ScaleW(11), -1);
+  texMotherShoe := aAtlas.AddFromSVG(path+'MotherShoe.svg', ScaleW(34), -1);
+end;
+
+procedure LoadRomeoTextures(aAtlas: TAtlas);
+begin
+  texRomeoHat := aAtlas.AddFromSVG(SpriteWolfFolder+'RomeoHat.svg', ScaleW(61), -1);
+end;
+
+procedure LoadJuliaTextures(aAtlas: TAtlas);
+var path: string;
+begin
+  path := SpriteWolfFolder;
+  texJuliaHead := aAtlas.AddFromSVG(path+'JuliaHead.svg', ScaleW(79), -1);
+  texJuliaDress := aAtlas.AddFromSVG(path+'JuliaDress.svg', ScaleW(67), -1);
 end;
 
 
@@ -1094,6 +1191,18 @@ begin
   State := wsJumping;
 end;
 
+procedure TWolf.SetRunMode;
+begin
+  TimeMultiplicator := 0.3;
+  WalkSpeed := FScene.ScaleDesignToSceneF(1200);
+end;
+
+procedure TWolf.SetWalkMode;
+begin
+  TimeMultiplicator := 0.6;
+  WalkSpeed := FScene.ScaleDesignToSceneF(90+(90*(1-TimeMultiplicator)));
+end;
+
 procedure TWolf.SetAsCarryingAnObject(aObject: TSimpleSurfaceWithEffect);
 begin
   FObjectToCarry := aObject;
@@ -1670,18 +1779,6 @@ begin
   end;
 end;
 
-procedure TWolfPenelope.SetRunMode;
-begin
-  TimeMultiplicator := 0.3;
-  WalkSpeed := FScene.ScaleDesignToSceneF(1200);
-end;
-
-procedure TWolfPenelope.SetWalkMode;
-begin
-  TimeMultiplicator := 0.6;
-  WalkSpeed := FScene.ScaleDesignToSceneF(90+(90*(1-TimeMultiplicator)));
-end;
-
 { TWolfMarcus }
 
 procedure TWolfMarcus.SetFlipH(AValue: boolean);
@@ -1733,16 +1830,177 @@ begin
   inherited ProcessMessage(UserValue);
 end;
 
-procedure TWolfMarcus.SetRunMode;
+{ TWolfFather }
+
+procedure TWolfFather.SetFlipH(AValue: boolean);
 begin
-  TimeMultiplicator := 0.3;
-  WalkSpeed := FScene.ScaleDesignToSceneF(1200);
+  inherited SetFlipH(AValue);
+  FHat.FlipH := AValue;
+  FGlasses.FlipH := AValue;
+  FBeard.FlipH := AValue;
+  FBelt.FlipH := AValue;
 end;
 
-procedure TWolfMarcus.SetWalkMode;
+procedure TWolfFather.SetFlipV(AValue: boolean);
 begin
-  TimeMultiplicator := 0.6;
-  WalkSpeed := FScene.ScaleDesignToSceneF(90+(90*(1-TimeMultiplicator)));
+  inherited SetFlipV(AValue);
+  FHat.FlipV := AValue;
+  FGlasses.FlipV := AValue;
+  FBeard.FlipV := AValue;
+  FBelt.FlipV := AValue;
+end;
+
+constructor TWolfFather.Create(aIsForestGame: boolean; aLayerIndex: integer);
+begin
+  inherited Create(aIsForestGame, aLayerIndex);
+  DialogAuthorName := sFatherOfWolfs;
+
+  FHat := TSprite.Create(texFatherHat, False);
+  Head.AddChild(FHat, 2);
+  FHat.SetCoordinate(Head.Width*0.18, Head.Height*25);
+  FHat.ApplySymmetryWhenFlip := True;
+
+  FGlasses := TSprite.Create(texFatherGlasses, False);
+  Head.AddChild(FGlasses, 2);
+  FGlasses.SetCoordinate(Head.Width*0.18, Head.Height*0.55);
+  FGlasses.ApplySymmetryWhenFlip := True;
+
+  FBeard := TSprite.Create(texFatherBeard, False);
+  Head.AddChild(FBeard, -1);
+  FBeard.SetCoordinate(Head.Width*0.3, Head.Height*0.96);
+  FBeard.ApplySymmetryWhenFlip := True;
+
+  FBelt := TSprite.Create(texFatherBelt, False);
+  Abdomen.AddChild(FBelt, 0);
+  FBelt.SetCoordinate(Abdomen.Width*0, Abdomen.Height*0.6);
+  FBelt.ApplySymmetryWhenFlip := True;
+end;
+
+{ TWolfMother }
+
+procedure TWolfMother.SetFlipH(AValue: boolean);
+begin
+  inherited SetFlipH(AValue);
+end;
+
+procedure TWolfMother.SetFlipV(AValue: boolean);
+begin
+  inherited SetFlipV(AValue);
+end;
+
+constructor TWolfMother.Create(aIsForestGame: boolean; aLayerIndex: integer);
+begin
+  inherited Create(aIsForestGame, aLayerIndex);
+  DialogAuthorName := sMotherOfWolfs;
+
+  FHat := TSprite.Create(texMotherHat, False);
+  Head.AddChild(FHat, 2);
+  FHat.SetCoordinate(ScaleW(0), ScaleH(7));
+  FHat.ApplySymmetryWhenFlip := True;
+
+  Head.HideAllMouth;
+  FMouth := TSprite.Create(texMotherMouth, False);
+  Head.AddChild(FMouth, 2);
+  FMouth.SetCoordinate(Head.Width*0.5-FMouth.Width*0.5, Head.Height-FMouth.Height*1.15);
+  FMouth.ApplySymmetryWhenFlip := True;
+
+  FPonyTail := TSprite.Create(texMotherPonyTail, False);
+  Head.AddChild(FPonyTail, -1);
+  FPonyTail.SetCoordinate(Head.Width*0.7, Head.Height*0.65);
+  FPonyTail.Pivot := PointF(0.5, 0);
+  FPonyTail.ApplySymmetryWhenFlip := True;
+
+  FDress := TSprite.Create(texMotherDress, False);
+  Abdomen.AddChild(FDress, 0);
+  FDress.SetCoordinate(-Abdomen.Width*0.18, Abdomen.Height*0.24);
+  FDress.ApplySymmetryWhenFlip := True;
+
+  FLeftArmStrap := TSprite.Create(texMotherLeftArmStrap, False);
+  LeftArm.AddChild(FLeftArmStrap, 0);
+  FLeftArmStrap.SetCoordinate(LeftArm.Width*0.48, LeftArm.Height*0.08);
+  FLeftArmStrap.ApplySymmetryWhenFlip := True;
+
+  FLeftLegStrap := TSprite.Create(texMotherLeftLegStrap, False);
+  LeftLeg.AddChild(FLeftLegStrap, 0);
+  FLeftLegStrap.SetCoordinate(LeftLeg.Width*0.62, LeftLeg.Height*0.56);
+  FLeftLegStrap.ApplySymmetryWhenFlip := True;
+
+  FRightLegStrap := TSprite.Create(texMotherRightLegStrap, False);
+  RightLeg.AddChild(FRightLegStrap, 0);
+  FRightLegStrap.SetCoordinate(RightLeg.Width*0.60, RightLeg.Height*0.45);
+  FRightLegStrap.ApplySymmetryWhenFlip := True;
+
+  FRightShoe := TSprite.Create(texMotherShoe, False);
+  RightLeg.AddChild(FRightShoe, 1);
+  FRightShoe.SetCoordinate(0, RightLeg.Height-FRightShoe.Height*0.9);
+  FRightShoe.ApplySymmetryWhenFlip := True;
+
+  FLeftShoe := TSprite.Create(texMotherShoe, False);
+  LeftLeg.AddChild(FLeftShoe, 1);
+  FLeftShoe.SetCoordinate(0, LeftLeg.Height-FLeftShoe.Height*0.9);
+  FLeftShoe.ApplySymmetryWhenFlip := True;
+
+end;
+
+{ TWolfRomeo }
+
+procedure TWolfRomeo.SetFlipH(AValue: boolean);
+begin
+  inherited SetFlipH(AValue);
+  FHat.FlipH := AValue;
+end;
+
+procedure TWolfRomeo.SetFlipV(AValue: boolean);
+begin
+  inherited SetFlipV(AValue);
+  FHat.FlipV := AValue;
+end;
+
+constructor TWolfRomeo.Create(aIsForestGame: boolean; aLayerIndex: integer);
+begin
+  inherited Create(aIsForestGame, aLayerIndex);
+  DialogAuthorName := 'Romeo';
+
+  FHat := TSprite.Create(texRomeoHat, False);
+  Head.AddChild(FHat, 2);
+  FHat.SetCoordinate(Head.Width*0.1, Head.Height*0.24);
+  FHat.ApplySymmetryWhenFlip := True;
+end;
+
+{ TWolfJulia }
+
+procedure TWolfJulia.SetFlipH(AValue: boolean);
+begin
+  inherited SetFlipH(AValue);
+  FNewHead.FlipH := AValue;
+  FDress.FlipH := AValue;
+end;
+
+procedure TWolfJulia.SetFlipV(AValue: boolean);
+begin
+  inherited SetFlipV(AValue);
+  FNewHead.FlipV := AValue;
+  FDress.FlipV := AValue;
+end;
+
+constructor TWolfJulia.Create(aIsForestGame: boolean; aLayerIndex: integer);
+begin
+  inherited Create(aIsForestGame, aLayerIndex);
+  DialogAuthorName := 'Julia';
+
+  FNewHead := TSprite.Create(texJuliaHead, False);
+  Abdomen.AddChild(FNewHead, 1);
+  FNewHead.CenterX := Abdomen.Width*0.5;
+  FNewHead.BottomY := FNewHead.Height*0.1;
+  FNewHead.Pivot := PointF(0.5, 1);
+  FNewHead.ApplySymmetryWhenFlip := True;
+  Head.Visible := False;
+  Head.Freeze := True;
+
+  FDress := TSprite.Create(texJuliaDress, False);
+  Abdomen.AddChild(FDress, 1);
+  FDress.SetCoordinate(-0.51*Abdomen.Width, 0.21*Abdomen.Height);
+  FDress.ApplySymmetryWhenFlip := True;
 end;
 
 end.
