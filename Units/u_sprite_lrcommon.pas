@@ -27,6 +27,7 @@ private
   FBodyWidth, FBodyHeight: integer;
   function GetBodyBottomY: single;
   function GetBodyTopY: single;
+  function GetDeltaYToBottom: single;
   procedure SetBodyBottomY(AValue: single);
   procedure SetBodyTopY(AValue: single);
 public
@@ -41,7 +42,7 @@ public
   function CheckCollisionWith(aRectF: TRectF): boolean; overload;
   // init in descendent classes
   property DeltaYToTop: single read FDeltaYToTop write FDeltaYToTop;
-  property DeltaYToBottom: single read FDeltaYToBottom write FDeltaYToBottom;
+  property DeltaYToBottom: single read GetDeltaYToBottom write FDeltaYToBottom;
 
   property BodyTopY: single read GetBodyTopY write SetBodyTopY;
   property BodyBottomY: single read GetBodyBottomY write SetBodyBottomY;
@@ -74,6 +75,7 @@ public
   procedure Update(const aElapsedTime: single); override;
   procedure PostMessageToTargetObject(aTarget: TObject; aMessageValue: TUserMessageValue; aDelay: single);
 public // walk utils
+  WalkDontUseSpeed: boolean;
   procedure CheckHorizontalMoveToX(aX: single; aMessageReceiver: TObject; aMessageValueWhenFinish: TUserMessageValue; aDelay: single=0);
   procedure CheckVerticalMoveToY(aY: single; aMessageReceiver: TObject; aMessageValueWhenFinish: TUserMessageValue; aDelay: single=0);
   procedure CheckMoveTo(aX, aY: single; aMessageReceiver: TObject; aMessageValueWhenFinish: TUserMessageValue; aDelay: single=0);
@@ -138,6 +140,8 @@ private
   FDialogAuthorName: string;
   FDialogTextColor: TBGRAPixel;
   FPanel: TInfoPanel; //TUITextArea;
+  FArrow: TSprite;
+  procedure CreateArrow;
   procedure PlacePanelOnView(aCameraInUse: TOGLCCamera);
 public
   // the dialog is shifted according to aCameraInUse.LookAt
@@ -147,7 +151,10 @@ public
   procedure ShowDialog(const aText: string; aTexturedFont: TTexturedFont; aLifeTime: single=4.0; aCameraInUse: TOGLCCamera=NIL);
   property DialogTextColor: TBGRAPixel read FDialogTextColor write FDialogTextColor;
   property DialogAuthorName: string read FDialogAuthorName write FDialogAuthorName;
-
+public
+  // set to True when there is a camera used to scale the layer of the character
+  // used in screen castle, the big meeting
+  class var DialogIsChildOfCharacter: boolean;
 end;
 
 
@@ -235,7 +242,7 @@ uses u_app, u_utils, Math;
 
 var
   // texture for dialog
-  texGameDialogDownArrow: PTexture;
+  texGameDialogDownArrow, texArrowPanelDialog: PTexture;
   // textures for character marks
   texExclamationMark, texQuestionMark: PTexture;
   // textures for Little Red Face
@@ -293,6 +300,7 @@ end;
 procedure LoadGameDialogTextures(aAtlas: TOGLCTextureAtlas);
 begin
   texGameDialogDownArrow := aAtlas.AddFromSVG(SpriteUIFolder+'GameDialogDownArrow.svg', ScaleW(16), -1);
+  texArrowPanelDialog := aAtlas.AddFromSVG(SpriteUIFolder+'ArrowPanelDialog.svg', -1, ScaleH(18));
 end;
 
 { TInfoPanel }
@@ -421,57 +429,87 @@ end;
 
 { TCharacterWithDialogPanel }
 
-procedure TCharacterWithDialogPanel.PlacePanelOnView(aCameraInUse: TOGLCCamera);
-var p: TPointF;
-    w, h: single;
-    //rView, rPanel, r: TRectF;
+procedure TCharacterWithDialogPanel.CreateArrow;
 begin
-  //rView := GetViewRect(aCameraInUse);
+  FArrow := TSprite.Create(texArrowPanelDialog, False);
+  FArrow.SetChildOf(FPanel, 0);
+  FArrow.CenterX := FPanel.Width * 0.5;
+  FArrow.Y.Value := FPanel.Height-PPIScale(3);
+end;
+
+procedure TCharacterWithDialogPanel.PlacePanelOnView(aCameraInUse: TOGLCCamera);
+var p, sc, delta: TPointF;
+    w, h: single;
+    rPanel, rView: TRectF;
+begin
+  //rView := GetViewRect(ParentLayer.Camera);
+
+  if DialogIsChildOfCharacter then begin
+    // VERSION CHILD OF CHARACTER
+    sc := Scale.Value;
+
+    FPanel.SetChildOf(Self, 50);
+    FPanel.CenterX := 0;
+    FPanel.Y.Value := -DeltaYToTop / sc.x - FPanel.Height - PPIScale(10);
+
+    FPanel.Scale.Value := PointF(1/sc.x, 1/sc.y);
+
+    if ParentLayer.Camera <> NIL then begin
+      sc := ParentLayer.Camera.Scale.Value;
+      FPanel.Scale.x.Value := FPanel.Scale.x.Value / sc.x;
+      FPanel.Scale.y.Value := FPanel.Scale.y.Value / sc.y;
+    end;
+
+    rView := GetViewRect(ParentLayer.Camera);
+    rPanel := FPanel.GetRectAreaInWorldSpace;
+    delta := PointF(0, 0);
+    if rPanel.Left < rView.Left then delta.x := rView.Left - rPanel.Left;
+    if rPanel.Right > rView.Right then delta.x := -(rPanel.Right - rView.Right);
+    if rPanel.Top < rView.Top then delta.y := rView.Top - rPanel.Top;
+    if rPanel.Bottom > rView.Bottom then delta.y := -(rPanel.Bottom - rView.Bottom);
+
+    sc := Scale.Value;
+    delta.x := delta.x / sc.x;
+    delta.y := delta.y / sc.y;
+
+    FArrow.X.Value := FArrow.X.Value - delta.x;
+    FPanel.SetCoordinate(FPanel.GetXY + delta);
+    exit;
+  end;
+
 
   w := FPanel.Width;
   h := FPanel.Height;
+  sc := Scale.Value;
+  if ParentLayer.Camera <> NIL then
+    sc.y := sc.y * 1/ParentLayer.Camera.Scale.y.Value;
 
-  p := SurfaceToScene(PointF(-w*0.5, -DeltaYToTop-h-PPIScale(20)));
+{  p := SurfaceToScene(PointF(0, -DeltaYToTop/sc.y - h - PPIScale(20)));
+  p.x := p.x - w * 0.5; }
+  p := SurfaceToScene(PointF(0, -DeltaYToTop/sc.y));
+  p.x := p.x - w * 0.5;
+  p.y := p.y - h - PPIScale(10);
+
+  p.x := EnsureRange(p.x, 0, FScene.Width - w);
+  p.y := EnsureRange(p.y, 0, FScene.Height - h);
+  FPanel.SetCoordinate(Trunc(p.x), Trunc(p.y)); // truncate to avoid artifact on characters
+
+  exit;
+
+{
+  // NORMAL VERSION
+  w := FPanel.Width;
+  h := FPanel.Height;
+
+  p := SurfaceToScene(PointF(0, -DeltaYToTop));
+  //p := SurfaceToScene(PointF(-w*0.5, -DeltaYToTop- h - PPIScale(20)));
+
+  p.x := p.x - w * 0.5;
+  p.y := p.y - h - PPIScale(20);
   p.x := EnsureRange(p.x, 0, FScene.Width - w);
   p.y := EnsureRange(p.y, 0, FScene.Height - h);
 
-  //p := PointF(X.Value-w*0.5, BodyTopY - h - PPIScale(20));
-
-{  p.x := EnsureRange(p.x, rView.Left, rView.Right - w);
-  p.y := EnsureRange(p.y, rView.Top, rView.Bottom - h); }
-
-{  // message panel overlapps the character body ?
-  rPanel := RectF(p.x, p.y, p.x+w, p.y+h);
-  if FScene.Collision.RectFRectF(GetBodyRect, rPanel) then begin
-    // the panel overlapps the character -> we shift it to the left or to the right
-    if p.x > rView.Left+rView.Width*0.5 then p.x := GetBodyRect.Left-w
-      else p.x := GetBodyRect.Right;
-  end; }
-
-{  w := FPanel.Width;
-  h := FPanel.Height;
-  p := SurfaceToScene(PointF(0, -DeltaYToTop));
-  if aCameraInUse <> NIL then
-    p := aCameraInUse.WorldToControlF(p);
-  p := p - PointF(w * 0.5, h + PPIScale(20));  }
-
-{  if aCameraInUse <> NIL then begin
-    r := aCameraInUse.GetViewRect;
-    p.x := Ensurerange(p.x, r.Left, r.Right - w);
-    p.y := EnsureRange(p.y, r.Top, r.Bottom - h);
-  end else begin
-    p.x := EnsureRange(p.x, 0, FScene.Width - w);
-    p.y := EnsureRange(p.y, 0, FScene.Height - h);
-  end;   }
-
-{  FPanel.SetChildOf(Self, 100);
-  FPanel.SetCoordinate(-FPanel.Width*0.5, -FPanel.Height-PPIScale(20)-DeltaYToTop);
-  FPanel.MoveFromChildToScene(LAYER_GAMEUI);
-  p := FPanel.GetXY;
-  if aCameraInUse <> NIL then p := aCameraInUse.WorldToControlF(p); }
-
-  //FPanel.SetCoordinate(p);
-  FPanel.SetCoordinate(Trunc(p.x), Trunc(p.y)); // truncate to avoid artifact on characters
+  FPanel.SetCoordinate(Trunc(p.x), Trunc(p.y)); // truncate to avoid artifact on characters   }
 end;
 
 procedure TCharacterWithDialogPanel.ShowDialog(const aText: string; aTexturedFont: TTexturedFont;
@@ -481,6 +519,7 @@ begin
   //if FPanel <> NIL then FPanel.Kill;
   FPanel := TInfoPanel.Create(FDialogAuthorName, aText, aTexturedFont,
                               aTargetScreen, aMessageValueWhenFinish, aDelay);
+  CreateArrow;
   PlacePanelOnView(aCameraInUse);
 end;
 
@@ -489,6 +528,7 @@ procedure TCharacterWithDialogPanel.ShowDialog(const aText: string;
 begin
   if FPanel <> NIL then FPanel.Kill;
   FPanel := TInfoPanel.Create(FDialogAuthorName, aText, aTexturedFont, aLifeTime);
+  CreateArrow;
   PlacePanelOnView(aCameraInUse);
 end;
 
@@ -560,6 +600,8 @@ end;
 procedure TWalkingCharacter.Update(const aElapsedTime: single);
 begin
   inherited Update(aElapsedTime);
+
+  if WalkDontUseSpeed then exit;  // for character that don't use property speed to walk (lije granny)
 
   if FMovingDirection in [mdLeft, mdLeftDown, mdLeftUp] then begin
     if X.Value <= FTargetPoint.x then begin
@@ -718,6 +760,11 @@ begin
   Result := Round(Y.Value - FDeltaYToTop);
 end;
 
+function TBaseComplexContainer.GetDeltaYToBottom: single;
+begin
+  Result := FDeltaYToBottom*Scale.y.Value;
+end;
+
 function TBaseComplexContainer.GetBodyBottomY: single;
 begin
   Result := Round(Y.Value + FDeltaYToBottom);
@@ -725,7 +772,7 @@ end;
 
 procedure TBaseComplexContainer.SetBodyBottomY(AValue: single);
 begin
-  Y.Value := AValue - FDeltaYToBottom;
+  Y.Value := Round(AValue - FDeltaYToBottom);
 end;
 
 procedure TBaseComplexContainer.SetBodyTopY(AValue: single);
@@ -740,7 +787,7 @@ begin
   r.Top := -DeltaYToTop;
   r.Width := BodyWidth;
   r.Height := BodyHeight;
-  r := GetMatrixSurfaceToWorld.Transform(r);
+  r := GetMatrixSurfaceToScene.Transform(r);
   Result := FScene.Collision.PointRectF(PointF(aX,aY), r);
 end;
 
@@ -751,7 +798,7 @@ begin
   r.Top := -DeltaYToTop;
   r.Width := BodyWidth;
   r.Height := BodyHeight;
-  r := GetMatrixSurfaceToWorld.Transform(r);
+  r := GetMatrixSurfaceToScene.Transform(r);
   Result := FScene.Collision.LineRectF(aPt1, aPt2, r);
 end;
 
@@ -762,7 +809,7 @@ begin
   r.Top := -DeltaYToTop;
   r.Width := BodyWidth;
   r.Height := BodyHeight;
-  r := GetMatrixSurfaceToWorld.Transform(r);
+  r := GetMatrixSurfaceToScene.Transform(r);
   Result := FScene.Collision.RectFRectF(aRectF, r);
 end;
 

@@ -21,7 +21,8 @@ uses
   u_sprite_def2, u_screen_sam, u_sam, u_dartboard_bird, u_submarine, u_turtle,
   u_transporterwk510, u_screen_strikeraccoon, u_screen_dartboard,
   u_screen_gamemermaidboss, u_screen_gamesnakefissureintro,
-  u_screen_gamesnakefissure, u_screen_gamecastle;
+  u_screen_gamesnakefissure, u_screen_gamecastle, u_robotw7, u_wolfmothership,
+  u_screen_gameinspace;
 
 {$R *.res}
 

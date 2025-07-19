@@ -164,7 +164,7 @@ begin
   item.BodyType := _btPoint;
   item.pt := aWorldPos;
 
-  CollisionBody.SetSurfaceToWordMatrix(GetMatrixSurfaceToWorld);
+  CollisionBody.SetTransformMatrix(GetMatrixSurfaceToScene);
   Result := CollisionBody.CheckCollisionWith(item);
   if Result then begin
     o := TSprite.Create(texSeatImpact, False);
@@ -281,7 +281,7 @@ begin
 
   //if FARobotIsAlreadyDestroyedWithTheLastShoot then exit;
 
-  CollisionBody.SetSurfaceToWordMatrix(GetMatrixSurfaceToWorld);
+  CollisionBody.SetTransformMatrix(GetMatrixSurfaceToScene);
   if CollisionBody.CheckCollisionWith(item) then begin
     FARobotIsAlreadyDestroyedWithTheLastShoot := True;
     Kill;
@@ -741,7 +741,7 @@ begin
 
   for i:=0 to FScene.Layer[LAYER_BG2].SurfaceCount-1 do begin
     o := FScene.Layer[LAYER_BG2].Surface[i];
-    o.CollisionBody.SetSurfaceToWordMatrix(o.GetMatrixSurfaceToWorld);
+    o.CollisionBody.SetTransformMatrix(o.GetMatrixSurfaceToScene);
     if o.CollisionBody.CheckCollisionWith(item) then begin
       impact := TSprite.Create(texSeatImpact, False);
       o.AddChild(impact, 1);

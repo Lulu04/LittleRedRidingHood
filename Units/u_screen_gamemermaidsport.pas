@@ -696,7 +696,7 @@ var r: TRectF;
 begin
   inherited Update(aElapsedTime);
   // check if LR collide the panel -> game win
-  r := GetMatrixSurfaceToWorld.Transform(GetRectAreaInLocalSpace);
+  r := GetMatrixSurfaceToScene.Transform(GetRectAreaInLocalSpace);
   if FLR.CheckCollisionWith(r) then begin
     ScreenMermaidsPort.GameState := gsLRWin;
   end;
@@ -949,7 +949,7 @@ begin
       if //not FLR.HaveFeetOnPlatform and
          (FLR.FloorIndex = o.FloorIndex+1) then begin
         for j:=0 to High(o.FGrounds) do begin
-          p := o.FGrounds[j].SurfaceToSceneWithoutLayerTransform(PointF(0, 0));
+          p := o.FGrounds[j].SurfaceToWorld(PointF(0, 0));
           x1 := p.x + texPlatformGround^.FrameWidth*0.05;
           x2 := p.x + texPlatformGround^.FrameWidth*0.95;
           if InRange(FLR.X.Value, x1, x2) then begin
@@ -973,7 +973,7 @@ begin
       o := TPlatform4Legs(FScene.Layer[LAYER_ARROW].Surface[i]);
 
       for j:=0 to High(o.FGrounds) do begin
-        p := o.FGrounds[j].SurfaceToSceneWithoutLayerTransform(PointF(0, 0));
+        p := o.FGrounds[j].SurfaceToWorld(PointF(0, 0));
         x1 := p.x + texPlatformGround^.FrameWidth*0.05;
         x2 := p.x + texPlatformGround^.FrameWidth*0.95;
         if InRange(FLR.X.Value, x1, x2) and
@@ -1220,7 +1220,7 @@ begin
       o := TSuspendedContainer(FScene.Layer[LAYER_FXANIM].Surface[i]);
       if FLR.ParentSurface = NIL then begin
         // check if LR becomes a child of the container
-        p := o.SurfaceToSceneWithoutLayerTransform(PointF(0, 0));
+        p := o.SurfaceToWorld(PointF(0, 0));
         x1 := p.x + o.Width*0.05;
         x2 := p.x + o.Width*0.90;
         if (o.FloorIndex = FLR.FloorIndex) and
@@ -1262,7 +1262,7 @@ begin
       o := TSuspendedContainer(FScene.Layer[LAYER_FXANIM].Surface[i]);
 
       // check if LR becomes a child of the container
-      p := o.SurfaceToSceneWithoutLayerTransform(PointF(0, 0));
+      p := o.SurfaceToWorld(PointF(0, 0));
       x1 := p.x + o.Width*0.05;
       x2 := p.x + o.Width*0.90;
       y1 := p.y;
@@ -1479,7 +1479,7 @@ procedure TTruck.ComputeVolumeAndPan(out vol, pan: single);
 var p: TPointF;
   distMax, v: single;
 begin
-  p := FLR.SurfaceToSceneWithoutLayerTransform(PointF(0, 0));
+  p := FLR.SurfaceToWorld(PointF(0, 0));
   v := Distance(p, ParentSurface.Center);
   distMax := FScene.Width*1.5;
   if v > distMax then v := distMax;
@@ -2512,7 +2512,7 @@ begin
   end;
 
   // update LR camera
-  p := FLR.SurfaceToSceneWithoutLayerTransform(PointF(0, 0));
+  p := FLR.SurfaceToWorld(PointF(0, 0));
   if FLR.IsJumping then p.y := FLR.YBeforeJump;
   FCamera.AutoFollow.SetTargetPoint(p);
 

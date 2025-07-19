@@ -41,8 +41,16 @@ msgstr ""
 msgid "All right, we'll be on time."
 msgstr ""
 
+#: u_resourcestring.sanancientmanuscript
+msgid "An ancient manuscript we've had for a long time explains that the only way to understand what's happening is to travel to the center of the universe. There, we may encounter the Original Force that creates worlds. If this entity truly exists, it can help us to find a solution."
+msgstr ""
+
 #: u_resourcestring.sandtheyusevolcanolavaasrawmaterial
 msgid "And they use the volcano's lava as a raw material..."
+msgstr ""
+
+#: u_resourcestring.sandyoushowedcourage
+msgid "And you showed courage in every challenge!"
 msgstr ""
 
 #: u_resourcestring.sandyouweresinging
@@ -65,8 +73,16 @@ msgstr ""
 msgid "Are you in the habit of asking before you give?"
 msgstr ""
 
+#: u_resourcestring.sareyouoktheydidnt
+msgid "Are you okay?  They didn't hurt you, did they?"
+msgstr ""
+
 #: u_resourcestring.sasubmarineiwasnt
 msgid "A submarine? I wasn't expecting that..."
+msgstr ""
+
+#: u_resourcestring.sasyoucanseewere
+msgid "As you can see, we're too entangled in the world's affairs to be considered innocent."
 msgstr ""
 
 #: u_resourcestring.satrain
@@ -83,6 +99,10 @@ msgstr ""
 
 #: u_resourcestring.sbacktosam
 msgid "BACK TO SAM"
+msgstr ""
+
+#: u_resourcestring.sbanningpeople
+msgid "Banning people from loving each other… It's ridiculous! And why? For productivity?"
 msgstr ""
 
 #: u_resourcestring.sbeforeileaveihavetosearchallcratesinthearea
@@ -152,6 +172,10 @@ msgstr ""
 
 #: u_resourcestring.scomeonitstime
 msgid "Come on, it's time to get started."
+msgstr ""
+
+#: u_resourcestring.scomeonletsgomeetthem
+msgid "Come on, let's go, they're waiting for us."
 msgstr ""
 
 #: u_resourcestring.scongratonceagain
@@ -226,6 +250,10 @@ msgstr ""
 msgid "Oh, a friend! You freed me from this cage, I'm going to jump into your arms and give you a hug!"
 msgstr ""
 
+#: u_resourcestring.sdonesir
+msgid "Done, sir."
+msgstr ""
+
 #: u_resourcestring.sdontbeafraidyouresafe
 msgid "Don't be afraid, you're safe inside. Don't move please."
 msgstr ""
@@ -294,6 +322,10 @@ msgstr ""
 
 #: u_resourcestring.sfinally
 msgid "Finally!"
+msgstr ""
+
+#: u_resourcestring.sfinallyifoundyou
+msgid "I finally found you!"
 msgstr ""
 
 #: u_resourcestring.sfirstcompleteforest
@@ -393,6 +425,10 @@ msgstr ""
 msgid "Granny??"
 msgstr ""
 
+#: u_resourcestring.sgrannyquestion
+msgid "Granny?"
+msgstr ""
+
 #: u_resourcestring.sgraphics
 msgid "GRAPHICS"
 msgstr ""
@@ -418,6 +454,11 @@ msgstr ""
 msgid "Have fun!"
 msgstr ""
 
+#: u_resourcestring.shelloplayermother
+#, object-pascal-format
+msgid "Hello %s. I am the Mother of Wolves. Behind me are our daughter Penelope, and our son Marcus whom you've already met."
+msgstr ""
+
 #: u_resourcestring.sherethereisabutton
 msgid "Here! there's a button marked Start"
 msgstr ""
@@ -439,6 +480,10 @@ msgstr ""
 
 #: u_resourcestring.sheyididit
 msgid "Hey! I did it!"
+msgstr ""
+
+#: u_resourcestring.shibutimnotsure
+msgid "Hi, but, um... I'm not really sure what's going on here..."
 msgstr ""
 
 #: u_resourcestring.showtochangekey
@@ -507,8 +552,17 @@ msgstr ""
 msgid "I knew you could do it, congratulations!"
 msgstr ""
 
+#: u_resourcestring.siknewyouwouldmakeit
+#, object-pascal-format
+msgid "%s, I knew you'd make it! I never stopped believing in you."
+msgstr ""
+
 #: u_resourcestring.siknowagame
 msgid "I know a game I love. If you beat me, I'll give you a way to cross the sea."
+msgstr ""
+
+#: u_resourcestring.sillgoifyoulifttheban
+msgid "I'll go if you lift the ban on romantic relationships between employees in your company!"
 msgstr ""
 
 #: u_resourcestring.sillhelpyoutoo
@@ -533,6 +587,10 @@ msgstr ""
 
 #: u_resourcestring.simproveequipment
 msgid "upgrade your equipment in the workshop"
+msgstr ""
+
+#: u_resourcestring.sinawayyes
+msgid "In a way, yes. Your innocence alone wasn't enough. You needed proper training to have any chance of succeeding in your mission."
 msgstr ""
 
 #: u_resourcestring.sineedakeytoopenthisgate
@@ -704,6 +762,10 @@ msgctxt "u_resourcestring.smermaidsporthint"
 msgid "factories as far as the eye can see!"
 msgstr ""
 
+#: u_resourcestring.smewhynotoneofyou
+msgid "Me? Why not one of you?"
+msgstr ""
+
 #: u_resourcestring.smotherofwolfs
 msgid "Mother of wolfs"
 msgstr ""
@@ -781,6 +843,14 @@ msgstr ""
 msgid "No idea! You're smart, you'll find a way on your own."
 msgstr ""
 
+#: u_resourcestring.snotatalleveryone
+msgid "Not at all. Everyone here's taken great care of me."
+msgstr ""
+
+#: u_resourcestring.snothankyou
+msgid "No. Thank you."
+msgstr ""
+
 #: u_resourcestring.snotreepoint
 msgid "No..."
 msgstr ""
@@ -813,6 +883,10 @@ msgstr ""
 msgid "Ok... Do you know where I can find a boat?"
 msgstr ""
 
+#: u_resourcestring.sokilldoitillgo
+msgid "Okay. I'll do it. I'll go meet this creature. But... on one condition!"
+msgstr ""
+
 #: u_resourcestring.sokletsgo
 msgid "Ok... Let's go!"
 msgstr ""
@@ -835,6 +909,10 @@ msgstr ""
 
 #: u_resourcestring.soups
 msgid "Oups..."
+msgstr ""
+
+#: u_resourcestring.sourresearchshows
+msgid "Our research shows that these disruptions will soon spiral out of control."
 msgstr ""
 
 #: u_resourcestring.soutofcristals
@@ -890,6 +968,16 @@ msgstr ""
 
 #: u_resourcestring.splainofsleepingmoonhint
 msgid "it is said that on full moon nights you can hear the train whistle..."
+msgstr ""
+
+#: u_resourcestring.splayeranythingelse
+#, object-pascal-format
+msgid "%s, anything else?"
+msgstr ""
+
+#: u_resourcestring.splayerivebeentreated
+#, object-pascal-format
+msgid "%s, I’ve been treated well. We can trust them."
 msgstr ""
 
 #: u_resourcestring.spocketsubmarineexplanation
@@ -1018,6 +1106,10 @@ msgstr ""
 msgid "So, are you in?"
 msgstr ""
 
+#: u_resourcestring.ssoletmegetthisstraight
+msgid "So, let me get this straight. You kidnapped my grandmother, except it wasn't really a kidnapping. And by trying to save her, I went through all these crazy events… which just so happened to train me… all so I can go meet some unknown creature at the center of the universe, that might not even exist?! And you expect me to believe all this?"
+msgstr ""
+
 #: u_resourcestring.ssomeonehere
 msgid "Someone's here!"
 msgstr ""
@@ -1093,12 +1185,24 @@ msgid ""
 "Participated in some way:"
 msgstr ""
 
+#: u_resourcestring.sthankstousyoulearned
+msgid "Thanks to us, you learned how to shoot a bow and a laser pistol!"
+msgstr ""
+
 #: u_resourcestring.sthankyoudino
 msgid "Thank you, Dino. I'm glad to know you. I hope we'll meet again."
 msgstr ""
 
 #: u_resourcestring.sthankyouforyourhelp
 msgid "Thank you for your help."
+msgstr ""
+
+#: u_resourcestring.sthatsanoblerequest
+msgid "That's a noble request. It clearly shows how different you are from us."
+msgstr ""
+
+#: u_resourcestring.sthebookalsosays
+msgid "The manuscript also says only a pure soul can make the journey. That's why we chose you."
 msgstr ""
 
 #: u_resourcestring.sthecompanywework
@@ -1117,8 +1221,24 @@ msgstr ""
 msgid "the new story of"
 msgstr ""
 
+#: u_resourcestring.sthenletssummonthetransporter
+msgid "Then let's summon the transporter and begin the journey."
+msgstr ""
+
+#: u_resourcestring.sthereisntmuchtime
+msgid "There isn't much time left. It's a long journey."
+msgstr ""
+
+#: u_resourcestring.stheresnothingtofear
+msgid "We are safe, I promise you."
+msgstr ""
+
 #: u_resourcestring.stheresomeoneonmytrain
 msgid "There's someone on my train!"
+msgstr ""
+
+#: u_resourcestring.sthesituationisdire
+msgid "The situation is dire... Something is disturbing the balance of the universe. We don't fully understand the consequences yet, but life on Earth is being deeply affected: climate change, natural disasters, rising aggression between nations, greed for power and wealth..."
 msgstr ""
 
 #: u_resourcestring.sthiscomputerhavesdcardreader
@@ -1133,12 +1253,20 @@ msgstr ""
 msgid "This place is beautiful."
 msgstr ""
 
+#: u_resourcestring.stobecontinued
+msgid "To be continued..."
+msgstr ""
+
 #: u_resourcestring.stomuchlavaisbadforyourhealth
 msgid "Too much lava is not good for your health"
 msgstr ""
 
 #: u_resourcestring.stotal
 msgid "TOTAL"
+msgstr ""
+
+#: u_resourcestring.stransporterisonitsway
+msgid "Transporter WK510 is on its way. Landing in just a few seconds."
 msgstr ""
 
 #: u_resourcestring.sturn
@@ -1182,6 +1310,10 @@ msgid ""
 "ACTION2 : use object"
 msgstr ""
 
+#: u_resourcestring.sw7question
+msgid "W7?"
+msgstr ""
+
 #: u_resourcestring.swanttoracewithme
 msgid "Me too! Want to race with me? The first to arrive gives the other a hug, right?"
 msgstr ""
@@ -1198,10 +1330,23 @@ msgstr ""
 msgid "Weird way of inviting people over... What's the hurry? What's going on?"
 msgstr ""
 
+#: u_resourcestring.swekidnappedyour
+msgid "We kidnapped your grandmother so you would come here. We figured you wouldn't believe us otherwise."
+msgstr ""
+
+#: u_resourcestring.swelcomeplayertamfather
+#, object-pascal-format
+msgid "Welcome %s. I am the Father of Wolves."
+msgstr ""
+
 #: u_resourcestring.swelcometosam
 msgid ""
 "Welcome to Sam's!\n"
 "Click on me for explanations"
+msgstr ""
+
+#: u_resourcestring.swelikebeeingincharge
+msgid "We like being in charge!"
 msgstr ""
 
 #: u_resourcestring.swellgottago
@@ -1210,6 +1355,26 @@ msgstr ""
 
 #: u_resourcestring.swellhowtostartit
 msgid "Well... How to start it?"
+msgstr ""
+
+#: u_resourcestring.swellivecomethisfar
+msgid "Well, I’ve come this far..."
+msgstr ""
+
+#: u_resourcestring.swemakemoney
+msgid "We make money."
+msgstr ""
+
+#: u_resourcestring.swerunfactories
+msgid "We run factories."
+msgstr ""
+
+#: u_resourcestring.swhatcondition
+msgid "What condition?"
+msgstr ""
+
+#: u_resourcestring.swhatquestionexclamation
+msgid "What?!"
 msgstr ""
 
 #: u_resourcestring.swhengrandfatherwashere
@@ -1304,6 +1469,10 @@ msgstr ""
 msgid "Yees! Now you are my friend and I want to give you a big hug!"
 msgstr ""
 
+#: u_resourcestring.syessirquestion
+msgid "Yes, sir?"
+msgstr ""
+
 #: u_resourcestring.syesthatswhativaguelyheard
 msgid "Yes, that's what I vaguely heard."
 msgstr ""
@@ -1320,6 +1489,18 @@ msgstr ""
 msgid "You?! Uh... don't tell anyone you saw us, okay?"
 msgstr ""
 
+#: u_resourcestring.syouhavetoyoure
+msgid "You have to. You're our only hope. If we do nothing, the world is doomed..."
+msgstr ""
+
+#: u_resourcestring.syouheardthatupdate
+msgid "You heard that? Update the employee policy, remove that rule, and notify everyone."
+msgstr ""
+
+#: u_resourcestring.syoulearnedtomove
+msgid "You learned to move unnoticed."
+msgstr ""
+
 #: u_resourcestring.syoulose
 msgctxt "u_resourcestring.syoulose"
 msgid "YOU LOST"
@@ -1329,8 +1510,28 @@ msgstr ""
 msgid "You're lying! I'm sure you know where she is!"
 msgstr ""
 
+#: u_resourcestring.syoumeanthiswas
+msgid "You mean... this was all planned?"
+msgstr ""
+
+#: u_resourcestring.syouonlyneedtoturnon
+msgid "You only need to turn on the TV to see that all of this is, sadly, real."
+msgstr ""
+
+#: u_resourcestring.syouovercameyourfear
+msgid "You overcame your fear of heights with the zipline."
+msgstr ""
+
+#: u_resourcestring.syoureowedsomeexplanations
+msgid "You're owed some explanations..."
+msgstr ""
+
 #: u_resourcestring.syourgrandmotherwasinvited
 msgid "Your grandmother was invited by my parents."
+msgstr ""
+
+#: u_resourcestring.syourrequestisgranted
+msgid "Your request is granted."
 msgstr ""
 
 #: u_resourcestring.syourscore

@@ -1115,7 +1115,7 @@ begin
       Paf.Opacity.ChangeTo(0, 0.5, idcStartSlowEndFast);
       // check collision between Paf and each wolf
       r := RectF(0, 0, Paf.Width, Paf.Height);
-      r := Paf.GetMatrixSurfaceToWorld.Transform(r);
+      r := Paf.GetMatrixSurfaceToScene.Transform(r);
       for i:=0 to FScene.Layer[LAYER_WOLF].SurfaceCount-1 do
         with FScene.Layer[LAYER_WOLF] do
           if Surface[i] is TWolf and TWolf(Surface[i]).CheckCollisionWith(r) then

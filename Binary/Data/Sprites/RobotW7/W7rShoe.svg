@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="24.357315"
+   height="7.8898625"
+   viewBox="0 0 6.4445395 2.0875261"
+   version="1.1"
+   id="svg1"
+   inkscape:version="1.4.2 (f4327f4, 2025-05-13)"
+   sodipodi:docname="W7.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#505050"
+     bordercolor="#eeeeee"
+     borderopacity="1"
+     inkscape:showpageshadow="0"
+     inkscape:pageopacity="0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#171717"
+     inkscape:document-units="px"
+     inkscape:zoom="1.9049028"
+     inkscape:cx="263.5305"
+     inkscape:cy="517.08675"
+     inkscape:window-width="1280"
+     inkscape:window-height="961"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1">
+    <inkscape:page
+       x="0"
+       y="0"
+       width="6.4445395"
+       height="2.0875261"
+       id="page2"
+       margin="0"
+       bleed="0" />
+  </sodipodi:namedview>
+  <defs
+     id="defs1" />
+  <g
+     inkscape:label="Calque 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(-49.473553,-125.76566)">
+    <g
+       id="g5"
+       transform="matrix(1.437814,0,0,1.437814,-1088.9498,-205.05768)">
+      <path
+         style="fill:#3d2f0d;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.264583px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+         d="m 792.12376,231.07082 v 0.46877 h 4.13215 l -0.24122,-0.41777 z"
+         id="path4" />
+      <path
+         style="fill:#d4b925;fill-opacity:1;fill-rule:evenodd;stroke:#837217;stroke-width:0.105833;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1"
+         d="m 792.19644,230.14063 h 2.11161 l 1.57141,0.63839 0.17188,0.3683 h -3.92856 l -0.28631,-0.49589 z"
+         id="path5" />
+    </g>
+  </g>
+</svg>

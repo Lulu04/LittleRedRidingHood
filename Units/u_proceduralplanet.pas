@@ -17,7 +17,27 @@ const PLANET_PINKY_MOON =
           'rDistribution|0.6100|CloudsOpacity|0.0000|CloudsFragmentation|1.0000|CloudsTrans'+
           'formation|0.0000|CloudsBlendMode|1.0000|ColorHalo|r,232,g,217,b,226,a,255|HaloTh'+
           'reshold|0.3749|ShadowAmount|0.0000|RotationSpeed|0.0075';
-
+const PLANET_HEARTH =
+          'ColorGround1|r,231,g,185,b,101,a,255|ColorGround2|r,128,g,64,b,64,a,255|GroundCo'+
+          'lorDistribution|0.0000|GroundAmount|0.1450|ColorOcean|r,15,g,158,b,236,a,255|Col'+
+          'orClouds1|r,255,g,255,b,255,a,255|ColorClouds2|r,25,g,25,b,25,a,255|CloudsColorD'+
+          'istribution|0.4000|CloudsOpacity|0.0863|CloudsFragmentation|2.5000|CloudsTransfo'+
+          'rmation|0.0000|CloudsBlendMode|-1.0000|ColorHalo|r,1,g,156,b,239,a,255|HaloThres'+
+          'hold|0.4178|ShadowAmount|0.0000|RotationSpeed|0.0085';
+const PLANET_FULL_MOON =
+          'ColorGround1|r,214,g,215,b,198,a,255|ColorGround2|r,150,g,147,b,105,a,255|Ground'+
+          'ColorDistribution|0.3000|GroundAmount|0.5850|ColorOcean|r,26,g,26,b,26,a,255|Col'+
+          'orClouds1|r,255,g,255,b,179,a,255|ColorClouds2|r,255,g,255,b,255,a,255|CloudsCol'+
+          'orDistribution|0.6100|CloudsOpacity|0.0000|CloudsFragmentation|1.0000|CloudsTran'+
+          'sformation|0.0000|CloudsBlendMode|1.0000|ColorHalo|r,196,g,193,b,185,a,255|HaloT'+
+          'hreshold|0.3749|ShadowAmount|0.0000|RotationSpeed|0.0075';
+const PLANET_MARS =
+          'ColorGround1|r,77,g,13,b,18,a,255|ColorGround2|r,132,g,0,b,0,a,255|GroundColorDi'+
+          'stribution|0.6800|GroundAmount|0.0000|ColorOcean|r,208,g,54,b,2,a,255|ColorCloud'+
+          's1|r,255,g,202,b,202,a,255|ColorClouds2|r,25,g,25,b,25,a,255|CloudsColorDistribu'+
+          'tion|0.3900|CloudsOpacity|0.0431|CloudsFragmentation|10.6000|CloudsTransformatio'+
+          'n|0.0000|CloudsBlendMode|1.0000|ColorHalo|r,0,g,0,b,0,a,255|HaloThreshold|0.4900'+
+          '|ShadowAmount|0.0000|RotationSpeed|0.0085';
 type
 
 TOGLCSpritePlanet = class;

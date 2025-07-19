@@ -388,7 +388,7 @@ begin
     FDino.Speed.x.Value := FDino.Speed.x.Value*0.25;
     Kill;
   end else begin// check collision with LR
-    m := GetMatrixSurfaceToWorld;
+    m := GetMatrixSurfaceToScene;
 
   if FLR.CheckCollisionWithLine(m.Transform(FP1LineForLRCollision), m.Transform(FP2LineForLRCollision)) then begin
     // LR collide with face of rock pile
@@ -533,7 +533,7 @@ begin
   if Min(FLR.X.Value, FDino.X.Value)-X.Value > FScene.Width*2 then Kill
   else begin
     // check collision with LR
-    r := GetMatrixSurfaceToWorld.Transform(RectF(0, 0, Width, Height));
+    r := GetMatrixSurfaceToScene.Transform(RectF(0, 0, Width, Height));
     if FLR.CheckCollisionWith(r) then begin
       MoveTo(FGasJauge.Center, 0.25);
       Scale.ChangeTo(PointF(0.3,0.3), 0.25);
@@ -677,7 +677,7 @@ begin
       p2 := PointF(Width, 0); // PointF(RightX, Y.Value);
       delta := -Height*0.25;
     end;
-    m := GetMatrixSurfaceToWorld;
+    m := GetMatrixSurfaceToScene;
     if FLR.CheckCollisionWithLine(m.Transform(p1), m.Transform(p2)) then begin
       FLR.Y.Value := FLR.Y.Value + delta;
       delta := FLR.Speed.x.Value;
@@ -763,7 +763,7 @@ begin
       p2 := PointF(Width, 0); // PointF(RightX, Y.Value);
       delta := -Height*0.5;
     end;
-    m := GetMatrixSurfaceToWorld;
+    m := GetMatrixSurfaceToScene;
     if FLR.CheckCollisionWithLine(m.Transform(p1), m.Transform(p2)) then begin
       FLR.Y.Value := FLR.Y.Value + delta; // shift LR position
       delta := FLR.Speed.x.Value;

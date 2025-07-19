@@ -74,7 +74,9 @@ TWolfState = (wsUndefined=0, wsIdle,
               wsPissing, wsFart,
               //  specific "pin forest" game
               wsFlyingWithBallon, wsPickingBalloon, wsInflateBalloon,
-              wsTargetedByStormCloud, wsDestroyingElevator
+              wsTargetedByStormCloud, wsDestroyingElevator,
+              // specific in space
+              wsSeatOnChair
               );
 
 TFuncCheckIfLost = function(): boolean of object;
@@ -138,7 +140,7 @@ public
   property TargetElevatorEngine: TElevatorEngine read FTargetElevatorEngine write FTargetElevatorEngine;
 public // utils to control character during cinematics
   procedure WalkHorizontallyTo(aX: single; aTarget: TObject; aMessageValueWhenFinish: TUserMessageValue; aDelay: single=0);
-  procedure Idle;
+  procedure Idle(aImmediat: boolean=False);
   procedure IdleLeft;
   procedure IdleRight;
   function IsOrientedToRight: boolean;
@@ -805,6 +807,10 @@ begin
       PostMessage(280);
     end;
 
+    wsSeatOnChair: begin
+      PostMessage(900);
+    end;
+
     wsDestroyingElevator: begin
       PostMessage(400);
     end;
@@ -1147,9 +1153,9 @@ begin
   end else PostMessageToTargetObject(aTarget, aMessageValueWhenFinish, aDelay);
 end;
 
-procedure TWolf.Idle;
+procedure TWolf.Idle(aImmediat: boolean);
 begin
-  ForceIdlePosition(False);
+  ForceIdlePosition(aImmediat);
 end;
 
 procedure TWolf.ProcessCallbackDoOnJumpMove(aDuration: single; aJumpStep: integer);
@@ -1298,25 +1304,25 @@ begin
   case UserValue of
     // STATE IDLE
     0: begin       // head
-      if not (FState in [wsIdle, wsCarryingIdle]) then exit;
+      if not (FState in [wsIdle, wsCarryingIdle, wsSeatOnChair]) then exit;
       d := random*2+1;
       Head.Angle.ChangeTo(-random*10, d, idcSinusoid);
       PostMessage(1, d+random*2);
     end;
     1: begin
-      if not (FState in [wsIdle, wsCarryingIdle]) then exit;
+      if not (FState in [wsIdle, wsCarryingIdle, wsSeatOnChair]) then exit;
       d := random*2+1;
       Head.Angle.ChangeTo(random*10, d, idcSinusoid);
       PostMessage(0, d+random*2);
     end;
     2: begin        // tail
-      if not (FState in [wsIdle, wsCarryingIdle]) then exit;
+      if not (FState in [wsIdle, wsCarryingIdle, wsSeatOnChair]) then exit;
       d := random*0.5+0.5;
       Tail.Angle.ChangeTo(-3-random*8, d, idcSinusoid);
       PostMessage(3, d);
     end;
     3: begin
-      if not (FState in [wsIdle, wsCarryingIdle]) then exit;
+      if not (FState in [wsIdle, wsCarryingIdle, wsSeatOnChair]) then exit;
       d := random*0.5+0.5;
       Tail.Angle.ChangeTo(3+random*4, d, idcSinusoid);
       PostMessage(2, d);
@@ -1521,7 +1527,7 @@ begin
       PostMessage(300, d);
     end;
 
-    // STATE DESTROYING ELEVATOR ENGINE
+    // STATE DESTROYING ELEVATOR ENGINE (pine forest game)
     400: begin
       if FState <> wsDestroyingElevator then exit;
       RightLeg.Angle.ChangeTo(-20, 0.3, idcSinusoid);
@@ -1665,6 +1671,30 @@ begin
       FCallbackDoOnJumpMove(0, 2);
       State := wsIdle;
     end;
+
+    // anim seat on chair : arms move slowly
+    900: begin
+      if State <> wsSeatOnChair then exit;
+      RightLeg.Angle.Value := 45;
+      LeftLeg.Angle.Value := 30;
+      LeftArm.Angle.Value := 120;
+      RightArm.Angle.Value := -30;
+      PostMessage(905);
+      PostMessage(910);
+    end;
+    905: begin
+      if State <> wsSeatOnChair then exit;
+      d := random*2+1;
+      LeftArm.Angle.ChangeTo(120+Random*30, d, idcSinusoid);
+      PostMessage(905, d);
+    end;
+    910: begin
+      if State <> wsSeatOnChair then exit;
+      d := random*2+1;
+      RightArm.Angle.ChangeTo(-30+Random*30, d, idcSinusoid);
+      PostMessage(910, d);
+    end;
+
   end;//case
 end;
 
@@ -1859,6 +1889,7 @@ begin
   Head.AddChild(FHat, 2);
   FHat.SetCoordinate(Head.Width*0.18, Head.Height*25);
   FHat.ApplySymmetryWhenFlip := True;
+  FHat.SetChildOf(Abdomen, 1);
 
   FGlasses := TSprite.Create(texFatherGlasses, False);
   Head.AddChild(FGlasses, 2);
@@ -1881,11 +1912,29 @@ end;
 procedure TWolfMother.SetFlipH(AValue: boolean);
 begin
   inherited SetFlipH(AValue);
+  FHat.FlipH := AValue;
+  FMouth.FlipH := AValue;
+  FPonyTail.FlipH := AValue;
+  FDress.FlipH := AValue;
+  FLeftArmStrap.FlipH := AValue;
+  FLeftLegStrap.FlipH := AValue;
+  FRightLegStrap.FlipH := AValue;
+  FRightShoe.FlipH := AValue;
+  FLeftShoe.FlipH := AValue;
 end;
 
 procedure TWolfMother.SetFlipV(AValue: boolean);
 begin
   inherited SetFlipV(AValue);
+  FHat.FlipV := AValue;
+  FMouth.FlipV := AValue;
+  FPonyTail.FlipV := AValue;
+  FDress.FlipV := AValue;
+  FLeftArmStrap.FlipV := AValue;
+  FLeftLegStrap.FlipV := AValue;
+  FRightLegStrap.FlipV := AValue;
+  FRightShoe.FlipV := AValue;
+  FLeftShoe.FlipV := AValue;
 end;
 
 constructor TWolfMother.Create(aIsForestGame: boolean; aLayerIndex: integer);

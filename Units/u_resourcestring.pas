@@ -430,10 +430,6 @@ sPerhapsThatWillChange='Perhaps that will change with time...';
 sIHopeForYou='I hope for you.';
 sWellGottaGo='Well... Gotta go. Bye!';
 sBye='Bye';
-
-
-
-
 sWouldYouLikeToSeeMarcus='Would you like to see Marcus'' meeting again?';
 sMySisterWasRight='My sister was right, you''re very efficient!';
 sImMarcus='I''m Marcus, Penelope''s brother, the one you met on the train. '+
@@ -482,6 +478,76 @@ sOutOfCristals='OUT OF CRISTAL!';
 // dialogs Wolf Castle
 sImFinallyOnTheIsland='I''m finally on the island!';
 sLetsGoToTheCastle='Let''s go to the castle...';
+sGrannyQuestion='Granny?';
+sFinallyIFoundYou='I finally found you!';
+sIKnewYouWouldMakeIt='%s, I knew you''d make it! I never stopped believing in you.';
+sAreYouOkTheyDidnt='Are you okay?  They didn''t hurt you, did they?';
+sNotAtAllEveryone='Not at all. Everyone here''s taken great care of me.';
+sComeOnLetsGoMeetThem='Come on, let''s go, they''re waiting for us.';
+sTheresNothingToFear='We are safe, I promise you.';
+sWelcomePlayerTAmFather='Welcome %s. I am the Father of Wolves.';
+sHelloPlayerMother='Hello %s. I am the Mother of Wolves. Behind me are our daughter Penelope, '+
+                'and our son Marcus whom you''ve already met.';
+sHiButImNotSure='Hi, but, um... I''m not really sure what''s going on here...';
+sYoureOwedSomeExplanations='You''re owed some explanations...';
+sTheSituationIsDire='The situation is dire... Something is disturbing the balance of the universe. '+
+                'We don''t fully understand the consequences yet, but life on Earth is being deeply '+
+                'affected: climate change, natural disasters, rising aggression between nations, '+
+                'greed for power and wealth...';
+sYouOnlyNeedToTurnOn='You only need to turn on the TV to see that all of this is, sadly, real.';
+sOurResearchShows='Our research shows that these disruptions will soon spiral out of control.';
+sAnAncientManuscript='An ancient manuscript we''ve had for a long time explains that the only way '+
+                'to understand what''s happening is to travel to the center of the universe. '+
+                'There, we may encounter the Original Force that creates worlds. If this entity '+
+                'truly exists, it can help us to find a solution.';
+sTheBookAlsoSays='The manuscript also says only a pure soul can make the journey. That''s why we chose you.';
+sMeWhyNotOneOfYou='Me? Why not one of you?';
+sWeRunFactories='We run factories.';
+sWeMakeMoney='We make money.';
+sWeLikeBeeingInCharge='We like being in charge!';
+sAsYouCanSeeWere='As you can see, we''re too entangled in the world''s affairs to be considered innocent.';
+sWeKidnappedYour='We kidnapped your grandmother so you would come here. '+
+                'We figured you wouldn''t believe us otherwise.';
+sYouMeanThisWas='You mean... this was all planned?';
+sInAWayYes='In a way, yes. Your innocence alone wasn''t enough. You needed proper training '+
+                'to have any chance of succeeding in your mission.';
+sThanksToUsYouLearned='Thanks to us, you learned how to shoot a bow and a laser pistol!';
+sYouOvercameYourFear='You overcame your fear of heights with the zipline.';
+sYouLearnedToMove='You learned to move unnoticed.';
+sAndYouShowedCourage='And you showed courage in every challenge!';
+sSoLetMeGetThisStraight='So, let me get this straight. You kidnapped my grandmother, '+
+                'except it wasn''t really a kidnapping. And by trying to save her, I went through '+
+                'all these crazy events… which just so happened to train me… all so I can go meet '+
+                'some unknown creature at the center of the universe, that might not even exist?! '+
+                'And you expect me to believe all this?';
+sYouHaveToYoure='You have to. You''re our only hope. If we do nothing, the world is doomed...';
+sThereIsntMuchTime='There isn''t much time left. It''s a long journey.';
+sPlayerIveBeenTreated='%s, I’ve been treated well. We can trust them.';
+sWellIveComeThisFar='Well, I’ve come this far...';
+sOkIllDoItIllGo='Okay. I''ll do it. I''ll go meet this creature. But... on one condition!';
+sWhatCondition='What condition?';
+sIllGoIfYouLiftTheBan='I''ll go if you lift the ban on romantic relationships '+
+                'between employees in your company!';
+sWhatQuestionExclamation='What?!';
+sBanningPeople='Banning people from loving each other… It''s ridiculous! And why? For productivity?';
+sThatsANobleRequest='That''s a noble request. It clearly shows how different you are from us.';
+sYourRequestIsGranted='Your request is granted.';
+sW7Question='W7?';
+sYesSirQuestion='Yes, sir?';
+sYouHeardThatUpdate='You heard that? Update the employee policy, remove that rule, and notify everyone.';
+sDoneSir='Done, sir.';
+sPlayerAnythingElse='%s, anything else?';
+sNoThankYou='No. Thank you.';
+sThenLetsSummonTheTransporter='Then let''s summon the transporter and begin the journey.';
+sTransporterIsOnItsWay='Transporter WK510 is on its way. Landing in just a few seconds.';
+
+
+sToBeContinued='To be continued...';
+
+
+
+
+
 
 
 

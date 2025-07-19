@@ -713,7 +713,7 @@ var r: TRectF;
 begin
   inherited Update(aElapsedTime);
   // check if LR collide the panel -> game win
-  r := GetMatrixSurfaceToWorld.Transform(GetRectAreaInLocalSpace);
+  r := GetMatrixSurfaceToScene.Transform(GetRectAreaInLocalSpace);
   if FLR.CheckCollisionWith(r) then begin
     ScreenGameVolcanoInner.ExitToTheRight := FExitToTheRight;
     ScreenGameVolcanoInner.GameState := gsLRWin;
@@ -920,7 +920,7 @@ begin
 
   if FBeam.Visible then begin
     // check if the beam touch LR
-    m := FBeam.GetMatrixSurfaceToWorld;
+    m := FBeam.GetMatrixSurfaceToScene;
 
     collide := False;
     CheckLineCollisionWithLR(FBeamTopRight, FBeamBottomRight);
@@ -1332,7 +1332,7 @@ begin
   if FLRIsInvisible then exit;
 
   // check if LR feet are on the switch
-  r := GetMatrixSurfaceToWorld.Transform(GetRectAreaInLocalSpace);
+  r := GetMatrixSurfaceToScene.Transform(GetRectAreaInLocalSpace);
 
   if FLR.BottomFeetCollideWith(r) then begin
     Tint.Value := BGRA(255,255,0);
@@ -2023,7 +2023,7 @@ var d: single;
   begin
     with TInfoPanel.Create(sAIvoice, s, FFontText, Self, aUserValue) do begin
       p := PointF(FComputer.Width*0.5, -FComputer.Height-PPIScale(20)-Height);
-      SetCenterCoordinate(FComputer.GetMatrixSurfaceToWorld.Transform(p));
+      SetCenterCoordinate(FComputer.GetMatrixSurfaceToScene.Transform(p));
     end;
   end;
 begin

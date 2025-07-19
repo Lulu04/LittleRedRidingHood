@@ -94,7 +94,7 @@ end;
 
 TCallbackPickUpSomethingWhenBendDown = procedure(aPickUpToTheRight: boolean) of object;
 
-TLRRightView = class(TWalkingCharacter) //(TBaseComplexContainer)
+TLRRightView = class(TWalkingCharacter)
 private type TLRRightViewState = (rvsIdle, rvsWalking,
                                   rvsJumping, // jump+move
                                   rvsBendDown, rvsBendUp,
@@ -815,15 +815,15 @@ var m: TOGLCMatrix;
 begin
   // check left shoe
   if FLRRight.Visible then begin
-    m := FLRRight.FLeftLeg.GetMatrixSurfaceToWorld;
+    m := FLRRight.FLeftLeg.GetMatrixSurfaceToScene;
     p1 := PointF(FLRRight.FLeftLeg.Width*0.2, FLRRight.FLeftLeg.Height);
     p2 := PointF(FLRRight.FLeftLeg.Width*0.8, FLRRight.FLeftLeg.Height);
   end else if FLRFront.Visible then begin
-    m := FLRFront.FLeftShoe.GetMatrixSurfaceToWorld;
+    m := FLRFront.FLeftShoe.GetMatrixSurfaceToScene;
     p1 := PointF(FLRFront.FLeftShoe.Width*0.1, FLRFront.FLeftShoe.Height);
     p2 := PointF(FLRFront.FLeftShoe.Width*0.9, FLRFront.FLeftShoe.Height);
   end else if FLRBack.Visible then begin
-    m := FLRBack.FLeftShoe.GetMatrixSurfaceToWorld;
+    m := FLRBack.FLeftShoe.GetMatrixSurfaceToScene;
     p1 := PointF(FLRBack.FLeftShoe.Width*0.1, FLRBack.FLeftShoe.Height);
     p2 := PointF(FLRBack.FLeftShoe.Width*0.9, FLRBack.FLeftShoe.Height);
   end else exit(False);
@@ -835,15 +835,15 @@ begin
 
   // check right shoe
   if FLRRight.Visible then begin
-    m := FLRRight.FRightLeg.GetMatrixSurfaceToWorld;
+    m := FLRRight.FRightLeg.GetMatrixSurfaceToScene;
     p1 := PointF(FLRRight.FRightLeg.Width*0.2, FLRRight.FRightLeg.Height);
     p2 := PointF(FLRRight.FRightLeg.Width*0.8, FLRRight.FRightLeg.Height);
   end else if FLRFront.Visible then begin
-    m := FLRFront.FRightShoe.GetMatrixSurfaceToWorld;
+    m := FLRFront.FRightShoe.GetMatrixSurfaceToScene;
     p1 := PointF(FLRFront.FRightShoe.Width*0.1, FLRFront.FRightShoe.Height);
     p2 := PointF(FLRFront.FRightShoe.Width*0.9, FLRFront.FRightShoe.Height);
   end else if FLRBack.Visible then begin
-    m := FLRBack.FRightShoe.GetMatrixSurfaceToWorld;
+    m := FLRBack.FRightShoe.GetMatrixSurfaceToScene;
     p1 := PointF(FLRBack.FRightShoe.Width*0.1, FLRBack.FRightShoe.Height);
     p2 := PointF(FLRBack.FRightShoe.Width*0.9, FLRBack.FRightShoe.Height);
   end else exit(False);

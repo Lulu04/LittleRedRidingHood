@@ -34,6 +34,8 @@ uses
   function FolderSpriteGameMermaidsPort: string;
   function FolderSpriteSnakeFissure: string;
   function FolderSpriteWolfCastle: string;
+  function FolderSpriteRobotW7: string;
+  function FolderSpriteInSpace: string;
   function FolderSpriteSam: string;
   function FolderSpriteStrikeRaccoon: string;
   function FolderSpriteDartboard: string;
@@ -398,7 +400,7 @@ private
   function GetHelpText: string; override;
 private
  const
-  WolfCastleStepCount = 2;  // 1=encounter + dialogs + departure
+  WolfCastleStepCount = 2;  // 1=big meeting 2=inspace
 public
   constructor Create;
   destructor Destroy; override;
@@ -655,6 +657,16 @@ end;
 function FolderSpriteWolfCastle: string;
 begin
   Result := SpriteFolder+'WolfCastle'+DirectorySeparator;
+end;
+
+function FolderSpriteRobotW7: string;
+begin
+  Result := SpriteFolder+'RobotW7'+DirectorySeparator;
+end;
+
+function FolderSpriteInSpace: string;
+begin
+  Result := SpriteFolder+'InSpace'+DirectorySeparator;
 end;
 
 function FolderSpriteSam: string;
