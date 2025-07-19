@@ -2573,6 +2573,7 @@ begin
       PostMessage(414, 0.5);
     end;
     414: begin
+      FLR.BodyBottomY := YFeetOnPlatform;
       FLR.IdleLeft;
       FLR.TimeMultiplicator := 0.4;
       FTrain.SetCharacterToFollow(FLR);

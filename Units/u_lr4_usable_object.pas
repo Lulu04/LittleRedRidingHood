@@ -341,8 +341,8 @@ begin
   if FLR.ParentSurface = ParentSurface
     then d := Distance(Center, FLR.GetXY)
     else begin
-      d := Distance(FLR.SurfaceToSceneWithoutLayerTransform(PointF(0,0)),
-                    SurfaceToSceneWithoutLayerTransform(PointF(Width*0.5, Height*0.5)));
+      d := Distance(FLR.SurfaceToWorld(PointF(0,0)),
+                    SurfaceToWorld(PointF(Width*0.5, Height*0.5)));
     end;
 
   if (d < Width*FWidthThresholdCoef) and (d < FLR.DistanceToObjectToHandle) then begin

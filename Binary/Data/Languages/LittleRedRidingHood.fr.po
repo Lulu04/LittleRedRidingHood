@@ -51,9 +51,17 @@ msgstr "voix de l'IA"
 msgid "All right, we'll be on time."
 msgstr "Très bien, nous serons à l'heure."
 
+#: u_resourcestring.sanancientmanuscript
+msgid "An ancient manuscript we've had for a long time explains that the only way to understand what's happening is to travel to the center of the universe. There, we may encounter the Original Force that creates worlds. If this entity truly exists, it can help us to find a solution."
+msgstr "Un vieux manuscrit que nous avons en notre possession depuis longtemps explique que le seul moyen d'en savoir plus est d'aller au centre de l'univers: là, nous y rencontrerons la Force Originelle qui engendre les mondes. Cet entité, si elle existe, pourra nous éclairer sur ce qu'il faut faire."
+
 #: u_resourcestring.sandtheyusevolcanolavaasrawmaterial
 msgid "And they use the volcano's lava as a raw material..."
 msgstr "Et ils se servent de la lave du volcan comme matière première..."
+
+#: u_resourcestring.sandyoushowedcourage
+msgid "And you showed courage in every challenge!"
+msgstr "Tu as montré ton courage dans chacune des épreuves!"
 
 #: u_resourcestring.sandyouweresinging
 msgid "And you sang at the top of your lungs! Hahaha!"
@@ -75,9 +83,17 @@ msgstr "Vas-tu m'aider maintenant ?"
 msgid "Are you in the habit of asking before you give?"
 msgstr "C'est une habitude chez vous de demander avant de donner ?"
 
+#: u_resourcestring.sareyouoktheydidnt
+msgid "Are you okay?  They didn't hurt you, did they?"
+msgstr "Tu vas bien? Ils ne t'ont pas fait de mal?"
+
 #: u_resourcestring.sasubmarineiwasnt
 msgid "A submarine? I wasn't expecting that..."
 msgstr "Un sous-marin ? Je ne m'attendais pas à ça..."
+
+#: u_resourcestring.sasyoucanseewere
+msgid "As you can see, we're too entangled in the world's affairs to be considered innocent."
+msgstr "Comme tu vois, nous sommes trop impliqués dans les affaires du monde pour être innocent."
 
 #: u_resourcestring.satrain
 msgid "A train!?"
@@ -94,6 +110,10 @@ msgstr "RETOUR A LA CARTE"
 #: u_resourcestring.sbacktosam
 msgid "BACK TO SAM"
 msgstr "RETOUR CHEZ SAM"
+
+#: u_resourcestring.sbanningpeople
+msgid "Banning people from loving each other… It's ridiculous! And why? For productivity?"
+msgstr "Interdire aux gens de s'aimer... C'est ridicule ! Et pourquoi ? Pour plus de rendement ?"
 
 #: u_resourcestring.sbeforeileaveihavetosearchallcratesinthearea
 msgid "Before I leave, I have to search all the crates in the area."
@@ -163,6 +183,10 @@ msgstr "Allez quoi... Je suis sûr qu'avec un peu de persévérance tu y arriver
 #: u_resourcestring.scomeonitstime
 msgid "Come on, it's time to get started."
 msgstr "Allez, il est temps de commencer."
+
+#: u_resourcestring.scomeonletsgomeetthem
+msgid "Come on, let's go, they're waiting for us."
+msgstr "Viens, on va les rencontrer, ils nous attendent."
 
 #: u_resourcestring.scongratonceagain
 msgid "Congratulations! Once again you've shown that you're up to the task!"
@@ -242,6 +266,10 @@ msgstr ""
 msgid "Oh, a friend! You freed me from this cage, I'm going to jump into your arms and give you a hug!"
 msgstr "Oh, une copine! Tu m'as libéré de la cage, je vais sauter dans tes bras et te faire un câlin!"
 
+#: u_resourcestring.sdonesir
+msgid "Done, sir."
+msgstr "C'est fait, Monsieur."
+
 #: u_resourcestring.sdontbeafraidyouresafe
 msgid "Don't be afraid, you're safe inside. Don't move please."
 msgstr "N'ai pas peur, tu ne risques rien à l'intérieur. Ne bouge pas s'il te plaît."
@@ -311,6 +339,10 @@ msgstr "Père des loups"
 #: u_resourcestring.sfinally
 msgid "Finally!"
 msgstr "Enfin!"
+
+#: u_resourcestring.sfinallyifoundyou
+msgid "I finally found you!"
+msgstr "Enfin je t'ai retrouvée!"
 
 #: u_resourcestring.sfirstcompleteforest
 msgid "you must first complete the pine forest!"
@@ -416,6 +448,10 @@ msgstr "Mamie"
 msgid "Granny??"
 msgstr "Mamie ??"
 
+#: u_resourcestring.sgrannyquestion
+msgid "Granny?"
+msgstr "Mamie?"
+
 #: u_resourcestring.sgraphics
 msgid "GRAPHICS"
 msgstr "GRAPHISMES"
@@ -440,6 +476,11 @@ msgstr "augmente le nombre d'utilisations"
 #: u_resourcestring.shavefun
 msgid "Have fun!"
 msgstr "Amuses-toi bien!"
+
+#: u_resourcestring.shelloplayermother
+#, object-pascal-format
+msgid "Hello %s. I am the Mother of Wolves. Behind me are our daughter Penelope, and our son Marcus whom you've already met."
+msgstr "Bonjour %s, je suis la Mère des loups. Derrière moi, se trouve notre fille Pénélope et notre fils Marcus que tu as déjà rencontré."
 
 #: u_resourcestring.sherethereisabutton
 msgid "Here! there's a button marked Start"
@@ -466,6 +507,10 @@ msgstr "Hé !!"
 #: u_resourcestring.sheyididit
 msgid "Hey! I did it!"
 msgstr "Hé ! J'ai réussi !"
+
+#: u_resourcestring.shibutimnotsure
+msgid "Hi, but, um... I'm not really sure what's going on here..."
+msgstr "Bonjour, mais, hum... je ne comprends pas bien ce qu'il se passe ici..."
 
 #: u_resourcestring.showtochangekey
 msgid "To change keys, click on the desired button then press the desired key"
@@ -535,9 +580,18 @@ msgstr "Je vous le souhaite."
 msgid "I knew you could do it, congratulations!"
 msgstr "Je savais que tu y arriverais, félicitations !"
 
+#: u_resourcestring.siknewyouwouldmakeit
+#, object-pascal-format
+msgid "%s, I knew you'd make it! I never stopped believing in you."
+msgstr "%s, je savais que tu y arriverais! J'ai toujours eu confiance en toi."
+
 #: u_resourcestring.siknowagame
 msgid "I know a game I love. If you beat me, I'll give you a way to cross the sea."
 msgstr "Je connais un jeu que j'adore. Si tu me bats, je te donnerai un moyen de traverser la mer."
+
+#: u_resourcestring.sillgoifyoulifttheban
+msgid "I'll go if you lift the ban on romantic relationships between employees in your company!"
+msgstr "J'irai à condition que vous autorisiez les relations amoureuses entre employés dans votre société!"
 
 #: u_resourcestring.sillhelpyoutoo
 msgid "I'll help you too, you deserve it. Please follow me."
@@ -562,6 +616,10 @@ msgstr "Je suis Marcus, le frère de Pénélope, celle que tu as rencontré dans
 #: u_resourcestring.simproveequipment
 msgid "upgrade your equipment in the workshop"
 msgstr "améliore tes équipements dans l'atelier"
+
+#: u_resourcestring.sinawayyes
+msgid "In a way, yes. Your innocence alone wasn't enough. You needed proper training to have any chance of succeeding in your mission."
+msgstr "En quelque sorte, oui. Ton innocence ne suffisait pas. Tu avais aussi besoin d'un bon entrainement pour avoir des chances de réussir la mission."
 
 #: u_resourcestring.sineedakeytoopenthisgate
 msgid "I need a key to open this gate..."
@@ -743,6 +801,10 @@ msgctxt "u_resourcestring.smermaidsporthint"
 msgid "factories as far as the eye can see!"
 msgstr "des usines à pertes de vue!"
 
+#: u_resourcestring.smewhynotoneofyou
+msgid "Me? Why not one of you?"
+msgstr "Moi ? Pourquoi pas l'un d'entre vous ?"
+
 #: u_resourcestring.smotherofwolfs
 msgid "Mother of wolfs"
 msgstr "Mère des loups"
@@ -824,6 +886,14 @@ msgstr "...sans commentaire..."
 msgid "No idea! You're smart, you'll find a way on your own."
 msgstr "Aucune idée ! Tu es maline, tu trouveras bien un moyen toute seule."
 
+#: u_resourcestring.snotatalleveryone
+msgid "Not at all. Everyone here's taken great care of me."
+msgstr "Pas du tout. Tout le monde ici a bien pris soin de moi."
+
+#: u_resourcestring.snothankyou
+msgid "No. Thank you."
+msgstr "Non. Merci."
+
 #: u_resourcestring.snotreepoint
 msgid "No..."
 msgstr "Non..."
@@ -856,13 +926,17 @@ msgstr "D'accord..."
 msgid "Ok... Do you know where I can find a boat?"
 msgstr "Ok... Sais-tu où est-ce que je peux trouver un bateau ?"
 
+#: u_resourcestring.sokilldoitillgo
+msgid "Okay. I'll do it. I'll go meet this creature. But... on one condition!"
+msgstr "Ok, j'accepte. Allons rencontrer cette créature. Mais... à une condition!"
+
 #: u_resourcestring.sokletsgo
 msgid "Ok... Let's go!"
 msgstr "Ok... Allons-y!"
 
 #: u_resourcestring.sokokyoulooksmart
 msgid "Ok, ok... You look smart, I'll give you a challenge."
-msgstr "Ok,ok... Tu as l'air maligne, je te propose un challenge."
+msgstr "Ok,ok... Tu as l'air maline, je te propose un challenge."
 
 #: u_resourcestring.sopenarmoureddoor
 msgid "Open armoured door"
@@ -879,6 +953,10 @@ msgstr "OPTIONS"
 #: u_resourcestring.soups
 msgid "Oups..."
 msgstr "Oups..."
+
+#: u_resourcestring.sourresearchshows
+msgid "Our research shows that these disruptions will soon spiral out of control."
+msgstr "Nos études montrent que ces perturbations seront bientôt hors de contrôle."
 
 #: u_resourcestring.soutofcristals
 msgid "OUT OF CRISTAL!"
@@ -937,6 +1015,16 @@ msgstr "détruis les robots et rejoins la locomotive à temps"
 #: u_resourcestring.splainofsleepingmoonhint
 msgid "it is said that on full moon nights you can hear the train whistle..."
 msgstr "on raconte que les nuits de pleine lune on entend siffler le train..."
+
+#: u_resourcestring.splayeranythingelse
+#, object-pascal-format
+msgid "%s, anything else?"
+msgstr "%s, autre chose?"
+
+#: u_resourcestring.splayerivebeentreated
+#, object-pascal-format
+msgid "%s, I’ve been treated well. We can trust them."
+msgstr "%s, j'ai été bien traité, nous pouvons leur faire confiance."
 
 #: u_resourcestring.spocketsubmarineexplanation
 msgid "a submarine that can shrink to fit in a pocket"
@@ -1069,6 +1157,10 @@ msgstr ""
 msgid "So, are you in?"
 msgstr "Alors, tu es partante ?"
 
+#: u_resourcestring.ssoletmegetthisstraight
+msgid "So, let me get this straight. You kidnapped my grandmother, except it wasn't really a kidnapping. And by trying to save her, I went through all these crazy events… which just so happened to train me… all so I can go meet some unknown creature at the center of the universe, that might not even exist?! And you expect me to believe all this?"
+msgstr "Si j'ai bien compris, vous avez enlever ma grand-mère, sauf que ce n'était pas un enlèvement... En voulant la sauver j'ai participé à toutes ces mésaventures, ce qui a eu pour conséquence de m'entraîner... Et tout ça pour rencontrer je ne sais où dans l'univers, une créature dont nous ne savons même pas si elle existe... Vous pensez vraiment que je vais vous croire?"
+
 #: u_resourcestring.ssomeonehere
 msgid "Someone's here!"
 msgstr "Il y a quelqu'un !"
@@ -1149,6 +1241,10 @@ msgstr ""
 "\n"
 "Ont participé d'une manière ou d'une autre:"
 
+#: u_resourcestring.sthankstousyoulearned
+msgid "Thanks to us, you learned how to shoot a bow and a laser pistol!"
+msgstr "Grâce à nous, tu as appris à tirer avec un arc et un pistolet laser!"
+
 #: u_resourcestring.sthankyoudino
 msgid "Thank you, Dino. I'm glad to know you. I hope we'll meet again."
 msgstr "Merci Dino, je suis contente de te connaître. J'espère qu'on se reverra."
@@ -1156,6 +1252,14 @@ msgstr "Merci Dino, je suis contente de te connaître. J'espère qu'on se reverr
 #: u_resourcestring.sthankyouforyourhelp
 msgid "Thank you for your help."
 msgstr "Merci pour ton aide."
+
+#: u_resourcestring.sthatsanoblerequest
+msgid "That's a noble request. It clearly shows how different you are from us."
+msgstr "C'est une noble requête qui démontre bien la différence entre toi et nous."
+
+#: u_resourcestring.sthebookalsosays
+msgid "The manuscript also says only a pure soul can make the journey. That's why we chose you."
+msgstr "Le manuscrit dit aussi que seule une âme innocente peut y aller. C'est pourquoi nous t'avons choisi."
 
 #: u_resourcestring.sthecompanywework
 msgid "The company we work for prohibits romantic relationships between employees."
@@ -1173,9 +1277,25 @@ msgstr "Le Petit"
 msgid "the new story of"
 msgstr "la nouvelle histoire"
 
+#: u_resourcestring.sthenletssummonthetransporter
+msgid "Then let's summon the transporter and begin the journey."
+msgstr "Dans ce cas, appelons le transporteur et mettons-nous en route."
+
+#: u_resourcestring.sthereisntmuchtime
+msgid "There isn't much time left. It's a long journey."
+msgstr "Il ne reste que peu de temps, c'est un long voyage."
+
+#: u_resourcestring.stheresnothingtofear
+msgid "We are safe, I promise you."
+msgstr "Il n'y a rien à craindre, je te le promet."
+
 #: u_resourcestring.stheresomeoneonmytrain
 msgid "There's someone on my train!"
 msgstr "Il y a quelqu'un sur mon train !"
+
+#: u_resourcestring.sthesituationisdire
+msgid "The situation is dire... Something is disturbing the balance of the universe. We don't fully understand the consequences yet, but life on Earth is being deeply affected: climate change, natural disasters, rising aggression between nations, greed for power and wealth..."
+msgstr "L'heure est grave... Quelque chose perturbe l'équilibre universel. Les conséquences ne sont pas très connues mais la vie sur Terre en est très affectée: changement climatique, cataclysmes, montée de l'agressivité entre les peuples, soif de pouvoir et d'argent..."
 
 #: u_resourcestring.sthiscomputerhavesdcardreader
 msgid "This computer has an SD card reader, so I'll be able to read the contents of the one I've found."
@@ -1189,6 +1309,10 @@ msgstr "Cette caisse est verrouillée, il me faut une clé pour l'ouvrir."
 msgid "This place is beautiful."
 msgstr "Cet endroit est magnifique."
 
+#: u_resourcestring.stobecontinued
+msgid "To be continued..."
+msgstr "À suivre..."
+
 #: u_resourcestring.stomuchlavaisbadforyourhealth
 msgid "Too much lava is not good for your health"
 msgstr "Trop de lave c'est pas bon pour la santé"
@@ -1196,6 +1320,10 @@ msgstr "Trop de lave c'est pas bon pour la santé"
 #: u_resourcestring.stotal
 msgid "TOTAL"
 msgstr "TOTAL"
+
+#: u_resourcestring.stransporterisonitsway
+msgid "Transporter WK510 is on its way. Landing in just a few seconds."
+msgstr "Le transporteur WK510 est en route et atterrira dans quelques secondes."
 
 #: u_resourcestring.sturn
 #, object-pascal-format
@@ -1244,6 +1372,10 @@ msgstr ""
 "ACTION1 : sauter\n"
 "ACTION2 : utiliser un objet"
 
+#: u_resourcestring.sw7question
+msgid "W7?"
+msgstr "W7?"
+
 #: u_resourcestring.swanttoracewithme
 msgid "Me too! Want to race with me? The first to arrive gives the other a hug, right?"
 msgstr "Moi aussi! Tu veux faire la course avec moi ? Le premier arrivé fait un câlin à l'autre, d'acc ?"
@@ -1260,6 +1392,15 @@ msgstr "Nous avons atteint notre pleine vitesse. Nous arriverons dans moins de d
 msgid "Weird way of inviting people over... What's the hurry? What's going on?"
 msgstr "Drôle de façon d'inviter les gens... Pourquoi est-il pressé ? Qu'est-ce qu'il se passe ?"
 
+#: u_resourcestring.swekidnappedyour
+msgid "We kidnapped your grandmother so you would come here. We figured you wouldn't believe us otherwise."
+msgstr "Nous avons kidnappé ta grand-mère, afin que tu viennes ici. Nous pensions que tu ne nous croirais pas."
+
+#: u_resourcestring.swelcomeplayertamfather
+#, object-pascal-format
+msgid "Welcome %s. I am the Father of Wolves."
+msgstr "Soit la bienvenue %s. Je suis le Père des loups."
+
 #: u_resourcestring.swelcometosam
 msgid ""
 "Welcome to Sam's!\n"
@@ -1268,6 +1409,10 @@ msgstr ""
 "Bienvenue chez Sam!\n"
 "Cliques sur moi pour avoir des explications"
 
+#: u_resourcestring.swelikebeeingincharge
+msgid "We like being in charge!"
+msgstr "Nous aimons commander!"
+
 #: u_resourcestring.swellgottago
 msgid "Well... Gotta go. Bye!"
 msgstr "Bon, ben... Je dois y aller. Bye!"
@@ -1275,6 +1420,26 @@ msgstr "Bon, ben... Je dois y aller. Bye!"
 #: u_resourcestring.swellhowtostartit
 msgid "Well... How to start it?"
 msgstr "Bon... Comment le démarrer?"
+
+#: u_resourcestring.swellivecomethisfar
+msgid "Well, I’ve come this far..."
+msgstr "Au point où j'en suis..."
+
+#: u_resourcestring.swemakemoney
+msgid "We make money."
+msgstr "Nous gagnons de l'argent."
+
+#: u_resourcestring.swerunfactories
+msgid "We run factories."
+msgstr "Nous possédons des usines."
+
+#: u_resourcestring.swhatcondition
+msgid "What condition?"
+msgstr "Laquelle?"
+
+#: u_resourcestring.swhatquestionexclamation
+msgid "What?!"
+msgstr "Quoi?!"
 
 #: u_resourcestring.swhengrandfatherwashere
 msgid "When your grandpa was still around, we often had barbecues; he loved that!"
@@ -1346,7 +1511,7 @@ msgstr "Voulez-vous revoir la rencontre avec Marcus?"
 
 #: u_resourcestring.swouldyouliketotryagain
 msgid "Would you like to try again ?"
-msgstr "Voulez-vous réessayer ?"
+msgstr "Veux-tu réessayer ?"
 
 #: u_resourcestring.swowamachinethatbuildsrobots
 msgid "Wow! A machine that builds robots!"
@@ -1368,6 +1533,10 @@ msgstr "Oui je me souviens bien, il prenait toujours sa guitare et nous jouait d
 msgid "Yees! Now you are my friend and I want to give you a big hug!"
 msgstr "Ouiii! Maintenant tu es mon amie et je veux te faire un gros câlin!"
 
+#: u_resourcestring.syessirquestion
+msgid "Yes, sir?"
+msgstr "Oui, Monsieur?"
+
 #: u_resourcestring.syesthatswhativaguelyheard
 msgid "Yes, that's what I vaguely heard."
 msgstr "Oui, c'est ce que j'ai vaguement entendu."
@@ -1384,6 +1553,18 @@ msgstr "Tu peux aussi gagner des pièces ou des articles en jouant aux jeux."
 msgid "You?! Uh... don't tell anyone you saw us, okay?"
 msgstr "Vous ?! Heu... Ne dites à personne que vous nous avez vu, d'accord ?"
 
+#: u_resourcestring.syouhavetoyoure
+msgid "You have to. You're our only hope. If we do nothing, the world is doomed..."
+msgstr "Il le faut. Tu es notre seul espoir. Si nous ne faisons rien, le monde cours à sa perte..."
+
+#: u_resourcestring.syouheardthatupdate
+msgid "You heard that? Update the employee policy, remove that rule, and notify everyone."
+msgstr "Tu as entendu ? Modifie le règlement intérieur afin d'abolir cette règle s'il te plaît, et informe les employés."
+
+#: u_resourcestring.syoulearnedtomove
+msgid "You learned to move unnoticed."
+msgstr "Tu sais te déplacer sans te faire repérer."
+
 #: u_resourcestring.syoulose
 msgctxt "u_resourcestring.syoulose"
 msgid "YOU LOST"
@@ -1393,9 +1574,29 @@ msgstr "PERDU"
 msgid "You're lying! I'm sure you know where she is!"
 msgstr "Tu mens ! Je suis sûre que tu sais où elle est !"
 
+#: u_resourcestring.syoumeanthiswas
+msgid "You mean... this was all planned?"
+msgstr "Vous voulez dire que tout était organisé?"
+
+#: u_resourcestring.syouonlyneedtoturnon
+msgid "You only need to turn on the TV to see that all of this is, sadly, real."
+msgstr "Il suffit d'allumer sa télévision pour se rendre compte que ces faits sont bien réels hélas."
+
+#: u_resourcestring.syouovercameyourfear
+msgid "You overcame your fear of heights with the zipline."
+msgstr "Tu as dompté ton vertige avec la tyrolienne."
+
+#: u_resourcestring.syoureowedsomeexplanations
+msgid "You're owed some explanations..."
+msgstr "Tu mérites quelques explications..."
+
 #: u_resourcestring.syourgrandmotherwasinvited
 msgid "Your grandmother was invited by my parents."
 msgstr "Ta grand-mère a été invitée par mes parents."
+
+#: u_resourcestring.syourrequestisgranted
+msgid "Your request is granted."
+msgstr "Ta requête est acceptée."
 
 #: u_resourcestring.syourscore
 #, object-pascal-format

@@ -595,7 +595,7 @@ begin
         exit;
       end;
       p := PointF(Random*Width, Random*Height*0.25);
-      p := SurfaceToSceneWithoutLayerTransform(p);
+      p := SurfaceToWorld(p);
       FElectricalBeam.SetCoordinate(p);
       p := PointF(Random*Width, Height*0.75+Random*Height*0.25);
       p := SurfaceToScene(p);
@@ -740,11 +740,11 @@ begin
     exit;
   end;
 
-  CollisionBody.SetSurfaceToWordMatrix(GetMatrixSurfaceToWorld);
+  CollisionBody.SetTransformMatrix(GetMatrixSurfaceToScene);
   if FInBounceMode then begin
     // when the bullet bounce, we check the collision with the crane hook
     if (FWorkingContainer <> NIL) and (FWorkingContainer.Mode = contmGoToTheRight) then begin
-      FWorkingContainer.FCraneHook.CollisionBody.SetSurfaceToWordMatrix(FWorkingContainer.FCraneHook.GetMatrixSurfaceToWorld);
+      FWorkingContainer.FCraneHook.CollisionBody.SetTransformMatrix(FWorkingContainer.FCraneHook.GetMatrixSurfaceToScene);
       if CollisionBody.CheckCollisionWith(FWorkingContainer.FCraneHook) then begin
         Audio.PlayThenKillSound('metal-hit.ogg', 0.6, 0.0, 0.8);
         FWorkingContainer.HitCraneHook;
@@ -760,7 +760,7 @@ begin
   end;
 
   if OwnerIsLR then begin
-    m := FBlackEgg.GetMatrixSurfaceToWorld;
+    m := FBlackEgg.GetMatrixSurfaceToScene;
 
     // check collision with Marcus detection area
     if FBlackEgg.State <> eggsFreezed then begin
@@ -774,7 +774,7 @@ begin
     end;
 
     // check collision with Marcus egg
-    FBlackEgg.CollisionBody.SetSurfaceToWordMatrix(m);
+    FBlackEgg.CollisionBody.SetTransformMatrix(m);
     if CollisionBody.CheckCollisionWith(FBlackEgg) then begin
       if not FBlackEgg.FlipH then begin
         // Marcus is in defense mode -> bullet bounce
@@ -791,7 +791,7 @@ begin
       end;
     end else begin
       // check collision with the control panel
-      FControlPanel.CollisionBody.SetSurfaceToWordMatrix(FControlPanel.GetMatrixSurfaceToWorld);
+      FControlPanel.CollisionBody.SetTransformMatrix(FControlPanel.GetMatrixSurfaceToScene);
       if CollisionBody.CheckCollisionWith(FControlPanel) then begin
         Audio.PlayThenKillSound('metal-hit.ogg', 0.6, 0.0, 1.2);
         Kill;
@@ -809,7 +809,7 @@ begin
     end;
   end else begin
     // check collision with LR egg
-    FRedEgg.CollisionBody.SetSurfaceToWordMatrix(FRedEgg.GetMatrixSurfaceToWorld);
+    FRedEgg.CollisionBody.SetTransformMatrix(FRedEgg.GetMatrixSurfaceToScene);
     if CollisionBody.CheckCollisionWith(FRedEgg) then begin
       if FRedEgg.FlipH then begin
         // LR is in defense mode -> bullet bounce
@@ -887,14 +887,14 @@ begin
     end;
     contmFalling: begin
       // check if container collide Marcus egg
-      CollisionBody.SetSurfaceToWordMatrix(GetMatrixSurfaceToWorld);
-      FBlackEgg.CollisionBody.SetSurfaceToWordMatrix(FBlackEgg.GetMatrixSurfaceToWorld);
+      CollisionBody.SetTransformMatrix(GetMatrixSurfaceToScene);
+      FBlackEgg.CollisionBody.SetTransformMatrix(FBlackEgg.GetMatrixSurfaceToScene);
       if CollisionBody.CheckCollisionWith(FBlackEgg) then begin
         ScreenMermaidsBoss.PostMessage(300);
         FMode := contmHitMarcus;
       end else begin
         // check if the container collide LR egg
-        FRedEgg.CollisionBody.SetSurfaceToWordMatrix(FRedEgg.GetMatrixSurfaceToWorld);
+        FRedEgg.CollisionBody.SetTransformMatrix(FRedEgg.GetMatrixSurfaceToScene);
         if CollisionBody.CheckCollisionWith(FRedEgg) then begin
           ScreenMermaidsBoss.PostMessage(400);
           FMode := contmHitLR;

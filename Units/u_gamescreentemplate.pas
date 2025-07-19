@@ -78,7 +78,8 @@ end;
 
 implementation
 
-uses Forms, Graphics, u_app, u_utils, u_resourcestring, u_audio;
+uses Forms, Graphics, u_app, u_utils, u_resourcestring, u_audio,
+  u_sprite_lrcommon;
 
 type
 
@@ -415,6 +416,8 @@ begin
     FScene.Layer[i].PostProcessing.DisableAll;
     FScene.Layer[i].PostProcessing.UseCustomRenderer(NIL);
   end;
+
+  TCharacterWithDialogPanel.DialogIsChildOfCharacter := False;
 end;
 
 end.

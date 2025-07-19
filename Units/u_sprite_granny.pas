@@ -26,7 +26,7 @@ public
   procedure SetMouthHurt;
 end;
 
-TGrannyState = (gsUnknown, gsIdle, gsCooking, gsKidnapped,
+TGrannyState = (gsUnknown, gsIdleRight, gsIdleLeft, gsCooking, gsKidnapped,
                 gsWalking);
 TGranny = class(TCharacterWithDialogPanel)
 private
@@ -54,6 +54,9 @@ public
   procedure SetIdlePosition(aImmediate: boolean);
   procedure SetCookingAnim;
   procedure SetKidnapedPosition;
+public
+  procedure IdleRight;
+  procedure IdleLeft;
   procedure WalkHorizontallyTo(aX: single; aTargetScreen: TScreenTemplate; aMessageValueWhenFinish: TUserMessageValue; aDelay: single=0);
   property State: TGrannyState read FState write SetState;
 end;
@@ -87,7 +90,16 @@ begin
   if FState = AValue then Exit;
   FState := AValue;
   case AValue of
-    gsIdle: SetIdlePosition(False);
+    gsIdleRight: begin
+      FlipH := False;
+      Posture_Idle(1.0);
+      PostMessage(0);
+    end;
+    gsIdleLeft: begin
+      FlipH := True;
+      Posture_Idle(1.0);
+      PostMessage(0);
+    end;
     gsCooking: PostMessage(100);
     gsKidnapped: SetKidnapedPosition;
     gsWalking: PostMessage(200);
@@ -96,7 +108,7 @@ end;
 
 function TGranny.GetWalkingDeltaPixelPerStep: integer;
 begin
-  Result := Round(FScene.Width*0.1);
+  Result := Round(FScene.Width*0.01);
   if FlipH then Result := -Result;
 end;
 
@@ -129,6 +141,7 @@ begin
   inherited Create(FScene);
   if aLayerIndex <> -1 then FScene.Add(Self, aLayerIndex);
   self.DialogAuthorName := sGranny;
+  WalkDontUseSpeed := True;
 
   Dress := CreateChildSprite(texGMDress, 0);
   Dress.CenterX := 0;
@@ -176,7 +189,7 @@ begin
   BodyWidth := Head.Width;
 
   TimeMultiplicator := 1.0;
-  State := gsIdle;
+  State := gsIdleRight;
 end;
 
 procedure TGranny.Update(const aElapsedTime: single);
@@ -188,7 +201,7 @@ begin
     if ((MovingDirection = mdLeft) and (X.Value <= WalkingTargetPoint.x)) or
        ((MovingDirection = mdRight) and (X.Value >= WalkingTargetPoint.x)) then begin
       X.Value := WalkingTargetPoint.x;
-      State := gsIdle;
+      if FlipH then State := gsIdleLeft else State := gsIdleRight;
       EndOfWalk_SendMessageToScreen;
     end;
 end;
@@ -199,13 +212,13 @@ begin
   case UserValue of
     // Body moves in idle position
     0: begin
-      if not(State in [gsIdle, gsCooking]) then exit;
+      if not(State in [gsIdleRight, gsIdleLeft, gsCooking]) then exit;
       d := Random*1.5+1.5;
       Dress.Angle.ChangeTo(-Random, d, idcSinusoid);
       PostMessage(1, d);
     end;
     1: begin
-      if not(State in [gsIdle, gsCooking]) then exit;
+      if not(State in [gsIdleRight, gsIdleLeft, gsCooking]) then exit;
       d := Random*1.5+1.5;
       Dress.Angle.ChangeTo(Random, d, idcSinusoid);
       PostMessage(0, d);
@@ -251,15 +264,15 @@ begin
     200: begin
       if State <> gsWalking then exit;
       case FWalkingStep of
-        0: Posture_Walking1(1.0);
-        1: Posture_Walking2(1.0);
-        2: Posture_Walking3(1.0);
-        3: Posture_Walking4(1.0);
+        0: Posture_Walking1(0.2);
+        1: Posture_Walking2(0.2);
+        2: Posture_Walking3(0.2);
+        3: Posture_Walking4(0.2);
       end;
       inc(FWalkingStep);
       if FWalkingStep = 4 then FWalkingStep := 0;
-      X.ChangeTo(x.Value+GetWalkingDeltaPixelPerStep, 1.0, idcSinusoid);
-      PostMessage(200, 1.0);
+      X.ChangeTo(x.Value+GetWalkingDeltaPixelPerStep, 0.2);//, idcSinusoid);
+      PostMessage(200, 0.2);
     end;
 
   end;
@@ -401,6 +414,16 @@ begin
   FFork.Visible := False;
   LeftLeg.SetCoordinate(LeftLeg.Width*0.1, -LeftLeg.Height*0.3);
   RightLeg.SetCoordinate(RightLeg.Width*0.55, LeftLeg.Y.Value);
+end;
+
+procedure TGranny.IdleRight;
+begin
+  State := gsIdleRight;
+end;
+
+procedure TGranny.IdleLeft;
+begin
+  State := gsIdleLeft;
 end;
 
 procedure TGranny.WalkHorizontallyTo(aX: single;

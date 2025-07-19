@@ -74,7 +74,7 @@ uses u_app, u_resourcestring, u_screen_title, u_screen_gameforest,
   u_screen_gamevolcanodino, screen_gameplainmoon, u_screen_gamemermaidsport,
   u_screen_sam, u_sprite_def2, u_screen_gamemermaidboss,
   u_screen_gamesnakefissure, u_screen_gamesnakefissureintro,
-  u_screen_gamecastle, BGRAPath, Forms, Math;
+  u_screen_gamecastle, u_screen_gameinspace, BGRAPath, Forms, Math;
 
 const
   CLOUDS_PRESET =
@@ -906,7 +906,12 @@ begin
         else FScene.RunScreen(ScreenSnakeFissure);
       end;
     end;
-    160: FScene.RunScreen(ScreenWolfCastle);
+    160: begin
+      case PlayerInfo.WolfCastle.StepPlayed of
+        1: FScene.RunScreen(ScreenWolfCastle);
+        2: FScene.RunScreen(ScreenInSpace);
+      end;
+    end;
   end;
 end;
 

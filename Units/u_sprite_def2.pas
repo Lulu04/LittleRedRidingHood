@@ -120,6 +120,14 @@ public
   procedure ProcessMessage(UserValue: TUserMessageValue); override;
 end;
 
+{ TResizedSprite }
+// to simplify the creation of resized sprite
+TResizedSprite = class(TSprite)
+  constructor Create(aTex: PTexture;
+                     aNotScaledX, aNotScaledY,
+                     aNotScaledWidth, aNotScaledHeight,
+                     aLayerIndex: integer);
+end;
 
 
 implementation
@@ -566,6 +574,17 @@ begin
       PostMessage(10, Random);
     end;
   end;
+end;
+
+{ TResizedSprite }
+
+constructor TResizedSprite.Create(aTex: PTexture; aNotScaledX,
+  aNotScaledY, aNotScaledWidth, aNotScaledHeight, aLayerIndex: integer);
+begin
+  inherited Create(aTex, False);
+  if aLayerIndex <> -1 then FScene.Add(Self, aLayerIndex);
+  SetCoordinate(ScaleW(aNotScaledX), ScaleH(aNotScaledY));
+  SetSize(ScaleW(aNotScaledWidth), ScaleH(aNotScaledHeight));
 end;
 
 end.

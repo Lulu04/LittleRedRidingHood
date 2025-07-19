@@ -392,8 +392,8 @@ begin
     // check collision with Submarine -> win
     100: begin
       if ScreenSnakeFissure.GameState <> gsRunning then exit;
-      CollisionBody.SetSurfaceToWordMatrix(GetMatrixSurfaceToWorld);
-      FSubmarine.CollisionBody.SetSurfaceToWordMatrix(FSubmarine.GetMatrixSurfaceToWorld);
+      CollisionBody.SetTransformMatrix(GetMatrixSurfaceToScene);
+      FSubmarine.CollisionBody.SetTransformMatrix(FSubmarine.GetMatrixSurfaceToScene);
       if CollisionBody.CheckCollisionWith(FSubmarine)
         then ScreenSnakeFissure.GameState := gsLRWin
         else PostMessage(100, 0.1);
@@ -419,11 +419,11 @@ begin
   inherited Update(aElapsedTime);
 
   // check collision with mine
-  CollisionBody.SetSurfaceToWordMatrix(GetMatrixSurfaceToWorld);
+  CollisionBody.SetTransformMatrix(GetMatrixSurfaceToScene);
   for i:=0 to FScene.Layer[LAYER_BG2].SurfaceCount-1 do
     if FScene.Layer[LAYER_BG2].Surface[i] is TMine then begin
       mine := TMine(FScene.Layer[LAYER_BG2].Surface[i]);
-      mine.CollisionBody.SetSurfaceToWordMatrix(mine.GetMatrixSurfaceToWorld);
+      mine.CollisionBody.SetTransformMatrix(mine.GetMatrixSurfaceToScene);
       if CollisionBody.CheckCollisionWith(mine) then begin
         mine.Explode;
         Kill;
@@ -484,8 +484,8 @@ begin
   if not FFalling then exit;
   // check collision with turtle
   if FTurtle.State <> tursSleep then exit;
-  FTurtle.CollisionBody.SetSurfaceToWordMatrix(FTurtle.GetMatrixSurfaceToWorld);
-  CollisionBody.SetSurfaceToWordMatrix(GetMatrixSurfaceToWorld);
+  FTurtle.CollisionBody.SetTransformMatrix(FTurtle.GetMatrixSurfaceToScene);
+  CollisionBody.SetTransformMatrix(GetMatrixSurfaceToScene);
   if CollisionBody.CheckCollisionWith(FTurtle) then begin
     Explode;
     FTurtle.WakeUpAndWalkToTheRight;
@@ -609,7 +609,7 @@ begin
   Posture_Idle(0);
   FlipH := True;
   State := tursSleep;
-  CenterX := 18*FTileEngine.TileSize.cx + FTileEngine.TileSize.cx*0.5;
+  CenterX := 21*FTileEngine.TileSize.cx + FTileEngine.TileSize.cx*0.5;
   BottomY := 69*FTileEngine.TileSize.cy + FTileEngine.TileSize.cy*0.3;
 end;
 
@@ -665,7 +665,7 @@ var i: integer;
   boat: TBoatBroken;
   function CollisionWithTile(aLocalPt: TPointF): boolean;
   begin
-    aLocalPt := SurfaceToSceneWithoutLayerTransform(aLocalPt) - FTileEngine.PositionOnMap.Value;
+    aLocalPt := SurfaceToWorld(aLocalPt) - FTileEngine.PositionOnMap.Value;
     Result := FTileEngine.GetGroundType(aLocalPt) = GROUND_ROCK;
   end;
 begin
@@ -681,11 +681,11 @@ begin
       Explode;
     end;
     // check collision with barrier and mine
-    CollisionBody.SetSurfaceToWordMatrix(GetMatrixSurfaceToWorld);
+    CollisionBody.SetTransformMatrix(GetMatrixSurfaceToScene);
     for i:=0 to FScene.Layer[LAYER_BG2].SurfaceCount-1 do
       if FScene.Layer[LAYER_BG2].Surface[i] is TBarrier then begin
         barrier := TBarrier(FScene.Layer[LAYER_BG2].Surface[i]);
-        barrier.CollisionBody.SetSurfaceToWordMatrix(barrier.GetMatrixSurfaceToWorld);
+        barrier.CollisionBody.SetTransformMatrix(barrier.GetMatrixSurfaceToScene);
         if CollisionBody.CheckCollisionWith(barrier) then begin
           barrier.Open;
           Explode;
@@ -695,7 +695,7 @@ begin
       else
       if FScene.Layer[LAYER_BG2].Surface[i] is TMine then begin
         mine := TMine(FScene.Layer[LAYER_BG2].Surface[i]);
-        mine.CollisionBody.SetSurfaceToWordMatrix(mine.GetMatrixSurfaceToWorld);
+        mine.CollisionBody.SetTransformMatrix(mine.GetMatrixSurfaceToScene);
         if CollisionBody.CheckCollisionWith(mine) then begin
           mine.Explode;
           Explode;
@@ -706,7 +706,7 @@ begin
       for i:=0 to FScene.Layer[LAYER_FXANIM].SurfaceCount-1 do begin
         if FScene.Layer[LAYER_FXANIM].Surface[i] is TStone1 then begin
           stone := TStone1(FScene.Layer[LAYER_FXANIM].Surface[i]);
-          stone.CollisionBody.SetSurfaceToWordMatrix(stone.GetMatrixSurfaceToWorld);
+          stone.CollisionBody.SetTransformMatrix(stone.GetMatrixSurfaceToScene);
           if CollisionBody.CheckCollisionWith(stone) then begin
             stone.Fall;
             Explode;
@@ -716,7 +716,7 @@ begin
         else    //TStoneTurtle
         if FScene.Layer[LAYER_FXANIM].Surface[i] is TStoneTurtle then begin
           stoneTurtle := TStoneTurtle(FScene.Layer[LAYER_FXANIM].Surface[i]);
-          stoneTurtle.CollisionBody.SetSurfaceToWordMatrix(stoneTurtle.GetMatrixSurfaceToWorld);
+          stoneTurtle.CollisionBody.SetTransformMatrix(stoneTurtle.GetMatrixSurfaceToScene);
           if CollisionBody.CheckCollisionWith(stoneTurtle) then begin
             stoneTurtle.Disappear;
             Explode;
@@ -726,7 +726,7 @@ begin
         else
         if FScene.Layer[LAYER_FXANIM].Surface[i] is TBoatBroken then begin
           boat := TBoatBroken(FScene.Layer[LAYER_FXANIM].Surface[i]);
-          boat.CollisionBody.SetSurfaceToWordMatrix(boat.GetMatrixSurfaceToWorld);
+          boat.CollisionBody.SetTransformMatrix(boat.GetMatrixSurfaceToScene);
           if CollisionBody.CheckCollisionWith(boat) then begin
             boat.CreateWoodBoard;
             Explode;
@@ -1531,8 +1531,8 @@ begin
     // check collision with submarine
     100: begin
       if ScreenSnakeFissure.GameState <> gsRunning then exit;
-      FSubmarine.CollisionBody.SetSurfaceToWordMatrix(FSubmarine.GetMatrixSurfaceToWorld);
-      CollisionBody.SetSurfaceToWordMatrix(GetMatrixSurfaceToWorld);
+      FSubmarine.CollisionBody.SetTransformMatrix(FSubmarine.GetMatrixSurfaceToScene);
+      CollisionBody.SetTransformMatrix(GetMatrixSurfaceToScene);
       if CollisionBody.CheckCollisionWith(FSubmarine) then begin
         FTileEngine.ScrollSpeed.Value := PointF(0, 0);
         FSubmarine.ProcessContactWithMine;
@@ -1578,13 +1578,13 @@ var i: integer;
   barrier: TBarrier;
   mine: TMine;
 begin
-  CollisionBody.SetSurfaceToWordMatrix(GetMatrixSurfaceToWorld);
+  CollisionBody.SetTransformMatrix(GetMatrixSurfaceToScene);
 
   for i:=0 to FScene.Layer[LAYER_BG2].SurfaceCount-1 do begin
     // check collision with barriers
     if FScene.Layer[LAYER_BG2].Surface[i] is TBarrier then begin
       barrier := TBarrier(FScene.Layer[LAYER_BG2].Surface[i]);
-      barrier.CollisionBody.SetSurfaceToWordMatrix(barrier.GetMatrixSurfaceToWorld);
+      barrier.CollisionBody.SetTransformMatrix(barrier.GetMatrixSurfaceToScene);
       if CollisionBody.CheckCollisionWith(barrier) then begin
         Explode;
         barrier.Open;
@@ -1594,7 +1594,7 @@ begin
     // check collision with mines
     if FScene.Layer[LAYER_BG2].Surface[i] is TMine then begin
       mine := TMine(FScene.Layer[LAYER_BG2].Surface[i]);
-      mine.CollisionBody.SetSurfaceToWordMatrix(mine.GetMatrixSurfaceToWorld);
+      mine.CollisionBody.SetTransformMatrix(mine.GetMatrixSurfaceToScene);
       if CollisionBody.CheckCollisionWith(mine) then begin
         Explode;
         mine.Explode;
@@ -1786,7 +1786,7 @@ begin
     for j:=0 to FScene.Layer[LAYER_BG2].SurfaceCount-1 do
       if FScene.Layer[LAYER_BG2].Surface[j] is TBarrier then begin
         barrier := TBarrier(FScene.Layer[LAYER_BG2].Surface[j]);
-        barrier.CollisionBody.SetSurfaceToWordMatrix(barrier.GetMatrixSurfaceToWorld);
+        barrier.CollisionBody.SetTransformMatrix(barrier.GetMatrixSurfaceToScene);
         colItem.pt := FCollisionPoints[i].pt+GetXY;
         if barrier.CollisionBody.CheckCollisionWith(colItem) then begin
           DoRebound(rebdN, aElapsedTime);
@@ -1802,8 +1802,8 @@ var stone1: TStone1;
   repopable: TRepopableItem;
   boat: TBoatBroken;
 begin
-  LeftPlier.CollisionBody.SetSurfaceToWordMatrix(LeftPlier.GetMatrixSurfaceToWorld);
-  RightPlier.CollisionBody.SetSurfaceToWordMatrix(RightPlier.GetMatrixSurfaceToWorld);
+  LeftPlier.CollisionBody.SetTransformMatrix(LeftPlier.GetMatrixSurfaceToScene);
+  RightPlier.CollisionBody.SetTransformMatrix(RightPlier.GetMatrixSurfaceToScene);
 
   for i:=0 to FScene.Layer[LAYER_FXANIM].SurfaceCount-1 do begin
     surf := FScene.Layer[LAYER_FXANIM].Surface[i];
@@ -1811,7 +1811,7 @@ begin
     if surf is TStone1 then begin
       stone1 := TStone1(surf);
       if stone1.CanInteractWithPlier then begin
-        stone1.CollisionBody.SetSurfaceToWordMatrix(stone1.GetMatrixSurfaceToWorld);
+        stone1.CollisionBody.SetTransformMatrix(stone1.GetMatrixSurfaceToScene);
         if LeftPlier.CollisionBody.CheckCollisionWith(stone1) or
            RightPlier.CollisionBody.CheckCollisionWith(stone1) then begin
           stone1.Fall;
@@ -1822,7 +1822,7 @@ begin
     // broken boat
     if surf is TBoatBroken then begin
       boat := TBoatBroken(surf);
-      boat.CollisionBody.SetSurfaceToWordMatrix(boat.GetMatrixSurfaceToWorld);
+      boat.CollisionBody.SetTransformMatrix(boat.GetMatrixSurfaceToScene);
       if LeftPlier.CollisionBody.CheckCollisionWith(boat) or
          RightPlier.CollisionBody.CheckCollisionWith(boat) then begin
         boat.CreateWoodBoard;
@@ -1833,7 +1833,7 @@ begin
     if surf is TRepopableItem then begin
       repopable := TRepopableItem(surf);
       if repopable.CanInteractWithPlier then begin
-        repopable.CollisionBody.SetSurfaceToWordMatrix(repopable.GetMatrixSurfaceToWorld);
+        repopable.CollisionBody.SetTransformMatrix(repopable.GetMatrixSurfaceToScene);
         if LeftPlier.CollisionBody.CheckCollisionWith(repopable) or
            RightPlier.CollisionBody.CheckCollisionWith(repopable) then begin
           repopable.Disappear;
@@ -2187,7 +2187,7 @@ end;
 
 procedure TScreenSnakeFissure.CreateObjects;
 begin
-  CreateAndSaveTileSet;
+  //CreateAndSaveTileSet;
 
   FGameState := gsUndefined;
   ResetVariables;
@@ -2219,6 +2219,7 @@ begin
   FTileEngine.SetViewSize(FScene.Width, FScene.Height);
   FTileEngine.OnTileEvent := @ProcessTileEvent;
   CreateSpriteFromTileEvent;
+  FTileEngine.PositionOnMap.Value := PointF(FTileEngine.TileSize.cx*2, 0);
 
   // turtle
   FTurtle := TCustomTurtle.Create;
@@ -2306,6 +2307,7 @@ end;
 
 procedure TScreenSnakeFissure.Update(const aElapsedTime: single);
 var v, friction: single;
+  p, scrollSpeed: TPointF;
   procedure ApplyFriction(var aSpeed: single);
   begin
     if aSpeed > 0.0 then v := Max(0.0, aSpeed-friction)
@@ -2347,6 +2349,19 @@ begin
         v := FTileEngine.ScrollSpeed.y.Value;
         ApplyFriction(v);
         FTileEngine.ScrollSpeed.y.Value := v;
+      end;
+
+      // avoid to exit the map
+      p := FTileEngine.PositionOnMap.Value;
+      scrollSpeed := FTileEngine.ScrollSpeed.Value;
+      if (p.x <= 0) and (scrollSpeed.x < 0) then begin
+        FTileEngine.PositionOnMap.x.Value := 0;
+        FTileEngine.ScrollSpeed.x.Value := 0;
+      end
+      else
+      if (p.y <= 0) and (scrollSpeed.y > 0) then begin
+        FTileEngine.PositionOnMap.y.Value := 0;
+        FTileEngine.ScrollSpeed.y.Value := 0;
       end;
 
       // update camera

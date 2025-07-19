@@ -49,6 +49,10 @@ Malloga_Ballinga_Mastered.ogg by Joe Reynolds - Professorlamp at https://opengam
 
 Boss-Time by David Renda - https://www.fesliyanstudios.com/royalty-free-music/download/boss-time/2340
 
+fast-banjo-tune-with-acoustic-guitar by Nicholas Panek -- https://pixabay.com/music/folk-fast-banjo-tune-with-acoustic-guitar-accompaniment-253946/
+
+5 Open Surge score jingle - A.ogg by jobromedia -- https://opengameart.org/content/level-finish-fanfares
+
 On The Islands.ogg,
 ForestInTheNight.ogg,
 PromenonsNousDansLesBois.ogg,
@@ -59,11 +63,8 @@ SuccessShort2.ogg,
 Lose1.ogg
 PercuLoop1.ogg,
 Emotion1Loop.ogg,
-Tranquille.ogg composed by Lulu with Reason 3.0
-
-fast-banjo-tune-with-acoustic-guitar by Nicholas Panek -- https://pixabay.com/music/folk-fast-banjo-tune-with-acoustic-guitar-accompaniment-253946/
-
-5 Open Surge score jingle - A.ogg by jobromedia -- https://opengameart.org/content/level-finish-fanfares
+Tranquille.ogg
+TheMachine.ogg by Lulu -- made with Reason 3.0
 
 [SOUNDS]
 
@@ -187,4 +188,14 @@ heavy_bubbles by freesound community -- https://pixabay.com/sound-effects/heavy-
 Rocket Launch by Jarusca -- https://freesound.org/s/521377/ -- License: Creative Commons 0
 
 Jackhammer.wav by Benboncan -- https://freesound.org/s/104998/ -- License: Attribution 4.0
+
+Rocket Launch Boost and Burning (Version A) by TheLittleCrow -- https://freesound.org/s/774245/ -- License: Creative Commons 0
+
+spaceship engine idle 2.wav by jerry.berumen -- https://freesound.org/s/584358/ -- License: Attribution 4.0
+
+Tropical Island by richwise -- https://freesound.org/s/451743/ -- License: Creative Commons 0
+
+Tropical Island Dawn.m4a by Virengifo18 -- https://freesound.org/s/563309/ -- License: Attribution 3.0
+
+Guterton - Spaceship Ambi Roomtone by guterton.wav -- https://freesound.org/s/760685/ -- License: Attribution 4.0
 
