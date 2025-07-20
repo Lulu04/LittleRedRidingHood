@@ -344,12 +344,6 @@ TCraneRemoteControl = class(TUpgradableItemDescriptor)
   function PriceForNextLevel: ArrayOfMoneyDescriptor; override;
 end;
 
-TPocketSubmarine = class(TUpgradableItemDescriptor)
-  function CanDisplayPrice: boolean; override;
-  function NextLevelExplanation: string; override;
-  function PriceForNextLevel: ArrayOfMoneyDescriptor; override;
-end;
-
 { TMermaidsPortDescriptor }
 
 TMermaidsPortDescriptor = class(TGameDescriptor)
@@ -357,12 +351,10 @@ private
   function GetHelpText: string; override;
 private
   FMarcusEncounterDone: boolean;
-  FPocketSubmarine: TPocketSubmarine;
   FCraneRemoteControl: TCraneRemoteControl;
   FRemoteExplanationDone: boolean;
  const
   MermaidsPortStepCount = 3;  // 1,2=crossing the city  3=Marcus 4=enter submarine  5=undersea
-  PocketSubmarineMaxLevel = 1;
   CraneRemoteControlMaxLevel = 1;
 public
   constructor Create;
@@ -370,26 +362,36 @@ public
   function SaveToString: string; override;
   procedure LoadFromString(const s: string); override;
 public // special item and properties
-  property PocketSubmarine: TPocketSubmarine read FPocketSubmarine;
   property CraneRemoteControl: TCraneRemoteControl read FCraneRemoteControl;
   property MarcusEncounterDone: boolean read FMarcusEncounterDone write FMarcusEncounterDone;
 public // property not saved
   property RemoteExplanationDone: boolean read FRemoteExplanationDone write FRemoteExplanationDone;
 end;
 
-{ TSnakeFissure }
+
+TPocketSubmarine = class(TUpgradableItemDescriptor)
+  function CanDisplayPrice: boolean; override;
+  function NextLevelExplanation: string; override;
+  function PriceForNextLevel: ArrayOfMoneyDescriptor; override;
+end;
+
+    { TSnakeFissure }
 
 TSnakeFissure = class(TGameDescriptor)
 private
   function GetHelpText: string; override;
 private
+  FPocketSubmarine: TPocketSubmarine;
  const
-  SnakeFissureStepCount = 2;  // 1=submarine discovery   2=cross the sea
+  SnakeFissureStepCount = 2;  // 1=submarine discovery   2=cross the fissure
+  PocketSubmarineMaxLevel = 1;
 public
   constructor Create;
   destructor Destroy; override;
   function SaveToString: string; override;
   procedure LoadFromString(const s: string); override;
+public
+  property PocketSubmarine: TPocketSubmarine read FPocketSubmarine;
 end;
 
 
@@ -1209,7 +1211,7 @@ end;
 
 function TPocketSubmarine.CanDisplayPrice: boolean;
 begin
-  Result := PlayerInfo.MermaidsPort.PocketSubmarine.Owned;
+  Result := PlayerInfo.SnakeFissure.PocketSubmarine.Owned;
 end;
 
 function TPocketSubmarine.NextLevelExplanation: string;
@@ -1237,13 +1239,11 @@ end;
 constructor TMermaidsPortDescriptor.Create;
 begin
   inherited Create(MermaidsPortStepCount);
-  FPocketSubmarine := TPocketSubmarine.Create(PocketSubmarineMaxLevel, atoiFound);
   FCraneRemoteControl := TCraneRemoteControl.Create(CraneRemoteControlMaxLevel, atoiFound);
 end;
 
 destructor TMermaidsPortDescriptor.Destroy;
 begin
-  FreeAndNil(FPocketSubmarine);
   FreeAndNil(FCraneRemoteControl);
   inherited Destroy;
 end;
@@ -1254,7 +1254,6 @@ begin
   prop.Init('!');
   SaveCommonProperties(prop);
   prop.Add('CraneRemoteControl', FCraneRemoteControl.Level);
-  prop.Add('SubmarineLevel', FPocketSubmarine.Level);
   prop.Add('MarcusEncounterDone', FMarcusEncounterDone);
   Result := prop.PackedProperty;
 end;
@@ -1268,8 +1267,6 @@ begin
   LoadCommonProperties(prop);
   prop.ByteValueOf('CraneRemoteControl', vi, 0);
   FCraneRemoteControl.Level := vi;
-  prop.ByteValueOf('SubmarineLevel', vi, 0);
-  FPocketSubmarine.Level := vi;
   prop.BooleanValueOf('MarcusEncounterDone', FMarcusEncounterDone, False);
 end;
 
@@ -1283,10 +1280,12 @@ end;
 constructor TSnakeFissure.Create;
 begin
   inherited Create(SnakeFissureStepCount);
+  FPocketSubmarine := TPocketSubmarine.Create(PocketSubmarineMaxLevel, atoiFound);
 end;
 
 destructor TSnakeFissure.Destroy;
 begin
+  FreeAndNil(FPocketSubmarine);
   inherited Destroy;
 end;
 
@@ -1295,14 +1294,19 @@ var prop: TProperties;
 begin
   prop.Init('!');
   SaveCommonProperties(prop);
+  prop.Add('SubmarineLevel', FPocketSubmarine.Level);
   Result := prop.PackedProperty;
 end;
 
 procedure TSnakeFissure.LoadFromString(const s: string);
 var prop: TProperties;
+  vi: byte;
 begin
   prop.Split(s, '!');
   LoadCommonProperties(prop);
+  vi := 0;
+  prop.ByteValueOf('SubmarineLevel', vi, 0);
+  FPocketSubmarine.Level := vi;
 end;
 
 { TWolfCastle }

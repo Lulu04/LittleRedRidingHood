@@ -981,7 +981,7 @@ msgid "%s, I’ve been treated well. We can trust them."
 msgstr ""
 
 #: u_resourcestring.spocketsubmarineexplanation
-msgid "a submarine that can shrink to fit in a pocket"
+msgid "a yellow submarine!"
 msgstr ""
 
 #: u_resourcestring.spossiblecauselackoflava
