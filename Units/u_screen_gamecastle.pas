@@ -29,7 +29,7 @@ private
   FClouds: TOGLCSpriteClouds;
   FCloudsDensity: TFParam;
   FSkyHigh: TQuad4Color;
-  FsndSeaSideAmbiance, FsndTropicalBird,
+  FsndSubmarineEngine, FsndSeaSideAmbiance, FsndTropicalBird,
   FsndMusic, FsndMainPropulsor, FsndEngineIdle: TALSSound;
 
   FPlanetRenderer: TOGLCPlanetRenderer;
@@ -486,6 +486,7 @@ begin
   FsndMusic.SetLoopBounds(114.871, FsndMusic.TotalDuration);
   FsndMainPropulsor := Audio.AddSound('rocket-launch-boost-and-burning.ogg', 0.80, True);
   FsndEngineIdle := Audio.AddSound('spaceship-engine-idle-2.ogg', 0.80, True);
+  FsndSubmarineEngine := Audio.AddSound('synth-robot-sound.ogg', 0.4, True);
 
   FAtlas := FScene.CreateAtlas;
   FAtlas.Spacing := 2;
@@ -644,6 +645,8 @@ begin
   FScene.KillCamera(FCamera);
   FScene.KillCamera(FCameraInSpace);
 
+  if FsndSubmarineEngine <> NIL then FsndSubmarineEngine.FadeOutThenKill(2.0);
+  FsndSubmarineEngine := NIL;
   if FsndSeaSideAmbiance <> NIL then FsndSeaSideAmbiance.FadeOutThenKill(2.0);
   FsndSeaSideAmbiance := NIL;
   if FsndTropicalBird <> NIL then FsndTropicalBird.FadeOutThenKill(2.0);
@@ -682,9 +685,24 @@ begin
       FLR.TimeMultiplicator := 1.2;
       FSubmarine.X.ChangeTo(ScaleW(201), 10.0, idcSinusoid);   //10
       FSubmarine.StartFloating;
+      PostMessage(5, 3.0);
       PostMessage(10, 12.5);
     end;
+    5: begin   // submarine sound
+      FsndSubmarineEngine.Pitch.Value := 1.0;
+      FsndSubmarineEngine.FadeIn(0.4, 2.0);
+      FsndSubmarineEngine.Pitch.ChangeTo(1.0 - 1/12*4, 6.0);
+      FsndSubmarineEngine.Pan.Value := -1.0;
+      FsndSubmarineEngine.Pan.ChangeTo(-0.2, 6.0);
+      PostMessage(6, 6.0);
+    end;
+    6: begin // engine stop
+      FsndSubmarineEngine.Pitch.ChangeTo(1.0 - 1/12*8, 3.0);
+      FsndSubmarineEngine.FadeOutThenKill(4.0);
+      FsndSubmarineEngine := NIL;
+    end;
     10: begin
+      Audio.PlayThenKillSound('spaceship-compartment-doorOPEN.ogg', 0.6);
       FSubmarine.Posture_OpenDoor(1.0);
       PostMessage(15, 1.5);
     end;
@@ -1142,11 +1160,11 @@ begin
       if flagPlayerIdle then FLR.SetIdlePosition;
 
       // check the position to toggle the tropical bird ambiance
-      // transition made between 900..1300
+      // transition made between x 900..1300
       x1 := ScaleW(900);
       x2 := ScaleW(1300);
-      if InRange(Round(FLR.X.Value), x1, x2) then begin
-        v := (FLR.X.Value-x1) / (x2-x1);
+      if InRange(Trunc(FLR.X.Value), x1, x2) then begin
+        v := (Trunc(FLR.X.Value)-x1) / (x2-x1);
         v := v*v;
         FsndTropicalBird.Volume.Value := v;
         FsndSeaSideAmbiance.Volume.Value := (1.0-v)*0.8;
