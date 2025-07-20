@@ -42,6 +42,7 @@ private
   procedure CreateLevel;
   procedure SetSkyHighColorTo(aCol: TBGRAPixel; aDuration: single);
   procedure ToggleViewFromSpace;
+  procedure SetAllLayersVisible;
   procedure KillSeaWaves;
 public
   //procedure DefineSubTextures(aAtlas: TAtlas); override;
@@ -461,6 +462,13 @@ begin
     FScene.Layer[i].Visible := False;
 end;
 
+procedure TScreenWolfCastle.SetAllLayersVisible;
+var i: integer;
+begin
+  for i:=0 to LAYER_BG3 do
+    FScene.Layer[i].Visible := True;
+end;
+
 procedure TScreenWolfCastle.KillSeaWaves;
 var i: integer;
 begin
@@ -635,6 +643,7 @@ end;
 
 procedure TScreenWolfCastle.FreeObjects;
 begin
+  SetAllLayersVisible;
   FCloudsRenderer.Free;
   FCloudsRenderer := NIL;
   FreeAndNil(FCloudsDensity);
@@ -1123,8 +1132,7 @@ begin
       FsndMusic := NIL;
       PostMessage(550, 8.0);
     end;
-    550: begin // end
-      //FScene.RunScreen(ScreenMap);
+    550: begin // end -> jump directly to next chapter
       FScene.RunScreen(ScreenInSpace);
     end;
 

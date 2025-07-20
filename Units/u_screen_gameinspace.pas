@@ -54,6 +54,20 @@ uses Forms, Graphics, u_app, u_mousepointer, u_screen_map, u_utils, u_resourcest
 
 type
 
+{ TScreenAnim }
+
+TScreenAnimType = (satNone, satRotate, satFlipH, satFlipV);
+TScreenAnim = class(TSprite)
+private
+  FInverse: TSprite;
+  procedure CreateFlippedH(aTex: PTexture);
+  procedure CreateFlippedV(aTex: PTexture);
+public
+  constructor Create(aTex: PTexture; aX, aY: single; aWidth, aHeight: integer; aAnimType: TScreenAnimType;
+    aLayerIndex: integer);
+  procedure ProcessMessage(UserValue: TUserMessageValue); override;
+end;
+
 TMainBridgeBG = class(TSprite)
   constructor Create(aLayerIndex: integer);
 end;
@@ -74,7 +88,8 @@ public
 end;
 
 var
-  texInnerMainBridge, texSeat, texSeatArmrest: PTexture;
+  texInnerMainBridge, texSeat, texSeatArmrest, texDeskCenter,
+  texScreen1, texScreen2, texScreen3, texScreen4: PTexture;
   FLR: TLR4Direction;
   FMarcus: TWolfMarcus;
   FPenelope: TWolfPenelope;
@@ -86,6 +101,76 @@ var
   FFontText: TTexturedFont;
   FMainBridge: TMainBridgeBG;
   FLeftSeat, FRightSeat: TSeatWithCharacter;
+  FDeskCenter: TSprite;
+
+{ TScreenAnim }
+
+procedure TScreenAnim.CreateFlippedH(aTex: PTexture);
+begin
+  FInverse := TSprite.Create(aTex, False);
+  AddChild(FInverse, -1);
+  FInverse.FlipH := True;
+  FInverse.X.Value := Width*0.5;
+  FInverse.Y.Value := 0;
+end;
+
+procedure TScreenAnim.CreateFlippedV(aTex: PTexture);
+begin
+  FInverse := TSprite.Create(aTex, False);
+  AddChild(FInverse, -1);
+  FInverse.FlipV := True;
+  FInverse.Y.Value := Height*0.5;
+  FInverse.X.Value := 0;
+end;
+
+constructor TScreenAnim.Create(aTex: PTexture; aX, aY: single; aWidth,
+  aHeight: integer; aAnimType: TScreenAnimType; aLayerIndex: integer);
+begin
+  inherited Create(aTex, False);
+  SetCoordinate(aX, aY);
+  SetSize(aWidth, aHeight);
+  if aLayerIndex <> -1 then FScene.Add(Self, aLayerIndex);
+  case aAnimType of
+    satRotate: Angle.AddConstant(180);
+    satFlipH: begin
+      CreateFlippedH(aTex);
+      PostMessage(0);
+    end;
+    satFlipV: begin
+      CreateFlippedV(aTex);
+      PostMessage(50);
+    end;
+  end;
+end;
+
+procedure TScreenAnim.ProcessMessage(UserValue: TUserMessageValue);
+begin
+  case UserValue of
+    // anim flipped H
+    0: begin
+      MoveXRelative(Width*0.5, 1.5, idcSinusoid);
+      FInverse.MoveXRelative(-Width, 1.5, idcSinusoid);
+      PostMessage(5, 1.5);
+    end;
+    5: begin
+      MoveXRelative(-Width*0.5, 1.5, idcSinusoid);
+      FInverse.MoveXRelative(Width, 1.5, idcSinusoid);
+      PostMessage(0, 1.5);
+    end;
+
+    // anim flipped V
+    50: begin
+      MoveYRelative(Height*0.5, 1.5, idcSinusoid);
+      FInverse.MoveYRelative(-Height, 1.5, idcSinusoid);
+      PostMessage(55, 1.5);
+    end;
+    55: begin
+      MoveYRelative(-Height*0.5, 1.5, idcSinusoid);
+      FInverse.MoveYRelative(Height, 1.5, idcSinusoid);
+      PostMessage(50, 1.5);
+    end;
+  end;
+end;
 
 { TSeatWithCharacter }
 
@@ -160,6 +245,7 @@ end;
 
 procedure TScreenInSpace.CreateLevel;
 var fd: TFontDescriptor;
+  o: TTileEngine;
 begin
   // stars   LAYER_BG3
   FStarRenderer := TStarNestRenderer.Create(FScene, True);
@@ -187,12 +273,42 @@ begin
   FMars := TOGLCSpritePlanet.Create(FScene, FPlanetRenderer);
   FScene.Add(FMars, LAYER_BG3);
   FMars.LoadParamsFromString(PLANET_MARS);
-  FMars.SetSize(ScaleW(25), ScaleW(25));
+  FMars.SetSize(ScaleW(15), ScaleW(15));
   FMars.SetCoordinate(ScaleW(916), ScaleH(268));
 
 
   // main bridge bg   LAYER_GROUND
   FMainBridge := TMainBridgeBG.Create(LAYER_GROUND);
+  // animation on screens LAYER_GROUND
+  // screen 1
+  TScreenAnim.Create(texScreen3, ScaleW(25), ScaleH(505), ScaleW(23), ScaleH(23), satRotate, LAYER_GROUND);
+  // screen 3
+  with TScreenAnim.Create(texScreen2, ScaleW(323), ScaleH(454), ScaleW(25), ScaleH(21), satFlipH, LAYER_GROUND) do
+    Angle.Value := -2.7;
+  // screen 5
+  TScreenAnim.Create(texScreen1, ScaleW(588), ScaleH(448), ScaleW(40), ScaleH(15), satFlipV, LAYER_GROUND);
+  // screen 6
+  with TScreenAnim.Create(texScreen2, ScaleW(667), ScaleH(454), ScaleW(25), ScaleH(21), satFlipH, LAYER_GROUND) do
+    Angle.Value := 2.7;
+  // screen 7
+  with TScreenAnim.Create(texScreen1, ScaleW(874), ScaleH(476), ScaleW(26), ScaleH(15), satFlipV, LAYER_GROUND) do
+    Angle.Value := 17;
+  // screen 2
+  o := TTileEngine.Create(Fscene);
+  FScene.Add(o, LAYER_GROUND);
+  o.LoadMapFile(FolderSpriteInSpace+'Screen4Main_Map.map', [texScreen4]);
+  o.SetCoordinate(ScaleW(153), ScaleH(470));
+  o.SetViewSize(ScaleW(35), ScaleH(29));
+  o.ScrollSpeed.Y.Value := FScene.Height*0.01;
+  o.Angle.Value := -18;
+  o.Tint.Value := BGRA(255,0,255,80);
+  // screen 4
+  o := TTileEngine.Create(Fscene);
+  FScene.Add(o, LAYER_GROUND);
+  o.LoadMapFile(FolderSpriteInSpace+'Screen4Main_Map.map', [texScreen4]);
+  o.SetCoordinate(ScaleW(393), ScaleH(447));
+  o.SetViewSize(ScaleW(48), ScaleH(28));
+  o.ScrollSpeed.Y.Value := -FScene.Height*0.01;
 
   // characters
   FMother := TWolfMother.Create(False, LAYER_PLAYER);
@@ -206,16 +322,15 @@ begin
   FGranny.IdleRight;
 
   FW7 := TRobotW74Direction.Create(LAYER_PLAYER);
-  FW7.X.Value := ScaleW(683);
+  FW7.X.Value := ScaleW(571);
   FW7.BodyBottomY := ScaleH(739);
   FW7.IdleLeft;
 
   FLR := TLR4Direction.Create(LAYER_PLAYER);
-  FLR.X.Value := ScaleW(497);
+  FLR.X.Value := ScaleW(462);
   FLR.BodyBottomY := ScaleH(739);
   FLR.SetWindSpeed(0);
   FLR.IdleRight;
-
 
   FMarcus := TWolfMarcus.Create(False, LAYER_WOLF);
   FMarcus.IdleRight;
@@ -230,14 +345,17 @@ begin
   FLeftSeat.SetCoordinate(ScaleW(172), ScaleH(487));
   FLeftSeat.SetCharacter(FPenelope);
 
-
   FFather := TWolfFather.Create(False, LAYER_WOLF);
   FFather.BodyBottomY := ScaleH(645);
   FFather.X.Value := ScaleW(280);
   FFather.IdleLeft;
 
+  // desk center
+  FDeskCenter := FScene.AddSprite(texDeskCenter, False, LAYER_WOLF);
+  FDeskCenter.SetCoordinate(ScaleW(401), ScaleH(619));
+
   fd.Create('Arial', FScene.Height div 10, [fsBold], BGRA(0,0,0, 0), BGRA(255,255,0), 2.5);
-  fd.ComputeMaxHeightFor(sToBeContinued, Rect(0, 0, ScaleW(240), ScaleH(56)));
+  fd.ComputeMaxHeightFor(sToBeContinued, Rect(0, 0, ScaleW(240), ScaleH(40)));
   with TSprite.Create(FScene, fd, sToBeContinued, NIL) do begin
     MoveToLayer(LAYER_BG3);
     CenterX := FScene.Width*0.5;
@@ -273,6 +391,11 @@ begin
   texInnerMainBridge := FAtlas.AddFromSVG(path+'MainBridgeInner.svg', ScaleW(768), -1);
   texSeat := FAtlas.AddFromSVG(path+'Seat.svg', ScaleW(120), -1);
   texSeatArmrest := FAtlas.AddFromSVG(path+'SeatArmrest.svg', ScaleW(69), -1);
+  texDeskCenter := FAtlas.AddFromSVG(path+'DeskCenter.svg', ScaleW(222), -1);
+  texScreen1 := FAtlas.AddFromSVG(path+'Screen1.svg', ScaleW(40), -1);
+  texScreen2 := FAtlas.AddFromSVG(path+'Screen2.svg', ScaleW(25), -1);
+  texScreen3 := FAtlas.AddFromSVG(path+'Screen3.svg', ScaleW(23), -1);
+  texScreen4 := FAtlas.AddFromSVG(path+'Screen4.svg', ScaleW(44), -1);
 
   AddSphereParticleToAtlas(FAtlas);
 
@@ -298,6 +421,7 @@ begin
   FPausePanel := TInGamePausePanel.Create(FFontText, FAtlas);
 
   CustomizeMousePointer(False);
+  PostMessage(0); // wolf father anim
 end;
 
 procedure TScreenInSpace.FreeObjects;
@@ -323,7 +447,21 @@ end;
 
 procedure TScreenInSpace.ProcessMessage(UserValue: TUserMessageValue);
 begin
-  inherited ProcessMessage(UserValue);
+  case UserValue of
+    // father go to Penelope then Marcus and loop
+    0: begin
+      FFather.WalkHorizontallyTo(ScaleW(280), Self, 5);
+    end;
+    5: begin
+      FFather.IdleLeft;
+      PostMessage(10, 8.0);
+    end;
+    10: FFather.WalkHorizontallyTo(ScaleW(753), Self, 15);
+    15: begin
+      FFather.IdleRight;
+      PostMessage(0, 8.0);
+    end;
+  end;
 end;
 
 procedure TScreenInSpace.Update(const aElapsedTime: single);
