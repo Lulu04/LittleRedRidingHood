@@ -1027,8 +1027,8 @@ msgid "%s, I’ve been treated well. We can trust them."
 msgstr "%s, j'ai été bien traité, nous pouvons leur faire confiance."
 
 #: u_resourcestring.spocketsubmarineexplanation
-msgid "a submarine that can shrink to fit in a pocket"
-msgstr "un sous-marin qui peut rétrécir jusqu'à tenir dans une poche"
+msgid "a yellow submarine!"
+msgstr "un sous-marin jaune!"
 
 #: u_resourcestring.spossiblecauselackoflava
 msgid "Possible cause: lack of lava"

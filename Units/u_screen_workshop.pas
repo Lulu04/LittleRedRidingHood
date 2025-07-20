@@ -578,6 +578,10 @@ begin
   // item Mermaids port
   with PlayerInfo.MermaidsPort do begin
     FPanelItem.AddItem(CraneRemoteControl, texCraneRemote);
+  end;
+
+  // item Snake Fissure
+  with PlayerInfo.SnakeFissure do begin
     // pocket submarine
     FPanelItem.AddItem(PocketSubmarine, texSubmarine);
   end;

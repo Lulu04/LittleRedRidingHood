@@ -122,7 +122,7 @@ sDorsalThrusterExplanation='a dorsal thruster to fly in the air';
 sLaserGunExplanation='a laser gun effective only against machines';
 
 sCraneRemoteControlExplanation='a crane remote control';
-sPocketSubmarineExplanation='a submarine that can shrink to fit in a pocket';
+sPocketSubmarineExplanation='a yellow submarine!';
 
 // hints in the panel where player choose the step of the game
 sImproveEquipment='upgrade your equipment in the workshop';

@@ -433,6 +433,7 @@ begin
       PostMessage(175, 3.0);
     end;
     175: begin
+      PlayerInfo.SnakeFissure.PocketSubmarine.IncLevel;
       PlayerInfo.SnakeFissure.IncCurrentStep;
       FSaveGame.Save;
       FScene.RunScreen(ScreenMap);
