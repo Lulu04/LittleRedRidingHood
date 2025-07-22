@@ -1380,6 +1380,7 @@ procedure TOptionsPanel.ProcessLanguageChange(Sender: TSimpleSurfaceWithEffect);
 begin
   FSaveGame.Language := AppLang.IndexToLanguageIdentifier(ListBoxLanguages.FirstSelectedIndex);
   FSaveGame.Save;
+  FScene.LogInfo('Deleting atlas files because language have changed to '+FSaveGame.Language);
   DeleteAtlasFiles;
   FScene.RunScreen(ScreenTitle);
 end;
