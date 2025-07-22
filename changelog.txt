@@ -1,16 +1,16 @@
-version 0.3.0 -
+version 0.3.0 - jul 23, 2025
+> 4 new mini games: Mermaids Port, The Plain of the Sleeping Moon, Snake Fissure, The Wolf Castle
 > new npc Sam where the player can exchange items or play some funny games to win coins or items. The available game at Sam are the dartboart and the Strike Raccoon.
-> there is challenge in all mini games in the map. the player win trophies when s/he successfully completes one. Trophies are stored in the player's home.
+> there is challenge in some mini games in the map. the player win trophies when s/he successfully completes one. Trophies are stored in the player's home.
 > to avoid annoying repetition, the games Pines Forest and Mountain Peaks have been shortened to 5 levels instead of 10.
 > new buttons in pause menu: OPTIONS to redefine keys or change audio volume, and HOW TO PLAY to display the game instructions.
 > texture atlas are saved to speed up screen switching. They are reconstructed:
   - if the game version change because graphics may change between a version to another.
   - when player change the language because font charset may change.
+  - when the screen resolution have changed (player have changed his monitor?)
 > a loading message is displayed when loading or constructing a texture atlas.
 > added custom mouse cursor everywhere.
 > game map redesigned.
-> new mini game Mermaids Port.
-> new mini game The Plain of the Sleeping Moon.
 > in Volcano, camera don't move vertically while main character is jumping: better experience for player's eyes!
 > fix a display bug in Volcano.
 > fix a camera bug in the introduction.
