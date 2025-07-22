@@ -232,9 +232,8 @@ PlayerInfo.Forest.StormCloudLevel := 3;  }
   // balloon crates                           LAYER_FXANIM
   SetLength(FBalloonCrates, EnsureRange(FDifficulty, 3, 7));
   xx := FScene.Width*0.9/(Length(FBalloonCrates)+1);
-  for i:=0 to High(FBalloonCrates) do begin
+  for i:=0 to High(FBalloonCrates) do
     FBalloonCrates[i] := TBalloonCrate.Create(FScene.Width*0.1+xx*(i+1), FScene.Height-g.Height*0.35-texBalloonCrate^.FrameHeight);
-  end;
 
   // sets the difficulty
   gameTime := 60 + FDifficulty*3;
@@ -252,7 +251,7 @@ PlayerInfo.Forest.StormCloudLevel := 3;  }
   end;
   for i:=0 to High(FWolfGates) do begin
     FWolfGates[i].AppearTime := Max(0.2, 1.0 - FDifficulty*0.05);
-    FWolfGates[i].TimeMultiplicator := Max(0.4, 1.2-FDifficulty*0.15);
+    FWolfGates[i].TimeMultiplicator := Max(0.4, 1.2-(FDifficulty+2)*0.15);
   end;
 
   FPlatformLRMinY := g.BottomY+g.Height*0.25;
