@@ -22,7 +22,7 @@ uses
   u_transporterwk510, u_screen_strikeraccoon, u_screen_dartboard,
   u_screen_gamemermaidboss, u_screen_gamesnakefissureintro,
   u_screen_gamesnakefissure, u_screen_gamecastle, u_robotw7, u_wolfmothership,
-  u_screen_gameinspace;
+  u_screen_gameinspace, u_procedural_interstellarjump;
 
 {$R *.res}
 

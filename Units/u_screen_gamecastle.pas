@@ -45,7 +45,7 @@ private
   procedure SetAllLayersVisible;
   procedure KillSeaWaves;
 public
-  //procedure DefineSubTextures(aAtlas: TAtlas); override;
+  procedure DefineSubTextures(aAtlas: TAtlas); override;
   procedure CreateObjects; override;
   procedure FreeObjects; override;
   procedure ProcessMessage(UserValue: TUserMessageValue); override;
@@ -477,9 +477,54 @@ begin
       FScene.Layer[LAYER_BG3].Surface[i].Kill;
 end;
 
+procedure TScreenWolfCastle.DefineSubTextures(aAtlas: TAtlas);
+var path: String;
+begin
+  AdditionnalScale := 1.0;
+  LoadLR4DirTextures(aAtlas, False);
+  LoadGranMaTextures(aAtlas);
+  LoadWolfTextures(aAtlas);
+  LoadPenelopeTextures(aAtlas);
+  LoadMarcusTextures(aAtlas);
+  LoadFatherTextures(aAtlas);
+  LoadMotherTextures(aAtlas);
+  LoadRobotW7Textures(aAtlas);
+  AdditionnalScale := 1.5;
+  TSubmarine.LoadTexture(aAtlas, AdditionnalScale);
+  AdditionnalScale := 1.0;
+  TTransporterWK510.LoadTexture(aAtlas);
+  TMotherShip.LoadTexture(aAtlas);
+
+  path := FolderSpriteGameMermaidsPort;
+  texPontoon := aAtlas.AddFromSVG(path+'WoodenPontoon.svg', ScaleW(157), -1);
+  texPontoonPillar := aAtlas.AddFromSVG(path+'WoodenPillar.svg', ScaleW(36), -1);
+  texWave1 := aAtlas.AddFromSVG(path+'SeaWave1.svg', ScaleW(81), -1);
+
+  texMountain := aAtlas.AddFromSVG(SpriteBGFolder+'Rock1.svg', ScaleW(362), -1);
+  texCastle := aAtlas.AddFromSVG(SpriteBGFolder+'WolfCastle.svg', ScaleW(557), -1);
+
+  path := FolderSpriteWolfCastle;
+  texPalmTree1 := aAtlas.AddFromSVG(path+'PalmTree1.svg', ScaleW(216), -1);
+  texPalmTree2 := aAtlas.AddFromSVG(path+'PalmTree2.svg', ScaleW(162), -1);
+  texRock2 := aAtlas.AddFromSVG(path+'Rock2.svg', ScaleW(103), -1);
+  texShipFrontView := aAtlas.AddFromSVG(path+'ShipFrontView.svg', ScaleW(460), -1);
+  texTransporterWhole := aAtlas.AddFromSVG(path+'TransporterWhole.svg', ScaleW(153), -1);
+
+  AddCloud128x128ParticleToAtlas(aAtlas);
+  AddSphereParticleToAtlas(aAtlas);
+  AddDustParticleToAtlas(aAtlas);
+
+  // ui
+  CreateGameFontNumber(aAtlas); // < must be first !
+  // font for button in pause panel
+  FFontText := CreateGameFontText(aAtlas);
+  LoadGameDialogTextures(aAtlas);
+  // load arrow for button panels
+  AddBlueArrowToAtlas(aAtlas);
+  LoadMousePointerTexture(aAtlas);
+end;
+
 procedure TScreenWolfCastle.CreateObjects;
-var path: string;
-  ima: TBGRABitmap;
 begin
   GameState := gsUndefined;
   Audio.PauseMusicTitleMap(3.0);
@@ -496,59 +541,7 @@ begin
   FsndEngineIdle := Audio.AddSound('spaceship-engine-idle-2.ogg', 0.80, True);
   FsndSubmarineEngine := Audio.AddSound('synth-robot-sound.ogg', 0.4, True);
 
-  FAtlas := FScene.CreateAtlas;
-  FAtlas.Spacing := 2;
-
-  //AdditionnalScale := 0.6;
-  AdditionnalScale := 1.0;
-  LoadLR4DirTextures(FAtlas, False);
-  LoadGranMaTextures(FAtlas);
-  LoadWolfTextures(FAtlas);
-  LoadPenelopeTextures(FAtlas);
-  LoadMarcusTextures(FAtlas);
-  LoadFatherTextures(FAtlas);
-  LoadMotherTextures(FAtlas);
-  LoadRobotW7Textures(FAtlas);
-  AdditionnalScale := 1.5;
-  TSubmarine.LoadTexture(FAtlas, AdditionnalScale);
-  AdditionnalScale := 1.0;
-  TTransporterWK510.LoadTexture(FAtlas);
-  TMotherShip.LoadTexture(FAtlas);
-
-  path := FolderSpriteGameMermaidsPort;
-  texPontoon := FAtlas.AddFromSVG(path+'WoodenPontoon.svg', ScaleW(157), -1);
-  texPontoonPillar := FAtlas.AddFromSVG(path+'WoodenPillar.svg', ScaleW(36), -1);
-  texWave1 := FAtlas.AddFromSVG(path+'SeaWave1.svg', ScaleW(81), -1);
-
-  texMountain := FAtlas.AddFromSVG(SpriteBGFolder+'Rock1.svg', ScaleW(362), -1);
-  texCastle := FAtlas.AddFromSVG(SpriteBGFolder+'WolfCastle.svg', ScaleW(557), -1);
-
-  path := FolderSpriteWolfCastle;
-  texPalmTree1 := FAtlas.AddFromSVG(path+'PalmTree1.svg', ScaleW(216), -1);
-  texPalmTree2 := FAtlas.AddFromSVG(path+'PalmTree2.svg', ScaleW(162), -1);
-  texRock2 := FAtlas.AddFromSVG(path+'Rock2.svg', ScaleW(103), -1);
-  texShipFrontView := FAtlas.AddFromSVG(path+'ShipFrontView.svg', ScaleW(460), -1);
-  texTransporterWhole := FAtlas.AddFromSVG(path+'TransporterWhole.svg', ScaleW(153), -1);
-
-  AddCloud128x128ParticleToAtlas(FAtlas);
-  //AddBubbleParticleToAtlas(FAtlas);
-  AddSphereParticleToAtlas(FAtlas);
-  AddDustParticleToAtlas(FAtlas);
-
-  // ui
-  CreateGameFontNumber(FAtlas); // < must be first !
-  // font for button in pause panel
-  FFontText := CreateGameFontText(FAtlas);
-  LoadGameDialogTextures(FAtlas);
-  // load arrow for button panels
-  AddBlueArrowToAtlas(FAtlas);
-  LoadMousePointerTexture(FAtlas);
-
-  FAtlas.TryToPack;
-  FAtlas.Build;
-  ima := FAtlas.GetPackedImage;
-  ima.SaveToFile(Application.Location+'Atlas.png');
-  ima.Free;
+  CheckAtlas(FAtlas, 'wolfcastle.atlas');
 
   CreateLevel;
 
