@@ -95,8 +95,6 @@ uses Forms, u_app, u_mousepointer, u_screen_map, u_utils,
       TILE_EVENT_BOAT_BROKEN       = 38;
       TILE_EVENT_EXIT              = 39;
 
-var FWorldArea, FViewArea: TRectF;
-
 type
 
 TCristalGauge = class(TCircularGauge)
@@ -2223,13 +2221,6 @@ begin
 
   // turtle
   FTurtle := TCustomTurtle.Create;
-
-  FWorldArea := RectF(0, 0, FTileEngine.MapSize.cx, FTileEngine.MapSize.cy);
-  // constrained size for the camera
-  FViewArea.Left := FWorldArea.Left + FScene.Width*0.5;
-  FViewArea.Top := FWorldArea.Top + FScene.Height*0.5;
-  FViewArea.Right := FWorldArea.Right - FScene.Width*0.5;
-  FViewArea.Bottom := FWorldArea.Bottom - FScene.Height*0.5;
 
   // camera
   FCamera := FScene.CreateCamera;

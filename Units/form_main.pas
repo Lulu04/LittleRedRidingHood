@@ -101,9 +101,9 @@ end;
 procedure TFormMain.LoadCommonData;
 begin
   FSaveGame := TSaveGame.Create;
-  FSaveGame.Load;
   if FSaveGame.FolderCreated then
     FScene.CreateLogFile(FSaveGame.SaveFolder+'scene.log', True, @ProcessLogCallback, NIL);
+  FSaveGame.Load;
 
   Audio := TAudioManager.Create;
   if Audio.PlaybackContext.Error then

@@ -1756,6 +1756,7 @@ procedure TSaveGame.Save;
 var t: TStringList;
   prop: TProperties;
 begin
+  FScene.LogInfo('Saving game player info');
   t := TStringList.Create;
   try
     // players
@@ -1782,6 +1783,17 @@ begin
     prop.Add('KeyPause', FKeyPause);
     t.Add('[KEYBOARD]');
     t.Add(prop.PackedProperty);
+    // scene resolution
+    prop.Init('|');
+    prop.Add('Width', FScene.Width.ToString);
+    prop.Add('Height', FScene.Height.ToString);
+    t.Add('[SCENE RESOLUTION]');
+    t.Add(prop.PackedProperty);
+    // app version
+    prop.Init('|');
+    prop.Add('Current', APP_VERSION);
+    t.Add('[APP VERSION]');
+    t.Add(prop.PackedProperty);
     try
       t.SaveToFile(SaveFolder+'LittleRedRidingHood.sav');
     except
@@ -1795,8 +1807,9 @@ procedure TSaveGame.Load;
 var t: TStringList;
   prop: TProperties;
   s: string;
+  w, h: integer;
 begin
-  FScene.LogInfo('Loading saved game');
+  FScene.LogInfo('Loading game player info');
   t := TStringList.Create;
   try
     try
@@ -1830,6 +1843,25 @@ begin
       Input.KeyAction1 := FKeyAction1;
       Input.KeyAction2 := FKeyAction2;
       Input.KeyPause := FKeyPause;
+
+      w :=0;
+      h := 0;
+      prop.SplitFrom(t, '[SCENE RESOLUTION]', '|');
+      prop.IntegerValueOf('Width', w, w);
+      prop.IntegerValueOf('Height', h, h);
+      if (FScene.Width <> w) or (FScene.Height <> h) then begin
+        FScene.LogInfo('Deleting atlas files because scene resolution have changed to '+
+                FScene.Width.ToString+', '+FScene.Height.ToString);
+        DeleteAtlasFiles;
+      end;
+
+      prop.SplitFrom(t, '[APP VERSION]', '|');
+      prop.StringValueOf('Current', s, '');
+      if s <> APP_VERSION then begin
+        FScene.LogInfo('Deleting atlas files because app version have changed to '+APP_VERSION);
+        DeleteAtlasFiles;
+      end;
+
     except
       on E: Exception do begin
         FScene.LogError('raise exception "'+E.Message+'"', 1);
