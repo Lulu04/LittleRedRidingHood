@@ -80,7 +80,7 @@ LAZARUS_PROJECT="${PROJECT_DIR}/LittleRedRidingHood.lpi"
 STAGING_DIR=./staging
 STAGING_EXECUTABLE="${STAGING_DIR}/LittleRedRidingHood"
 NO_INSTALL_ARCHIVE_NAME="little_red_riding_hood_${VERSION}_${OS_NAME}_${WIDGETSET}_portable.tar.gz"
-LAZBUILD_DIR="/home/lulu/fpcupdeluxe/lazarus"
+LAZBUILD_DIR="/home/lulu/Documents/lazarus_stable/lazarus/"
 
 # delete the old project binary file
 if [ -f "${PROJECT_EXECUTABLE}" ]; then
