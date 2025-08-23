@@ -25,7 +25,8 @@ type
 
 // add new game here
 TGameOnMap = (gomUnknow, gomPineForest, gomZipLine, gomVolcano,
-              gomPlainOfSleepingMoon, gomMermaidPort, gomSnakeFissure, gomWolfCastle);
+              gomPlainOfSleepingMoon, gomMermaidPort, gomSnakeFissure,
+              gomWolfCastle, gomInSpace);
 
 { TScreenMap }
 
@@ -34,7 +35,7 @@ private
   FsndSeaWave: TALSSound;
   FIconLR: TSprite;
   BWorkShop, BSamHome, BPineForest, BMountainPeaks, BVolcano, BPlainMoon, BMermaidPort,
-  BSnakeFissure, BCastle: TImageButton;
+  BSnakeFissure, BCastle, BInSpace: TImageButton;
   FLabelPlaceOnTheMap: TUILabel;
   FPlaceHint: TUITextArea;
   FFontPlaceName: TTexturedFont;
@@ -74,7 +75,8 @@ uses u_app, u_resourcestring, u_screen_title, u_screen_gameforest,
   u_screen_gamevolcanodino, screen_gameplainmoon, u_screen_gamemermaidsport,
   u_screen_sam, u_sprite_def2, u_screen_gamemermaidboss,
   u_screen_gamesnakefissure, u_screen_gamesnakefissureintro,
-  u_screen_gamecastle, u_screen_gameinspace, BGRAPath, Forms, Math;
+  u_screen_gamecastle, u_screen_msmainbridge, u_screen_msconstruction,
+  u_screen_msharvesting, u_screen_msmeteorstorm, BGRAPath, Forms, Math;
 
 const
   CLOUDS_PRESET =
@@ -86,7 +88,6 @@ type
 { TPanelChooseGameStep }
 
 TPanelChooseGameStep = class(TCenteredGameUIPanel)
-private class var FHintIndex: integer;
 private
   FLine: TShapeOutline;
   FSteps: array of TImageButton;
@@ -119,7 +120,7 @@ var FFontText: TTexturedFont;
   texMap1FW, texMap1Outline, texLRHome, texSamHome, texPineForest,
   texZipLinePeaks, texZipLinePeaksCableToVolcano,
   texVolcanoMountain, texPlainOfSleepingMoon, texFactory, texSnakeFissure,
-  texCastle: PTexture;
+  texCastle, texInSpace: PTexture;
   FPanelChooseGameStep: TPanelChooseGameStep=NIL;
   FAtlas: TOGLCTextureAtlas;
 
@@ -173,13 +174,14 @@ begin
     o := TImageButton(Sender);
     FSelectedStepIndex := o.Tag1;
     SetLRIconPosition;
+    FHint.Text.Caption := FGameDescriptor.GetStepInfo(FSelectedStepIndex);
   end else
   if Sender = BChallenge then begin
     Audio.PlayUIClick;
     ChallengeMode := not ChallengeMode;
     if not ChallengeMode then begin
       BChallenge.Caption := sGameMode;
-      FHint.Text.Caption := FGameDescriptor.HelpText;
+      FHint.Text.Caption := FGameDescriptor.GetStepInfo(FSelectedStepIndex);
       ShowGameSteps(True);
     end else begin
       BChallenge.Caption := sChallengeMode;
@@ -256,11 +258,12 @@ begin
   FHint.BodyShape.SetShapeRectangle(Round(Width/2), Round(Height/2), 0);
   FHint.BodyShape.Fill.Visible := False;
   FHint.BodyShape.Border.Visible := False;
-  if aHint = '' then begin
+{  if aHint = '' then begin
     FHint.Text.Caption := GameHints[FHintIndex];
     inc(FHintIndex);
     if FHintIndex > High(GameHints) then FHintIndex := 0;
-  end else FHint.Text.Caption := aHint;
+  end else FHint.Text.Caption := aHint; }
+  FHint.Text.Caption := aGame.GetStepInfo(FSelectedStepIndex);
   FHint.Text.Align := taTopCenter;
   FHint.Text.TexturedFont := FFontText;
   FHint.SetCoordinate(Width/2-PPIScale(10), PPIScale(10));
@@ -349,6 +352,9 @@ begin
   end else if Sender = BCastle then begin
     s := sWolfCastle;
     hint := sWolfCastleHint;
+  end else if Sender = BInSpace then begin
+    s := sInSpace;
+    hint := ' ';
   end;
   FLabelPlaceOnTheMap.Caption := s;
   FLabelPlaceOnTheMap.CenterX := ScaleW(687);
@@ -483,9 +489,19 @@ begin
 
   if Sender = BCastle then begin
     UnableMouseInteractionOnMapObjects(False);
-    FPanelChooseGameStep := TPanelChooseGameStep.Create(texCastle, texLRIcon, PlayerInfo.WolfCastle, 160, sLetsGo);
-    _ShowPanelChooseGameStep;
+    FScene.RunScreen(ScreenWolfCastle);
     LastGameClicked := gomWolfCastle;
+    exit;
+  end;
+
+  if s = '' then
+    if not PlayerInfo.WolfCastle.IsTerminated then s := sFirstCompleteWolfCastle;
+
+  if Sender = BInSpace then begin
+    UnableMouseInteractionOnMapObjects(False);
+    FPanelChooseGameStep := TPanelChooseGameStep.Create(texInSpace, texLRIcon, PlayerInfo.InSpace, 160, ' ');
+    _ShowPanelChooseGameStep;
+    LastGameClicked := gomInSpace;
     exit;
   end;
 end;
@@ -500,6 +516,7 @@ begin
     gomMermaidport: ProcessButtonClick(BMermaidPort);
     gomSnakeFissure: ProcessButtonClick(BSnakeFissure);
     gomWolfCastle: ProcessButtonClick(BCastle);
+    gomInSpace: ProcessButtonClick(BInSpace);
   end;
 end;
 
@@ -516,9 +533,11 @@ begin
   else
   if PlayerInfo.MermaidsPort.FirstTimeTerminated then FTargetButtonForFireworkAnim := BMermaidport
   else
-  if PlayerInfo.SnakeFissure.FirstTimeTerminated then FTargetButtonForFireworkAnim := BSnakeFissure
-  else
-  if PlayerInfo.WolfCastle.FirstTimeTerminated then FTargetButtonForFireworkAnim := BCastle;
+  if PlayerInfo.SnakeFissure.FirstTimeTerminated then FTargetButtonForFireworkAnim := BSnakeFissure;
+  {else
+  if PlayerInfo.WolfCastle.FirstTimeTerminated then FTargetButtonForFireworkAnim := BCastle
+  else}
+
 
   Result := FTargetButtonForFireworkAnim <> NIL;
   if Result then begin
@@ -529,6 +548,8 @@ end;
 
 procedure TScreenMap.SetLRIconPositionOnGameToPlay;
 begin
+  if PlayerInfo.WolfCastle.IsTerminated then FIconLR.SetCenterCoordinate(BInSpace.CenterX, BInSpace.CenterY)
+  else
   if PlayerInfo.SnakeFissure.IsTerminated then FIconLR.SetCenterCoordinate(BCastle.CenterX, BCastle.CenterY)
   else
   if PlayerInfo.MermaidsPort.IsTerminated then FIconLR.SetCenterCoordinate(BSnakeFissure.CenterX, BSnakeFissure.CenterY)
@@ -566,6 +587,7 @@ begin
   texPlainOfSleepingMoon := aAtlas.AddFromSVG(SpriteMapFolder+'MapPlainOfSleepingMoon.svg', ScaleW(211), -1);
   texFactory := aAtlas.AddFromSVG(SpriteMapFolder+'MapFactory.svg', ScaleW(159), -1);
   texSnakeFissure := aAtlas.AddFromSVG(SpriteMapFolder+'SnakeFissure.svg', ScaleW(107), -1);
+  texInSpace := aAtlas.AddFromSVG(SpriteMapFolder+'MapInSpace.svg', ScaleW(199), -1);
 
   // castle island
   texMapCastleFW := aAtlas.AddFromSVG(SpriteMapFolder+'MapCastleFW.svg', ScaleW(170), -1);
@@ -752,6 +774,12 @@ begin
   BCastle := CreateImageButton(texCastle);
   BCastle.SetCoordinate(ScaleW(859), ScaleH(186));
 
+  // button in space
+  BInSpace := CreateImageButton(texInSpace);
+  BInSpace.SetCoordinate(ScaleW(797), ScaleH(27));
+  BInSpace.Visible := PlayerInfo.WolfCastle.IsTerminated;
+  BInSpace.MouseInteractionEnabled := BInSpace.Visible;
+
   // icon LR
   FIconLR := TSprite.Create(texLRIcon, False);
   FScene.Add(FIconLR, LAYER_PLAYER);
@@ -785,6 +813,11 @@ begin
 
   // player items panel
   FInMapPanel := TInMapPanel.Create;
+  FInMapPanel.Visible := not BInSpace.Visible;
+
+  // we go directly from 'wolf castle' to 'in space'
+  if (LastGameClicked = gomWolfCastle) and (PlayerInfo.WolfCastle.IsTerminated) then
+    LastGameClicked := gomInSpace;
 
   // check if a sub-game was completed, if yes an animation with firework start
   // else the last game panel is opened
@@ -907,9 +940,20 @@ begin
       end;
     end;
     160: begin
-      case PlayerInfo.WolfCastle.StepPlayed of
-        1: FScene.RunScreen(ScreenWolfCastle);
-        2: FScene.RunScreen(ScreenInSpace);
+      case PlayerInfo.InSpace.StepPlayed of
+        1: FScene.RunScreen(ScreenMotherShipMainBridge);   // briefing 1: we need a mining ship and a docking bay
+        2: FScene.RunScreen(ScreenMotherShipConstruction); // build docking bay and mining ship
+        3: FScene.RunScreen(ScreenMotherShipMainBridge);   // briefing 2
+        4: FScene.RunScreen(ScreenHarvestingInSpace);      // deploy the probe and harvest for shield
+        5: FScene.RunScreen(ScreenMotherShipConstruction); // construct the shield
+        6: FScene.RunScreen(ScreenHarvestingInSpace);      // harvest for the fighter
+        7: FScene.RunScreen(ScreenMotherShipConstruction); // construct the fighter
+        8: FScene.RunScreen(ScreenMotherShipMainBridge);   // briefing 3
+        9: FScene.RunScreen(ScreenMeteorStorm);            // battle against the meteor storm
+        10: FScene.RunScreen(ScreenMotherShipMainBridge);  // briefing 4
+        11: FScene.RunScreen(ScreenHarvestingInSpace);     // harvest for the Gigatron and Annihilator
+        12: FScene.RunScreen(ScreenMotherShipConstruction);// construct the Gigatron and Annihilator
+        13: FScene.RunScreen(ScreenMotherShipMainBridge);  // intergalactic jump
       end;
     end;
   end;
@@ -964,6 +1008,7 @@ begin
   BMermaidPort.MouseInteractionEnabled := aValue;
   BSnakeFissure.MouseInteractionEnabled := aValue;
   BCastle.MouseInteractionEnabled := aValue;
+  BInSpace.MouseInteractionEnabled := aValue and BInSpace.Visible;
   BMainMenu.MouseInteractionEnabled := aValue;
 end;
 

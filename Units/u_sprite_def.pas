@@ -136,7 +136,7 @@ end;
 
 { TLittleRobot }
 
-TLittleRobot = class(TWalkingCharacter)
+TLittleRobot = class(TCharacterWithMark)
 public class var texWheel, texBody, texArm, texFingerLeft, texFingerRight: PTexture;
 private
   FWheel1, FWheel2, FBody, FFingerLeft, FFingerRight: TSprite;
@@ -154,9 +154,21 @@ public // move utils
   FArm: TSprite;
   procedure FingerStartKnitting;
   procedure FingerStopKnitting;
+  procedure MoveArmUp(aDuration: single);
   procedure MoveArmForward;
   procedure MoveArmDown;
   procedure WalkHorizontallyTo(aX: single; aMessageReceiver: TObject; aMessageValueWhenFinish: TUserMessageValue; aDelay: single=0);
+private // OBJECT HELD BY HAND
+  FObjectInHand: TSimpleSurfaceWithEffect;
+  FSweepTheFloorWithBroom: boolean;
+public
+  // insert aSurface as child of left arm
+  procedure AddObjectInHand(aSurface: TSimpleSurfaceWithEffect; aOffset: TPointF; aZOrder: integer=-1);
+  // remove the child dependency. if aFreeSurface is True the object (surface) is freed.
+  procedure RemoveObjectInHand(aFreeSurface: boolean);
+  procedure StartAnimSweepTheFloor;
+  procedure StopAnimSweepTheFloor;
+  property ObjectInHand: TSimpleSurfaceWithEffect read FObjectInHand;
 end;
 
 { TLittleRobotConstructor }
@@ -1908,6 +1920,18 @@ begin
       FFingerRight.Angle.ChangeTo(-10, 0.1);
       PostMessage(100, 0.1);
     end;
+
+    // anim sweep the floor
+    200: begin
+      if not FSweepTheFloorWithBroom then exit;
+      FArm.Angle.ChangeTo(67, 0.3, idcSinusoid);
+      PostMessage(205, 0.3);
+    end;
+    205: begin
+      if not FSweepTheFloorWithBroom then exit;
+      FArm.Angle.ChangeTo(52, 0.3, idcSinusoid);
+      PostMessage(200, 0.3);
+    end;
   end;
 end;
 
@@ -1920,6 +1944,7 @@ begin
   FArm.FlipH := AValue;
   FFingerLeft.FlipH := AValue;
   FFingerRight.FlipH := AValue;
+  if FObjectInHand <> NIL then FObjectInHand.FlipH := AValue;
 end;
 
 procedure TLittleRobot.SetFlipV(AValue: boolean);
@@ -1931,6 +1956,7 @@ begin
   FArm.FlipV := AValue;
   FFingerLeft.FlipV := AValue;
   FFingerRight.FlipV := AValue;
+  if FObjectInHand <> NIL then FObjectInHand.FlipV := AValue;
 end;
 
 procedure TLittleRobot.FingerStartKnitting;
@@ -1945,6 +1971,11 @@ begin
   FFingerKnitting := False;
   FFingerLeft.Angle.ChangeTo(0, 1.0*TimeMultiplicator);
   FFingerRight.Angle.ChangeTo(0, 1.0*TimeMultiplicator);
+end;
+
+procedure TLittleRobot.MoveArmUp(aDuration: single);
+begin
+  FArm.Angle.ChangeTo(-180, aDuration, idcSinusoid);
 end;
 
 procedure TLittleRobot.MoveArmForward;
@@ -1976,6 +2007,35 @@ begin
     PostMessageToTargetObject(aMessageReceiver, aMessageValueWhenFinish, aDelay);
     Speed.X.Value := 0.0;
   end;
+end;
+
+procedure TLittleRobot.AddObjectInHand(aSurface: TSimpleSurfaceWithEffect; aOffset: TPointF; aZOrder: integer);
+begin
+  FObjectInHand := aSurface;
+  FArm.AddChild(FObjectInHand, aZOrder);
+  FObjectInHand.SetCoordinate(PointF(FArm.Width*0.5, FArm.Height) + aOffset);
+end;
+
+procedure TLittleRobot.RemoveObjectInHand(aFreeSurface: boolean);
+begin
+  if FObjectInHand = NIL then exit;
+
+  FArm.RemoveChild(FObjectInHand);
+  if aFreeSurface then FObjectInHand.Free;
+  FObjectInHand := NIL;
+end;
+
+procedure TLittleRobot.StartAnimSweepTheFloor;
+begin
+  if FSweepTheFloorWithBroom then exit;
+  FSweepTheFloorWithBroom := True;
+  PostMessage(200);
+end;
+
+procedure TLittleRobot.StopAnimSweepTheFloor;
+begin
+  if not FSweepTheFloorWithBroom then exit;
+  FSweepTheFloorWithBroom := False;
 end;
 
 { TLittleRobotConstructor.TArm }

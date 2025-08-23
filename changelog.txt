@@ -1,5 +1,10 @@
+version 0.4.0 - aug 23, 2025
+> new chapter In Space, made of 13 sub-chapters.
+> add missing funny sequence to the big meeting at the wolf castle.
+> add custom title for each step in the panels where the player can choose the step to play.
+
 version 0.3.0 - jul 23, 2025
-> 4 new mini games: Mermaids Port, The Plain of the Sleeping Moon, Snake Fissure, The Wolf Castle
+> 4 new chapters: Mermaids Port, The Plain of the Sleeping Moon, Snake Fissure, The Wolf Castle
 > new npc Sam where the player can exchange items or play some funny games to win coins or items. The available game at Sam are the dartboart and the Strike Raccoon.
 > there is challenge in some mini games in the map. the player win trophies when s/he successfully completes one. Trophies are stored in the player's home.
 > to avoid annoying repetition, the games Pines Forest and Mountain Peaks have been shortened to 5 levels instead of 10.
@@ -21,7 +26,7 @@ version 0.3.0 - jul 23, 2025
 version 0.2.0 - sep 28, 2024
 -----------------------------
 >When a new player is created, an cinematic explain the quest of the main character.
->Added game Volcano, made of three part:
+>Added chapter Volcano, made of three part:
  - the Volcano entrance: an humorous point'n click game.
  - Volcano inner: a platformer game where main character must avoid detection by laser beam, guards and switch on the floor.
  - The thirth part is an humorous race versus Dino.

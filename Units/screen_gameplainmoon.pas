@@ -2379,7 +2379,7 @@ begin
       FLaserGun.Visible := True;
       sndMusic.Play(True);
       PostMessage(61);
-      ShowGameInstructions(SPlainMoonHelpText);
+      ShowGameInstructions(SPlainMoonHelpText+LineEnding+SPlainMoonHelpKeys);
     end;
     61: begin // start clock and game
       FGameinventory.Clock.StartTime;
@@ -2418,7 +2418,7 @@ begin
         else PostMessage(101, 0.1);
     end;
     101: begin
-      ShowGameInstructions(SPlainMoonHelpText);
+      ShowGameInstructions(SPlainMoonHelpText+LineEnding+SPlainMoonHelpKeys);
       PostMessage(61);
     end;
 

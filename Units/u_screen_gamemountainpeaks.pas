@@ -451,7 +451,7 @@ begin
 
   FCristalCounter := TUICristalCounter.Create;
   AddItem(FCristalCounter);
-  ResizeAndPlaceAtTopRight;
+  ResizeAndPlace;
 end;
 
 procedure TInGamePanel.AddToCristal(aDelta: integer);

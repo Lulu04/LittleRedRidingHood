@@ -2,7 +2,7 @@ unit u_app;
 
 {$mode ObjFPC}{$H+}
 {$modeswitch AdvancedRecords}
-
+{$WARN 6058 off : Call to subroutine "$1" marked as inline is not inlined}
 interface
 
 uses
@@ -36,6 +36,7 @@ uses
   function FolderSpriteWolfCastle: string;
   function FolderSpriteRobotW7: string;
   function FolderSpriteInSpace: string;
+  function FolderConstructionUnit: string;
   function FolderSpriteSam: string;
   function FolderSpriteStrikeRaccoon: string;
   function FolderSpriteDartboard: string;
@@ -124,6 +125,8 @@ public
   function SaveToString: string; virtual; abstract;
   procedure LoadFromString(const s: string); virtual; abstract;
 
+  function GetStepInfo(aStepIndex: integer): string; virtual; abstract;
+
   procedure IncCurrentStep;
   // 1 based
   property CurrentStep: integer read FCurrentStep;
@@ -205,6 +208,7 @@ public
   destructor Destroy; override;
   function SaveToString: string; override;
   procedure LoadFromString(const s: string); override;
+  function GetStepInfo(aStepIndex: integer): string; override;
   // force this mini game to be finished and all related items to full level + 5000 coins
   procedure ApplyCheatCode;
   property Bow: TForestBow read FBow;
@@ -239,6 +243,7 @@ public
   destructor Destroy; override;
   function SaveToString: string; override;
   procedure LoadFromString(const s: string); override;
+  function GetStepInfo(aStepIndex: integer): string; override;
   // sets the mini-game Peaks Mountains as finished, buy the zipline, +50 purple cristals and +5000 coins
   procedure ApplyCheatCode;
   property ZipLine: TMountainPeakZipLine read FZipLine;
@@ -284,6 +289,7 @@ public
   destructor Destroy; override;
   function SaveToString: string; override;
   procedure LoadFromString(const s: string); override;
+  function GetStepInfo(aStepIndex: integer): string; override;
 public // special volcano item
   property DigicodeDecoder: TDigicodeDecoder read FDigicodeDecoder;
   property DorsalThruster: TDorsalThruster read FDorsalThruster;
@@ -326,6 +332,7 @@ public
   destructor Destroy; override;
   function SaveToString: string; override;
   procedure LoadFromString(const s: string); override;
+  function GetStepInfo(aStepIndex: integer): string; override;
 public // special item and properties
   property LaserGun: TLaserGun read FLaserGun;
   property IntroAlreadySeen: boolean read FIntroAlreadySeen write FIntroAlreadySeen;
@@ -361,6 +368,7 @@ public
   destructor Destroy; override;
   function SaveToString: string; override;
   procedure LoadFromString(const s: string); override;
+  function GetStepInfo(aStepIndex: integer): string; override;
 public // special item and properties
   property CraneRemoteControl: TCraneRemoteControl read FCraneRemoteControl;
   property MarcusEncounterDone: boolean read FMarcusEncounterDone write FMarcusEncounterDone;
@@ -390,6 +398,7 @@ public
   destructor Destroy; override;
   function SaveToString: string; override;
   procedure LoadFromString(const s: string); override;
+  function GetStepInfo(aStepIndex: integer): string; override;
 public
   property PocketSubmarine: TPocketSubmarine read FPocketSubmarine;
 end;
@@ -400,17 +409,60 @@ end;
 TWolfCastle = class(TGameDescriptor)
 private
   function GetHelpText: string; override;
-private
  const
-  WolfCastleStepCount = 2;  // 1=big meeting 2=inspace
+  WolfCastleStepCount = 1;  // 1= castle big meeting at wolf castle
 public
   constructor Create;
   destructor Destroy; override;
   function SaveToString: string; override;
   procedure LoadFromString(const s: string); override;
+  function GetStepInfo({%H-}aStepIndex: integer): string; override;
 end;
 
 
+{ TInSpace }
+
+TInSpace = class(TGameDescriptor)
+private
+  function GetHelpText: string; override;
+private
+  //FHaveDockingBay: boolean;
+  {FHaveMiningShip,
+  FHaveShield,
+  FHaveOreForFighter,
+  FHaveFighter,
+  FHaveGigatronPropulsor,
+  FHaveRadiationAnnihilator}
+ const
+  InSpaceStepCount = 13;  // 1= briefing1 at main bridge + departure to the asteroid belt
+                          // 2= game constructing docking bay and mining ship
+                          // 3= briefing2 arrival to the asteroid belt
+                          // 4= LR deploy a probe near the gate + harvest for the shield
+                          // 5= construct the shield
+                          // 6= harvest for the fighter
+                          // 7= construct the fighter
+                          // 8= briefing3 about the meteor storm
+                          // 9= shoot'em up to protect the mother ship against the meteor storm
+                          // 10= briefing4 about the Gigatron and the radiation Anihilator
+                          // 11= harvest for the Gigatron and the radiation Anihilator
+                          // 12= construct the Gigatron and the radiation Anihilator
+                          // 13= intergalactic jump
+public
+  constructor Create;
+  destructor Destroy; override;
+  function SaveToString: string; override;
+  procedure LoadFromString(const s: string); override;
+  function GetStepInfo(aStepIndex: integer): string; override;
+public
+  //property HaveDockingBay: boolean read FHaveDockingBay write FHaveDockingBay;
+  //property HaveMiningShip: boolean read FHaveMiningShip write FHaveMiningShip;
+
+  //property HaveShield: boolean read FHaveShield write FHaveShield;
+  //property HaveOreForFighter: boolean read FHaveOreForFighter write FHaveOreForFighter;
+  //property HaveFighter: boolean read FHaveFighter write FHaveFighter;
+  //property HaveGigatronPropulsor: boolean read FHaveGigatronPropulsor write FHaveGigatronPropulsor;
+  //property HaveRadiationAnnihilator: boolean read FHaveRadiationAnnihilator write FHaveRadiationAnnihilator;
+end;
 
 { TPlayerInfo }
 
@@ -426,6 +478,7 @@ private
   FMermaidsPort: TMermaidsPortDescriptor;
   FSnakeFissure: TSnakeFissure;
   FWolfCastle: TWolfCastle;
+  FInSpace: TInSpace;
 public
   constructor Create;
   destructor Destroy; override;
@@ -443,6 +496,7 @@ public
   property MermaidsPort: TMermaidsPortDescriptor read FMermaidsPort;
   property SnakeFissure: TSnakeFissure read FSnakeFissure;
   property WolfCastle: TWolfCastle read FWolfCastle;
+  property InSpace: TInSpace read FInSpace;
 end;
 
 TPlayerList = class(specialize TFPGObjectList<TPlayerInfo>);
@@ -669,6 +723,11 @@ end;
 function FolderSpriteInSpace: string;
 begin
   Result := SpriteFolder+'InSpace'+DirectorySeparator;
+end;
+
+function FolderConstructionUnit: string;
+begin
+  Result := FolderSpriteInSpace + 'ConstructionUnit'+DirectorySeparator;
 end;
 
 function FolderSpriteSam: string;
@@ -1116,6 +1175,16 @@ begin
   prop.IntegerValueOf('DinoRaceWinCount', FDinoRaceWinCount, 0);
 end;
 
+function TVolcanoDescriptor.GetStepInfo(aStepIndex: integer): string;
+begin
+  case aStepIndex of
+    1: Result := sVolcanoStepInfo1;
+    2, 3, 4: Result := sDontBeSpotted;
+    5: Result := sVolcanoStepInfo2;
+    6: Result := sVolcanoStepInfo3;
+  end;
+end;
+
 { TLaserGun }
 
 function TLaserGun.CanDisplayPrice: boolean;
@@ -1140,7 +1209,7 @@ end;
 
 function TPlainMoonDescriptor.GetHelpText: string;
 begin
-  Result := SPlainMoonHelpText;
+  Result := SPlainMoonHelpText + LineEnding + SPlainMoonHelpKeys;
 end;
 
 function TPlainMoonDescriptor.GetChallengeHelpText: string;
@@ -1187,6 +1256,14 @@ begin
   prop.BooleanValueOf('IntroAlreadySeen', FIntroAlreadySeen, False);
 end;
 
+function TPlainMoonDescriptor.GetStepInfo(aStepIndex: integer): string;
+begin
+  case aStepIndex of
+    1: Result := sPlainMoonStepInfo1;
+    2: Result := SPlainMoonHelpText;
+  end;
+end;
+
 { TCraneRemoteControl }
 
 function TCraneRemoteControl.CanDisplayPrice: boolean;
@@ -1231,7 +1308,7 @@ end;
 
 function TMermaidsPortDescriptor.GetHelpText: string;
 begin
-  Result := sMermaidsPortHelpText;
+  Result := sMermaidsPortHelpText + LineEnding + sMermaidsPortHelpKeys;
   if FCraneRemoteControl.Owned then
     Result := Result + LineEnding + sMermaidsPortHelpText2;
 end;
@@ -1268,6 +1345,14 @@ begin
   prop.ByteValueOf('CraneRemoteControl', vi, 0);
   FCraneRemoteControl.Level := vi;
   prop.BooleanValueOf('MarcusEncounterDone', FMarcusEncounterDone, False);
+end;
+
+function TMermaidsPortDescriptor.GetStepInfo(aStepIndex: integer): string;
+begin
+  case aStepIndex of
+    1, 2: Result := sMermaidsPortHelpText;
+    3: Result := sPlainMoonStepInfo1;
+  end;
 end;
 
 { TSnakeFissure }
@@ -1309,6 +1394,14 @@ begin
   FPocketSubmarine.Level := vi;
 end;
 
+function TSnakeFissure.GetStepInfo(aStepIndex: integer): string;
+begin
+  case aStepIndex of
+    1: Result := sSnakeFissureStepInfo1;
+    2: Result := sSnakeFissure;
+  end;
+end;
+
 { TWolfCastle }
 
 function TWolfCastle.GetHelpText: string;
@@ -1341,11 +1434,89 @@ begin
   LoadCommonProperties(prop);
 end;
 
+function TWolfCastle.GetStepInfo(aStepIndex: integer): string;
+begin
+  Result := '';
+end;
+
+{ TInSpace }
+
+function TInSpace.GetHelpText: string;
+begin
+  case StepPlayed of
+    1, 3, 8, 10, 13: Result := ''; // briefing
+    2, 5, 7, 12: Result := sConstructionExplanation;
+    4: Result := sInstructionLittleShip + LineEnding + sInstructionMiningShipOre + LineEnding +
+                 sInstructionMiningShipProbe;
+    6, 11: Result := sInstructionLittleShip + LineEnding + sInstructionMiningShipOre;
+    9: Result := sInstructionMeteorStorm;
+    else Result := 'Step played = '+StepPlayed.ToString;
+  end;
+end;
+
+constructor TInSpace.Create;
+begin
+  inherited Create(InSpaceStepCount);
+end;
+
+destructor TInSpace.Destroy;
+begin
+  inherited Destroy;
+end;
+
+function TInSpace.SaveToString: string;
+var prop: TProperties;
+begin
+  prop.Init('!');
+  SaveCommonProperties(prop);
+//  prop.Add('HaveDockingBay', FHaveDockingBay);
+{  prop.Add('HaveMiningShip', FHaveMiningShip);
+  prop.Add('HaveShield', FHaveShield);
+  prop.Add('HaveOreForFighter', FHaveOreForFighter);
+  prop.Add('HaveFighter', FHaveFighter);
+  prop.Add('HaveGigatronPropulsor', FHaveGigatronPropulsor);
+  prop.Add('HaveRadiationAnnihilator', FHaveRadiationAnnihilator); }
+  Result := prop.PackedProperty;
+end;
+
+procedure TInSpace.LoadFromString(const s: string);
+var prop: TProperties;
+begin
+  prop.Split(s, '!');
+//  prop.BooleanValueOf('HaveDockingBay', FHaveDockingBay, False);
+{  prop.BooleanValueOf('HaveMiningShip', FHaveMiningShip, False);
+  prop.BooleanValueOf('HaveShield', FHaveShield, False);
+  prop.BooleanValueOf('HaveOreForFighter', FHaveOreForFighter, False);
+  prop.BooleanValueOf('HaveFighter', FHaveFighter, False);
+  prop.BooleanValueOf('HaveGigatronPropulsor', FHaveGigatronPropulsor, False);
+  prop.BooleanValueOf('HaveRadiationAnnihilator', FHaveRadiationAnnihilator, False); }
+  LoadCommonProperties(prop);
+end;
+
+function TInSpace.GetStepInfo(aStepIndex: integer): string;
+begin
+  case aStepIndex of
+    1: Result := sInSpaceStepinfo1;
+    2: Result := sInSpaceStepinfo2;
+    3: Result := sInSpaceStepinfo3;
+    4: Result := sInSpaceStepinfo4;
+    5: Result := sInSpaceStepinfo5;
+    6: Result := sInSpaceStepinfo6;
+    7: Result := sInSpaceStepinfo7;
+    8: Result := sInSpaceStepinfo8;
+    9: Result := sInSpaceStepinfo9;
+    10: Result := sInSpaceStepinfo10;
+    11: Result := sInSpaceStepinfo11;
+    12: Result := sInSpaceStepinfo12;
+    13: Result := sInSpaceStepinfo13;
+  end;
+end;
+
 { TMountainPeakDescriptor }
 
 function TMountainPeakDescriptor.GetHelpText: string;
 begin
-  Result := SMountainPeakHelpText;
+  Result := SMountainPeakHelpText + LineEnding + SMountainPeakHelpKeys;
 end;
 
 function TMountainPeakDescriptor.GetChallengeHelpText: string;
@@ -1389,6 +1560,14 @@ begin
   prop.ByteValueOf('ZipLineLevel', vb, 0); FZipLine.Level := vb;
 end;
 
+function TMountainPeakDescriptor.GetStepInfo(aStepIndex: integer): string;
+begin
+  case aStepIndex of
+    1..4: Result := SMountainPeakStepInfo1;
+    5: Result := SMountainPeakStepInfo5;
+  end;
+end;
+
 procedure TMountainPeakDescriptor.ApplyCheatCode;
 begin
   if IsTerminated then exit;
@@ -1403,6 +1582,15 @@ begin
 end;
 
 { TForestDescriptor }
+
+function TForestDescriptor.GetStepInfo(aStepIndex: integer): string;
+begin
+  case aStepIndex of
+    1, 4: Result := sForestStepInfo1;
+    2: Result := sForestStepInfo2;
+    3, 5: Result := sForestStepInfo3;
+  end;
+end;
 
 function TForestDescriptor.GetHelpText: string;
 begin
@@ -1554,6 +1742,7 @@ begin
   FMermaidsPort := TMermaidsPortDescriptor.Create;
   FSnakeFissure := TSnakeFissure.Create;
   FWolfCastle := TWolfCastle.Create;
+  FInSpace := TInSpace.Create;
 end;
 
 destructor TPlayerInfo.Destroy;
@@ -1572,6 +1761,8 @@ begin
   FSnakeFissure := NIL;
   FWolfCastle.Free;
   FWolfCastle := NIL;
+  FInSpace.Free;
+  FInSpace := NIL;
   inherited Destroy;
 end;
 
@@ -1589,6 +1780,7 @@ begin
   prop.Add('MermaidsPort', FMermaidsPort.SaveToString);
   prop.Add('SnakeFissure', SnakeFissure.SaveToString);
   prop.Add('WolfCastle', FWolfCastle.SaveToString);
+  prop.Add('InSpace', FInSpace.SaveToString);
   Result := prop.PackedProperty;
 end;
 
@@ -1615,6 +1807,8 @@ begin
   SnakeFissure.LoadFromString(st);
   prop.StringValueOf('WolfCastle', st, '');
   WolfCastle.LoadFromString(st);
+  prop.StringValueOf('InSpace', st, '');
+  InSpace.LoadFromString(st);
 end;
 
 { TSaveGame }

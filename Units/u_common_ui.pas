@@ -90,6 +90,14 @@ TUIKeyMetalCounter = class(TUIItemCounter)
   constructor Create;
 end;
 
+{ TUIItemSpaceHarvesting }
+
+TUIItemSpaceHarvesting = class(TUIItemCounter)
+  ItemIndex: integer;
+  // 0=yellow 1=orange, 2=white, 3=black, 4=purple, 5=green, 6=red
+  constructor Create(aItemIndex, aCount: integer);
+end;
+
 { TUISDCardGreen }
 
 TUISDCardGreen = class(TUIItem)
@@ -141,15 +149,19 @@ TBaseInGamePanel = class(TUIPanel)
 private
   FTotalWidth, FTotalHeight, FMarginBetweenItem: integer;
   FLastAddedItem: TUIItem;
+  FItemCount, FPositionMode: integer;
   procedure RecomputePanelWidth;
 protected
-  procedure ResizeAndPlaceAtTopRight;
+  procedure ResizeAndPlace;
 public
   procedure AddItem(aItem: TUIItem); virtual;
   procedure RemoveItem(aItem: TUIItem; aCount: integer);
 public
-  constructor Create;
+  // 0=TopLeft  1=TopCenter  2=TopRight
+  // 3=BottomLeft  4= BottomCenter  5=BottomRight
+  constructor Create(aPositionOnScreen: integer=2);
   property TotalWidth: integer read FTotalWidth;
+  property ItemCount: integer read FItemCount;
 end;
 
 { TBaseInGamePanelWithCoinAndClock }
@@ -271,7 +283,9 @@ var
   texIconDorsalThruster,
   texIconLaserGun,
   texIconCraneRemote,
-  texIconHammerRaccoon: PTexture;
+  texIconHammerRaccoon,
+  texSpaceHarvesting: PTexture;
+  texIconItemSpaceHarvesting: array[0..6] of PTexture;
   FontNumberCapLine: integer;
 
 // FONTS used by the game
@@ -291,6 +305,7 @@ procedure LoadDorsalThrusterTexture(aAtlas: TOGLCTextureAtlas);
 procedure LoadLaserGunTexture(aAtlas: TOGLCTextureAtlas);
 procedure LoadIconCraneRemoteTexture(aAtlas: TAtlas);
 procedure LoadIconHammerRaccoon(aAtlas: TAtlas);
+procedure LoadIconSpaceHarvestingItem(aAtlas: TAtlas);
 
 implementation
 uses u_app, u_common, u_resourcestring, Math, Graphics, LCLType;
@@ -373,6 +388,15 @@ end;
 procedure LoadIconHammerRaccoon(aAtlas: TAtlas);
 begin
   texIconHammerRaccoon := aAtlas.AddFromSVG(SpriteUIFolder+'IconHammerRaccoon.svg', -1, IconHeight);
+end;
+
+procedure LoadIconSpaceHarvestingItem(aAtlas: TAtlas);
+var path: string;
+  i: integer;
+begin
+  path := FolderConstructionUnit;
+  for i:=0 to High(texIconItemSpaceHarvesting) do
+    texIconItemSpaceHarvesting[i] := aAtlas.AddFromSVG(path+'ConsItem'+(i+14).ToString+'.svg', -1, IconHeight);
 end;
 
 { TUIManufacturerPlan }
@@ -501,6 +525,15 @@ begin
   inherited Create(texKeyMetal, UIFontNumber, 1);
 end;
 
+{ TUIItemSpaceHarvesting }
+
+constructor TUIItemSpaceHarvesting.Create(aItemIndex, aCount: integer);
+begin
+  inherited Create(texIconItemSpaceHarvesting[aItemIndex], UIFontNumber, 1);
+  Count := aCount;
+  ItemIndex := aItemIndex;
+end;
+
 { TUIPurpleCristalCounter }
 
 constructor TUIPurpleCristalCounter.Create;
@@ -580,6 +613,7 @@ end;
 
 procedure TBaseInGamePanel.AddItem(aItem: TUIItem);
 begin
+  inc(FItemCount);
   AddChild(aItem, 0);
   if FLastAddedItem = NIL then begin
     aItem.SetCoordinate(FMarginBetweenItem*0.5, 0);
@@ -592,7 +626,7 @@ begin
 
   if FTotalHeight < aItem.TotalHeight then FTotalHeight := aItem.TotalHeight;
   Visible := True;
-  ResizeAndPlaceAtTopRight;
+  ResizeAndPlace;
 end;
 
 procedure TBaseInGamePanel.RemoveItem(aItem: TUIItem; aCount: integer);
@@ -606,13 +640,15 @@ begin
         if o = FLastAddedItem then FLastAddedItem := NIL;
         RemoveChild(o);
         o.Free;
-        ResizeAndPlaceAtTopRight;
+        dec(FItemCount);
+        ResizeAndPlace;
       end;
   end else begin
     if o = FLastAddedItem then FLastAddedItem := NIL;
     RemoveChild(o);
     o.Free;
-    ResizeAndPlaceAtTopRight;
+    dec(FItemCount);
+    ResizeAndPlace;
   end;
 end;
 
@@ -635,16 +671,25 @@ begin
   end;
 end;
 
-procedure TBaseInGamePanel.ResizeAndPlaceAtTopRight;
+procedure TBaseInGamePanel.ResizeAndPlace;
 begin
   RecomputePanelWidth;
   //FTotalWidth := FTotalWidth - Round(FMarginBetweenItem*0.5);
   BodyShape.ResizeCurrentShape(FTotalWidth, Round(FTotalHeight*1.1), False);
 
-  SetCoordinate(FScene.Width-FTotalWidth, 0);
+  // 0=TopLeft  1=TopCenter  2=TopRight
+  // 3=BottomLeft  4= BottomCenter  5=BottomRight
+  case FPositionMode of
+    0: SetCoordinate(0, 0);
+    1: SetCoordinate((FScene.Width-FTotalWidth)*0.5, 0);
+    2: SetCoordinate(FScene.Width-FTotalWidth, 0);
+    3: SetCoordinate(0, FScene.Height-Height);
+    4: SetCoordinate((FScene.Width-FTotalWidth)*0.5, FScene.Height-Height);
+    5: SetCoordinate(FScene.Width-FTotalWidth, FScene.Height-Height);
+  end;
 end;
 
-constructor TBaseInGamePanel.Create;
+constructor TBaseInGamePanel.Create(aPositionOnScreen: integer);
 begin
   inherited Create(FScene);
   FScene.Add(Self, LAYER_GAMEUI);
@@ -656,6 +701,8 @@ begin
   FMarginBetweenItem := UIFontNumber.GetCharWidth('9');
   FTotalWidth := 0;
   FTotalHeight := 0;
+
+  FPositionMode := aPositionOnScreen;
 
   Visible := False; // not visible until item is added
   SetCoordinate(FScene.Width, 0);
@@ -913,7 +960,7 @@ end;
 
 constructor TInMapPanel.Create;
 begin
-  inherited Create;
+  inherited Create(2);
 
   FCoinCounter := TUICoinCounter.Create;
   AddItem(FCoinCounter);
@@ -925,7 +972,7 @@ begin
     FPurpleCristalCounter.Count := PlayerInfo.PurpleCristalCount;
   end;
 
-  ResizeAndPlaceAtTopRight;
+  ResizeAndPlace;
 end;
 
 procedure TInMapPanel.ProcessMessage(UserValue: TUserMessageValue);

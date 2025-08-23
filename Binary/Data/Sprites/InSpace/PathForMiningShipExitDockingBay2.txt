@@ -1,0 +1,2 @@
+[OGLC_PATH]
+NodeCount|7|UseSpline|false|SplineStyle|3|Nodes|0.471 0.733 0.471 0.761 0.460 0.798 0.435 0.832 0.422 0.874 0.422 0.913 0.422 0.977

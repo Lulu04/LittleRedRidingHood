@@ -14,10 +14,7 @@ type
   { TFormMain }
 
   TFormMain = class(TForm)
-    Memo1: TMemo;
     OpenGLControl1: TOpenGLControl;
-    Panel1: TPanel;
-    Panel2: TPanel;
     Timer1: TTimer;
     procedure FormCloseQuery(Sender: TObject; var {%H-}CanClose: boolean);
     procedure FormCreate(Sender: TObject);
@@ -30,7 +27,6 @@ type
     procedure LoadCommonData;
     procedure FreeCommonData;
     procedure ProcessApplicationIdle(Sender: TObject; var Done: Boolean);
-    procedure ProcessLogCallback(const s: string);
   public
   end;
 
@@ -45,7 +41,8 @@ uses u_screen_title, u_screen_gameforest, BGRABitmap, BGRABitmapTypes,
   u_screen_intro, screen_gameplainmoon, screen_gameplainmooninside,
   u_screen_gamemermaidsport, u_screen_sam, u_screen_strikeraccoon,
   u_screen_dartboard, u_screen_gamemermaidboss, u_screen_gamesnakefissureintro,
-  u_screen_gamesnakefissure, u_screen_gamecastle, u_screen_gameinspace,
+  u_screen_gamesnakefissure, u_screen_gamecastle, u_screen_msmainbridge,
+  u_screen_msconstruction, u_screen_msharvesting, u_screen_msmeteorstorm,
   DefaultTranslator, LCLTranslator, i18_utils;
 {$R *.lfm}
 
@@ -102,7 +99,7 @@ procedure TFormMain.LoadCommonData;
 begin
   FSaveGame := TSaveGame.Create;
   if FSaveGame.FolderCreated then
-    FScene.CreateLogFile(FSaveGame.SaveFolder+'scene.log', True, @ProcessLogCallback, NIL);
+    FScene.CreateLogFile(FSaveGame.SaveFolder+'scene.log', True, NIL, NIL);
   FSaveGame.Load;
 
   Audio := TAudioManager.Create;
@@ -130,11 +127,17 @@ begin
   ScreenSamHome := TScreenSamHome.Create;
   ScreenStrikeRaccoon := TScreenStrikeRaccoon.Create;
   ScreenDartboard := TScreenDartboard.Create;
-  ScreenInSpace := TScreenInSpace.Create;
-//  FScene.RunScreen(ScreenLogo);
+  ScreenMotherShipMainBridge := TScreenMotherShipMainBridge.Create;
+  ScreenMotherShipConstruction := TScreenMotherShipConstruction.Create;
+  ScreenHarvestingInSpace := TScreenHarvestingInSpace.Create;
+  ScreenMeteorStorm := TScreenMeteorStorm.Create;
+  FScene.RunScreen(ScreenLogo);
 
-FSaveGame.SetCurrentPlayerIndex(0);
-FScene.RunScreen(ScreenMap);     //ScreenMap  ScreenIntro   ScreenPlainMoonInside
+{
+  FSaveGame.SetCurrentPlayerIndex(0);
+  FScene.RunScreen(ScreenMap);     //ScreenMap  ScreenIntro   ScreenPlainMoonInside
+  Timer1.Enabled := True;
+}
 end;
 
 procedure TFormMain.FreeCommonData;
@@ -159,7 +162,10 @@ begin
   FreeAndNil(ScreenSnakeFissureIntro);
   FreeAndNil(ScreenSnakeFissure);
   FreeAndNil(ScreenWolfCastle);
-  FreeAndNil(ScreenInSpace);
+  FreeAndNil(ScreenMotherShipMainBridge);
+  FreeAndNil(ScreenMotherShipConstruction);
+  FreeAndNil(ScreenHarvestingInSpace);
+  FreeAndNil(ScreenMeteorStorm);
   FreeAndNil(ScreenLogo);
   FreeAndNil(Audio);
 end;
@@ -168,11 +174,6 @@ procedure TFormMain.ProcessApplicationIdle(Sender: TObject; var Done: Boolean);
 begin
   FScene.DoLoop;
   Done := FALSE;
-end;
-
-procedure TFormMain.ProcessLogCallback(const s: string);
-begin
-  Memo1.Lines.Add(s);
 end;
 
 

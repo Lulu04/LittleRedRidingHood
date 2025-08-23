@@ -154,7 +154,7 @@ public
   property JumpDeltaX: single read FJumpDeltaX write FJumpDeltaX;
   property CallbackPickUpSomethingWhenBendDown: TCallbackPickUpSomethingWhenBendDown read FCallbackPickUpSomethingWhenBendDown write FCallbackPickUpSomethingWhenBendDown;
   property CallbackBendUpIsFinished: TOGLCEvent read FCallbackBendUpIsFinished write FCallbackBendUpIsFinished;
-private // OBJECT HAND HELDED
+private // OBJECT HELD BY HAND
   FObjectInRightHand: TSimpleSurfaceWithEffect;
 public
   // insert aSurface as child of right arm

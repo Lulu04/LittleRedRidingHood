@@ -79,6 +79,7 @@ public // walk utils
   procedure CheckHorizontalMoveToX(aX: single; aMessageReceiver: TObject; aMessageValueWhenFinish: TUserMessageValue; aDelay: single=0);
   procedure CheckVerticalMoveToY(aY: single; aMessageReceiver: TObject; aMessageValueWhenFinish: TUserMessageValue; aDelay: single=0);
   procedure CheckMoveTo(aX, aY: single; aMessageReceiver: TObject; aMessageValueWhenFinish: TUserMessageValue; aDelay: single=0);
+  procedure CancelWalk;
   procedure EndOfWalk_SendMessageToScreen;
   procedure EndOfWalk_SendMessageToSurface;
   property MovingDirection: TMovingDirection read FMovingDirection;
@@ -490,9 +491,15 @@ begin
   p.x := p.x - w * 0.5;
   p.y := p.y - h - PPIScale(10);
 
-  p.x := EnsureRange(p.x, 0, FScene.Width - w);
-  p.y := EnsureRange(p.y, 0, FScene.Height - h);
-  FPanel.SetCoordinate(Trunc(p.x), Trunc(p.y)); // truncate to avoid artifact on characters
+  delta := PointF(0, 0);
+  if p.x < 0 then delta.x := -p.x;
+  if p.x+w > FScene.Width then delta.x := FScene.Width - (p.x+w);
+  if p.y < 0 then delta.y := -p.y;
+  if p.y+h > FScene.Height then delta.y := FScene.Height - (p.y+h);
+  FArrow.X.Value := FArrow.X.Value - delta.x;
+  {p.x := EnsureRange(p.x, 0, FScene.Width - w);
+  p.y := EnsureRange(p.y, 0, FScene.Height - h);}
+  FPanel.SetCoordinate(p+delta); // truncate to avoid artifact on characters
 
   exit;
 
@@ -601,7 +608,7 @@ procedure TWalkingCharacter.Update(const aElapsedTime: single);
 begin
   inherited Update(aElapsedTime);
 
-  if WalkDontUseSpeed then exit;  // for character that don't use property speed to walk (lije granny)
+  if WalkDontUseSpeed then exit;  // for character that don't use property speed to walk (i.e. granny)
 
   if FMovingDirection in [mdLeft, mdLeftDown, mdLeftUp] then begin
     if X.Value <= FTargetPoint.x then begin
@@ -700,6 +707,11 @@ begin
   FMessageReceiver := aMessageReceiver;
   FMessageValueWhenFinish := aMessageValueWhenFinish;
   FDelay := aDelay;
+end;
+
+procedure TWalkingCharacter.CancelWalk;
+begin
+  FMovingDirection := mdNone;
 end;
 
 procedure TWalkingCharacter.EndOfWalk_SendMessageToScreen;

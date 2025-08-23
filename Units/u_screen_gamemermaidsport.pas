@@ -2200,7 +2200,7 @@ begin
            PlayerInfo.MermaidsPort.CraneRemoteControl.Owned then begin
           ShowGameInstructions(sMermaidsPortHelpText2);
           PlayerInfo.MermaidsPort.RemoteExplanationDone := True;
-          SetGameInstructions(sMermaidsPortHelpText+LineEnding+sMermaidsPortHelpText2);
+          SetGameInstructions(sMermaidsPortHelpText+LineEnding+sMermaidsPortHelpKeys+LineEnding+sMermaidsPortHelpText2);
         end;
         GameState := gsRunning;
       end else if FLR.BodyBottomY >= GetYFloor(0) then begin

@@ -14,8 +14,6 @@ function InGamePausePanelButtonCharSet: string;
 function MapButtonCharset: string;
 function FontNumberCharset: string;
 
-function GameHints: TStringArray;
-
 function CorruptString(const s: string): string;
 
 const SupportedLanguages: array[0..3] of string=(
@@ -98,7 +96,7 @@ sTurn='Turn %d/%d';
 sYes='Yes';
 sNo='No';
 
-sLetsGo='Let''s go!';
+//sLetsGo='Let''s go!';
 sFatherOfWolfs='Father of wolfs';
 sMotherOfWolfs='Mother of wolfs';
 
@@ -124,11 +122,6 @@ sLaserGunExplanation='a laser gun effective only against machines';
 sCraneRemoteControlExplanation='a crane remote control';
 sPocketSubmarineExplanation='a yellow submarine!';
 
-// hints in the panel where player choose the step of the game
-sImproveEquipment='upgrade your equipment in the workshop';
-sRedoALevel='you can redo a level to earn the end bonus';
-sBuyEquipment='buy new equipment in the workshop';
-
 sFirstCompleteForest='you must first complete the pine forest!';
 sBuyZipLineFirst='you need to buy the zip line first!';
 sFirstCompleteMountainPeaks='you must first complete the mountain peaks!';
@@ -136,23 +129,35 @@ sFirstCompleteVolcano='you must first complete the Volcano!';
 sFirstCompletePlainMoon='you must first complete the Plain of the Sleeping Moon!';
 sFirstCompleteMermaidsPort='you must first complete the Mermaids Port!';
 sFirstCompleteSnakeFissure='you must first complete the Snake Fissure!';
+sFirstCompleteWolfCastle='you must first complete the Wolf Castle!';
 sSorryNotYetAvailable='Sorry, this game is not yet available...';
 
-SArcadeMode='ARCADE MODE';
-SAdventureMode='ADVENTURE MODE';
+//SArcadeMode='ARCADE MODE';
+//SAdventureMode='ADVENTURE MODE';
 
-// help text
+// help text and step info
+sForestStepInfo1='upgrade your equipment in the workshop';
+sForestStepInfo2='you can redo a level to earn the end bonus';
+sForestStepInfo3='buy new equipment in the workshop';
 SForestHelpText='Burst the balloons to prevent the wolves from climbing up.' + LineEnding +
                 'Keep up the rhythm until the timer runs out.' + LineEnding +
                 '↑↓ to move' + LineEnding +
                 'ACTION1 : bow' + LineEnding +
                 'ACTION2 : lightning storm';
-SMountainPeakHelpText='Avoid rocks, collect bonuses.' + LineEnding +
-                      'Brake at the end to earn the extra bonus.' + LineEnding +
-                      '←→ : move' + LineEnding +
+
+SMountainPeakStepInfo1='Hang in there!';
+SMountainPeakStepInfo5='The last one! Keep going!';
+SMountainPeakHelpText='Finish the course before time runs out.' + LineEnding +
+                      'Avoid rocks, collect bonuses.' + LineEnding +
+                      'Brake at the end to earn the extra bonus.';
+SMountainPeakHelpKeys='←→ : move' + LineEnding +
                       'ACTION1 : break';
+
 SVolcanoEntranceHelpText='Use mouse and click objects on the screen';
+sVolcanoStepInfo1='What is that?';
 sDontBeSpotted='Don''t be spotted!';
+sVolcanoStepInfo2='The Awakening of Volcano';
+sVolcanoStepInfo3='Who is Dino?';
 SVolcanoInnerHelpText='←→↑↓ to move' + LineEnding +
                       'ACTION1 : jump' + LineEnding +
                       'ACTION2 : use object';
@@ -163,11 +168,14 @@ sDinoRaceInstructions='Win the race against Dino !'+ LineEnding+
                       'Don''t forget to collect gas cans to refill the tank' + LineEnding +
                       '↑↓ : move up and down' + LineEnding +
                       'ACTION1 : speed up';
-SPlainMoonHelpText='Destroy the robots as fast as you can' + LineEnding +
-                   'Outside: ←→↑↓ to move, ACTION1 to jump, ACTION2 to fire' + LineEnding +
+
+sPlainMoonStepInfo1='The encounter';
+SPlainMoonHelpText='Destroy the robots as fast as you can';
+SPlainMoonHelpKeys='Outside: ←→↑↓ to move, ACTION1 to jump, ACTION2 to fire' + LineEnding +
                    'Inside: use the mouse to target the robots, ACTION2 to fire';
-sMermaidsPortHelpText='Crosses the factories to reach the sea.' + LineEnding +
-                      '←→↑↓ to move' + LineEnding +
+
+sMermaidsPortHelpText='Crosses the factories to reach the sea.';
+sMermaidsPortHelpKeys='←→↑↓ to move' + LineEnding +
                       'ACTION1 : jump' + LineEnding +
                       'ACTION2 : use object';
 sMermaidsPortHelpText2='When you jump on a container, the remote control'+ LineEnding +
@@ -177,11 +185,30 @@ sMermaidBossInstructions='Finds the right strategy to beat Marcus at his game'+ 
                          '←→↑↓ to move' + LineEnding +
                          'ACTION1 : to shoot' + LineEnding +
                          'ACTION2 : defensive position';
+
+sSnakeFissureStepInfo1='A way to cross the sea';
 sSnakeFissureInstructions='Use the submarine capabilities to cross the fissure' + LineEnding +
                           'Avoids contact with mines, they are fatals!' + LineEnding +
                           'Warning: each action consumes blue crystals!' + LineEnding +
                           '←→↑↓ : move the submarine' + LineEnding +
                           'MOUSE to press the buttons on dashboard';
+
+sInSpaceStepinfo1='First briefing in space';
+sInSpaceStepinfo2='A docking bay and a mining ship';
+sInSpaceStepinfo3='Arrival at the asteroid belt';
+sInSpaceStepinfo4='A probe to analyse the gate';
+sInSpaceStepinfo5='Shield construction';
+sInSpaceStepinfo6='Ore for a combat ship';
+sInSpaceStepinfo7='Construction of the combat ship';
+sInSpaceStepinfo8='A new problem...';
+sInSpaceStepinfo9='Battle against the meteor storm';
+sInSpaceStepinfo10='A strange coincidence';
+sInSpaceStepinfo11='Ore for the Gigatron and Radiation Annihilator';
+sInSpaceStepinfo12='Construction of the Gigatron and Radiation Annihilator';
+sInSpaceStepinfo13='The big jump!';
+
+sConstructionExplanation='Use the mouse to click the item asked by Marcus' + LineEnding +
+                         'Hurry, or the fusion of the elements will fail!';
 
 sStrikeRaccoonInstructions='←→↑↓ to target'+ LineEnding +
                            'ACTION1 : to strike';
@@ -209,6 +236,7 @@ sSnakeFissure='The Snake Fissure';
 sSnakeFissureHint='don''t forget your swimsuit and buoy!';
 sWolfCastle='The Wolf Castle';
 sWolfCastleHint='will you dare to throw yourself into the wolf''s den?';
+sInSpace='Into the depths of space...';
 
 // challenge
 sChallenge='CHALLENGE !';
@@ -232,7 +260,7 @@ sWhenGrandFatherWasHere='When your grandpa was still around, we often had barbec
 sYesIRememberWell='Yes, I remember well, he always took his guitar and played music for us.';
 sAndYouWereSinging='And you sang at the top of your lungs! Hahaha!';
 sHaHaHa='Hahahaha!';
-sItsAlreadybeenFiveYears='It’s already been 5 years since he left us...';
+sItsAlreadybeenFiveYears='It''s already been 5 years since he left us...';
 sYesTimePasses='Yes... Time flies. I miss him...';
 sIMissHimToo='I miss him too...';
 sWouldYouLikeToPickSomeFlowers='Would you mind picking a few flowers to decorate the table?';
@@ -335,10 +363,10 @@ sToMuchLavaIsBadForYourHealth='Too much lava is not good for your health';
 // dialogs volcano dino
 sThisComputerHaveSDCardReader='This computer has an SD card reader, so I''ll be able to read the contents of the one I''ve found.';
 sConversation='conversation';
-sRomeo1='My dear Julia, I hope you’re doing well. This SD card is the key to unlocking the big armored door in the basement. It will help you get out of here in case the volcano becomes too unstable. I’m not allowed to give it to you, so I’ve hidden it in a way that you can easily find it. I don’t want anything to happen to you; you mean a lot to me, you’re the love of my life!';
-sJulia1='My dear Romeo, thank you a thousand times! I made a copy of the SD card and I’m using it to reply to you. Ever since I read your message, I’ve been doing great. I care about you a lot too, and I can’t wait for us to be together again. I really hope that happens soon!';
-sRomeo2='Oh my love, I’m so happy you replied! I can’t wait for us to be together again either, but I have to be careful, the boss is watching me closely. He says I’m daydreaming... It’s because I can’t stop thinking about you!';
-sJulia2='Romeo, my darling, be careful. I’m only thinking about you too. At the lab, my boss also says I’m daydreaming... Yesterday he asked me to serve him coffee, and instead, I poured the contents of the test tube with the dinosaur droppings into his cup!';
+sRomeo1='My dear Julia, I hope you''re doing well. This SD card is the key to unlocking the big armored door in the basement. It will help you get out of here in case the volcano becomes too unstable. I''m not allowed to give it to you, so I''ve hidden it in a way that you can easily find it. I don''t want anything to happen to you; you mean a lot to me, you''re the love of my life!';
+sJulia1='My dear Romeo, thank you a thousand times! I made a copy of the SD card and I''m using it to reply to you. Ever since I read your message, I''ve been doing great. I care about you a lot too, and I can''t wait for us to be together again. I really hope that happens soon!';
+sRomeo2='Oh my love, I''m so happy you replied! I can''t wait for us to be together again either, but I have to be careful, the boss is watching me closely. He says I''m daydreaming... It''s because I can''t stop thinking about you!';
+sJulia2='Romeo, my darling, be careful. I''m only thinking about you too. At the lab, my boss also says I''m daydreaming... Yesterday he asked me to serve him coffee, and instead, I poured the contents of the test tube with the dinosaur droppings into his cup!';
 sOpenArmouredDoor='Open armoured door';
 sFail='FAIL';
 sOpenCage='Open cage';
@@ -522,8 +550,8 @@ sSoLetMeGetThisStraight='So, let me get this straight. You kidnapped my grandmot
                 'And you expect me to believe all this?';
 sYouHaveToYoure='You have to. You''re our only hope. If we do nothing, the world is doomed...';
 sThereIsntMuchTime='There isn''t much time left. It''s a long journey.';
-sPlayerIveBeenTreated='%s, I’ve been treated well. We can trust them.';
-sWellIveComeThisFar='Well, I’ve come this far...';
+sPlayerIveBeenTreated='%s, I''ve been treated well. We can trust them.';
+sWellIveComeThisFar='Well, I''ve come this far...';
 sOkIllDoItIllGo='Okay. I''ll do it. I''ll go meet this creature. But... on one condition!';
 sWhatCondition='What condition?';
 sIllGoIfYouLiftTheBan='I''ll go if you lift the ban on romantic relationships '+
@@ -536,16 +564,296 @@ sW7Question='W7?';
 sYesSirQuestion='Yes, sir?';
 sYouHeardThatUpdate='You heard that? Update the employee policy, remove that rule, and notify everyone.';
 sDoneSir='Done, sir.';
+sTheyCertainlyDidntWaste='They certainly didn''t waste any time...';
 sPlayerAnythingElse='%s, anything else?';
 sNoThankYou='No. Thank you.';
 sThenLetsSummonTheTransporter='Then let''s summon the transporter and begin the journey.';
 sTransporterIsOnItsWay='Transporter WK510 is on its way. Landing in just a few seconds.';
 
+// briefing 1: departure to the asteroid belt
+sHereWeAreInOrbit='Here we are, in orbit around our beautiful planet.';
+sItsBreathtaking='It''s breathtaking!';
+sTheOldBookSpeaksOfAPortal='The old manuscript speaks of a port, one that can open the way to intergalactic travel.';
+sAccordingToOurResearch='According to our research, it should be just beyond the asteroid belt.';
+sPSetACourse='Penelope, set a course for the coordinates please.';
+sOnIt='On it!';
+sWaitFatherYouKnown='Wait, Father! You know we can''t make it through that zone. '+
+                    'This ship is way too big. One step inside and we''ll be shredded to pieces!';
+sAndThatsOnlyProblem='And that''s only the first problem . Problem number two: we''re not even '+
+                    'remotely equipped for intergalactic travel. Even if we find the portal, '+
+                    'we don''t have the right drive system, and the radiation would fry us in seconds...';
+sYoureBothRight='You''re both right. Two huge problems... but both can be solved, '+
+                    'thanks to that asteroid belt.';
+sSolvedHow='Solved? How exactly?';
+sThoseRocksAreLoaded='Those rocks are loaded with all kinds of rare ores. '+
+                    'If we can mine them, we''ll have the resources to upgrade the ship.';
+sAndHowAreWeSupposed='And how are we supposed to mine anything without a mining vessel?';
+sPCarryingaWhole='Penelope''s carrying a whole army of little robots onboard. '+
+                 'We could salvage a few and turn them into a mining ship.';
+sWedStillNeedADocking='We''d still need a docking bay so the mining vessel can take off and land.';
+sExactlyHereThePlan='Exactly. Here''s the plan: Penelope, gather the materials we need. '+
+                 '%s and Marcus, you handle building the docking bay first, then the mining ship.';
+sWeWillRegroupFor='We''ll regroup for a debrief when we''re near the asteroid belt.';
+sGotItComeOnM='Got it. Come on, Marcus, let''s get to work!';
 
-sToBeContinued='To be continued...';
+// construction of the docking bay
+sConsDockBay='Construction of the docking bay, step %d of %d';
+sConsMiningShip='Construction of the mining ship, step %d of %d';
+sOkLetsFocusAndGetBack='Okay... let''s focus and get back to it!';
+sGreatLetsAssembleBay='Great! Let''s install the docking bay.';
+sNowLetsMoveOnToThe='Now let''s move on to the construction of the mining ship.';
+sThereWeGoWeHaveAll='There we go, we have all the parts of the mining ship. '+
+                    'Let''s assemble them and then test it out!';
 
 
+// briefing 2: a probe near the gate
+sTheDockingBayAndThe='The docking bay and the ship are fully operational.';
+sExcellentExclamation='Perfect!';
+sWereApproachingThe='We''re approaching the asteroid belt.';
+sThatsItWeCantGoAny='That''s it... we can''t go any further than this.';
+sUnderstoodWellDeploy='Alright. We''ll deploy a research probe as close as possible '+
+                      'to the intergalactic gate.';
+sPYourJobWillBe='Penelope, your job will be to gather the probe''s data as soon as it''s in position '+
+                'and with W7''s help, you''ll attempt to uncover its secrets.';
+sWeNeedNewTechToBuid='We need new technologies to build an interstellar jump drive '+
+                      'and a radiation shield strong enough to protect us.';
+sIllDoMyBest='I''ll do my best.';
+sMYouWillOverseeThe='Marcus, you''ll oversee the construction unit. Prepare the raw material '+
+                    'stockpiles for the tech Penelope discovers, and handle the incoming ore.';
+sYesFather='Yes father.';
+sAndFinallyIfYoureUp='And finally, %s if you''re up for it, you''ll pilot the mining vessel.';
+sAwesomeImIn='Awesome! I''m in!';
+sItsGoingToBeDangerous='It''s going to be dangerous.';
+sDontWorryGIllBe='Don''t worry, Granny. I''ll be extra careful.';
+sYourFirstObjective='Your first objective is to navigate through the asteroid belt '+
+                    'and deploy the probe as close to the gate as you can.';
+sOnceThatDoneYoull='Once that''s done, you''ll collect whatever ore Penelope or Marcus request.';
+sGotIt='Got it.';
+sAnyQuestions='Any questions?';
+sNoQuestionThen='No questions? Then... everyone to your stations!';
+sITrustYouChildren='I trust you, children.';
 
+
+// dialogs step4: deploy the probe near the gate
+sWeHaveAttachedThe='We have attached the search probe to your ship. I am sending you the coordinates of the portal.';
+sDoneTheBlueSymbol='Done. The blue symbol on your radar shows its direction.'+LineEnding+
+                   'The asteroids are too numerous to be displayed, '+
+                   'they would prevent you from seeing the other objects.';
+sTheAsteroidsAreTooNumerous='The asteroids are too numerous to be displayed, '+
+                            'they would prevent you from seeing the other objects.';
+sImCancelingTheDropTooFar='I''m canceling the drop, you''re too far from the gate...';
+sImCancelingTheDropOutside='I''m canceling the drop. The probe must be dropped outside the gate.';
+sTheProbeHasJustSent='The probe has just sent its first data, good job %s!';
+sApparentlyTheGateIsEquipped='Apparently, the portal is equipped with a protective shield against '+
+                            'meteorite impacts. To adapt this technology to the mother ship, I need '+
+                            '3T of neodymium, 1T of gold and 2T of praseodymium. '+
+                            'I send you the coordinates of the asteroids that contain them.';
+sWellDoneYouCanReturn='Well done! You can return to the mother ship now.';
+sIllBeAbleToDrawUp='I''ll be able to draw up a manufacturing plan for the shield.';
+sToEnterTheDockCircleAround='To enter the docking bay, circle around the mothership from behind, '+
+                            'align your ship with the center of the bay, and move forward at low speed.';
+
+// dialogs step5: constructing the shield
+sThisFirstMissionIntoSpace='This first mission into space is a success!';
+sPHasDrawnUpThePlans='Penelope has drawn up the plans for a protective shield. We can build it.';
+sConsShield='Construction of the shield, step %d of %d';
+sWeGotAllTheComponentForTheShield='We''ve got all the components for the shield. Let''s install and test it!';
+sPStillNeedsOre='Penelope still needs ore. Apparently, another mission awaits you. I''m preparing for your takeoff!';
+
+// dialogs step6: harvesting ore for a combat ship
+sGreatWeHaveANiceShield='Great, we''ve got ourselves a nice shield now!';
+sILikeItsColor='I like its color.';
+sMeTooHeeHee='Me too! Heehee!';
+sSorryToInterruptGirls='Sorry to interrupt, girls. A meteor storm is closing in, and I''m afraid our new shield won''t be enough to handle what''s coming...';
+sWouldACombatShip='Would a combat ship capable of blasting the largest incoming meteors before they reach the mothership be useful?';
+sIBelieveSoButCanYou='I believe so. But... can you build one in such a short time?';
+sWeAlreadyHaveTheMeansTo='We already have the means to construct a ship, and we know laser tech. Yes, it''s doable.';
+sInThatCaseGiveMeTheList='In that case, give me the list of ores you need ASAP.';
+sW7JustSCompiledIt='W7 just compiled it. Sending it to you now.';
+sThePlanToBuildTheCombatShip='The plan to build the combat ship is already underway. '+
+                             'We will be able to finish it as soon as you bring us the ore.';
+
+// dialogs step7: construction of the combat ship
+sLetsGetStartedOnBuilding='Let''s get started on building the combat ship!';
+sConsCombatShip='Construction of the combat ship, step %d of %d';
+sWeHaveAllPartsOfCombatShip='We have all the parts of the combat ship. Let''s assemble them and test it out!';
+
+// dialogs step8: briefing about the meteor storm
+sFatherWeHaveACombatShipReady='Father, we have a combat ship ready for launch.';
+sYouveDoneWell='You''ve done well. With this ship and the shield, we have a chance of getting through this.';
+sTheMeteorStormWillHit='The meteor storm will hit us in a few minutes.';
+sVeryWellItsTimeToAct='Very well. It''s time to act.';
+sPTakeControlOfTheShip='Penelope, take control of the ship and go for it! We''re going to cross '+
+                       'the asteroid belt at the same time as the meteor storm. '+
+                       'Avoid collisions as much as possible.';
+sItsRiskyButILikeIt='It''s risky, but I like it. Let''s go for it!';
+sPlayerYoullPilotTheCombat='%s, you''ll pilot the combat ship. Destroy everything you see and clear a path through all those rocks.';
+sDontForgetEachImpact='Don''t forget: each impact will reduce the shield''s energy. '+
+                      'If it is completely discharged, one more impact and it''s over...';
+sMWithWAssistPlayer='Marcus, with W7, assist %s with takeoff, then go to the reactor room '+
+                    'and send as much energy as possible to the engines and shield.';
+sLadiesWellNeedYourHelp='Ladies, we''ll need your help as well.';
+sYesQuestion='Yes?';
+sINeedYouToSweepThroughTheShip='I need you to sweep through the ship and shut down every non-essential '+
+                               'system. It''ll save power for the shield and buy us more time.';
+sConsiderItDone='Consider it done.';
+sFinallySomeExercice='Finally, some exercise!';
+sIncomingMeteorActivatingShield='Incoming meteor. Activating shield.';
+sNoMoreTimeToWaste='No more time to waste! Everyone to your stations!';
+sDanger='DANGER';
+
+// dialogs step9: the battle against the meteor storm
+sAlrightKidsForward='Alright kids, forward!';
+sEngagingThrusters='Engaging thrusters! %s, I''m counting on you to clear the way.';
+sOkImGoingInFirst='Ok. I''m going in first.';
+sSomeExplanation='Some explanations: when meteorites explode, they emit particles. Your ship is equipped '+
+                 'with a system to attract them. When the particle gauge is full, '+
+                 'your weaponry upgrade by one level.';
+sWeaponryLevel='Weaponry level %d/5';
+sLargeMeteorApproaching='Large meteors approaching!';
+sKeepItUp='Keep it up!';
+sWeCanDoIt='We can do it!';
+sMWAreInstalling='Marcus and W7 are installing the system to draw the particles to the mothership!';
+sJustALittleLonger='Just a little longer, they''re almost done.';
+sIfItWorkWellHave='If it works, we''ll have enough energy to recharge the shield.';
+sSystemInstalled='System installed, let''s see if it runs...';
+sTheShieldIsRecharging='The particles are powering the mothership! The shield is recharging! Fantastic!!';
+sPTakeFormation='%s, don''t shoot anymore and take formation above us, inside the shield.';
+sUnderstood='Understood.';
+sInPosition='In position.';
+sAlrightMyWayNow='Alright... my way now. FULL THRUST!!';
+sGodILoveThis='God, I love this!';
+sWeHaveMadeItThrough='We''ve made it through the asteroid belt! Well done, everyone!';
+sEveryoneGetSomeRest='Rest for everyone! Tomorrow morning, meet me on the main deck for a new briefing.';
+
+// dialogs step10: about harvesting and construction of the Gigatron and Radiation Anihilator
+sTheNextMorning='The next morning...';
+sIHopeEveryone='I hope everyone''s well rested. It''s time to continue our journey.';
+sNowThatWeveMadeIt='Now that we''ve made it past the asteroid belt, all that remains is to build a '+
+                   'drive capable of intergalactic jumps, and a shielding system against radiation. '+
+                   'Once that''s done, we''ll finally be able to cross the portal.';
+sSirMayI='Sir, may I?';
+sOfCourseWWhatIsIt='Of course, W7. What is it?';
+sDuringYourRest='During your rest, I analyzed the latest data from the probe.';
+sItSeemsThePortal='It seems the portal''s technology relies on materials that normally cannot be found '+
+                  'in this region of space. The most powerful telescopes on record detected them by '+
+                  'spectroscopy, in a distant galaxy called GN-z11, thirteen point four billion '+
+                  'light-years away.';
+sThenItsHopeless='Then it''s hopeless! We''ll never be able to build what we need...';
+sISaidNormally='I said normally because now... they are here.';
+sWhatDoYouMean='What do you mean, W7?';
+sTheMeteorsFrom='The meteors from the storm we just crossed: they contain it. We can salvage fragments '+
+                'from the scattered debris.';
+sWhatButThatsGreat='What?! That''s great!';
+sItsAStrangeCoincidence='It''s a strange coincidence, don''t you think?';
+sYesMaamItsVeryStrange='Yes, ma''am, it''s very strange: there was almost zero chance that this storm '+
+                       'would hit the place where we were, and especially at that exact moment.';
+sIsThereAnExplanation='Is there an explanation for this?';
+sIveTurnedTheEvents='I''ve turned the events around in every possible way. No rational conclusion.'+
+                    'The idea that comes to mind is that these meteors were sent...';
+sWhatQuestion='What?';
+sSentVeryLikely='...sent very likely with the intention of helping us.';
+sPfffSoundsLike='Pfft… Sounds like someone needs a serious software update.';
+sIRanAFullDiag='I ran a full diagnostic. All systems are optimal.';
+sW7IsRightLook='W7 is right. Look closely: these meteors brought us exactly what we were missing.';
+sItIsIndeedStrange='It is indeed strange. But for now, we have no way of digging deeper into this mystery.';
+sOurFocusMustRemain='Our focus must remain on gathering the ore we need for the propulsor and the '+
+                    'radiation shielding, then on their construction.';
+sIveGotNamesForThem='I''ve got names for them! The propulsor will be called Gigatron. '+
+                    'And the shielding system: Radiation Annihilator.';
+sApprovedEveryone='Approved! Everyone, to your stations!';
+
+// dialogs step11: harvesting for the Gigatron and Annihilator
+sWeveLocatedTheAsteroids='We''ve located the asteroids we''re interested in. I''m sending you their coordinates.';
+sWowThatsALongList='Wow! That''s a long list!';
+sYesWeHaveTwo='Yes, we have two constructions to do.';
+sOkLetsGo2='Ok, let''s go.';
+sGreatNowAllWeHaveToDo='Great! Now all we have to do is build the devices.';
+sPJustToldMeThatYou='Penelope just told me that you''ve finished mining the asteroids. '+
+                    'I''m waiting for you in the construction unit.';
+
+// dialogs step12: constructing the Gigatron and Annihilator
+sWeHaveNewOres='We have new ores: they are the ones brought by the meteors.';
+sAsYouCanSeeTheyAre='As you can see, they are either raw or refined and then ground into powder. '+
+                    'The liquid version is obtained by dissolving them with various acids.';
+sEverythingIsReadyLetsGet='Everything is ready, let''s get started.';
+sConsGigatron='Construction of the Gigatron, step %d of %d';
+sWeHaveAllPartForGigatron='We have all the parts for the Gigatron. Let''s install it on the ship.';
+sLetContinueWithAnnihilator='Let''s continue with the Radiation Annihilator.';
+sConsAnnihilator='Construction of the Radiation Annihilator, step %d of %d';
+sWereDoneLetsInstall='We''re done! Let''s install the Radiation Annihilator.';
+
+// dialogs step13: le grand saut
+sEverythingIsReadyForTheBigJump='Everything''s ready for the big jump. What lies ahead is the unknown. '+
+                                'No human, no wolf has ever crossed this portal.';
+sOkButHumanOrWolf='Okay, but... human or wolf, nobody really knows how it works...';
+sSomethingTellsMeIts='Something tells me it''s not as complicated as it seems.';
+sAndYouAChild='And you, a child, just a human, pretend you know?';
+sNoThatNotWhat='No! That''s not what I said!';
+sHumansAreAllTheSame='Humans are all the same. You think your dreams and your feelings will get '+
+                     'you anywhere in this world...';
+sAndICouldSayTheSame='And I could say the same about you wolves. No feelings, just a thirst to dominate. '+
+                     'You don''t care about the damage, or the suffering you cause, '+
+                     'so long as your power stays intact.';
+sThatsWhatIDid='That''s what I did...';
+sThatExactlyWhatIve='That''s exactly what I''ve done my whole life... I built an empire made of companies, '+
+                    'factories, endless exploitation...';
+sButNowImOld='But now I''m old. And looking back... that empire doesn''t mean much anymore. '+
+             'What truly matters to me is my family. This people I love.';
+sDad='Dad!?';
+sAndIThinkThatMayBe='And I think that maybe those who aren''t interested in owning so many things '+
+                    'are satisfied every day with this feeling...';
+sWeDontNeedMuch='We don''t need much: some food, some water, a roof over our heads.';
+sINowKnowThat='I now know that happiness is not found in the concerns of a financial empire, '+
+              'but rather in the simple things of everyday life and harmonious relationships.';
+sIFeelThatWayToo='I feel that way too, for a long time.';
+sThankYouForBeingSoHonest='Thank you for being so honest, sir. You''ve learned from your life, '+
+                          'that''s what matters. I''m sorry for what I said.';
+sNoDontBeSorry='No, don''t be sorry. You were right.';
+sWeDontLiveInAFairyTale='We don''t live in a fairy tale. There will always be predators, '+
+                        'thirsty to own the world. I was one of them...';
+sWeMustLiveAccording='We must live according to our nature. In fact, I''d say we can''t do otherwise.';
+sThatsRightButInTheEnd='That''s right. But in the end, what''s important is that we''ve '+
+                       'learned something from our life.';
+sAndIfWeHaventLearned='And if we haven''t learned anything… does that mean we''ve missed something?';
+sYesThatsExactlyWhatMy='Yes definitely. That''s exactly what my grandfather used to say, back when he was still alive.';
+sAtNightHeWould='At night, he would often gaze at the stars. And after a while, he''d say: '+
+                'There''s something greater than what we can see with our eyes.';
+sSirIApologizeForDisturbing='Sir, I apologize for disturbing you, but... The portal has been activated.';
+sWhyAreWeMoving='Why are we moving? The thrusters are shut down!';
+sNotTheGigatron='Not the Gigatron. It seems to be interacting with the portal.';
+sTheGigatronIsFully='The Gigatron is fully activated.';
+sButWhoActivatedIt='But who activated it? Nobody touched it!';
+sIDontKnowTheProbe='I don''t know. The probe is detecting communication signals between the portal and the Gigatron.';
+sEveryoneToLookLike='Everyone to your posts! Looks like we''re making the big jump despite ourselves...';
+sDetectionOfStrong='Detection of strong radiation coming from the portal.';
+sRadiation='RADIATION';
+sOkImActivatingTheRadiation='Okay, I''m activating the Radiation Annihilator!';
+sRadiationNeutralized='Radiation neutralized.';
+sTheGateActivity='The gate''s activity is intensifying.';
+sGigatronOverload='The Gigatron is overloading.';
+sSirIThinkWereInHyperspace='Sir, I think we''re in hyperspace.';
+sWowItWorks='Wow! It works!';
+sThatsIncredible='That''s incredible!';
+sTheRadiationsHasStopped='The radiation have stopped. I''m deactivating the Annihilator.';
+sThatNightNoOneWentToBed='That night, no one went to bed despite the late hour. Everyone stayed up '+
+                         'to watch the spectacle unfolding before their eyes.';
+sTheyWereAwareThat='They were aware that what they were experiencing had never been experienced before. '+
+                   'There was no longer any reason for quarrels. Faced with this immensity, '+
+                   'a feeling of humility and peace settled in their hearts.';
+
+
+sInstructionLittleShip='←→ to rotate' + LineEnding +
+                       '↑ to accelerate' + LineEnding +
+                       '↓ to decelerate';
+sInstructionMiningShipOre='ACTION1 to extract ore';
+sInstructionMiningShipProbe='ACTION2 to launch the probe';
+
+sInstructionMeteorStorm='←→↑↓ to move' + LineEnding +
+                        'ACTION1 : fire';
+
+
+sToBeContinued='to be continued...';
 
 
 
@@ -582,15 +890,6 @@ end;
 function FontNumberCharset: string;
 begin
   Result := AddToCharset(' 0123456789:.x=', [sLevelAchieved, sTotal, sRemainTime, sSmoothArrivalBonus]);
-end;
-
-function GameHints: TStringArray;
-begin
-  Result := NIL;
-  SetLength(Result, 3);
-  Result[0] := sImproveEquipment;
-  Result[1] := sRedoALevel;
-  Result[2] := sBuyEquipment;
 end;
 
 function CorruptString(const s: string): string;

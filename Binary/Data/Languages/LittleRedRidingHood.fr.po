@@ -15,6 +15,10 @@ msgstr ""
 msgid "Remedy: pump acceleration at maximum level"
 msgstr "Remède: accélération de la pompe au niveau maximum"
 
+#: u_resourcestring.saccordingtoourresearch
+msgid "According to our research, it should be just beyond the asteroid belt."
+msgstr "D'après nos recherches il se trouverait après la ceinture d'astéroïdes."
+
 #: u_resourcestring.saction1
 msgid "ACTION1"
 msgstr "ACTION1"
@@ -26,10 +30,6 @@ msgstr "ACTION2"
 #: u_resourcestring.sadorsalpropulsorineedit
 msgid "A dorsal propulsor! No way I'm leaving this here!"
 msgstr "Un propulseur dorsal ! Pas question de laisser ça ici !"
-
-#: u_resourcestring.sadventuremode
-msgid "ADVENTURE MODE"
-msgstr "MODE AVENTURE"
 
 #: u_resourcestring.sagain
 msgid "AGAIN ?!!"
@@ -51,13 +51,50 @@ msgstr "voix de l'IA"
 msgid "All right, we'll be on time."
 msgstr "Très bien, nous serons à l'heure."
 
+#: u_resourcestring.salrightkidsforward
+msgid "Alright kids, forward!"
+msgstr "Aller les enfants, en avant!"
+
+#: u_resourcestring.salrightmywaynow
+msgid "Alright... my way now. FULL THRUST!!"
+msgstr "Ok, maintenant nous allons faire à ma façon... PLEIN GAZ!!"
+
 #: u_resourcestring.sanancientmanuscript
 msgid "An ancient manuscript we've had for a long time explains that the only way to understand what's happening is to travel to the center of the universe. There, we may encounter the Original Force that creates worlds. If this entity truly exists, it can help us to find a solution."
 msgstr "Un vieux manuscrit que nous avons en notre possession depuis longtemps explique que le seul moyen d'en savoir plus est d'aller au centre de l'univers: là, nous y rencontrerons la Force Originelle qui engendre les mondes. Cet entité, si elle existe, pourra nous éclairer sur ce qu'il faut faire."
 
+#: u_resourcestring.sandfinallyifyoureup
+#, object-pascal-format
+msgid "And finally, %s if you're up for it, you'll pilot the mining vessel."
+msgstr "Enfin, %s si tu es d'accord, tu piloteras le vaisseau minier."
+
+#: u_resourcestring.sandhowarewesupposed
+msgid "And how are we supposed to mine anything without a mining vessel?"
+msgstr "Et comment sommes-nous censés extraire du minerai sans vaisseau minier ?"
+
+#: u_resourcestring.sandicouldsaythesame
+msgid "And I could say the same about you wolves. No feelings, just a thirst to dominate. You don't care about the damage, or the suffering you cause, so long as your power stays intact."
+msgstr "Je pourrai aussi dire des choses sur vous, les loups: vous n'avez pas de sentiments, vous voulez dominer et la destruction de l'environnement ou la souffrance des autres ne vous touche pas, pourvu que vos gains soit intacts."
+
+#: u_resourcestring.sandifwehaventlearned
+msgid "And if we haven't learned anything… does that mean we've missed something?"
+msgstr "Et si on a rien appris, c'est qu'on a raté quelque chose?"
+
+#: u_resourcestring.sandithinkthatmaybe
+msgid "And I think that maybe those who aren't interested in owning so many things are satisfied every day with this feeling..."
+msgstr "Et je me dit que peut-être, ceux qui ne sont pas intéressés par posséder tant de choses, se suffisent chaque jour de ce sentiment..."
+
+#: u_resourcestring.sandthatsonlyproblem
+msgid "And that's only the first problem . Problem number two: we're not even remotely equipped for intergalactic travel. Even if we find the portal, we don't have the right drive system, and the radiation would fry us in seconds..."
+msgstr "Et ce n'est que le premier problème: l'autre est que nous ne sommes pas du tout équipés pour les voyages intergalactiques. Même si nous trouvons le portail, nous n'avons pas de propulseur adéquat et les radiations nous carboniseraient en quelques secondes..."
+
 #: u_resourcestring.sandtheyusevolcanolavaasrawmaterial
 msgid "And they use the volcano's lava as a raw material..."
 msgstr "Et ils se servent de la lave du volcan comme matière première..."
+
+#: u_resourcestring.sandyouachild
+msgid "And you, a child, just a human, pretend you know?"
+msgstr "Parce que toi, simple humaine et encore enfant, tu prétends savoir?"
 
 #: u_resourcestring.sandyoushowedcourage
 msgid "And you showed courage in every challenge!"
@@ -71,9 +108,17 @@ msgstr "Et toi tu chantais à tue-tête! Hahaha!"
 msgid "an SD card... I'll take it, it might come in handy."
 msgstr "une carte SD... Je la prend, ça pourrai m'être utile."
 
-#: u_resourcestring.sarcademode
-msgid "ARCADE MODE"
-msgstr "MODE ARCADE"
+#: u_resourcestring.sanyquestions
+msgid "Any questions?"
+msgstr "Avez-vous des questions?"
+
+#: u_resourcestring.sapparentlythegateisequipped
+msgid "Apparently, the portal is equipped with a protective shield against meteorite impacts. To adapt this technology to the mother ship, I need 3T of neodymium, 1T of gold and 2T of praseodymium. I send you the coordinates of the asteroids that contain them."
+msgstr "Apparemment le portail est équipé d'un bouclier de protection contre les impacts de météorite. Pour adapter cette technologie au vaisseau mère j'ai besoin de 3T de néodyme, 1T d'or et 2T de praséodyme. Je t'envoie les coordonnées des astéroïdes qui en contiennent."
+
+#: u_resourcestring.sapprovedeveryone
+msgid "Approved! Everyone, to your stations!"
+msgstr "Validé! Tout le monde à son poste!"
 
 #: u_resourcestring.sareyougoingtohelpmenow
 msgid "Are you going to help me now?"
@@ -91,13 +136,25 @@ msgstr "Tu vas bien? Ils ne t'ont pas fait de mal?"
 msgid "A submarine? I wasn't expecting that..."
 msgstr "Un sous-marin ? Je ne m'attendais pas à ça..."
 
+#: u_resourcestring.sasyoucanseetheyare
+msgid "As you can see, they are either raw or refined and then ground into powder. The liquid version is obtained by dissolving them with various acids."
+msgstr "Comme tu le vois, ils sont soit bruts, soit raffinés puis réduits en poudre. La version liquide s'obtient en les dissolvant avec divers acides."
+
 #: u_resourcestring.sasyoucanseewere
 msgid "As you can see, we're too entangled in the world's affairs to be considered innocent."
 msgstr "Comme tu vois, nous sommes trop impliqués dans les affaires du monde pour être innocent."
 
+#: u_resourcestring.satnighthewould
+msgid "At night, he would often gaze at the stars. And after a while, he'd say: There's something greater than what we can see with our eyes."
+msgstr "Le soir, il regardait souvent les étoiles et après un moment, il disait qu'il y a quelque chose de plus grand que ce que nous pouvons voir avec nos yeux."
+
 #: u_resourcestring.satrain
 msgid "A train!?"
 msgstr "Un train !?"
+
+#: u_resourcestring.sawesomeimin
+msgid "Awesome! I'm in!"
+msgstr "Chouette! avec plaisir!"
 
 #: u_resourcestring.sback
 msgid "BACK"
@@ -136,17 +193,21 @@ msgstr "FABRIQUER"
 msgid "But hurry, it's really urgent, I've rarely seen my parents so worried."
 msgstr "Mais fais vite, il y a vraiment urgence, j'ai rarement vu mes parents si inquiets."
 
+#: u_resourcestring.sbutnowimold
+msgid "But now I'm old. And looking back... that empire doesn't mean much anymore. What truly matters to me is my family. This people I love."
+msgstr "Aujourd'hui je suis vieux. Et lorsque j'y réfléchi, cet empire a perdu de son importance. La chose la plus importante à mes yeux est ma famille: ces personnes que j'aime."
+
 #: u_resourcestring.sbutwhataboutyourrobots
 msgid "What about your robots? Don't you mind losing them?"
 msgstr "Et tes robots ? ça ne te fait rien de les perdre ?"
 
+#: u_resourcestring.sbutwhoactivatedit
+msgid "But who activated it? Nobody touched it!"
+msgstr "Mais qui l'active? Personne n'y touche!"
+
 #: u_resourcestring.sbuy
 msgid "BUY"
 msgstr "ACHETER"
-
-#: u_resourcestring.sbuyequipment
-msgid "buy new equipment in the workshop"
-msgstr "achète de nouveaux équipements dans ton atelier"
 
 #: u_resourcestring.sbuyziplinefirst
 msgid "you need to buy the zip line first!"
@@ -196,6 +257,48 @@ msgstr "Félicitations! Encore une fois tu t'es montrée à la hauteur!"
 msgid "CONNECTED"
 msgstr "CONNECTÉ"
 
+#: u_resourcestring.sconsannihilator
+#, object-pascal-format
+msgid "Construction of the Radiation Annihilator, step %d of %d"
+msgstr "Construction du Radiation Annihilator, étape %d sur %d"
+
+#: u_resourcestring.sconscombatship
+#, object-pascal-format
+msgid "Construction of the combat ship, step %d of %d"
+msgstr "Construction du vaisseau de combat, étape %d sur %d"
+
+#: u_resourcestring.sconsdockbay
+#, object-pascal-format
+msgid "Construction of the docking bay, step %d of %d"
+msgstr "Construction de la baie d'amarrage, étape %d sur %d"
+
+#: u_resourcestring.sconsgigatron
+#, object-pascal-format
+msgid "Construction of the Gigatron, step %d of %d"
+msgstr "Construction du Gigatron, étape %d sur %d"
+
+#: u_resourcestring.sconsideritdone
+msgid "Consider it done."
+msgstr "Ce sera fait."
+
+#: u_resourcestring.sconsminingship
+#, object-pascal-format
+msgid "Construction of the mining ship, step %d of %d"
+msgstr "Construction du vaisseau minier, étape %d sur %d"
+
+#: u_resourcestring.sconsshield
+#, object-pascal-format
+msgid "Construction of the shield, step %d of %d"
+msgstr "Construction du bouclier, étape %d sur %d"
+
+#: u_resourcestring.sconstructionexplanation
+msgid ""
+"Use the mouse to click the item asked by Marcus\n"
+"Hurry, or the fusion of the elements will fail!"
+msgstr ""
+"Utilise la souris pour cliquer sur l'élément demandé par Marcus\n"
+"Fais vite, sinon la fusion des éléments échouera!"
+
 #: u_resourcestring.scontinue
 msgid "CONTINUE"
 msgstr "CONTINUER"
@@ -221,9 +324,17 @@ msgstr "une télécommande de grue"
 msgid "CREDITS"
 msgstr "CRÉDITS"
 
+#: u_resourcestring.sdad
+msgid "Dad!?"
+msgstr "Papa!?"
+
 #: u_resourcestring.sdamnacodeddoor
 msgid "I don't have the code to open this door..."
 msgstr "Je n'ai pas le code pour ouvrir cette porte..."
+
+#: u_resourcestring.sdanger
+msgid "DANGER"
+msgstr "DANGER"
 
 #: u_resourcestring.sdartboardinstructions
 msgid ""
@@ -245,6 +356,10 @@ msgstr "EFFACER"
 #: u_resourcestring.sdeploymentofemergencyexit
 msgid "Deployment of emergency exit"
 msgstr "Déploiement de l'issue de secours"
+
+#: u_resourcestring.sdetectionofstrong
+msgid "Detection of strong radiation coming from the portal."
+msgstr "Détection de fortes radiations provenant du portail."
 
 #: u_resourcestring.sdevelopment
 msgid "DEVELOPMENT"
@@ -270,6 +385,14 @@ msgstr "Oh, une copine! Tu m'as libéré de la cage, je vais sauter dans tes bra
 msgid "Done, sir."
 msgstr "C'est fait, Monsieur."
 
+#: u_resourcestring.sdonethebluesymbol
+msgid ""
+"Done. The blue symbol on your radar shows its direction.\n"
+"The asteroids are too numerous to be displayed, they would prevent you from seeing the other objects."
+msgstr ""
+"C'est fait. Le symbole bleu sur ton radar indique sa direction.\n"
+"Les astéroïdes sont trop nombreux pour être affichés, ils t'empêcheraient de voir les autres objets."
+
 #: u_resourcestring.sdontbeafraidyouresafe
 msgid "Don't be afraid, you're safe inside. Don't move please."
 msgstr "N'ai pas peur, tu ne risques rien à l'intérieur. Ne bouge pas s'il te plaît."
@@ -277,6 +400,14 @@ msgstr "N'ai pas peur, tu ne risques rien à l'intérieur. Ne bouge pas s'il te 
 #: u_resourcestring.sdontbespotted
 msgid "Don't be spotted!"
 msgstr "Ne vous faites pas repérer !"
+
+#: u_resourcestring.sdontforgeteachimpact
+msgid "Don't forget: each impact will reduce the shield's energy. If it is completely discharged, one more impact and it's over..."
+msgstr "N'oublie pas: chaque impact diminuera l'énergie du bouclier. S'il est complètement déchargé, un impact de plus et c'est fini..."
+
+#: u_resourcestring.sdontworrygillbe
+msgid "Don't worry, Granny. I'll be extra careful."
+msgstr "Ne t'inquiètes pas mamie, je ferai très attention."
 
 #: u_resourcestring.sdorsalthrusterexplanation
 msgctxt "u_resourcestring.sdorsalthrusterexplanation"
@@ -287,6 +418,10 @@ msgstr "un propulseur dorsal pour voler dans les airs"
 msgid "Driver voice"
 msgstr "Voix du conducteur"
 
+#: u_resourcestring.sduringyourrest
+msgid "During your rest, I analyzed the latest data from the probe."
+msgstr "Pendant votre repos, j'ai analysé les nouvelles données de la sonde."
+
 #: u_resourcestring.selevatorexplanation
 msgid "a simple system for getting on and off"
 msgstr "un système simple pour monter et descendre"
@@ -295,6 +430,11 @@ msgstr "un système simple pour monter et descendre"
 msgctxt "u_resourcestring.selevatorupgradehint"
 msgid "increase speed"
 msgstr "augmente la vitesse"
+
+#: u_resourcestring.sengagingthrusters
+#, object-pascal-format
+msgid "Engaging thrusters! %s, I'm counting on you to clear the way."
+msgstr "Activation des propulseurs! %s, je compte sur toi pour ouvrir le passage."
 
 #: u_resourcestring.senteryourname
 msgid "ENTER YOUR NAME"
@@ -316,6 +456,31 @@ msgstr "Heu... Je ne veux pas finir ma vie dans une boîte de conserve!"
 msgid "Er, I have to go"
 msgstr "Oui ben, je dois encore y aller"
 
+#: u_resourcestring.severyonegetsomerest
+msgid "Rest for everyone! Tomorrow morning, meet me on the main deck for a new briefing."
+msgstr "Repos pour tous! Demain matin, rejoignez-moi sur le pont principal pour un nouveau briefing."
+
+#: u_resourcestring.severyonetolooklike
+msgid "Everyone to your posts! Looks like we're making the big jump despite ourselves..."
+msgstr "Tout le monde à son poste! Il semblerai que nous allons faire le grand saut malgré nous."
+
+#: u_resourcestring.severythingisreadyforthebigjump
+msgid "Everything's ready for the big jump. What lies ahead is the unknown. No human, no wolf has ever crossed this portal."
+msgstr "Tout est prêt pour le grand saut. Devant nous se trouve l'inconnu. Aucun humain, aucun loup n'a encore emprunté ce portail."
+
+#: u_resourcestring.severythingisreadyletsget
+msgid "Everything is ready, let's get started."
+msgstr "Tout est prêt, commençons."
+
+#: u_resourcestring.sexactlyheretheplan
+#, object-pascal-format
+msgid "Exactly. Here's the plan: Penelope, gather the materials we need. %s and Marcus, you handle building the docking bay first, then the mining ship."
+msgstr "Absolument. Procédons par ordre: Pénélope fourni le matériel nécessaire. %s et Marcus s'occupent de la fabrication de la baie d'amarrage puis du vaisseau minier."
+
+#: u_resourcestring.sexcellentexclamation
+msgid "Perfect!"
+msgstr "Parfait!"
+
 #: u_resourcestring.sexchange
 msgid "EXCHANGE"
 msgstr "ÉCHANGER"
@@ -336,6 +501,10 @@ msgstr "Échec d'ouverture de la porte. Je vais ouvrir la cage, comme ça j'aura
 msgid "Father of wolfs"
 msgstr "Père des loups"
 
+#: u_resourcestring.sfatherwehaveacombatshipready
+msgid "Father, we have a combat ship ready for launch."
+msgstr "Père, nous avons un vaisseau de combat prêt à décoller."
+
 #: u_resourcestring.sfinally
 msgid "Finally!"
 msgstr "Enfin!"
@@ -343,6 +512,10 @@ msgstr "Enfin!"
 #: u_resourcestring.sfinallyifoundyou
 msgid "I finally found you!"
 msgstr "Enfin je t'ai retrouvée!"
+
+#: u_resourcestring.sfinallysomeexercice
+msgid "Finally, some exercise!"
+msgstr "Un peu d'exercice, enfin!"
 
 #: u_resourcestring.sfirstcompleteforest
 msgid "you must first complete the pine forest!"
@@ -372,6 +545,10 @@ msgstr "d'abord, termines le mode jeu"
 #: u_resourcestring.sfirstcompletevolcano
 msgid "you must first complete the Volcano!"
 msgstr "tu dois d'abord compléter Volcano !"
+
+#: u_resourcestring.sfirstcompletewolfcastle
+msgid "you must first complete the Wolf Castle!"
+msgstr "tu dois d'abord terminer le Château des Loups!"
 
 #: u_resourcestring.sfirstupgradetothemaxthebowelevator
 msgid "to access the challenge, you must first, upgrade to the max the bow, the elevator, the hammer and the lightning storm"
@@ -403,6 +580,21 @@ msgstr ""
 "ACTION1 : arc\n"
 "ACTION2 : tempête d'éclairs foudroyants"
 
+#: u_resourcestring.sforeststepinfo1
+msgctxt "u_resourcestring.sforeststepinfo1"
+msgid "upgrade your equipment in the workshop"
+msgstr "améliore tes équipements dans l'atelier"
+
+#: u_resourcestring.sforeststepinfo2
+msgctxt "u_resourcestring.sforeststepinfo2"
+msgid "you can redo a level to earn the end bonus"
+msgstr "tu peux refaire un niveau pour gagner le bonus de fin"
+
+#: u_resourcestring.sforeststepinfo3
+msgctxt "u_resourcestring.sforeststepinfo3"
+msgid "buy new equipment in the workshop"
+msgstr "achète de nouveaux équipements dans ton atelier"
+
 #: u_resourcestring.sfunnyatthecanteen
 msgctxt "u_resourcestring.sfunnyatthecanteen"
 msgid "Spinach in the canteen this lunchtime"
@@ -428,13 +620,29 @@ msgstr "en pause"
 msgid "GET READY"
 msgstr "PRÊT"
 
+#: u_resourcestring.sgigatronoverload
+msgid "The Gigatron is overloading."
+msgstr "Le Gigatron entre en surcharge."
+
 #: u_resourcestring.sgo
 msgid "GO"
 msgstr "GO"
 
+#: u_resourcestring.sgodilovethis
+msgid "God, I love this!"
+msgstr "J'adore ça!"
+
 #: u_resourcestring.sgoodluckseeyousoon
 msgid "Good luck, see you soon."
 msgstr "Bonne chance, à bientôt."
+
+#: u_resourcestring.sgotit
+msgid "Got it."
+msgstr "Bien compris."
+
+#: u_resourcestring.sgotitcomeonm
+msgid "Got it. Come on, Marcus, let's get to work!"
+msgstr "Très bien. Allons-y Marcus!"
 
 #: u_resourcestring.sgotoworkshoptoexamintheplan
 msgid "I'll take a look at this plan in the workshop and see what I can do with it. (cough)"
@@ -456,9 +664,21 @@ msgstr "Mamie?"
 msgid "GRAPHICS"
 msgstr "GRAPHISMES"
 
+#: u_resourcestring.sgreatletsassemblebay
+msgid "Great! Let's install the docking bay."
+msgstr "Super! Allons installer la baie d'amarrage."
+
+#: u_resourcestring.sgreatnowallwehavetodo
+msgid "Great! Now all we have to do is build the devices."
+msgstr "Super! Il ne nous reste plus qu'à construire les appareils."
+
 #: u_resourcestring.sgreatnowicanpass
 msgid "Great! Now I can pass!"
 msgstr "Chouette ! Maintenant je peux passer !"
+
+#: u_resourcestring.sgreatwehaveaniceshield
+msgid "Great, we've got ourselves a nice shield now!"
+msgstr "Super, nous avons un joli bouclier maintenant!"
 
 #: u_resourcestring.shahaha
 msgid "Hahahaha!"
@@ -496,6 +716,10 @@ msgstr ""
 "\"Ce sous-marin te mènera sur l'île. Il fonctionne avec des cristaux bleus mais sa réserve est petite. Si tu essais de traverser directement, tu tomberas en panne au milieu de la mer. Le seul moyen est de passer par la Faille du Serpent: là tu trouveras des cristaux pour remplir ton réservoir. N'est pas peur, il n'y a pas de serpent, c'est sa forme qui lui a donné son nom. Bonne chance!\"\n"
 "C'est signé Marcus."
 
+#: u_resourcestring.shereweareinorbit
+msgid "Here we are, in orbit around our beautiful planet."
+msgstr "Nous y voilà, en orbite autour de notre belle planète."
+
 #: u_resourcestring.shereyoucanexchange
 msgid "Here you can exchange your coins for certain items."
 msgstr "Ici tu peux échanger tes pièces contre certains articles."
@@ -520,9 +744,17 @@ msgstr "Pour modifier les touches, cliques sur un bouton puis presse la nouvelle
 msgid "HUG !"
 msgstr "CÂLIN !"
 
+#: u_resourcestring.shumansareallthesame
+msgid "Humans are all the same. You think your dreams and your feelings will get you anywhere in this world..."
+msgstr "Vous êtes tous pareil les humains, vous croyez qu'avec vos rêves et vos sentiments vous arriverez à quelque chose dans ce monde..."
+
 #: u_resourcestring.sialwayskeepmyword
 msgid "I always keep my word."
 msgstr "Je tiens toujours parole."
+
+#: u_resourcestring.sibelievesobutcanyou
+msgid "I believe so. But... can you build one in such a short time?"
+msgstr "Je pense que oui. Tu pourrais faire ça en si peu de temps?"
 
 #: u_resourcestring.sibetterleavethisplacequickly
 msgid ""
@@ -540,9 +772,21 @@ msgstr "Moi aussi ! Tu peux venir me voir quand tu le voudras."
 msgid "I don't know about that. I don't deal with my parents' business."
 msgstr "Ça, je n'en sais rien. Je ne m'occupe pas des affaires de mes parents."
 
+#: u_resourcestring.sidontknowtheprobe
+msgid "I don't know. The probe is detecting communication signals between the portal and the Gigatron."
+msgstr "Je ne sais pas. La sonde perçoit des signaux de communications entre le portail et le Gigatron."
+
 #: u_resourcestring.sidontknowwhereitsgoing
 msgid "I don't know where it's going, but I have a feeling it's going to bring me closer to Granny. No time to lose!"
 msgstr "Je ne connaît pas sa destination mais j'ai le sentiment qu'il va me rapprocher de grand-mère. Pas de temps à perdre !"
+
+#: u_resourcestring.sifeelthatwaytoo
+msgid "I feel that way too, for a long time."
+msgstr "Je ressens cela aussi, depuis longtemps."
+
+#: u_resourcestring.sifitworkwellhave
+msgid "If it works, we'll have enough energy to recharge the shield."
+msgstr "Si ça fonctionne nous aurons assez d'énergie pour recharger le bouclier."
 
 #: u_resourcestring.siftheyfoundoutwed
 msgid "If they found out, we'd be fired and have a hard time finding another job."
@@ -572,6 +816,10 @@ msgstr "J'entends quelqu'un derrière la porte. Vite ! Je dois me cacher !"
 msgid "I hear voices..."
 msgstr "J'entends des voix..."
 
+#: u_resourcestring.sihopeeveryone
+msgid "I hope everyone's well rested. It's time to continue our journey."
+msgstr "J'espère que tout le monde est bien reposé, il est temps de continuer notre voyage."
+
 #: u_resourcestring.sihopeforyou
 msgid "I hope for you."
 msgstr "Je vous le souhaite."
@@ -589,6 +837,18 @@ msgstr "%s, je savais que tu y arriverais! J'ai toujours eu confiance en toi."
 msgid "I know a game I love. If you beat me, I'll give you a way to cross the sea."
 msgstr "Je connais un jeu que j'adore. Si tu me bats, je te donnerai un moyen de traverser la mer."
 
+#: u_resourcestring.silikeitscolor
+msgid "I like its color."
+msgstr "J'aime bien sa couleur."
+
+#: u_resourcestring.sillbeabletodrawup
+msgid "I'll be able to draw up a manufacturing plan for the shield."
+msgstr "Je vais pouvoir établir le plan de fabrication du bouclier."
+
+#: u_resourcestring.silldomybest
+msgid "I'll do my best."
+msgstr "Je ferai de mon mieux."
+
 #: u_resourcestring.sillgoifyoulifttheban
 msgid "I'll go if you lift the ban on romantic relationships between employees in your company!"
 msgstr "J'irai à condition que vous autorisiez les relations amoureuses entre employés dans votre société!"
@@ -600,6 +860,14 @@ msgstr "Je vais t'aider à mon tour, tu le mérites. Suis-moi s'il te plaît."
 #: u_resourcestring.silovecommingtosee
 msgid "I love coming to see Granny..."
 msgstr "J'aime bien venir voir Mamie..."
+
+#: u_resourcestring.simcancelingthedropoutside
+msgid "I'm canceling the drop. The probe must be dropped outside the gate."
+msgstr "J'annule le largage, la sonde doit être larguée en dehors du portail."
+
+#: u_resourcestring.simcancelingthedroptoofar
+msgid "I'm canceling the drop, you're too far from the gate..."
+msgstr "J'annule le largage, tu es trop loin du portail..."
 
 #: u_resourcestring.simfinallyontheisland
 msgid "I'm finally on the island!"
@@ -613,21 +881,121 @@ msgstr "Il me manque aussi..."
 msgid "I'm Marcus, Penelope's brother, the one you met on the train. I know you're looking for your grandmother."
 msgstr "Je suis Marcus, le frère de Pénélope, celle que tu as rencontré dans le train. Je sais que tu cherches ta grand-mère."
 
-#: u_resourcestring.simproveequipment
-msgid "upgrade your equipment in the workshop"
-msgstr "améliore tes équipements dans l'atelier"
-
 #: u_resourcestring.sinawayyes
 msgid "In a way, yes. Your innocence alone wasn't enough. You needed proper training to have any chance of succeeding in your mission."
 msgstr "En quelque sorte, oui. Ton innocence ne suffisait pas. Tu avais aussi besoin d'un bon entrainement pour avoir des chances de réussir la mission."
+
+#: u_resourcestring.sincomingmeteoractivatingshield
+msgid "Incoming meteor. Activating shield."
+msgstr "Météorite en approche. Activation du bouclier."
 
 #: u_resourcestring.sineedakeytoopenthisgate
 msgid "I need a key to open this gate..."
 msgstr "J'ai besoin d'une clé pour ouvrir ce portail..."
 
+#: u_resourcestring.sineedyoutosweepthroughtheship
+msgid "I need you to sweep through the ship and shut down every non-essential system. It'll save power for the shield and buy us more time."
+msgstr "Je vous charge de faire le tour du vaisseau et d'éteindre tous les appareils qui ne sont pas utiles: cela économisera de l'énergie pour le bouclier et nous donnera un peu plus de temps."
+
+#: u_resourcestring.sinowknowthat
+msgid "I now know that happiness is not found in the concerns of a financial empire, but rather in the simple things of everyday life and harmonious relationships."
+msgstr "Je sais aujourd'hui que le bonheur ne se trouve pas dans les soucis d'un empire financier, mais plutôt dans les choses simples du quotidien et les relations harmonieuses."
+
+#: u_resourcestring.sinposition
+msgid "In position."
+msgstr "En position."
+
+#: u_resourcestring.sinspace
+msgid "Into the depths of space..."
+msgstr "Dans les profondeurs de l'espace..."
+
+#: u_resourcestring.sinspacestepinfo1
+msgid "First briefing in space"
+msgstr "Premier briefing dans l'espace"
+
+#: u_resourcestring.sinspacestepinfo10
+msgid "A strange coincidence"
+msgstr "Une étrange coïncidence"
+
+#: u_resourcestring.sinspacestepinfo11
+msgid "Ore for the Gigatron and Radiation Annihilator"
+msgstr "Du minerai pour le Gigatron et le Radiation Annihilator"
+
+#: u_resourcestring.sinspacestepinfo12
+msgid "Construction of the Gigatron and Radiation Annihilator"
+msgstr "Construction du Gigatron et du Radiation Annihilator"
+
+#: u_resourcestring.sinspacestepinfo13
+msgid "The big jump!"
+msgstr "Le grand saut!"
+
+#: u_resourcestring.sinspacestepinfo2
+msgid "A docking bay and a mining ship"
+msgstr "Une baie d'amarrage et un vaisseau minier"
+
+#: u_resourcestring.sinspacestepinfo3
+msgid "Arrival at the asteroid belt"
+msgstr "Arrivée à la ceinture d'astéroïdes"
+
+#: u_resourcestring.sinspacestepinfo4
+msgid "A probe to analyse the gate"
+msgstr "Une sonde pour analyser le portail"
+
+#: u_resourcestring.sinspacestepinfo5
+msgid "Shield construction"
+msgstr "Construction du bouclier"
+
+#: u_resourcestring.sinspacestepinfo6
+msgid "Ore for a combat ship"
+msgstr "Du minerai pour un vaisseau de combat"
+
+#: u_resourcestring.sinspacestepinfo7
+msgid "Construction of the combat ship"
+msgstr "Construction du vaisseau de combat"
+
+#: u_resourcestring.sinspacestepinfo8
+msgctxt "u_resourcestring.sinspacestepinfo8"
+msgid "A new problem..."
+msgstr "Un nouveau problème..."
+
+#: u_resourcestring.sinspacestepinfo9
+msgctxt "u_resourcestring.sinspacestepinfo9"
+msgid "Battle against the meteor storm"
+msgstr "Bataille contre la tempête de météorite"
+
+#: u_resourcestring.sinstructionlittleship
+msgid ""
+"←→ to rotate\n"
+"↑ to accelerate\n"
+"↓ to decelerate"
+msgstr ""
+"←→ rotation\n"
+"↑ accélérer\n"
+"↓ décélérer"
+
+#: u_resourcestring.sinstructionmeteorstorm
+msgid ""
+"←→↑↓ to move\n"
+"ACTION1 : fire"
+msgstr ""
+"←→↑↓ se déplacer\n"
+"ACTION1 : tirer"
+
+#: u_resourcestring.sinstructionminingshipore
+msgid "ACTION1 to extract ore"
+msgstr "ACTION 1 extraire le minerai"
+
+#: u_resourcestring.sinstructionminingshipprobe
+msgid "ACTION2 to launch the probe"
+msgstr "ACTION 2 lancer de la sonde"
+
 #: u_resourcestring.sinstructions
 msgid "HOW TO PLAY"
 msgstr "COMMENT JOUER"
+
+#: u_resourcestring.sinthatcasegivemethelist
+msgid "In that case, give me the list of ores you need ASAP."
+msgstr "Dans ce cas donne moi le listing des minerais qu'il te faut dès que possible."
 
 #: u_resourcestring.sinvitedyoutiedher
 msgid "Invited?! You tied her up and took her by force!"
@@ -637,9 +1005,29 @@ msgstr "Invitée ?! Vous l'avez ligotée et emmenée de force !"
 msgid "I promise to take good care of her when she gets older!"
 msgstr "Je fais la promesse de bien m'en occuper lorsqu'elle sera plus agée!"
 
+#: u_resourcestring.siranafulldiag
+msgid "I ran a full diagnostic. All systems are optimal."
+msgstr "J'ai effectué un diagnostic complet. Tous les systèmes fonctionnent de manière optimale."
+
+#: u_resourcestring.sisaidnormally
+msgid "I said normally because now... they are here."
+msgstr "J'ai dit normalement car, maintenant... il y en a."
+
+#: u_resourcestring.sisthereanexplanation
+msgid "Is there an explanation for this?"
+msgstr "Y a-t-il une explication à cela?"
+
 #: u_resourcestring.sithinkivebrokenanail
 msgid "I think I've broken a nail..."
 msgstr "Je crois que je me suis cassé un ongle..."
+
+#: u_resourcestring.sitisindeedstrange
+msgid "It is indeed strange. But for now, we have no way of digging deeper into this mystery."
+msgstr "C'est très étrange en effet. Mais pour le moment nous n'avons aucun moyen d'avancer sur ce point."
+
+#: u_resourcestring.sitrustyouchildren
+msgid "I trust you, children."
+msgstr "J'ai confiance en vous les enfants."
 
 #: u_resourcestring.sitsalasergun
 msgid "It's a laser pistol, harmless against humans and wolves but highly effective against robots."
@@ -650,8 +1038,24 @@ msgid "It's almost ready, we're going to have a great meal."
 msgstr "C'est bientôt prêt, on va se régaler."
 
 #: u_resourcestring.sitsalreadybeenfiveyears
-msgid "It’s already been 5 years since he left us..."
+msgid "It's already been 5 years since he left us..."
 msgstr "Ça fait déjà 5 ans qu'il nous a quitté..."
+
+#: u_resourcestring.sitsastrangecoincidence
+msgid "It's a strange coincidence, don't you think?"
+msgstr "C'est une drôle de coïncidence, vous ne trouvez pas?"
+
+#: u_resourcestring.sitsbreathtaking
+msgid "It's breathtaking!"
+msgstr "C'est magnifique!"
+
+#: u_resourcestring.sitseemstheportal
+msgid "It seems the portal's technology relies on materials that normally cannot be found in this region of space. The most powerful telescopes on record detected them by spectroscopy, in a distant galaxy called GN-z11, thirteen point four billion light-years away."
+msgstr "Il semblerai que la technologie du portail utilise des matériaux que l'on ne trouve normalement pas dans cette région de l'espace. Les télescopes les plus puissants du monde en ont repéré par spectroscopie dans une lointaine galaxie qui s'appelle GN-z11, galaxie située à 13.4 milliard d'années lumière."
+
+#: u_resourcestring.sitsgoingtobedangerous
+msgid "It's going to be dangerous."
+msgstr "Cela peut-être dangereux..."
 
 #: u_resourcestring.sitshugistooheavyforme
 msgid "His hug might be too weighing for me... I think it's time to try the dorsal thruster!"
@@ -660,6 +1064,10 @@ msgstr "Son câlin risque d'être trop pesant pour moi... Je crois que le moment
 #: u_resourcestring.sitsmorefunthisway
 msgid "It's more fun this way!"
 msgstr "C'est plus amusant comme ça !"
+
+#: u_resourcestring.sitsriskybutilikeit
+msgid "It's risky, but I like it. Let's go for it!"
+msgstr "C'est risqué, mais j'aime ça. On fonce dans le tas!"
 
 #: u_resourcestring.sitstoodangerousihavetofind
 msgid "It's too dangerous. I have to find another way to cross."
@@ -673,6 +1081,14 @@ msgstr "Finalement c'était plutôt amusant!"
 msgid "I've come for my grandmother, you've kidnapped her!... Where is she? Answer me!"
 msgstr "Je viens chercher ma grand-mère, vous l'avez kidnappé !... Où est-elle ? Réponds !!"
 
+#: u_resourcestring.sivegotnamesforthem
+msgid "I've got names for them! The propulsor will be called Gigatron. And the shielding system: Radiation Annihilator."
+msgstr "J'ai un nom pour le propulseur: le Gigatron. Et pour le système anti-radiation: le Radiation Annihilator."
+
+#: u_resourcestring.siveturnedtheevents
+msgid "I've turned the events around in every possible way. No rational conclusion.The idea that comes to mind is that these meteors were sent..."
+msgstr "J'ai beau tourner les évènements dans tous les sens, je n'arrive à aucune conclusion rationnelle. L'idée qui en résulte est que ces météores ont été envoyés..."
+
 #: u_resourcestring.siwonderwhatalltheserobotsarefor
 msgid "I wonder what all these robots are for... Knowing wolves, certainly not to help mankind..."
 msgstr "Je me demande à quoi serviront tous ces robots... Connaissant les loups, certainement pas pour aider l'humanité…"
@@ -682,33 +1098,53 @@ msgid "I wonder what the digicode is for..."
 msgstr "Je me demande à quoi sert ce digicode..."
 
 #: u_resourcestring.sjulia1
-msgid "My dear Romeo, thank you a thousand times! I made a copy of the SD card and I’m using it to reply to you. Ever since I read your message, I’ve been doing great. I care about you a lot too, and I can’t wait for us to be together again. I really hope that happens soon!"
+msgid "My dear Romeo, thank you a thousand times! I made a copy of the SD card and I'm using it to reply to you. Ever since I read your message, I've been doing great. I care about you a lot too, and I can't wait for us to be together again. I really hope that happens soon!"
 msgstr "Mon cher Roméo, merci mille fois! J'ai fait une copie de la carte SD et je me sers de celle-ci pour te répondre. Depuis que j'ai lu ton message, je vais très bien. Moi aussi, je tiens beaucoup à toi et j'ai hâte qu'on se retrouve. J'espère de tout mon coeur que cela arrivera bientôt !"
 
 #: u_resourcestring.sjulia2
-msgid "Romeo, my darling, be careful. I’m only thinking about you too. At the lab, my boss also says I’m daydreaming... Yesterday he asked me to serve him coffee, and instead, I poured the contents of the test tube with the dinosaur droppings into his cup!"
+msgid "Romeo, my darling, be careful. I'm only thinking about you too. At the lab, my boss also says I'm daydreaming... Yesterday he asked me to serve him coffee, and instead, I poured the contents of the test tube with the dinosaur droppings into his cup!"
 msgstr "Roméo chérie, fais attention à toi. Moi aussi je ne pense qu'à toi. Au laboratoire, mon chef aussi dit que je suis dans la lune... Hier il m'a demandé de lui servir un café et à la place j'ai versé dans sa tasse le contenu de l'éprouvette qui contenai les déjections du dinosaure!"
 
 #: u_resourcestring.sjumpinmyarmgivemehug
 msgid "Jump in my arms ?! A hug ?!"
 msgstr "Sauter dans mes bras ?! un câlin ?!"
 
+#: u_resourcestring.sjustalittlelonger
+msgid "Just a little longer, they're almost done."
+msgstr "Tiens bon, ils ont presque fini."
+
+#: u_resourcestring.skeepitup
+msgid "Keep it up!"
+msgstr "Continue comme ça!"
+
 #: u_resourcestring.skeyboard
 msgid "KEYBOARD"
 msgstr "CLAVIER"
 
+#: u_resourcestring.sladieswellneedyourhelp
+msgid "Ladies, we'll need your help as well."
+msgstr "Mesdames nous avons également besoin de vous."
+
 #: u_resourcestring.slanguage
 msgid "LANGUAGE"
 msgstr "LANGAGE"
+
+#: u_resourcestring.slargemeteorapproaching
+msgid "Large meteors approaching!"
+msgstr "Gros météores en approche!"
 
 #: u_resourcestring.slasergunexplanation
 msgctxt "u_resourcestring.slasergunexplanation"
 msgid "a laser gun effective only against machines"
 msgstr "un pistolet laser efficace seulement contre les machines"
 
-#: u_resourcestring.sletsgo
-msgid "Let's go!"
-msgstr "Allons-y !"
+#: u_resourcestring.sletcontinuewithannihilator
+msgid "Let's continue with the Radiation Annihilator."
+msgstr "Continuons avec le Radiation Annihilator."
+
+#: u_resourcestring.sletsgetstartedonbuilding
+msgid "Let's get started on building the combat ship!"
+msgstr "C'est parti pour la construction du vaisseau de combat!"
 
 #: u_resourcestring.sletsgotothecastle
 msgid "Let's go to the castle..."
@@ -774,17 +1210,20 @@ msgstr ""
 msgid "The Mermaids port"
 msgstr "Le Port des Sirènes"
 
-#: u_resourcestring.smermaidsporthelptext
+#: u_resourcestring.smermaidsporthelpkeys
+msgctxt "u_resourcestring.smermaidsporthelpkeys"
 msgid ""
-"Crosses the factories to reach the sea.\n"
 "←→↑↓ to move\n"
 "ACTION1 : jump\n"
 "ACTION2 : use object"
 msgstr ""
-"Traverses les usines pour atteindre la mer.\n"
-"←→↑↓ se déplacer\n"
+"←→↑↓ : se déplacer\n"
 "ACTION1 : sauter\n"
-"ACTION2 : utiliser object"
+"ACTION2 : utiliser objet"
+
+#: u_resourcestring.smermaidsporthelptext
+msgid "Crosses the factories to reach the sea."
+msgstr "Traverses les usines pour atteindre la mer."
 
 #: u_resourcestring.smermaidsporthelptext2
 msgid ""
@@ -801,6 +1240,10 @@ msgctxt "u_resourcestring.smermaidsporthint"
 msgid "factories as far as the eye can see!"
 msgstr "des usines à pertes de vue!"
 
+#: u_resourcestring.smetooheehee
+msgid "Me too! Heehee!"
+msgstr "Moi aussi! Hihihi!"
+
 #: u_resourcestring.smewhynotoneofyou
 msgid "Me? Why not one of you?"
 msgstr "Moi ? Pourquoi pas l'un d'entre vous ?"
@@ -809,17 +1252,23 @@ msgstr "Moi ? Pourquoi pas l'un d'entre vous ?"
 msgid "Mother of wolfs"
 msgstr "Mère des loups"
 
-#: u_resourcestring.smountainpeakhelptext
+#: u_resourcestring.smountainpeakhelpkeys
 msgid ""
-"Avoid rocks, collect bonuses.\n"
-"Brake at the end to earn the extra bonus.\n"
 "←→ : move\n"
 "ACTION1 : break"
 msgstr ""
-"Évitez les rocher et ramassez les bonus.\n"
-"Freinez à la fin pour gagner un bonus supplémentaire.\n"
-"←→ se déplacer\n"
+"←→ : se déplacer\n"
 "ACTION1 : frein"
+
+#: u_resourcestring.smountainpeakhelptext
+msgid ""
+"Finish the course before time runs out.\n"
+"Avoid rocks, collect bonuses.\n"
+"Brake at the end to earn the extra bonus."
+msgstr ""
+"Termine la traversée avant la fin du temps.\n"
+"Évite les rocher, ramasse les bonus.\n"
+"Freine à la fin pour gagner un bonus supplémentaire."
 
 #: u_resourcestring.smountainpeaks
 msgid "Mountain peaks"
@@ -833,6 +1282,14 @@ msgstr "termine le parcours avec le bonus d'arrivée en douceur"
 msgid "if you're afraid of heights, don't go!"
 msgstr "si tu as le vertige, ne le fait pas !"
 
+#: u_resourcestring.smountainpeakstepinfo1
+msgid "Hang in there!"
+msgstr "Accroche-toi!"
+
+#: u_resourcestring.smountainpeakstepinfo5
+msgid "The last one! Keep going!"
+msgstr "Le dernier! Courage!"
+
 #: u_resourcestring.smusics
 msgid "MUSICS"
 msgstr "MUSIQUES"
@@ -840,6 +1297,15 @@ msgstr "MUSIQUES"
 #: u_resourcestring.smusicvolume
 msgid "MUSIC VOLUME"
 msgstr "VOLUME MUSIQUE"
+
+#: u_resourcestring.smwareinstalling
+msgid "Marcus and W7 are installing the system to draw the particles to the mothership!"
+msgstr "Marcus et W7 installent le système qui attire les particules sur le vaisseau mère!"
+
+#: u_resourcestring.smwithwassistplayer
+#, object-pascal-format
+msgid "Marcus, with W7, assist %s with takeoff, then go to the reactor room and send as much energy as possible to the engines and shield."
+msgstr "Marcus, avec W7, assistez %s au décollage, puis allez dans la salle du réacteur et envoyez toute l'énergie possible vers les moteurs et le bouclier."
 
 #: u_resourcestring.smyfatherwasinhurry
 msgid "My father was in a hurry, and when he's in a hurry, he ignores politeness..."
@@ -852,6 +1318,10 @@ msgstr "Mon amie, j'ai gagné la course, et toi… tu as gagné un câlin !"
 #: u_resourcestring.smyfriendyouwintherace
 msgid "My friend, you won the race, and me... I won a hug!"
 msgstr "Mon amie, tu as gagné la course et moi... j'ai gagné un câlin !"
+
+#: u_resourcestring.smyouwilloverseethe
+msgid "Marcus, you'll oversee the construction unit. Prepare the raw material stockpiles for the tech Penelope discovers, and handle the incoming ore."
+msgstr "Marcus, tu superviseras l'unité de construction. Prépare les stocks de matières premières pour les technologies découvertes par Penelope et gère les arrivages de minerai."
 
 #: u_resourcestring.smysisterwasright
 msgid "My sister was right, you're very efficient!"
@@ -882,9 +1352,21 @@ msgstr "pas de défi ici"
 msgid "...no comment..."
 msgstr "...sans commentaire..."
 
+#: u_resourcestring.snodontbesorry
+msgid "No, don't be sorry. You were right."
+msgstr "Non, ne t'excuse pas, ce que tu as dit était tout à fait juste."
+
 #: u_resourcestring.snoideayouaresmart
 msgid "No idea! You're smart, you'll find a way on your own."
 msgstr "Aucune idée ! Tu es maline, tu trouveras bien un moyen toute seule."
+
+#: u_resourcestring.snomoretimetowaste
+msgid "No more time to waste! Everyone to your stations!"
+msgstr "Plus de temps à perdre! Tout le monde à son poste!"
+
+#: u_resourcestring.snoquestionthen
+msgid "No questions? Then... everyone to your stations!"
+msgstr "Pas de question? Alors... tout le monde à son poste!"
 
 #: u_resourcestring.snotatalleveryone
 msgid "Not at all. Everyone here's taken great care of me."
@@ -894,13 +1376,29 @@ msgstr "Pas du tout. Tout le monde ici a bien pris soin de moi."
 msgid "No. Thank you."
 msgstr "Non. Merci."
 
+#: u_resourcestring.snothatnotwhat
+msgid "No! That's not what I said!"
+msgstr "Non! Ce n'est pas ce que j'ai dit!"
+
 #: u_resourcestring.snotreepoint
 msgid "No..."
 msgstr "Non..."
 
+#: u_resourcestring.snotthegigatron
+msgid "Not the Gigatron. It seems to be interacting with the portal."
+msgstr "Pas le Gigatron. Il semble interagir avec le portail."
+
 #: u_resourcestring.snotwaiting
 msgid "I'm not waiting for you, it's going to be long"
 msgstr "Je ne t'attends pas, ça va être trop long"
+
+#: u_resourcestring.snowletsmoveontothe
+msgid "Now let's move on to the construction of the mining ship."
+msgstr "Passons maintenant à la construction du vaisseau minier."
+
+#: u_resourcestring.snowthatwevemadeit
+msgid "Now that we've made it past the asteroid belt, all that remains is to build a drive capable of intergalactic jumps, and a shielding system against radiation. Once that's done, we'll finally be able to cross the portal."
+msgstr "Maintenant que nous sommes de l'autre côté de la ceinture d'astéroïdes, il ne nous reste plus qu'à construire un propulseur capable de saut intergalactique et un système de protection contre les radiations. Nous pourrons alors enfin traverser ce portail."
 
 #: u_resourcestring.snowwearebuddyforlife
 msgid "Now we're buddies for life!"
@@ -909,6 +1407,10 @@ msgstr "Maintenant on est copain pour la vie !"
 #: u_resourcestring.sofcoursethereisbut
 msgid "Of course there is, but you have to earn it..."
 msgstr "Bien sûr, il y en a un, mais tu dois le gagner..."
+
+#: u_resourcestring.sofcoursewwhatisit
+msgid "Of course, W7. What is it?"
+msgstr "Bien sûr W7, qu'y a-t-il?"
 
 #: u_resourcestring.sohdontworryicanhave
 msgid "Oh, don't worry, I can have as many as I want!"
@@ -922,6 +1424,10 @@ msgstr "OK"
 msgid "Okay..."
 msgstr "D'accord..."
 
+#: u_resourcestring.sokbuthumanorwolf
+msgid "Okay, but... human or wolf, nobody really knows how it works..."
+msgstr "D'accord, mais... humain ou loup, personne ne sait comment il fonctionne..."
+
 #: u_resourcestring.sokdoyouknownwhereicanfindaboat
 msgid "Ok... Do you know where I can find a boat?"
 msgstr "Ok... Sais-tu où est-ce que je peux trouver un bateau ?"
@@ -930,13 +1436,37 @@ msgstr "Ok... Sais-tu où est-ce que je peux trouver un bateau ?"
 msgid "Okay. I'll do it. I'll go meet this creature. But... on one condition!"
 msgstr "Ok, j'accepte. Allons rencontrer cette créature. Mais... à une condition!"
 
+#: u_resourcestring.sokimactivatingtheradiation
+msgid "Okay, I'm activating the Radiation Annihilator!"
+msgstr "Ok, j'enclenche le Radiation Annihilator!"
+
+#: u_resourcestring.sokimgoinginfirst
+msgid "Ok. I'm going in first."
+msgstr "Ok. Je passe devant."
+
+#: u_resourcestring.sokletsfocusandgetback
+msgid "Okay... let's focus and get back to it!"
+msgstr "Ok… on se concentre et on y retourne!"
+
 #: u_resourcestring.sokletsgo
 msgid "Ok... Let's go!"
 msgstr "Ok... Allons-y!"
 
+#: u_resourcestring.sokletsgo2
+msgid "Ok, let's go."
+msgstr "Ok, c'est parti."
+
 #: u_resourcestring.sokokyoulooksmart
 msgid "Ok, ok... You look smart, I'll give you a challenge."
 msgstr "Ok,ok... Tu as l'air maline, je te propose un challenge."
+
+#: u_resourcestring.soncethatdoneyoull
+msgid "Once that's done, you'll collect whatever ore Penelope or Marcus request."
+msgstr "Dès que c'est fait, tu récolteras le minerai que Marcus ou Pénélope te demanderont."
+
+#: u_resourcestring.sonit
+msgid "On it!"
+msgstr "C'est parti!"
 
 #: u_resourcestring.sopenarmoureddoor
 msgid "Open armoured door"
@@ -953,6 +1483,10 @@ msgstr "OPTIONS"
 #: u_resourcestring.soups
 msgid "Oups..."
 msgstr "Oups..."
+
+#: u_resourcestring.sourfocusmustremain
+msgid "Our focus must remain on gathering the ore we need for the propulsor and the radiation shielding, then on their construction."
+msgstr "Nous allons donc nous concentrer sur le ramassage des minerais nécessaires pour le propulseur et le système anti-radiation, puis sur leur fabrication."
 
 #: u_resourcestring.sourresearchshows
 msgid "Our research shows that these disruptions will soon spiral out of control."
@@ -974,6 +1508,10 @@ msgstr "PLUS DE TEMPS"
 msgid "PAUSE"
 msgstr "PAUSE"
 
+#: u_resourcestring.spcarryingawhole
+msgid "Penelope's carrying a whole army of little robots onboard. We could salvage a few and turn them into a mining ship."
+msgstr "Pénélope a une grande quantité de petits robots à bord. Nous pourrions en recycler quelques uns pour fabriquer un vaisseau minier."
+
 #: u_resourcestring.sperhapsthatwillchange
 msgid "Perhaps that will change with time..."
 msgstr "Peut-être que cela changera avec le temps..."
@@ -982,9 +1520,17 @@ msgstr "Peut-être que cela changera avec le temps..."
 msgid "Pfff, he could have dropped me off on the island!"
 msgstr "Pfff, il aurait pu me déposer sur l'île!"
 
+#: u_resourcestring.spfffsoundslike
+msgid "Pfft… Sounds like someone needs a serious software update."
+msgstr "Pfff...On dirait que quelqu'un a besoin d'une sérieuse mise à jour de son logiciel.."
+
 #: u_resourcestring.spfffthatsnotfairplay
 msgid "Pfff! That's not fairplay, you're certainly already trained, I'm not!"
 msgstr "Pfff! Ce n'est pas fairplay, tu es déjà certainement entrainé, moi non!"
+
+#: u_resourcestring.sphasdrawnuptheplans
+msgid "Penelope has drawn up the plans for a protective shield. We can build it."
+msgstr "Pénélope a élaboré le plan de fabrication d'un bouclier de protection. Nous pouvons le construire."
 
 #: u_resourcestring.spinforest
 msgid "The pins forest"
@@ -994,15 +1540,25 @@ msgstr "La forêt de pins"
 msgid "beware the wolf!"
 msgstr "gare au loup !"
 
-#: u_resourcestring.splainmoonhelptext
+#: u_resourcestring.spjusttoldmethatyou
+msgid "Penelope just told me that you've finished mining the asteroids. I'm waiting for you in the construction unit."
+msgstr "Pénélope vient de me dire que tu as terminé de miner les astéroïdes. Je t'attends dans l'unité de construction."
+
+#: u_resourcestring.splainmoonhelpkeys
 msgid ""
-"Destroy the robots as fast as you can\n"
 "Outside: ←→↑↓ to move, ACTION1 to jump, ACTION2 to fire\n"
 "Inside: use the mouse to target the robots, ACTION2 to fire"
 msgstr ""
-"Détruis les robots le plus vite possible\n"
-"Extérieur: ←→↑↓ pour se déplacer, ACTION1 pour sauter, ACTION2 pour tirer\n"
-"Intérieur: utilisez la souris pour cibler les robots, ACTION2 pour tirer"
+"Extérieur: ←→↑↓ se déplacer, ACTION1 sauter, ACTION2 pour tirer\n"
+"Intérieur: utilise la souris pour cibler les robots, ACTION2 pour tirer"
+
+#: u_resourcestring.splainmoonhelptext
+msgid "Destroy the robots as fast as you can"
+msgstr "Détruis les robots le plus vite possible"
+
+#: u_resourcestring.splainmoonstepinfo1
+msgid "The encounter"
+msgstr "La rencontre"
 
 #: u_resourcestring.splainofsleepingmoon
 msgid "The plain of the sleeping moon"
@@ -1023,8 +1579,13 @@ msgstr "%s, autre chose?"
 
 #: u_resourcestring.splayerivebeentreated
 #, object-pascal-format
-msgid "%s, I’ve been treated well. We can trust them."
+msgid "%s, I've been treated well. We can trust them."
 msgstr "%s, j'ai été bien traité, nous pouvons leur faire confiance."
+
+#: u_resourcestring.splayeryoullpilotthecombat
+#, object-pascal-format
+msgid "%s, you'll pilot the combat ship. Destroy everything you see and clear a path through all those rocks."
+msgstr "%s , tu piloteras le vaisseau de combat. Détruit tout ce que tu vois et ouvre un passage à travers tous ces rochers."
 
 #: u_resourcestring.spocketsubmarineexplanation
 msgid "a yellow submarine!"
@@ -1050,9 +1611,38 @@ msgstr "Problème résolu"
 msgid "Problem solved, however it is advisable to evacuate urgently"
 msgstr "Problème résolu, toutefois il est conseillé d'évacuer d'urgence"
 
+#: u_resourcestring.spsetacourse
+msgid "Penelope, set a course for the coordinates please."
+msgstr "Pénélope, cap sur l'emplacement s'il te plaît."
+
+#: u_resourcestring.spstillneedsore
+msgid "Penelope still needs ore. Apparently, another mission awaits you. I'm preparing for your takeoff!"
+msgstr "Pénélope a encore besoin de minerai. Apparemment une autre mission t'attend. Je prépare ton décollage!"
+
+#: u_resourcestring.sptakecontroloftheship
+msgid "Penelope, take control of the ship and go for it! We're going to cross the asteroid belt at the same time as the meteor storm. Avoid collisions as much as possible."
+msgstr "Pénélope, prends les commandes du vaisseau et fonce! Nous allons traverser la ceinture d'astéroïdes en même temps que la tempête de météorites. Évite les collisions du mieux que tu peux."
+
+#: u_resourcestring.sptakeformation
+#, object-pascal-format
+msgid "%s, don't shoot anymore and take formation above us, inside the shield."
+msgstr "%s, ne tire plus et met toi en formation au dessus de nous, à l'intérieur du bouclier."
+
+#: u_resourcestring.spyourjobwillbe
+msgid "Penelope, your job will be to gather the probe's data as soon as it's in position and with W7's help, you'll attempt to uncover its secrets."
+msgstr "Pénélope, ton rôle sera de recueillir les données de la sonde dès qu'elle sera en place, et avec l'aide de W7, vous essaierez de percer ses secrets."
+
 #: u_resourcestring.squit
 msgid "QUIT"
 msgstr "QUITTER"
+
+#: u_resourcestring.sradiation
+msgid "RADIATION"
+msgstr "RADIATION"
+
+#: u_resourcestring.sradiationneutralized
+msgid "Radiation neutralized."
+msgstr "Radiations neutralisées."
 
 #: u_resourcestring.srapidreturntotheaxis
 msgid "Remedy: rapid return to the axis"
@@ -1061,10 +1651,6 @@ msgstr "Remède: retour rapide sur l'axe"
 #: u_resourcestring.sredisforyou
 msgid "Red is for you, black is for me. Whoever shoots the other first wins."
 msgstr "Le rouge est pour toi, le noir pour moi. Le premier qui abat l'autre a gagné."
-
-#: u_resourcestring.sredoalevel
-msgid "you can redo a level to earn the end bonus"
-msgstr "tu peux refaire un niveau pour gagner le bonus de fin"
 
 #: u_resourcestring.srelaxidontevenknown
 msgid "Relax, I don't even know what you're talking about."
@@ -1083,11 +1669,11 @@ msgid "Riding Hood"
 msgstr "Chaperon Rouge"
 
 #: u_resourcestring.sromeo1
-msgid "My dear Julia, I hope you’re doing well. This SD card is the key to unlocking the big armored door in the basement. It will help you get out of here in case the volcano becomes too unstable. I’m not allowed to give it to you, so I’ve hidden it in a way that you can easily find it. I don’t want anything to happen to you; you mean a lot to me, you’re the love of my life!"
+msgid "My dear Julia, I hope you're doing well. This SD card is the key to unlocking the big armored door in the basement. It will help you get out of here in case the volcano becomes too unstable. I'm not allowed to give it to you, so I've hidden it in a way that you can easily find it. I don't want anything to happen to you; you mean a lot to me, you're the love of my life!"
 msgstr "Ma chère Julia, j'espère que tu vas bien. Cette carte SD est la clé pour ouvrir la grande porte blindée du sous-sol. Elle te servira à sortir d'ici au cas où ce volcan devenait trop instable. Je n'ai pas le droit de te la donner, alors je l'ai caché de manière à ce que tu puisses la trouver facilement. Je ne veux pas qu'il t'arrive quelque chose, je tiens beaucoup à toi, tu es l'amour de ma vie!"
 
 #: u_resourcestring.sromeo2
-msgid "Oh my love, I’m so happy you replied! I can’t wait for us to be together again either, but I have to be careful, the boss is watching me closely. He says I’m daydreaming... It’s because I can’t stop thinking about you!"
+msgid "Oh my love, I'm so happy you replied! I can't wait for us to be together again either, but I have to be careful, the boss is watching me closely. He says I'm daydreaming... It's because I can't stop thinking about you!"
 msgstr "Oh mon amour comme je suis content que tu m'ais répondu ! Moi aussi j'ai hâte qu'on se retrouve, mais je dois faire attention, le chef me surveille de prêt. Il dit que je suis dans la lune... C'est parce que je pense sans arrêt à toi !"
 
 #: u_resourcestring.ssamgiveyou
@@ -1114,9 +1700,25 @@ msgstr "Tu vois ces espèces d'œufs ? Ce sont des robots que l'ont peut command
 msgid "Select your prize"
 msgstr "Sélectionne ton prix"
 
+#: u_resourcestring.ssentverylikely
+msgid "...sent very likely with the intention of helping us."
+msgstr "...envoyés vraisemblablement dans le but de nous aider."
+
 #: u_resourcestring.sshhifyoumanage
 msgid "Shhh... If you manage to blow up my robots hiding in the carriages before the journey's over, I'll help you."
 msgstr "Chut... Si tu réussis à exploser mes robots qui se cachent dans les wagons avant la fin du voyage, Je t'aiderai."
+
+#: u_resourcestring.ssiriapologizefordisturbing
+msgid "Sir, I apologize for disturbing you, but... The portal has been activated."
+msgstr "Monsieur, je m'excuse de vous déranger, mais... Le portail s'est activé."
+
+#: u_resourcestring.ssirithinkwereinhyperspace
+msgid "Sir, I think we're in hyperspace."
+msgstr "Monsieur, je crois que nous sommes en hyper-espace."
+
+#: u_resourcestring.ssirmayi
+msgid "Sir, may I?"
+msgstr "Monsieur, vous permettez?"
 
 #: u_resourcestring.sslowerrobotproduction
 msgid "New problem detected: slower robot production"
@@ -1131,6 +1733,7 @@ msgid "smooth arrival bonus"
 msgstr "bonus d'arrivée en douceur"
 
 #: u_resourcestring.ssnakefissure
+msgctxt "u_resourcestring.ssnakefissure"
 msgid "The Snake Fissure"
 msgstr "La Faille du Serpent"
 
@@ -1153,6 +1756,10 @@ msgstr ""
 "←→↑↓ : déplacer le sous-marin\n"
 "SOURIS : presser les boutons du tableau de bord"
 
+#: u_resourcestring.ssnakefissurestepinfo1
+msgid "A way to cross the sea"
+msgstr "Un moyen de traverser la mer"
+
 #: u_resourcestring.ssoareyouin
 msgid "So, are you in?"
 msgstr "Alors, tu es partante ?"
@@ -1161,13 +1768,29 @@ msgstr "Alors, tu es partante ?"
 msgid "So, let me get this straight. You kidnapped my grandmother, except it wasn't really a kidnapping. And by trying to save her, I went through all these crazy events… which just so happened to train me… all so I can go meet some unknown creature at the center of the universe, that might not even exist?! And you expect me to believe all this?"
 msgstr "Si j'ai bien compris, vous avez enlever ma grand-mère, sauf que ce n'était pas un enlèvement... En voulant la sauver j'ai participé à toutes ces mésaventures, ce qui a eu pour conséquence de m'entraîner... Et tout ça pour rencontrer je ne sais où dans l'univers, une créature dont nous ne savons même pas si elle existe... Vous pensez vraiment que je vais vous croire?"
 
+#: u_resourcestring.ssolvedhow
+msgid "Solved? How exactly?"
+msgstr "Comment ça ?"
+
+#: u_resourcestring.ssomeexplanation
+msgid "Some explanations: when meteorites explode, they emit particles. Your ship is equipped with a system to attract them. When the particle gauge is full, your weaponry upgrade by one level."
+msgstr "Quelques explications: lorsque les météorites explosent, elles émettent des particules. Ton vaisseau est équipé d'un système pour les attirer. Lorsque la jauge à particule sera pleine, ton armement évoluera d'un niveau."
+
 #: u_resourcestring.ssomeonehere
 msgid "Someone's here!"
 msgstr "Il y a quelqu'un !"
 
+#: u_resourcestring.ssomethingtellsmeits
+msgid "Something tells me it's not as complicated as it seems."
+msgstr "Quelque chose me dit que les choses sont plus simples qu'il n'y paraît."
+
 #: u_resourcestring.ssorrynotyetavailable
 msgid "Sorry, this game is not yet available..."
 msgstr "Désolé, ce jeu n'est pas encore disponible..."
+
+#: u_resourcestring.ssorrytointerruptgirls
+msgid "Sorry to interrupt, girls. A meteor storm is closing in, and I'm afraid our new shield won't be enough to handle what's coming..."
+msgstr "Désolé de vous interrompre les filles. Une tempête de météorites s'approche et je crains que notre nouveau bouclier ne soit pas suffisant face à l'ampleur du problème..."
 
 #: u_resourcestring.ssounds
 msgid "SOUNDS"
@@ -1215,6 +1838,10 @@ msgstr ""
 "←→↑↓ pour cibler\n"
 "ACTION1 : frapper"
 
+#: u_resourcestring.ssysteminstalled
+msgid "System installed, let's see if it runs..."
+msgstr "Système installé, on va voir si ça marche..."
+
 #: u_resourcestring.ssystemintrusionalert
 msgid "SYSTEM INTRUSION ALERT!"
 msgstr "ALERTE, INTRUSION DANS LE SYSTÈME !"
@@ -1249,13 +1876,45 @@ msgstr "Grâce à nous, tu as appris à tirer avec un arc et un pistolet laser!"
 msgid "Thank you, Dino. I'm glad to know you. I hope we'll meet again."
 msgstr "Merci Dino, je suis contente de te connaître. J'espère qu'on se reverra."
 
+#: u_resourcestring.sthankyouforbeingsohonest
+msgid "Thank you for being so honest, sir. You've learned from your life, that's what matters. I'm sorry for what I said."
+msgstr "Merci pour votre sincérité Monsieur. Vous avez appris de votre vie, c'est ce qui compte. Je m'excuse pour ce que j'ai dit."
+
 #: u_resourcestring.sthankyouforyourhelp
 msgid "Thank you for your help."
 msgstr "Merci pour ton aide."
 
+#: u_resourcestring.sthatexactlywhative
+msgid "That's exactly what I've done my whole life... I built an empire made of companies, factories, endless exploitation..."
+msgstr "C'est exactement ce que j'ai fait durant toute ma vie... C'est comme ça que j'ai construit cet empire fait de sociétés, d'usines et autres exploitations..."
+
+#: u_resourcestring.sthatnightnoonewenttobed
+msgid "That night, no one went to bed despite the late hour. Everyone stayed up to watch the spectacle unfolding before their eyes."
+msgstr "Cette nuit là, personne n'alla se coucher malgré l'heure tardive. Tous restèrent à contempler le spectacle qui s'offrait à leur yeux."
+
 #: u_resourcestring.sthatsanoblerequest
 msgid "That's a noble request. It clearly shows how different you are from us."
 msgstr "C'est une noble requête qui démontre bien la différence entre toi et nous."
+
+#: u_resourcestring.sthatsincredible
+msgid "That's incredible!"
+msgstr "C'est incroyable!"
+
+#: u_resourcestring.sthatsitwecantgoany
+msgid "That's it... we can't go any further than this."
+msgstr "Voilà, nous ne pouvons pas aller plus loin que ça..."
+
+#: u_resourcestring.sthatsrightbutintheend
+msgid "That's right. But in the end, what's important is that we've learned something from our life."
+msgstr "C'est ça. Mais, au bout du compte, il est important d'avoir appris de sa vie."
+
+#: u_resourcestring.sthatswhatidid
+msgid "That's what I did..."
+msgstr "C'est ce que j'ai fait..."
+
+#: u_resourcestring.stheasteroidsaretoonumerous
+msgid "The asteroids are too numerous to be displayed, they would prevent you from seeing the other objects."
+msgstr "Les astéroïdes sont trop nombreux pour être affichés, ils t'empêcheraient de voir les autres objets."
 
 #: u_resourcestring.sthebookalsosays
 msgid "The manuscript also says only a pure soul can make the journey. That's why we chose you."
@@ -1265,6 +1924,18 @@ msgstr "Le manuscrit dit aussi que seule une âme innocente peut y aller. C'est 
 msgid "The company we work for prohibits romantic relationships between employees."
 msgstr "L'entreprise dans laquelle nous travaillons interdit les relations amoureuses entre employés."
 
+#: u_resourcestring.sthedockingbayandthe
+msgid "The docking bay and the ship are fully operational."
+msgstr "La baie d'amarrage et le vaisseau sont opérationnels."
+
+#: u_resourcestring.sthegateactivity
+msgid "The gate's activity is intensifying."
+msgstr "L'activité du portail s'intensifie."
+
+#: u_resourcestring.sthegigatronisfully
+msgid "The Gigatron is fully activated."
+msgstr "Le Gigatron s'est complètement activé."
+
 #: u_resourcestring.sthehigheryourscore
 msgid "The higher your score, the more articles you earn!"
 msgstr "Plus ton score est élevé, plus tu gagnes d'articles!"
@@ -1273,13 +1944,46 @@ msgstr "Plus ton score est élevé, plus tu gagnes d'articles!"
 msgid "The Little Red"
 msgstr "Le Petit"
 
+#: u_resourcestring.sthemeteorsfrom
+msgid "The meteors from the storm we just crossed: they contain it. We can salvage fragments from the scattered debris."
+msgstr "Les météores de la tempête que nous avons traversé en contiennent. Nous pourrons en récupérer dans leur débris éparpillés."
+
+#: u_resourcestring.sthemeteorstormwillhit
+msgid "The meteor storm will hit us in a few minutes."
+msgstr "La tempête de météorites sera sur nous dans quelques minutes."
+
 #: u_resourcestring.sthenewstoryof
 msgid "the new story of"
 msgstr "la nouvelle histoire"
 
+#: u_resourcestring.sthenextmorning
+msgid "The next morning..."
+msgstr "Le lendemain matin..."
+
+#: u_resourcestring.sthenitshopeless
+msgid "Then it's hopeless! We'll never be able to build what we need..."
+msgstr "C'est donc fichu! Nous ne pourrons pas construire ce qu'il nous manque..."
+
 #: u_resourcestring.sthenletssummonthetransporter
 msgid "Then let's summon the transporter and begin the journey."
 msgstr "Dans ce cas, appelons le transporteur et mettons-nous en route."
+
+#: u_resourcestring.stheoldbookspeaksofaportal
+msgid "The old manuscript speaks of a port, one that can open the way to intergalactic travel."
+msgstr "Le vieux manuscrit décrit l'emplacement d'un portail permettant les voyages intergalactiques."
+
+#: u_resourcestring.stheplantobuildthecombatship
+msgid "The plan to build the combat ship is already underway. We will be able to finish it as soon as you bring us the ore."
+msgstr "Le plan de fabrication du vaisseau de combat est déjà en cours. Nous pourrons le terminer dès que tu nous rapporteras le minerai."
+
+#: u_resourcestring.stheprobehasjustsent
+#, object-pascal-format
+msgid "The probe has just sent its first data, good job %s!"
+msgstr "La sonde vient juste d'envoyer ses premières données, bon travail %s!"
+
+#: u_resourcestring.stheradiationshasstopped
+msgid "The radiation have stopped. I'm deactivating the Annihilator."
+msgstr "Les radiations ont cessées. Je désactive l'Annihilator."
 
 #: u_resourcestring.sthereisntmuchtime
 msgid "There isn't much time left. It's a long journey."
@@ -1293,9 +1997,25 @@ msgstr "Il n'y a rien à craindre, je te le promet."
 msgid "There's someone on my train!"
 msgstr "Il y a quelqu'un sur mon train !"
 
+#: u_resourcestring.stherewegowehaveall
+msgid "There we go, we have all the parts of the mining ship. Let's assemble them and then test it out!"
+msgstr "Voilà, nous avons toutes les parties du vaisseau minier. Assemblons-les puis allons le tester!"
+
+#: u_resourcestring.stheshieldisrecharging
+msgid "The particles are powering the mothership! The shield is recharging! Fantastic!!"
+msgstr "Les particules alimentent le vaisseau mère! Le bouclier se recharge! Génial!!"
+
 #: u_resourcestring.sthesituationisdire
 msgid "The situation is dire... Something is disturbing the balance of the universe. We don't fully understand the consequences yet, but life on Earth is being deeply affected: climate change, natural disasters, rising aggression between nations, greed for power and wealth..."
 msgstr "L'heure est grave... Quelque chose perturbe l'équilibre universel. Les conséquences ne sont pas très connues mais la vie sur Terre en est très affectée: changement climatique, cataclysmes, montée de l'agressivité entre les peuples, soif de pouvoir et d'argent..."
+
+#: u_resourcestring.stheycertainlydidntwaste
+msgid "They certainly didn't waste any time..."
+msgstr "Ils n'ont pas perdu de temps..."
+
+#: u_resourcestring.stheywereawarethat
+msgid "They were aware that what they were experiencing had never been experienced before. There was no longer any reason for quarrels. Faced with this immensity, a feeling of humility and peace settled in their hearts."
+msgstr "Ils étaient conscient que ce qu'ils vivaient, personne auparavant ne l'avait vécu. Les querelles n'avaient plus lieu d'être. Devant cette immensité, un sentiment d'humilité et de paix s'installa dans leur coeur."
 
 #: u_resourcestring.sthiscomputerhavesdcardreader
 msgid "This computer has an SD card reader, so I'll be able to read the contents of the one I've found."
@@ -1305,13 +2025,25 @@ msgstr "Cet ordinateur a un lecteur de carte SD, je vais pouvoir lire le contenu
 msgid "This crate is locked, I need a key to open it."
 msgstr "Cette caisse est verrouillée, il me faut une clé pour l'ouvrir."
 
+#: u_resourcestring.sthisfirstmissionintospace
+msgid "This first mission into space is a success!"
+msgstr "Cette première mission dans l'espace est un succès!"
+
 #: u_resourcestring.sthisplaceisbeautiful
 msgid "This place is beautiful."
 msgstr "Cet endroit est magnifique."
 
+#: u_resourcestring.sthoserocksareloaded
+msgid "Those rocks are loaded with all kinds of rare ores. If we can mine them, we'll have the resources to upgrade the ship."
+msgstr "Ces rochers contiennent toutes sortes de minerais rares. Si nous parvenons à les extraire, nous aurons les ressources nécessaires pour améliorer le vaisseau."
+
 #: u_resourcestring.stobecontinued
-msgid "To be continued..."
-msgstr "À suivre..."
+msgid "to be continued..."
+msgstr "à suivre..."
+
+#: u_resourcestring.stoenterthedockcirclearound
+msgid "To enter the docking bay, circle around the mothership from behind, align your ship with the center of the bay, and move forward at low speed."
+msgstr "Pour entrer dans la baie d'amarrage, contourne le vaisseau mère par l'arrière, aligne bien ton vaisseau au centre de la baie et avance à l'intérieur à faible vitesse."
 
 #: u_resourcestring.stomuchlavaisbadforyourhealth
 msgid "Too much lava is not good for your health"
@@ -1330,9 +2062,21 @@ msgstr "Le transporteur WK510 est en route et atterrira dans quelques secondes."
 msgid "Turn %d/%d"
 msgstr "Tour %d/%d"
 
+#: u_resourcestring.sunderstood
+msgid "Understood."
+msgstr "Bien reçu."
+
+#: u_resourcestring.sunderstoodwelldeploy
+msgid "Alright. We'll deploy a research probe as close as possible to the intergalactic gate."
+msgstr "Bien. Nous allons déployer une sonde de recherche près du portail intergalactique."
+
 #: u_resourcestring.supgrade
 msgid "UPGRADE"
 msgstr "AMÉLIORER"
+
+#: u_resourcestring.sverywellitstimetoact
+msgid "Very well. It's time to act."
+msgstr "Très bien. Il est temps d'agir."
 
 #: u_resourcestring.svolcano
 msgid "Volcano"
@@ -1372,17 +2116,90 @@ msgstr ""
 "ACTION1 : sauter\n"
 "ACTION2 : utiliser un objet"
 
+#: u_resourcestring.svolcanostepinfo1
+msgid "What is that?"
+msgstr "Qu'est-ce que c'est que ça?"
+
+#: u_resourcestring.svolcanostepinfo2
+msgid "The Awakening of Volcano"
+msgstr "Le réveil de Volcano"
+
+#: u_resourcestring.svolcanostepinfo3
+msgid "Who is Dino?"
+msgstr "Qui est Dino?"
+
+#: u_resourcestring.sw7isrightlook
+msgid "W7 is right. Look closely: these meteors brought us exactly what we were missing."
+msgstr "W7 a raison. Si on y regarde bien, ces météores ont apporté ce dont il nous manquait."
+
+#: u_resourcestring.sw7justscompiledit
+msgid "W7 just compiled it. Sending it to you now."
+msgstr "W7 vient juste de la sortir. Je te transmet tout ça."
+
 #: u_resourcestring.sw7question
 msgid "W7?"
 msgstr "W7?"
+
+#: u_resourcestring.swaitfatheryouknown
+msgid "Wait, Father! You know we can't make it through that zone. This ship is way too big. One step inside and we'll be shredded to pieces!"
+msgstr "Mais père, tu sais bien qu'il est impossible de traverser cette zone, notre vaisseau est beaucoup trop grand. Dès que nous y entrerons, nous serons réduits en miettes!"
 
 #: u_resourcestring.swanttoracewithme
 msgid "Me too! Want to race with me? The first to arrive gives the other a hug, right?"
 msgstr "Moi aussi! Tu veux faire la course avec moi ? Le premier arrivé fait un câlin à l'autre, d'acc ?"
 
+#: u_resourcestring.swealreadyhavethemeansto
+msgid "We already have the means to construct a ship, and we know laser tech. Yes, it's doable."
+msgstr "Nous avons déjà la capacité de construire un vaisseau et nous connaissons la technologie laser. Oui, c'est faisable."
+
+#: u_resourcestring.sweaponrylevel
+#, object-pascal-format
+msgid "Weaponry level %d/5"
+msgstr "Armement niveau %d/5"
+
 #: u_resourcestring.swearriveatmermaidsport
 msgid "We arrive at Mermaids Port. No one must see you. As soon as the train stops, jump off and find a way to get to the island. Good luck!"
 msgstr "Nous arrivons au Port des Sirènes. Il ne faut pas qu'on te voit. Dès que le train s'arrête, saute et trouve un moyen d'aller sur l'île. Bonne chance !"
+
+#: u_resourcestring.swecandoit
+msgid "We can do it!"
+msgstr "Allez, on peut le faire!"
+
+#: u_resourcestring.swedontliveinafairytale
+msgid "We don't live in a fairy tale. There will always be predators, thirsty to own the world. I was one of them..."
+msgstr "Nous ne vivons pas dans un conte de fées: il y aura toujours des prédateurs assoiffés de posséder le monde. J'étais l'un d'entre eux..."
+
+#: u_resourcestring.swedontneedmuch
+msgid "We don't need much: some food, some water, a roof over our heads."
+msgstr "Nous n'avons pas besoin de grand chose: un peu d'eau et de nourriture chaque jour, un toit sur la tête."
+
+#: u_resourcestring.swedstillneedadocking
+msgid "We'd still need a docking bay so the mining vessel can take off and land."
+msgstr "Il faudrait aussi une baie d'amarrage afin que le vaisseau minier puisse décoller et atterrir."
+
+#: u_resourcestring.swegotallthecomponentfortheshield
+msgid "We've got all the components for the shield. Let's install and test it!"
+msgstr "Nous avons tous les composants du bouclier. Installons-les et testons-le!"
+
+#: u_resourcestring.swehaveallpartforgigatron
+msgid "We have all the parts for the Gigatron. Let's install it on the ship."
+msgstr "Nous avons toutes les parties du Gigatron. Installons-le sur le vaisseau."
+
+#: u_resourcestring.swehaveallpartsofcombatship
+msgid "We have all the parts of the combat ship. Let's assemble them and test it out!"
+msgstr "Nous avons toutes les pièces du vaisseau de combat. Assemblons-les et testons-le!"
+
+#: u_resourcestring.swehaveattachedthe
+msgid "We have attached the search probe to your ship. I am sending you the coordinates of the portal."
+msgstr "Nous avons fixé la sonde de recherche sur ton vaisseau. Je t'envoie les coordonnées du portail."
+
+#: u_resourcestring.swehavemadeitthrough
+msgid "We've made it through the asteroid belt! Well done, everyone!"
+msgstr "Nous sommes de l'autre côté de la ceinture d'astéroïdes! Félicitations à tout le monde!"
+
+#: u_resourcestring.swehavenewores
+msgid "We have new ores: they are the ones brought by the meteors."
+msgstr "Nous avons de nouveaux minerais: ce sont ceux que les météores ont apportés."
 
 #: u_resourcestring.swehavereachedfullspeed
 msgid "We've reached full speed. We'll arrive in less than ten minutes."
@@ -1413,6 +2230,10 @@ msgstr ""
 msgid "We like being in charge!"
 msgstr "Nous aimons commander!"
 
+#: u_resourcestring.swelldoneyoucanreturn
+msgid "Well done! You can return to the mother ship now."
+msgstr "Bien joué! Tu peux revenir au vaisseau mère maintenant."
+
 #: u_resourcestring.swellgottago
 msgid "Well... Gotta go. Bye!"
 msgstr "Bon, ben... Je dois y aller. Bye!"
@@ -1422,20 +2243,56 @@ msgid "Well... How to start it?"
 msgstr "Bon... Comment le démarrer?"
 
 #: u_resourcestring.swellivecomethisfar
-msgid "Well, I’ve come this far..."
+msgid "Well, I've come this far..."
 msgstr "Au point où j'en suis..."
 
 #: u_resourcestring.swemakemoney
 msgid "We make money."
 msgstr "Nous gagnons de l'argent."
 
+#: u_resourcestring.swemustliveaccording
+msgid "We must live according to our nature. In fact, I'd say we can't do otherwise."
+msgstr "Nous devons vivre selon sa nature. Je dirai même que nous ne pouvons pas faire autrement."
+
+#: u_resourcestring.sweneednewtechtobuid
+msgid "We need new technologies to build an interstellar jump drive and a radiation shield strong enough to protect us."
+msgstr "Nous avons besoin de nouvelles technologies pour fabriquer un propulseur capable de sauts interstellaires et un système anti-radiation suffisamment puissant pour nous protéger."
+
+#: u_resourcestring.swereapproachingthe
+msgid "We're approaching the asteroid belt."
+msgstr "Nous arrivons à la ceinture d'astéroïdes."
+
+#: u_resourcestring.sweredoneletsinstall
+msgid "We're done! Let's install the Radiation Annihilator."
+msgstr "Nous avons terminé! installons le Radiation Annihilator."
+
 #: u_resourcestring.swerunfactories
 msgid "We run factories."
 msgstr "Nous possédons des usines."
 
+#: u_resourcestring.swevelocatedtheasteroids
+msgid "We've located the asteroids we're interested in. I'm sending you their coordinates."
+msgstr "Nous avons repéré les astéroïdes qui nous intéressent. Je t'envoi leur coordonnées."
+
+#: u_resourcestring.swewillregroupfor
+msgid "We'll regroup for a debrief when we're near the asteroid belt."
+msgstr "Débriefing ici lorsque nous arriverons à proximité de la ceinture d'astéroïdes."
+
+#: u_resourcestring.swhatbutthatsgreat
+msgid "What?! That's great!"
+msgstr "Quoi?! Mais c'est génial!"
+
 #: u_resourcestring.swhatcondition
 msgid "What condition?"
 msgstr "Laquelle?"
+
+#: u_resourcestring.swhatdoyoumean
+msgid "What do you mean, W7?"
+msgstr "Que veux-tu dire W7?"
+
+#: u_resourcestring.swhatquestion
+msgid "What?"
+msgstr "Quoi?"
 
 #: u_resourcestring.swhatquestionexclamation
 msgid "What?!"
@@ -1452,6 +2309,10 @@ msgstr "Qui est là ? Montrez-vous!"
 #: u_resourcestring.swhy
 msgid "Why?"
 msgstr "Pourquoi ?"
+
+#: u_resourcestring.swhyarewemoving
+msgid "Why are we moving? The thrusters are shut down!"
+msgstr "Mais pourquoi on avance? les propulseurs sont arrêtés!"
 
 #: u_resourcestring.swhyareyouhiding
 msgid "Why are you hiding?"
@@ -1497,6 +2358,10 @@ msgstr "Atelier"
 msgid "home, sweet home"
 msgstr "mon doux foyer"
 
+#: u_resourcestring.swouldacombatship
+msgid "Would a combat ship capable of blasting the largest incoming meteors before they reach the mothership be useful?"
+msgstr "Est-ce qu'un vaisseau de combat capable d'éliminer les plus grosses météorites qui s'approcheront du vaisseau mère serai utile ?"
+
 #: u_resourcestring.swouldyouliketopicksomeflowers
 msgid "Would you mind picking a few flowers to decorate the table?"
 msgstr "Tu voudrais bien cueillir quelques fleurs pour décorer la table ?"
@@ -1517,6 +2382,14 @@ msgstr "Veux-tu réessayer ?"
 msgid "Wow! A machine that builds robots!"
 msgstr "Ouah ! Une machine qui fabrique des robots !"
 
+#: u_resourcestring.swowitworks
+msgid "Wow! It works!"
+msgstr "Bon sang! Ça marche!"
+
+#: u_resourcestring.swowthatsalonglist
+msgid "Wow! That's a long list!"
+msgstr "Ouah! la liste est longue!"
+
 #: u_resourcestring.syes
 msgid "Yes"
 msgstr "Oui"
@@ -1524,6 +2397,10 @@ msgstr "Oui"
 #: u_resourcestring.syesasitoldyouialways
 msgid "Yes, as I told you, I always keep my word."
 msgstr "Oui, comme je te l'ai dit, je tiens toujours parole."
+
+#: u_resourcestring.syesfather
+msgid "Yes father."
+msgstr "Oui père."
 
 #: u_resourcestring.syesirememberwell
 msgid "Yes, I remember well, he always took his guitar and played music for us."
@@ -1533,9 +2410,21 @@ msgstr "Oui je me souviens bien, il prenait toujours sa guitare et nous jouait d
 msgid "Yees! Now you are my friend and I want to give you a big hug!"
 msgstr "Ouiii! Maintenant tu es mon amie et je veux te faire un gros câlin!"
 
+#: u_resourcestring.syesmaamitsverystrange
+msgid "Yes, ma'am, it's very strange: there was almost zero chance that this storm would hit the place where we were, and especially at that exact moment."
+msgstr "Oui Madame, c'est très curieux: il y avait une probabilité quasiment nulle que cette tempête arrive à l'endroit où nous nous trouvions, et surtout au même moment."
+
+#: u_resourcestring.syesquestion
+msgid "Yes?"
+msgstr "Oui?"
+
 #: u_resourcestring.syessirquestion
 msgid "Yes, sir?"
 msgstr "Oui, Monsieur?"
+
+#: u_resourcestring.syesthatsexactlywhatmy
+msgid "Yes definitely. That's exactly what my grandfather used to say, back when he was still alive."
+msgstr "Oui, certainement. C'est ce que disait mon grand-père quand il était là."
 
 #: u_resourcestring.syesthatswhativaguelyheard
 msgid "Yes, that's what I vaguely heard."
@@ -1544,6 +2433,10 @@ msgstr "Oui, c'est ce que j'ai vaguement entendu."
 #: u_resourcestring.syestimepasses
 msgid "Yes... Time flies. I miss him..."
 msgstr "Oui... Le temps passe. Il me manque..."
+
+#: u_resourcestring.syeswehavetwo
+msgid "Yes, we have two constructions to do."
+msgstr "Oui, nous avons deux constructions à faire."
 
 #: u_resourcestring.syoucanalsowinitems
 msgid "You can also win coins or items by playing the games."
@@ -1586,9 +2479,17 @@ msgstr "Il suffit d'allumer sa télévision pour se rendre compte que ces faits 
 msgid "You overcame your fear of heights with the zipline."
 msgstr "Tu as dompté ton vertige avec la tyrolienne."
 
+#: u_resourcestring.syourebothright
+msgid "You're both right. Two huge problems... but both can be solved, thanks to that asteroid belt."
+msgstr "Tout cela est exact. Deux gros problèmes qui peuvent être résolus grâce à cette ceinture d'astéroïdes."
+
 #: u_resourcestring.syoureowedsomeexplanations
 msgid "You're owed some explanations..."
 msgstr "Tu mérites quelques explications..."
+
+#: u_resourcestring.syourfirstobjective
+msgid "Your first objective is to navigate through the asteroid belt and deploy the probe as close to the gate as you can."
+msgstr "Ton premier objectif sera de traverser la ceinture d'astéroïdes afin de déployer la sonde au plus près du portail."
 
 #: u_resourcestring.syourgrandmotherwasinvited
 msgid "Your grandmother was invited by my parents."
@@ -1610,6 +2511,10 @@ msgstr "Ça ressemble à des plans de fabrication. Tu en prends un discrètement
 #: u_resourcestring.syouvealreadywonthischallenge
 msgid "you've already won this challenge"
 msgstr "tu as déjà gagné ce défi"
+
+#: u_resourcestring.syouvedonewell
+msgid "You've done well. With this ship and the shield, we have a chance of getting through this."
+msgstr "Vous avez bien travaillés. Grâce à ce vaisseau et au bouclier, nous avons des chances de nous en sortir."
 
 #: u_resourcestring.syouvegotexactly
 #, object-pascal-format
