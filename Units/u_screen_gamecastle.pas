@@ -59,8 +59,8 @@ var ScreenWolfCastle: TScreenWolfCastle;
 implementation
 uses Forms, u_app, u_mousepointer, u_screen_map, u_utils, u_resourcestring,
   u_sprite_def2, u_sprite_lr4dir, u_sprite_wolf, u_sprite_granny,
-  u_screen_gameinspace, u_submarine, u_transporterwk510, u_robotw7,
-  u_wolfmothership, Math;
+  u_screen_msmainbridge, u_submarine, u_transporterwk510, u_robotw7,
+  u_wolfmothership, u_airplaneromeoandjulia, Math;
 
 var FWorldArea, FViewArea: TRectF;
 
@@ -109,8 +109,9 @@ var
   FCamera, FCameraInSpace: TOGLCCamera;
   FCastle: TSprite;
   FShipFrontView: TSprite;
-  FMotherShip: TMotherShip;
+  FMotherShip: TMotherShipTopView;
   FTransporterWhole: TSprite;
+  FAirplaneRomeoAndJulia: TAirplaneRomeoAndJulia;
 
 { TMountain }
 
@@ -436,7 +437,7 @@ begin
   FStars.Visible := False;
 
   // wolf mother ship
-  FMotherShip := TMotherShip.Create(LAYER_ARROW, FAtlas);
+  FMotherShip := TMotherShipTopView.Create(LAYER_ARROW, FAtlas, False);
   FMotherShip.SetCoordinate(ScaleW(545), ScaleH(265));
   FMotherShip.Visible := False;
 
@@ -491,9 +492,11 @@ begin
   LoadRobotW7Textures(aAtlas);
   AdditionnalScale := 1.5;
   TSubmarine.LoadTexture(aAtlas, AdditionnalScale);
+  AdditionnalScale := 0.54;
+  TAirplaneRomeoAndJulia.LoadTexture(FAtlas);
   AdditionnalScale := 1.0;
   TTransporterWK510.LoadTexture(aAtlas);
-  TMotherShip.LoadTexture(aAtlas);
+  TMotherShipTopView.LoadTexture(aAtlas);
 
   path := FolderSpriteGameMermaidsPort;
   texPontoon := aAtlas.AddFromSVG(path+'WoodenPontoon.svg', ScaleW(157), -1);
@@ -852,8 +855,51 @@ begin
     387: FFather.ShowDialog(sW7Question, FFontText, Self, 390);
     390: FW7.ShowDialog(sYesSirQuestion, FFontText, Self, 395);
     395: FFather.ShowDialog(sYouHeardThatUpdate, FFontText, Self, 400);
-    400: FW7.ShowDialog(sDoneSir, FFontText, Self, 405);
-    405: FFather.ShowDialog(Format(sPlayerAnythingElse, [PlayerInfo.Name]), FFontText, Self, 410);
+    400: FW7.ShowDialog(sDoneSir, FFontText, Self, 401);
+
+    // airplane romeo and julia
+    401: begin
+      FAirplaneRomeoAndJulia := TAirplaneRomeoAndJulia.Create(LAYER_TOP);
+      FAirplaneRomeoAndJulia.StartAnimCrossTheScreen;
+      PostMessage(403);
+      PostMessage(402, 1.0);
+    end;
+    402: begin
+      FLR.IdleLeft;
+      FGranny.IdleLeft;
+      FFather.IdleLeft;
+      FMother.IdleLeft;
+      FPenelope.IdleLeft;
+      FMarcus.IdleLeft;
+      FW7.IdleLeft;
+    end;
+    403: if FAirplaneRomeoAndJulia.AnimDone then begin
+        FAirplaneRomeoAndJulia.Kill;
+        FAirplaneRomeoAndJulia := NIL;
+        PostMessage(404);
+      end else begin
+             if FAirplaneRomeoAndJulia.X.Value > FScene.Width*0.6 then begin
+               FLR.IdleRight;
+               FGranny.IdleRight;
+               FFather.IdleRight;
+               FMother.IdleRight;
+               FPenelope.IdleRight;
+               FMarcus.IdleRight;
+               FW7.IdleRight;
+             end;
+             PostMessage(403);
+           end;
+    404: FMother.ShowDialog(sTheyCertainlyDidntWaste, FFontText, Self, 405, 0.5);
+    405: begin
+      FFather.IdleLeft;
+      FMother.IdleLeft;
+      FPenelope.IdleLeft;
+      FMarcus.IdleLeft;
+      FW7.IdleDown;
+      PostMessage(409, 1.0);
+    end;
+
+    409: FFather.ShowDialog(Format(sPlayerAnythingElse, [PlayerInfo.Name]), FFontText, Self, 410);
     410: FLR.ShowDialog(sNoThankYou, FFontText, Self, 415);
     415: FFather.ShowDialog(sThenLetsSummonTheTransporter, FFontText, Self, 420);
     420: FW7.ShowDialog(sTransporterIsOnItsWay, FFontText, Self, 421);
@@ -1118,7 +1164,7 @@ begin
       FTransporterWhole.Scale.ChangeTo(PointF(1.0, 1.0), 2.0, idcSinusoid);
       PostMessage(545);
     end;
-    545: begin
+    545: begin  PlayerInfo.WolfCastle.StepPlayed := 1;
       PlayerInfo.WolfCastle.IncCurrentStep;
       FSaveGame.Save;
       FsndMusic.FadeOutThenKill(10.0);
@@ -1126,7 +1172,7 @@ begin
       PostMessage(550, 8.0);
     end;
     550: begin // end -> jump directly to next chapter
-      FScene.RunScreen(ScreenInSpace);
+      FScene.RunScreen(ScreenMotherShipMainBridge);
     end;
 
 

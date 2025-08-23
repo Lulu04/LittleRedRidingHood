@@ -763,7 +763,7 @@ begin
 {  FClock := TUIClock.Create;
   AddItem(FClock);  }
 
-  ResizeAndPlaceAtTopRight;
+  ResizeAndPlace;
 end;
 
 procedure TInGamePanel.IncBalloonExploded;

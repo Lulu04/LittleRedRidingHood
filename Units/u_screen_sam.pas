@@ -103,6 +103,7 @@ var texSamHomeInner, texDoor, texBarrel, texDartboard,
   FGameinventory: TGameInventory;
   FPanelItems: TPanelItems;
   FItemHeight: integer;
+  FsndMusic: TALSSound;
 
 { TTradeItem }
 
@@ -256,7 +257,7 @@ begin
   FScene.Add(o, LAYER_GAMEUI);
   o.SetCoordinate(PPIScale(20), ScaleH(297));
 
-  ResizeAndPlaceAtTopRight;
+  ResizeAndPlace;
   SetCoordinate(o.RightX+PPIScale(5), o.Y.Value);
   o.SetSize(-1, Height);
 end;
@@ -500,6 +501,8 @@ var home: TSprite;
 begin
   if not FPlayerPlaySamsGame then
     Audio.PauseMusicTitleMap(3.0);
+  FsndMusic := Audio.AddMusic('Hoedown_Hustle.ogg', True);
+  FsndMusic.FadeIn(1.0, 2.0);
 
   CheckAtlas(FAtlas, 'samhome.atlas');
 
@@ -561,6 +564,8 @@ end;
 
 procedure TScreenSamHome.FreeObjects;
 begin
+  if FsndMusic <> NIL then FsndMusic.FadeOutThenKill(2.0);
+  FsndMusic := NIL;
   if FScene.RequestedScreen = ScreenMap then
     Audio.ResumeMusicTitleMap(3.0);
 

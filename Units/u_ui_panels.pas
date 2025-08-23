@@ -73,7 +73,7 @@ end;
 
 TNewPlayerPanel = class(TCenteredGameUIPanel)
 private
-  BStart, BBack, BErase: TUIButton;
+  BStart, BBack, BErase, BSpace: TUIButton;
   FPanelName: TUIPanel;
   FName: TUILabel;
   FCursor: TShapeOutline;
@@ -2053,6 +2053,8 @@ begin
 end;
 
 procedure TNewPlayerPanel.ProcessButtonClick(Sender: TSimpleSurfaceWithEffect);
+var
+  charset: String;
 begin
   Audio.PlayUIClick;
   if Sender = BStart then begin
@@ -2069,9 +2071,11 @@ begin
     if Length(FName.Caption) = 0 then exit;
     FName.Caption := Copy(FName.Caption, 1, Length(FName.Caption)-1);
   end
+  else if Sender = BSpace then FName.Caption := FName.Caption + ' '
   else begin
     //keyboard
-    FName.Caption := FName.Caption + FScene.Charsets.SIMPLELATIN[Sender.Tag1];
+    charset := FScene.Charsets.NUMBER+FScene.Charsets.ASCII_LETTER;
+    FName.Caption := FName.Caption + charset[Sender.Tag1];
   end;
 end;
 
@@ -2082,6 +2086,7 @@ var xx, yy, delta: single;
   title: TUILabel;
   b: TUIButton;
   arrow: TSprite;
+  charset: string;
 begin
   inherited Create(Round(FScene.Width*0.7), Round(FScene.Height*0.7), aFont);
 
@@ -2096,31 +2101,32 @@ begin
   BBack.AnchorPosToParent(haLeft, haLeft, PPIScale(10), vaBottom, vaBottom, -PPIScale(10));
 
   // keyboard buttons
-  xx := PPIScale(10);
-  yy := PPIScale(10);
-  delta := (Width-PPIScale(10)) / KEY_PER_LINE;
-  FKeyboardButtonSize := Round(delta)-PPIScale(10);
   FKeyboardButtonSpacing := PPIScale(10);
-  i := 1;
+  xx := FKeyboardButtonSpacing;
+  yy := FKeyboardButtonSpacing;
+  delta := (Width-PPIScale(10)) / KEY_PER_LINE;
+  FKeyboardButtonSize := Round(delta) - FKeyboardButtonSpacing;
+  i := 0;
+  charset := FScene.Charsets.NUMBER+FScene.Charsets.ASCII_LETTER;
   while i < 62 do begin
-    b := TUIButton.Create(FScene, FScene.Charsets.SIMPLELATIN[i+1], aFont, NIL);
+    b := TUIButton.Create(FScene, charset[i+1], aFont, NIL);     //i+1
     AddChild(b, 0);
-    b.Tag1 := i+1;
+    b.Tag1 := i+1;    //i+1
     FormatButtonKeyboard(b);
     b.SetCoordinate(xx, yy);
     xx := xx + delta;
     inc(i);
-    if i mod KEY_PER_LINE = 0 then begin
-      xx := PPIScale(10);
+    if (i mod KEY_PER_LINE = 0) {and (i > 10)} then begin
+      xx := FKeyboardButtonSpacing;
       yy := yy + delta;
     end;
   end;
   // SPACE
-  b := TUIButton.Create(FScene, sSpace, aFont, NIL);
-  AddChild(b, 0);
-  b.Tag1 := 1;
-  FormatBigButtonKeyboard(b);
-  b.SetCoordinate(xx, yy);
+  BSpace := TUIButton.Create(FScene, sSpace, aFont, NIL);
+  AddChild(BSpace, 0);
+  BSpace.Tag1 := 1;
+  FormatBigButtonKeyboard(BSpace);
+  BSpace.SetCoordinate(xx, yy);
   xx := xx + delta*2;
 
   // ERASE

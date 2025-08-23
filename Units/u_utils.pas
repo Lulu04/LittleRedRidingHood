@@ -16,6 +16,8 @@ function GetCenterView(aCameraInUse: TOGLCCamera): TPointF;
 function GetPurpleCristalTint: TBGRAPixel;
 function GetBlueCristalTint: TBGRAPixel;
 
+function Distance2BetweenCenters(aSurface1, aSurface2: TSimpleSurfaceWithEffect): single;
+
 type
 
 { TInput }
@@ -166,6 +168,14 @@ end;
 function GetBlueCristalTint: TBGRAPixel;
 begin
   Result := BGRA(49,124,255,150);// BGRA(0,128,255,150);
+end;
+
+function Distance2BetweenCenters(aSurface1, aSurface2: TSimpleSurfaceWithEffect): single;
+var p1, p2: TPointF;
+begin
+  p1 := aSurface1.SurfaceToScene(PointF(aSurface1.Width*0.5, aSurface1.Height*0.5));
+  p2 := aSurface2.SurfaceToScene(PointF(aSurface2.Width*0.5, aSurface2.Height*0.5));
+  Result := Distance2(p1, p2);
 end;
 
 end.

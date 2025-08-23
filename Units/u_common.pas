@@ -11,7 +11,7 @@ uses
 
 const
 
-  APP_VERSION = '0.3.0';   // wolf castle
+  APP_VERSION = '0.4.0';   // in space
 
 // Scene layers
 LAYER_COUNT = 12;

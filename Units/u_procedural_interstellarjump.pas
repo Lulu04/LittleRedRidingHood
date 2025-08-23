@@ -1,110 +1,117 @@
 unit u_procedural_interstellarjump;
 
 {$mode ObjFPC}{$H+}
+{$modeswitch AdvancedRecords}
 
 interface
 
 uses
   Classes, SysUtils, Graphics,
-  BGRABitmap, BGRABitmapTypes, BGRAGradients,
+  BGRABitmap, BGRABitmapTypes,
   OGLCScene, glcorearb;
 
 
 type
 
+{ TInterStellarJumpParameters }
+
+TInterStellarJumpParameters = record
+private
+  FStretch: single;
+  FTrailLength: single; // 5 .. 35
+  FChanged: boolean;
+  function GetChanged: boolean;
+  procedure SetStretch(AValue: single);
+  procedure SetTrailLength(AValue: single);
+public
+  procedure InitDefault;
+  property TrailLength: single read FTrailLength write SetTrailLength;
+  property Stretch: single read FStretch write SetStretch;
+  property Changed: boolean read GetChanged;
+end;
+PInterStellarJumpParameters = ^TInterStellarJumpParameters;
+
 { TInterStellarJumpRenderer }
 
-TInterStellarJumpRenderer = class(specialize TOGLCGenericPrimitiveRenderer<Txyuv>)
+TInterStellarJumpRenderer = class(specialize TOGLCGenericPrimitiveRenderer<Txy>)
 private const
   VERTEX_SHADER =
     '#version 330 core'#10+
-    '  layout(location = 0) in vec4 aVertexAndTextureCoor;'#10+
+    '  layout(location = 0) in vec2 aVertexCoor;'#10+
     '  uniform mat4 uMVP;'#10+
-    '  out vec2 TexCoords;'#10+
     'void main()'#10+
     '{'#10+
-    '  gl_Position = uMVP*vec4(aVertexAndTextureCoor.xy, 0.0, 1.0);'#10+
-    '  TexCoords = aVertexAndTextureCoor.zw;'#10+
+    '  gl_Position = uMVP*vec4(aVertexCoor, 0.0, 1.0);'#10+
     '}';
 
   FRAGMENT_SHADER =
     '#version 330 core'#10+
     '  layout(location = 0) out vec4 FragColor;'#10+
-    '  in vec2 TexCoords;'#10+
+    '  uniform vec4 uTintColor;'#10+
     '  uniform vec4 uSizexy_Opacity_Time;'#10+
-    '  uniform sampler2D uTexUnit;'#10+
+    '  uniform vec4 uTrailLength_Stretch;'#10+
 
-  // Interstellar
-  // Hazel Quantock
-  // This code is licensed under the CC0 license http://creativecommons.org/publicdomain/zero/1.0/
-  // https://www.shadertoy.com/view/Xdl3D2
-    'const float tau = 6.28318530717958647692;'#10+
+    // V-Drop - Del 19/11/2019 - (Tunnel mix - Enjoy)
+    // https://www.shadertoy.com/view/wsKXRK
+    // vertical version: https://www.shadertoy.com/view/tdGXWm
+    '#define PI 3.14159'#10+
 
-    // Gamma correction
-    '#define GAMMA (2.2)'#10+
-
-    'vec3 ToLinear( in vec3 col )'#10+
+    'float vDrop(vec2 uv,float t)'#10+
     '{'#10+
-	// simulate a monitor, converting colour values into light values
-    '  return pow( col, vec3(GAMMA) );'#10+
+    '  uv.x = uv.x*128.0;'#10+        // H-Count      128.0
+    '  float dx = fract(uv.x);'#10+
+    '  uv.x = floor(uv.x);'#10+
+    '  uv.y *= uTrailLength_Stretch.y;'#10+             // stretch    0.05       0.01 étoiles plus fines
+    '  float o=sin(uv.x*215.4);'#10+  // offset     215.4
+    '  float s=cos(uv.x*33.1)*.3 +.7;'#10+  // speed
+    '  float trail = mix(95.0, uTrailLength_Stretch.x, s);'#10+  // trail length       95.0,35.0,s
+    '  float yv = fract(uv.y + t*s + o) * trail;'#10+
+    '  yv = 1.0/yv;'#10+
+    '  yv = smoothstep(0.0,1.0,yv*yv);'#10+
+    '  yv = sin(yv*PI)*(s*5.0);'#10+
+    '  float d2 = sin(dx*PI);'#10+
+    '  return yv*(d2*d2);'#10+
     '}'#10+
 
-    'vec3 ToGamma( in vec3 col )'#10+
+    'void main()'#10+
     '{'#10+
-	// convert back into colour values, so the correct light will come out of the monitor
-      'return pow( col, vec3(1.0/GAMMA) );'#10+
-    '}'#10+
+    '  vec2 p = (gl_FragCoord.xy - 0.5 * uSizexy_Opacity_Time.xy) / uSizexy_Opacity_Time.y;'#10+
+    //'  p += vec2(0.0, -0.5);'#10+
+    '  float d = length(p)+0.1;'#10+
+    '  p = vec2(atan(p.x, p.y) / PI, 2.5 / d);'#10+
+    '  float t =  uSizexy_Opacity_Time.w*0.4;'#10+
+    '  vec3 col = vec3(1.55,0.65,.225) * vDrop(p,t);'#10+	// red
+    '  col += vec3(0.55,0.75,1.225) * vDrop(p,t+0.33);'#10+	// blue
+    '  col += vec3(0.45,1.15,0.425) * vDrop(p,t+0.66);'#10+	// green
 
-    'vec4 Noise( in ivec2 x )'#10+
-    '{'#10+
-      'return texture(uTexUnit, (vec2(x)+0.5)/256.0, -100.0 );'#10+
-    '}'#10+
+    '  col *= d*0.3;'#10+
 
-    'vec4 Rand( in int x )'#10+
-    '{'#10+
-      'vec2 uv;'#10+
-      'uv.x = (float(x)+0.5)/256.0;'#10+
-      'uv.y = (floor(uv.x)+0.5)/256.0;'#10+
-      'return texture(uTexUnit, uv, -100.0);'#10+
-    '}'#10+
+    // Tint
+    '  float a = uSizexy_Opacity_Time.z;'#10+    // d*d     d*0.5
+    //'  if (a == 0) discard;'#10+
+    '  float tintAlphaX2 = uTintColor.a*2;'#10+
+    '  if (uTintColor.a >= 0.5)'#10+
+    '   {'#10+
+    '     tintAlphaX2 = tintAlphaX2-1;'#10+
+    '     col = mix(col, uTintColor.rgb, tintAlphaX2);'#10+ // replace mode
+    '   }'#10+
+    '  else if (uTintColor.a > 0)'#10+
+    '     col = col + uTintColor.rgb*tintAlphaX2;'#10+     // mix mode
+    '  FragColor = vec4(col, a);'#10+
 
-   'void main()'#10+
-   '{'#10+
-     'vec3 ray;'#10+
-     'ray.xy = 2.0*(TexCoords-uSizexy_Opacity_Time.xy*.5)/uSizexy_Opacity_Time.x;'#10+
-     'ray.z = 1.0;'#10+
 
-     'float offset = uSizexy_Opacity_Time.w*.5;'#10+
-     'float speed2 = (cos(offset)+1.0)*2.0;'#10+
-     'float speed = speed2+.1;'#10+
-     'offset += sin(offset)*.96;'#10+
-     'offset *= 2.0;'#10+
+    //'  FragColor = vec4(col, d*0.5 * uSizexy_Opacity_Time.z);'#10+
+    '}';
 
-     'vec3 col = vec3(0);'#10+
-
-     'vec3 stp = ray/max(abs(ray.x),abs(ray.y));'#10+
-
-     'vec3 pos = 2.0*stp+.5;'#10+
-     'for ( int i=0; i < 20; i++ )'#10+
-     '{'#10+
-       'float z = Noise(ivec2(pos.xy)).x;'#10+
-       'z = fract(z-offset);'#10+
-       'float d = 50.0*z-pos.z;'#10+
-        'float w = pow(max(0.0,1.0-8.0*length(fract(pos.xy)-.5)),2.0);'#10+
-       'vec3 c = max(vec3(0),vec3(1.0-abs(d+speed2*.5)/speed,1.0-abs(d)/speed,1.0-abs(d-speed2*.5)/speed));'#10+
-       'col += 1.5*(1.0-z)*c*w;'#10+
-       'pos += stp;'#10+
-     '}'#10+
-
-     'FragColor = vec4(ToGamma(col),1.0);'#10+
-   '}';
 private
   FLocMVP,
-  FLocSizexy_Opacity_Time: glint;
+  FLocTintColor,
+  FLocSizexy_Opacity_Time,
+  FLocTrailLength_Stretch: glint;
 
   FMVP: TOGLCMatrix;
+  FTintF: TColorF;
   FOpacity, FTimeAccu, FWidth, FHeight: single;
-  var FtextureNoise: PTexture;
 protected
   procedure InitShaderCodeAndCallBack; override;
 private
@@ -112,13 +119,11 @@ private
   procedure GetUniformLocation;
   procedure SetUniformValuesAndTexture;
 public
-  // construct the noise texture
-  //class procedure CreateTexture(aAtlas: TAtlas);
-  constructor Create(aParentScene: TOGLCScene; aUseIndicesBuffer: boolean); reintroduce;
-  destructor Destroy; override;
+  Params: TInterStellarJumpParameters;
   procedure Prepare(aTriangleType: TTriangleType; const aMVP: TOGLCMatrix;
-    const aOpacity: single; aBlendMode: byte; aTimeAccu, aWidth, aHeight: single);
-  procedure PushQuad(aFlipIndex: integer);
+    const aOpacity: single; const aComputedTint: TColorF; aBlendMode: byte; aTimeAccu, aWidth, aHeight: single
+  );
+  procedure PushQuad;
 end;
 
 
@@ -135,15 +140,52 @@ public
   procedure Update(const aElapsedTime: single); override;
   procedure DoDraw; override;
 public
-  // Don't forget to create the texture by calling TInterStellarJumpRenderer.CreateTexture()
+  // 0..1   0=short  1=long
+  TrailLength: TBoundedFParam;
+  // Star stretch. range is 0..1   0=thin  1=large
+  Stretch: TBoundedFParam;
+  // allow to control the speed on the z axis. default value is 0
+  ZSpeed: TFParam;
   constructor Create(aParentScene: TOGLCScene; aRenderer: TInterStellarJumpRenderer);
+  destructor Destroy; override;
 
   procedure SetSize(aWidth, aHeight: integer);
+public // parameters
+  function Params: PInterStellarJumpParameters;
 end;
 
 
 
 implementation
+
+{ TInterStellarJumpParameters }
+
+procedure TInterStellarJumpParameters.SetTrailLength(AValue: single);
+begin
+  if FTrailLength = AValue then Exit;
+  FTrailLength := AValue;
+  FChanged := True;
+end;
+
+function TInterStellarJumpParameters.GetChanged: boolean;
+begin
+  Result := FChanged;
+  FChanged := False;
+end;
+
+procedure TInterStellarJumpParameters.SetStretch(AValue: single);
+begin
+  if FStretch = AValue then Exit;
+  FStretch := AValue;
+  FChanged := True;
+end;
+
+procedure TInterStellarJumpParameters.InitDefault;
+begin
+  FTrailLength := 35.0;
+  FStretch := 0.05;
+  FChanged := True;
+end;
 
 { TInterStellarJumpRenderer }
 
@@ -155,11 +197,13 @@ begin
   FDefineVertexAttribPointer := @DefineVertexAttribPointer;
   FGetUniformLocation := @GetUniformLocation;
   FSetUniformValuesAndTexture := @SetUniformValuesAndTexture;
+
+  Params.InitDefault;
 end;
 
 procedure TInterStellarJumpRenderer.DefineVertexAttribPointer;
 begin
-  glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, sizeof(Txyuv), PChar(0));
+  glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(Txy), PChar(0));
   glEnableVertexAttribArray(0);
 end;
 
@@ -167,90 +211,49 @@ procedure TInterStellarJumpRenderer.GetUniformLocation;
 begin
   with Shader do begin
     FLocMVP := GetUniform('uMVP');
+    FLocTintColor := GetUniform('uTintColor');
     FLocSizexy_Opacity_Time := GetUniform('uSizexy_Opacity_Time');
+    FLocTrailLength_Stretch := GetUniform('uTrailLength_Stretch');
   end;
 end;
 
 procedure TInterStellarJumpRenderer.SetUniformValuesAndTexture;
 begin
   glUniformMatrix4fv(FLocMVP, 1, GL_FALSE, @FMVP.Matrix[0,0]);
+  glUniform4fv(FLocTintColor, 1, @FTintF);
   glUniform4f(FLocSizexy_Opacity_Time, FWidth, FHeight, FOpacity, FTimeAccu);
+  if Params.Changed then begin
+    glUniform4f(FLocTrailLength_Stretch, Params.TrailLength, Params.Stretch, 0, 0);
+  end;
   //  glGetError();
 
-  ParentScene.TexMan.Bind(FtextureNoise, 0);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-end;
-
-{class procedure TInterStellarJumpRenderer.CreateTexture(aAtlas: TAtlas);
-var ima: TBGRABitmap;
-  i, g: integer;
-begin
-  ima := TBGRABitmap.Create(256, 256, BGRA(0,0,0)); //BGRAPixelTransparent);
-  for i := 0 to (ima.Width*ima.Height) div 2 do begin
-    g := 80+Random(175);
-    ima.SetPixel(Random(ima.Width), Random(ima.Height), BGRA(g, g, g));
-  end;
-  FtextureNoise := ParentScene.TexMan.Add(ima);
-  ima.Free;
-
-
-{  FtextureNoise := aAtlas.RetrieveTextureByFileName('TextureForInterStellarJumpRenderer');
-  if FtextureNoise = NIL then begin
-    ima := TBGRABitmap.Create(256, 256, BGRA(0,0,0)); //BGRAPixelTransparent);
-    for i := 0 to (ima.Width*ima.Height) div 2 do begin
-      g := 80+Random(175);
-      ima.SetPixel(Random(ima.Width), Random(ima.Height), BGRA(g, g, g));
-    end;
-    FtextureNoise := aAtlas.Add(ima);
-    FtextureNoise^.Filename := 'TextureForInterStellarJumpRenderer';
-  end;   }
-end; }
-
-constructor TInterStellarJumpRenderer.Create(aParentScene: TOGLCScene;
-  aUseIndicesBuffer: boolean);
-var ima: TBGRABitmap;
-  i, g: integer;
-begin
-  inherited Create(aParentScene, aUseIndicesBuffer);
-
-  ima := TBGRABitmap.Create(256, 256, BGRA(0,0,0)); //BGRAPixelTransparent);
-  for i := 0 to (ima.Width*ima.Height) div 2 do begin
-    g := 80+Random(175);
-    ima.SetPixel(Random(ima.Width), Random(ima.Height), BGRA(g, g, g));
-  end;
-  FtextureNoise := ParentScene.TexMan.Add(ima);
-  ima.Free;
-end;
-
-destructor TInterStellarJumpRenderer.Destroy;
-begin
-  ParentScene.TexMan.Delete(FtextureNoise);
-  inherited Destroy;
+  ParentScene.TexMan.UnbindTexture;
 end;
 
 procedure TInterStellarJumpRenderer.Prepare(aTriangleType: TTriangleType;
-  const aMVP: TOGLCMatrix; const aOpacity: single; aBlendMode: byte;
-  aTimeAccu, aWidth, aHeight: single);
+  const aMVP: TOGLCMatrix; const aOpacity: single;
+  const aComputedTint: TColorF; aBlendMode: byte; aTimeAccu, aWidth,
+  aHeight: single);
 var forceFlush: Boolean;
 begin
   forceFlush := not FMVP.EqualTo(aMVP) or
                 (FOpacity <> aOpacity) or
+                not FTintF.EqualTo(aComputedTint) or
                 (aTimeAccu <> FTimeAccu) or
                 (aWidth <> FWidth) or
                 (aHeight <> FHeight);
   Batch_CheckIfNeedFlush(Self, aTriangleType, NIL, 0, aBlendMode, forceFlush);
   FMVP.CopyFrom(aMVP);
   FOpacity := aOpacity;
+  FTintF.CopyFrom(aComputedTint);
   FTimeAccu := aTimeAccu;
   FWidth := aWidth;
   FHeight := aHeight;
 end;
 
-procedure TInterStellarJumpRenderer.PushQuad(aFlipIndex: integer);
-var area, texCoords: TQuadCoor;
-    tci: PQuadCornerIndexes;
-    p: Pxyuv;
+procedure TInterStellarJumpRenderer.PushQuad;
+var area: TQuadCoor;
+    p: Pxy;
     pIndex: PVertexIndex;
     currentIndex: TVertexIndex;
 begin
@@ -263,16 +266,6 @@ begin
   area[cTR].x := FWidth;
   area[cTR].y := 0;
 
-  texCoords[cBL].x := 0;
-  texCoords[cBL].y := 0;
-  texCoords[cTL].x := 0;
-  texCoords[cTL].y := 1;
-  texCoords[cBR].x := 1;
-  texCoords[cBR].y := 0;
-  texCoords[cTR].x := 1;
-  texCoords[cTR].y := 1;
-
-  tci := @FLIP_INDEXES[aFlipIndex];
   currentIndex := FIndexInAttribsArray;
 
   case Batch^.CurrentPrimitiveType of
@@ -298,26 +291,18 @@ begin
   // push the 4 vertex        // vertex coord      24
   p := QueryVertex(4);        //                   13
   with p[0] do begin
-    u := texCoords[ tci^[0] ].x;
-    v := texCoords[ tci^[0] ].y;
     x := area[cBL].x;
     y := area[cBL].y;
   end;
   with p[1] do begin
-    u := texCoords[ tci^[1] ].x;
-    v := texCoords[ tci^[1] ].y;
     x := area[cTL].x;
     y := area[cTL].y;
   end;
   with p[2] do begin
-    u := texCoords[ tci^[2] ].x;
-    v := texCoords[ tci^[2] ].y;
     x := area[cBR].x;
     y := area[cBR].y;
   end;
   with p[3] do begin
-    u := texCoords[ tci^[3] ].x;
-    v := texCoords[ tci^[3] ].y;
     x := area[cTR].x;
     y := area[cTR].y;
   end;
@@ -336,15 +321,23 @@ end;
 procedure TInterStellarJump.Update(const aElapsedTime: single);
 begin
   inherited Update(aElapsedTime);
-
-  FTimeAccu := FTimeAccu + aElapsedTime;
+  if Freeze then exit;
+  TrailLength.OnElapse(aElapsedTime);
+  TrailLength.OnElapse(aElapsedTime);
+  ZSpeed.OnElapse(aElapsedTime);
+  FTimeAccu :=  FTimeAccu + ZSpeed.Value * aElapsedTime;
 end;
 
 procedure TInterStellarJump.DoDraw;
 begin
-  FRenderer.Prepare(ptTriangleStrip, FParentScene.MVPMatrix, FComputedOpacity, FBlendMode,
+  //FRenderer.Params.TrailLength := (1.0-TrailLength.Value)*(75-1)+1;
+  FRenderer.Params.TrailLength := (1.0-TrailLength.Value)*(75-0.1)+0.1;
+
+  FRenderer.Params.Stretch := Stretch.Value*(0.1-0.05)+0.05;
+
+  FRenderer.Prepare(ptTriangleStrip, FParentScene.MVPMatrix, FComputedOpacity, FComputedTint, FBlendMode,
                     FTimeAccu, Width, Height);
-  FRenderer.PushQuad(FlipToIndex);
+  FRenderer.PushQuad;
 end;
 
 constructor TInterStellarJump.Create(aParentScene: TOGLCScene; aRenderer: TInterStellarJumpRenderer);
@@ -355,12 +348,32 @@ begin
 
   FWidth := 100;
   FHeight := 100;
+  TrailLength := CreateBoundedFParam(0.0, 1.0, False);
+  TrailLength.Value := 0.5;
+
+  Stretch := CreateBoundedFParam(0.0, 1.0, False);
+  Stretch.Value := 0.5;
+
+  ZSpeed := TFParam.Create;
+end;
+
+destructor TInterStellarJump.Destroy;
+begin
+  FreeAndNil(TrailLength);
+  FreeAndNil(Stretch);
+  FreeAndNil(ZSpeed);
+  inherited Destroy;
 end;
 
 procedure TInterStellarJump.SetSize(aWidth, aHeight: integer);
 begin
   FWidth := aWidth;
   FHeight := aHeight;
+end;
+
+function TInterStellarJump.Params: PInterStellarJumpParameters;
+begin
+  Result := @FRenderer.Params;
 end;
 
 end.

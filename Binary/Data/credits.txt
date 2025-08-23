@@ -1,5 +1,5 @@
 [THANKS]
-rchastain, circular, Charlotte, Coralie, gerbil76115.
+rchastain, circular, Charlotte, Coralie, gerbil76115, Gigatron.
 
 [DEV]
 
@@ -51,7 +51,13 @@ Boss-Time by David Renda - https://www.fesliyanstudios.com/royalty-free-music/do
 
 fast-banjo-tune-with-acoustic-guitar by Nicholas Panek -- https://pixabay.com/music/folk-fast-banjo-tune-with-acoustic-guitar-accompaniment-253946/
 
+Hoedown Hustle - by Steve Oxen -- https://www.fesliyanstudios.com/royalty-free-music/download/hoedown-hustle/3044
+
 5 Open Surge score jingle - A.ogg by jobromedia -- https://opengameart.org/content/level-finish-fanfares
+
+spaceship-arcade-shooter-game.ogg  by Serhii_Kliets -- https://pixabay.com/music/video-games-spaceship-arcade-shooter-game-background-soundtrack-318508/
+
+this_1s_for_abbie.ogg from mod file by Dr. Awesome -- https://modarchive.org/index.php?request=view_by_moduleid&query=93834
 
 On The Islands.ogg,
 ForestInTheNight.ogg,
@@ -64,7 +70,8 @@ Lose1.ogg
 PercuLoop1.ogg,
 Emotion1Loop.ogg,
 Tranquille.ogg
-TheMachine.ogg by Lulu -- made with Reason 3.0
+TheMachine.ogg
+Gigatron.ogg by Lulu -- made with Reason 3.0
 
 [SOUNDS]
 
@@ -198,4 +205,22 @@ Tropical Island by richwise -- https://freesound.org/s/451743/ -- License: Creat
 Tropical Island Dawn.m4a by Virengifo18 -- https://freesound.org/s/563309/ -- License: Attribution 3.0
 
 Guterton - Spaceship Ambi Roomtone by guterton.wav -- https://freesound.org/s/760685/ -- License: Attribution 4.0
+
+AI_Yes.ogg by LilMati -- https://freesound.org/s/453136/ -- License: Attribution NonCommercial 4.0
+
+Water steaming on hot surface #1 by Ekrcoaster -- https://freesound.org/s/666290/ -- License: Creative Commons 0
+
+Digital Machine Grunt 1_4 by Joao_Janz -- https://freesound.org/s/478483/ -- License: Creative Commons 0
+
+ice machine.wav by bsung88 -- https://freesound.org/s/79013/ -- License: Attribution 3.0
+
+missile_launch_2.wav by smcameron -- https://freesound.org/s/51468/ -- License: Attribution 4.0
+
+unfa's Laser Weapon Sounds by unfa -- https://freesound.org/s/187119/ -- License: Creative Commons 0
+
+Pulse laser.wav by Defunct3 -- https://freesound.org/s/77172/ -- License: Creative Commons 0
+
+Cinematic Designed Sci-Fi Stinger - Impact Incoming Electro Ignition by RescopicSound -- https://freesound.org/s/749778/ -- License: Attribution NonCommercial 4.0
+
+AI Technology.ogg by LilMati -- https://freesound.org/s/705952/ -- License: Creative Commons 0
 

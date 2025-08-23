@@ -118,7 +118,9 @@ private
   ArmLeft2: TSprite;
   HandLeft: TSprite;
   FState: TW7RightViewState;
+  FWalkingStep: integer;
   procedure SetState(AValue: TW7RightViewState);
+  function GetWalkingDeltaPixelPerStep: integer;
 protected
   procedure SetFlipH(AValue: boolean); override;
   procedure SetFlipV(AValue: boolean); override;
@@ -126,6 +128,7 @@ public
   // aAdditionalScale is used to scale the collision bodies
   class procedure LoadTexture(aAtlas: TOGLCTextureAtlas; aAdditionalScale: single=1.0);
   constructor Create(aLayerIndex: integer=-1);
+  procedure Update(const aElapsedTime: single); override;
   procedure ProcessMessage(UserValue: TUserMessageValue); override;
 public
   procedure Posture_Idle(aDuration: single=0.5);
@@ -133,6 +136,7 @@ public
   procedure Posture_Walk2(aDuration: single=0.5);
   procedure Posture_Walk3(aDuration: single=0.5);
   procedure Posture_Walk4(aDuration: single=0.5);
+  procedure WalkHorizontallyTo(aX: single; aTargetScreen: TScreenTemplate; aMessageValueWhenFinish: TUserMessageValue; aDelay: single=0);
 
   property State: TW7RightViewState read FState write SetState;
 end;
@@ -232,6 +236,12 @@ begin
   end;
 end;
 
+function TRobotW7Right.GetWalkingDeltaPixelPerStep: integer;
+begin
+  Result := Round(FScene.Width*0.03);
+  if FlipH then Result := -Result;
+end;
+
 procedure TRobotW7Right.SetFlipH(AValue: boolean);
 begin
   inherited SetFlipH(AValue);
@@ -275,6 +285,7 @@ begin
   inherited Create(FScene);
   if aLayerIndex <> -1 then
     FScene.Add(Self, aLayerIndex);
+  WalkDontUseSpeed := True;
 
   W7rAbdomen := TSprite.Create(texW7rAbdomen, False);
   with W7rAbdomen do begin
@@ -397,10 +408,45 @@ begin
   BodyHeight := Trunc(DeltaYToBottom + DeltaYToTop);
 end;
 
+procedure TRobotW7Right.Update(const aElapsedTime: single);
+begin
+  inherited Update(aElapsedTime);
+
+  // check the end of a walk
+  if State = w7rvsWalking then
+    if ((MovingDirection = mdLeft) and (ParentSurface.X.Value <= WalkingTargetPoint.x)) or
+       ((MovingDirection = mdRight) and (ParentSurface.X.Value >= WalkingTargetPoint.x)) then begin
+      ParentSurface.X.Value := WalkingTargetPoint.x;
+      State := w7rvsIdle;
+      //if FlipH then State := gsIdleLeft else State := gsIdleRight;
+      EndOfWalk_SendMessageToScreen;
+    end;
+end;
+
 procedure TRobotW7Right.ProcessMessage(UserValue: TUserMessageValue);
 var d: single;
 begin
   case UserValue of
+    // walking anim
+    100: begin
+      if State <> w7rvsWalking then exit;
+      d := 0.25;
+      case FWalkingStep of
+        0: Posture_Walk1(d);
+        1: Posture_Walk2(d);
+        2: Posture_Walk3(d);
+        3: Posture_Walk4(d);
+      end;
+      if FWalkingStep in [0, 2] then
+       ParentSurface.X.ChangeTo(ParentSurface.X.Value+GetWalkingDeltaPixelPerStep*0.6, d)
+      else ParentSurface.X.ChangeTo(ParentSurface.X.Value+GetWalkingDeltaPixelPerStep, d);
+      inc(FWalkingStep);
+      if FWalkingStep = 4 then FWalkingStep := 0;
+      PostMessage(100, d);
+    end;
+
+
+{
     // WALKING
     100: begin
       if FState <> w7rvsWalking then exit;
@@ -425,7 +471,7 @@ begin
       d := W7_BASE_TIME_MOVE*TimeMultiplicator;
       Posture_Walk4(d);
       PostMessage(100, d);
-    end;
+    end;   }
   end;//case
 end;
 
@@ -659,6 +705,17 @@ begin
   HandLeft.Scale.ChangeTo(PointF(1.0, 1.0), aDuration, idcSinusoid);
 end;
 
+procedure TRobotW7Right.WalkHorizontallyTo(aX: single;
+  aTargetScreen: TScreenTemplate; aMessageValueWhenFinish: TUserMessageValue;
+  aDelay: single);
+begin
+  CheckHorizontalMoveToX(aX, aTargetScreen, aMessageValueWhenFinish, aDelay);
+  case MovingDirection of
+    mdLeft, mdRight: State := w7rvsWalking;
+    mdNone: State := w7rvsIdle;
+  end;
+end;
+
 { TRobotW74Direction }
 
 procedure TRobotW74Direction.SetState(AValue: TRobotW74State);
@@ -698,14 +755,14 @@ begin
     end;
     w74sRightWalking: begin
       FW7Right.State := w7rvsWalking;
-      if Speed.X.Value < 0 then Speed.X.Value := WalkSpeed
-        else Speed.X.ChangeTo(WalkSpeed, 0.2, idcSinusoid);
+     { if Speed.X.Value < 0 then Speed.X.Value := WalkSpeed
+        else Speed.X.ChangeTo(WalkSpeed, 0.2, idcSinusoid); }
       Speed.Y.Value := 0;
     end;
     w74sLeftWalking: begin
       FW7Right.State := w7rvsWalking;
-      if Speed.X.Value > 0 then Speed.X.Value := -WalkSpeed
-        else Speed.X.ChangeTo(-WalkSpeed, 0.2, idcSinusoid);
+   {   if Speed.X.Value > 0 then Speed.X.Value := -WalkSpeed
+        else Speed.X.ChangeTo(-WalkSpeed, 0.2, idcSinusoid);  }
       Speed.Y.Value := 0;
     end;
     w74sUpWalking: begin
@@ -830,13 +887,15 @@ procedure TRobotW74Direction.WalkHorizontallyTo(aX: single;
   aTargetScreen: TScreenTemplate; aMessageValueWhenFinish: TUserMessageValue;
   aDelay: single);
 begin
-  if X.Value < aX then begin
-    State := w74sRightWalking;
+  FW7Right.WalkHorizontallyTo(aX, aTargetScreen, aMessageValueWhenFinish, aDelay);
+
+{  if X.Value < aX then begin
     CheckHorizontalMoveToX(aX, aTargetScreen, aMessageValueWhenFinish, aDelay);
+    if MovingDirection <> mdNone then State := w74sRightWalking;
   end else if X.Value > aX then begin
-    State := w74sLeftWalking;
     CheckHorizontalMoveToX(aX, aTargetScreen, aMessageValueWhenFinish, aDelay);
-  end else aTargetScreen.PostMessage(aMessageValueWhenFinish, aDelay);
+    if MovingDirection <> mdNone then State := w74sLeftWalking;
+  end else aTargetScreen.PostMessage(aMessageValueWhenFinish, aDelay);   }
 end;
 
 procedure TRobotW74Direction.WalkVerticallyTo(aY: single;
