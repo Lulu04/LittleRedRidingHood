@@ -187,11 +187,7 @@ end;
 procedure TExplosion.ProcessMessage(UserValue: TUserMessageValue);
 begin
   case UserValue of
-    0: begin
-      FExplosionContainer.SetInactive(Tag1);
-      Freeze := True;
-      Visible := False;
-    end;
+    0: FExplosionContainer.SetInactive(Self);
   end;
 end;
 
@@ -253,8 +249,7 @@ begin
 
   polar := CartesianToPolar(targetPoint, Center);
   if polar.Distance < 10 then begin
-    //Kill;
-    FMeteorParticleContainer.SetInactive(Tag1);
+    FMeteorParticleContainer.SetInactive(Self);
     Visible := False;
     Freeze := True;
     // increment the particule gauge
@@ -288,15 +283,14 @@ begin
   Scale.x.Value := sc;
   Scale.y.Value := sc;
   FminW := Min(ScaledWidth, ScaledHeight);
-  //Tint.Value := BGRA(30+Random(220), 30+Random(220), 30+Random(220), 30+Random(100));
 end;
 
 { TBaseAsteroid }
 
 procedure TBaseAsteroid.SetInactive;
 begin
-  if FIsAsteroid then FAsteroidContainer.SetInactive(Tag1)
-    else FMeteorContainer.SetInactive(Tag1);
+  if FIsAsteroid then FAsteroidContainer.SetInactive(TAsteroid(Self))
+    else FMeteorContainer.SetInactive(TMeteor(Self));
   Visible := False;
   Freeze := True;
 end;
@@ -314,27 +308,18 @@ begin
     else Audio.PlayThenKillSound('custom_short_explosion.ogg', 0.6, 0.0, 1.0+Random*0.1-0.2);
 
   // generate explosion
-  i := FExplosionContainer.GetInactiveIndex;
-  explosion := FExplosionContainer.Surfaces[i];
-  explosion.Tag1 := i;
+  explosion := FExplosionContainer.GetInactiveSurface;
   explosion.SetCoordinate(GetXY);
   explosion.SetEmitterTypeRectangle(Width, Height);
-  explosion.Visible := True;
-  explosion.Freeze := False;
   explosion.Go;
 
   // generate particle
   p := Center;
   pc := FGenerateParticleCount;
   while pc > 0 do begin
-    i := FMeteorParticleContainer.GetInactiveIndex;
-    o := FMeteorParticleContainer.Surfaces[i];
-    o.Tag1 := i;
+    o := FMeteorParticleContainer.GetInactiveSurface;
     o.InitSpeed;
     o.SetCenterCoordinate(p.x + Random*Width-Width*0.5, p.y + Random*Height-Height*0.5);
-    o.Visible := True;
-    o.Freeze := False;
-
     dec(pc);
   end;
 end;
@@ -345,7 +330,6 @@ var r: integer;
   sc: single;
 begin
   FHitCount := aHitCount;
-  //FGenerateParticleCount := 1;
   FDelayCheckCollision := 5;
 
   // texture
@@ -443,7 +427,6 @@ begin
 
   // check if it is not visible
   if Y.Value > FScene.Height*1.1 then begin
-    //Kill;
     SetInactive;
     exit;
   end;
@@ -608,12 +591,9 @@ begin
       end;
       gsFinalAnim: FTimeAccuAsteroid := 0.125/FAsteroidSpeedCoeff*0.05;
     end;
-    i := FAsteroidContainer.GetInactiveIndex;
-    asteroid := FAsteroidContainer.Surfaces[i];
+
+    asteroid := FAsteroidContainer.GetInactiveSurface;
     asteroid.SetCenterCoordinate(Random*FScene.Width, -FScene.Height*0.25);
-    asteroid.Tag1 := i;
-    asteroid.Visible := True;
-    asteroid.Freeze := False;
     asteroid.FHitCount := 2;
   end;
 end;
@@ -638,12 +618,8 @@ begin
       gsFinalAnim: FTimeAccuMeteor := 0.125/FAsteroidSpeedCoeff*0.75;
     end;
     if FCombatShip.ShootLevelIndex > 0 then begin
-      i := FMeteorContainer.GetInactiveIndex;
-      meteor := FMeteorContainer.Surfaces[i];
+      meteor := FMeteorContainer.GetInactiveSurface;
       meteor.SetCenterCoordinate(Random*FScene.Width*0.6+FScene.Width*0.2, -FScene.Height*0.25);
-      meteor.Tag1 := i;
-      meteor.Visible := True;
-      meteor.Freeze := False;
       meteor.FHitCount := Round(10*meteor.Scale.x.Value);
     end;
   end;
