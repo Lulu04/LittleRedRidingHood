@@ -342,6 +342,7 @@ begin
 
   // gate
   FGate := THyperSpaceGate.Create(FScene.Width*0.5, ScaleH(333), LAYER_BG1, FAtlas);
+  FGate.Scale.Value := PointF(0.35, 0.35);
 
   // black screen
   FBlackScreen := TQuad4Color.Create(FScene);
