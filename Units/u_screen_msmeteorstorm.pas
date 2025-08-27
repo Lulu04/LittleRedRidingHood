@@ -450,6 +450,7 @@ begin
         FShieldGauge.Percent := v - 0.01*v;
     end;
     Explode;
+    FMotherShip.Shake;
   end;
 end;
 
@@ -851,7 +852,7 @@ begin
     255: begin
       FMotherShip.StartPropulsors;
       FMotherShip.Y.ChangeTo(ScaleH(251), 13.0, idcSinusoid);
-      PostMessage(260, 13.0);
+      PostMessage(260, 13.0); // penelope message
       PostMessage(257, 3.0); // asteroid/meteor accelerate
       FShieldGauge.Opacity.ChangeTo(0, 5.0);
       FParticleGauge.Opacity.ChangeTo(0, 5.0);

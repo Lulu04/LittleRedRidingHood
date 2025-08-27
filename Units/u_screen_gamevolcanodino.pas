@@ -1902,7 +1902,7 @@ begin
       PostMessage(573, 0.1);
     end;
     573: begin // earthquake
-      FCamera.Shaker.Start(PPIScale(10), PPIScale(10), 0.03, True);
+      FCamera.Shaker.Start(PPIScale(10), PPIScale(10), 0.03);
       FCamera.Shaker.FadeOut(3.0);
       FsndEarthQuakeLoop.Volume.Value := 1.0;
       FsndEarthQuakeLoop.Play(True);
