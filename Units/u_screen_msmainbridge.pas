@@ -426,7 +426,7 @@ end;
 procedure TScreenMotherShipMainBridge.CreateLevel;
 begin
   case PlayerInfo.InSpace.StepPlayed of
-    1: CreateLevelStep1;
+    0, 1: CreateLevelStep1;
     3: CreateLevelStep3;
     8: CreateLevelStep8;
     10: CreateLevelStep10;
@@ -887,7 +887,7 @@ begin
     549: begin  // meteor explode
       FMeteor.Kill;
       FMeteorImpact.Visible := True;
-      FCamera.Shaker.Start(PPIScale(10), PPIScale(10), 0.1, True);
+      FCamera.Shaker.Start(PPIScale(10), PPIScale(10), 0.1);
       PostMessage(551, 2.0);
     end;
     551: begin

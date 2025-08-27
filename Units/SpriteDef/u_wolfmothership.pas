@@ -306,20 +306,23 @@ private
   FShield, FShield2: TParticleEmitter;
   FGigatron1, FGigatron2, FAnnihilator1, FAnnihilator2: TSprite;
   FBlinkCounter: integer;
+  FShaker: TShakerDescriptor;
+  FOriginForShaker: TPointF;
 public
   // aAdditionalScale is used to scale the collision bodies
   class procedure LoadTexture(aAtlas: TOGLCTextureAtlas; aAdditionalScale: single=1.0);
   constructor Create(aLayerIndex: integer; aAtlas: TAtlas; aAddTransporterWK510: boolean);
+  destructor Destroy; override;
+  procedure Update(const aElapsedTime: single); override;
   procedure ProcessMessage(UserValue: TUserMessageValue); override;
 
   function GetLocalTransporterBayCenter: TPointF;
 public // anim
-  Invincible: boolean;
   procedure StartPropulsors;
   procedure StopPropulsor;
   procedure StartShield;
   procedure StopShield;
-  procedure Hit;
+  procedure Shake;
 
   procedure ShowDockingBay;
   procedure ShowGigatron;
@@ -1740,8 +1743,9 @@ begin
       FFollowingPath := False;
       ApplyAngleAndPos;
       Y.ChangeTo(Y.Value - Height*1.5,  2.5);
-      PostMessage(5, 2.5);
+      PostMessage(120, 2.5);
     end;
+    120: FAnimDone := True;
 
     // ship enter the docking bay (after a manual fly)
     200: begin
@@ -2462,6 +2466,23 @@ begin
     SetEmitterTypeCircle(Self.Height*1.40*0.5);
     ParticlesToEmit.Value := 0;
   end;
+
+  FShaker.Create;
+end;
+
+destructor TMotherShipTopView.Destroy;
+begin
+  FShaker.Free;
+  inherited Destroy;
+end;
+
+procedure TMotherShipTopView.Update(const aElapsedTime: single);
+begin
+  inherited Update(aElapsedTime);
+  FShaker.Update(aElapsedTime);
+  // apply shaker only on x
+  if FShaker.ComputedOffsetX <> 0 then
+    X.Value := FOriginForShaker.x + FShaker.ComputedOffsetX;
 end;
 
 procedure TMotherShipTopView.ProcessMessage(UserValue: TUserMessageValue);
@@ -2506,32 +2527,6 @@ begin
       FGigatron2.Tint.Alpha.Value := 0;
       PostMessage(20, 0.4);
     end;
-
-    // hit anim
-    100: begin
-      PostMessage(105);
-      PostMessage(103, 6.0);
-    end;
-    103: begin
-      Invincible := False;
-      Tint.Alpha.Value := 0;
-      WingLeft.Tint.Alpha.Value := 0;
-      WingRight.Tint.Alpha.Value := 0;
-    end;
-    105: begin
-      if not Invincible then exit;
-      Tint.Value := BGRA(255, 255, 255);
-      WingLeft.Tint.Value := BGRA(255, 255, 255);
-      WingRight.Tint.Value := BGRA(255, 255, 255);
-      PostMessage(110, 0.25);
-    end;
-    110: begin
-      if not Invincible then exit;
-      Tint.Alpha.Value := 0;
-      WingLeft.Tint.Alpha.Value := 0;
-      WingRight.Tint.Alpha.Value := 0;
-      PostMessage(105, 0.25);
-    end;
   end;
 end;
 
@@ -2565,10 +2560,12 @@ begin
   FShield2.ParticlesToEmit.Value := 0;
 end;
 
-procedure TMotherShipTopView.Hit;
+procedure TMotherShipTopView.Shake;
 begin
-  Invincible := True;
-  PostMessage(100);
+  if FShaker.Amount.State = psNO_CHANGE then
+    FOriginForShaker := GetXY;
+  FShaker.Start(PPIScale(8), 0, 0.1);
+  FShaker.FadeOut(2.0);
 end;
 
 procedure TMotherShipTopView.ShowDockingBay;

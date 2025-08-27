@@ -1057,8 +1057,8 @@ begin
       FsndMainPropulsor.FadeIn(1.0, 1.0);
       FsndEngineIdle.FadeOut(8.0);
       FTransporter.StartMainPropulsor;
-      FCamera.Shaker.Start(PPIScale(6), PPIScale(6), 0.05, False);
-      FCamera.Shaker.FadeIn(1.0, 8.0);
+      FCamera.Shaker.Start(PPIScale(6), PPIScale(6), 0.05);
+      FCamera.Shaker.FadeIn(8.0);
       FTransporter.Y.ChangeTo(ScaleH(-1107), 4.0, idcDrop);
       PostMessage(495, 4.0);
     end;
@@ -1172,6 +1172,7 @@ begin
       PostMessage(550, 8.0);
     end;
     550: begin // end -> jump directly to next chapter
+      PlayerInfo.InSpace.StepPlayed := 1;
       FScene.RunScreen(ScreenMotherShipMainBridge);
     end;
 
