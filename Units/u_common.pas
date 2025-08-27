@@ -11,7 +11,7 @@ uses
 
 const
 
-  APP_VERSION = '0.4.0';   // in space
+  APP_VERSION = '0.4.1';   // in space (bug fix)
 
 // Scene layers
 LAYER_COUNT = 12;
