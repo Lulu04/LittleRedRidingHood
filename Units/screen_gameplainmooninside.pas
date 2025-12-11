@@ -519,7 +519,7 @@ end;
 
 procedure TScreenPlainMoonInside.CreatePerspectiveDecors;
 var o: TQuad4Color;
-  quad: TQuadCoor;
+  quad: TQuadF;
   sprite: TSprite;
   arrow: TDirectionnalArrow;
   mountain: TScrollableSprite;
@@ -592,16 +592,16 @@ begin
 
   // sky behind the left window
   sky := TQuad4Color.Create(FScene);
-  sky.SetSize(QuadCoor(PointF(0,0), PointF(ScaleW(490), ScaleH(192)),
-                       PointF(ScaleW(490), ScaleH(240)),  PointF(ScaleW(0), ScaleH(315))));
+  sky.SetSize(QuadF(PointF(0,0), PointF(ScaleW(490), ScaleH(192)),
+                    PointF(ScaleW(490), ScaleH(240)),  PointF(ScaleW(0), ScaleH(315))));
   sky.SetCoordinate(ScaleW(-1), ScaleH(156));
   sky.SetTopColors(BGRA(212,68,119));
   sky.SetBottomColors(BGRA(57,4,37));
   FScene.Add(sky, LAYER_BG3);
   // mountain behind the left window
   mountain := TScrollableSprite.Create(texMountain, False);
-  mountain.SetShape(QuadCoor(PointF(0,0), PointF(ScaleW(611), ScaleH(140)),
-                              PointF(ScaleW(611), ScaleH(212)),  PointF(ScaleW(0), ScaleH(212))));
+  mountain.SetShape(QuadF(PointF(0,0), PointF(ScaleW(611), ScaleH(140)),
+                          PointF(ScaleW(611), ScaleH(212)),  PointF(ScaleW(0), ScaleH(212))));
   mountain.SetCoordinate(ScaleW(-142), ScaleH(216));
   mountain.Offset.x.AddConstant(100);
   mountain.Tint.Value := BGRA(0,0,0,100);
@@ -618,16 +618,16 @@ begin
 
   // sky behind the right window
   sky := TQuad4Color.Create(FScene);
-  sky.SetSize(QuadCoor(PointF(0,192), PointF(ScaleW(490), ScaleH(0)),
-                       PointF(ScaleW(490), ScaleH(315)),  PointF(ScaleW(0), ScaleH(240))));
+  sky.SetSize(QuadF(PointF(0,192), PointF(ScaleW(490), ScaleH(0)),
+                    PointF(ScaleW(490), ScaleH(315)),  PointF(ScaleW(0), ScaleH(240))));
   sky.SetCoordinate(ScaleW(548), ScaleH(156));
   sky.SetTopColors(BGRA(212,68,119));
   sky.SetBottomColors(BGRA(57,4,37));
   FScene.Add(sky, LAYER_BG3);
   // mountain behind the right window
   mountain := TScrollableSprite.Create(texMountain, False);
-  mountain.SetShape(QuadCoor(PointF(0,140), PointF(ScaleW(611), ScaleH(0)),
-                              PointF(ScaleW(611), ScaleH(212)),  PointF(ScaleW(0), ScaleH(212))));
+  mountain.SetShape(QuadF(PointF(0,140), PointF(ScaleW(611), ScaleH(0)),
+                          PointF(ScaleW(611), ScaleH(212)),  PointF(ScaleW(0), ScaleH(212))));
   mountain.SetCoordinate(ScaleW(555), ScaleH(216));
   mountain.Offset.x.AddConstant(-100);
   mountain.Tint.Value := BGRA(0,0,0,100);

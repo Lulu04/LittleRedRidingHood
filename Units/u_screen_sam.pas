@@ -197,6 +197,7 @@ begin
   FScene.Add(Self, LAYER_GAMEUI);
   BodyShape.SetShapeRoundRect(FScene.Width, Round(FScene.Height-aY), PPIScale(8), PPIScale(8), PPIScale(2));
   BackGradient.CreateHorizontal([BGRA(255,0,255,10), BGRA(255,0,255,40), BGRA(255,0,255,10)],[0, 0.5, 1]);
+  BackGradient.Visible := True;
   SetCoordinate(aX, aY);
   VScrollBarMode := sbmAlwaysShow;
   FCurrentY := 0;

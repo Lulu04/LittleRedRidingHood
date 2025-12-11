@@ -86,26 +86,26 @@ end;
 procedure TScreenMotherShipConstruction.DefineSubTextures(aAtlas: TAtlas);
 begin
   AdditionnalScale := 1.0;
-  LoadWolfTextures(FAtlas);
-  LoadMarcusTextures(FAtlas);
+  LoadWolfTextures(aAtlas);
+  LoadMarcusTextures(aAtlas);
   AdditionnalScale := 1.0;
-  LoadConstructionUnitTextures(FAtlas);
-  LoadMiningShipTextures(FAtlas);
-  LoadRedCombatShipTextures(FAtlas);
-  TMotherShipTopView.LoadTexture(FAtlas);
+  LoadConstructionUnitTextures(aAtlas);
+  LoadMiningShipTextures(aAtlas);
+  LoadRedCombatShipTextures(aAtlas);
+  TMotherShipTopView.LoadTexture(aAtlas);
   AdditionnalScale := 1.0;
 
-  AddSphereParticleToAtlas(FAtlas);
-  AddCrossParticleToAtlas(FAtlas);
+  AddSphereParticleToAtlas(aAtlas);
+  AddCrossParticleToAtlas(aAtlas);
 
   // ui
-  CreateGameFontNumber(FAtlas); // < must be first !
+  CreateGameFontNumber(aAtlas); // < must be first !
   // font for button in pause panel
-  FFontText := CreateGameFontText(FAtlas);
-  LoadGameDialogTextures(FAtlas);
+  FFontText := CreateGameFontText(aAtlas);
+  LoadGameDialogTextures(aAtlas);
   // load arrow for button panels
-  AddBlueArrowToAtlas(FAtlas);
-  LoadMousePointerTexture(FAtlas);
+  AddBlueArrowToAtlas(aAtlas);
+  LoadMousePointerTexture(aAtlas);
 end;
 
 procedure TScreenMotherShipConstruction.CreateObjects;

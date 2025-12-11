@@ -252,7 +252,7 @@ begin
 end;
 
 procedure TInterStellarJumpRenderer.PushQuad;
-var area: TQuadCoor;
+var area: TQuadF;
     p: Pxy;
     pIndex: PVertexIndex;
     currentIndex: TVertexIndex;

@@ -239,7 +239,7 @@ procedure LoadCharacterMarkTextures(aAtlas: TOGLCTextureAtlas);
 procedure LoadGameDialogTextures(aAtlas: TOGLCTextureAtlas);
 
 implementation
-uses u_app, u_utils, Math;
+uses u_app, u_utils;
 
 var
   // texture for dialog
@@ -462,7 +462,7 @@ begin
     end;
 
     rView := GetViewRect(ParentLayer.Camera);
-    rPanel := FPanel.GetRectAreaInWorldSpace;
+    rPanel := FPanel.GetQuadAreaInWorldSpace.Bounds;
     delta := PointF(0, 0);
     if rPanel.Left < rView.Left then delta.x := rView.Left - rPanel.Left;
     if rPanel.Right > rView.Right then delta.x := -(rPanel.Right - rView.Right);

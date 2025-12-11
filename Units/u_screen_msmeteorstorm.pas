@@ -297,7 +297,6 @@ end;
 
 procedure TBaseAsteroid.Explode;
 var p: TPointF;
-  i: SizeUInt;
   o: TMeteorParticle;
   pc: integer;
   explosion: TExplosion;
@@ -575,7 +574,6 @@ end;
 
 procedure TScreenMeteorStorm.AsteroidCreation(const aElapsedTime: single);
 var asteroid: TAsteroid;
-  i: SizeUInt;
 begin
   FTimeAccuAsteroid := FTimeAccuAsteroid - aElapsedTime;
   if FTimeAccuAsteroid <= 0 then begin
@@ -600,8 +598,7 @@ begin
 end;
 
 procedure TScreenMeteorStorm.MeteorCreation(const aElapsedTime: single);
-var i: integer;
-  meteor: TMeteor;
+var meteor: TMeteor;
 begin
   FTimeAccuMeteor := FTimeAccuMeteor - aElapsedTime;
   if FTimeAccuMeteor <= 0 then begin

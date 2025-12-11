@@ -351,8 +351,7 @@ begin
     FGeometricShapes := TGeometricShapes.Create;
     FGeometricShapes.GlobalColor := BGRA(255,255,0);
     FGeometricShapes.DrawStar(ima);
-    texWolfStarWhenStunned := aAtlas.Add(ima);
-    texWolfStarWhenStunned^.Filename := 'WolfStarWhenStunned';
+    texWolfStarWhenStunned := aAtlas.Add(ima, 'WolfStarWhenStunned');
     FGeometricShapes.Free;
     FGeometricShapes := NIL;
   end;

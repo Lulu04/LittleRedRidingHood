@@ -1300,6 +1300,7 @@ begin
   FBody.BodyShape.Border.Color := BGRABlack;
   FBody.BodyShape.Fill.Visible := False;
   FBody.BackGradient.CreateVertical([BGRA(56,56,56), BGRA(192,192,192), BGRA(56,56,56)], [0.0, 0.5, 1.0]);
+  FBody.BackGradient.Visible := True;
   AddChild(FBody, 0);
   FBody.SetCoordinate(0, 0);
 
@@ -2209,6 +2210,7 @@ begin
   FBody.BodyShape.Border.Color := BGRABlack;
   FBody.BodyShape.Fill.Visible := False;
   FBody.BackGradient.CreateVertical([BGRA(56,56,56), BGRA(192,192,192), BGRA(56,56,56)], [0.0, 0.5, 1.0]);
+  FBody.BackGradient.Visible := True;
   AddChild(FBody, 0);
   FBody.CenterX := 0;
   FBody.BottomY := FLegRight.Y.Value + ScaleH(15);

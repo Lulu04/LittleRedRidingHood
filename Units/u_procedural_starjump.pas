@@ -286,7 +286,7 @@ begin
 end;
 
 procedure TStarJumpRenderer.PushQuad;
-var area: TQuadCoor;
+var area: TQuadF;
     p: Pxy;
     pIndex: PVertexIndex;
     currentIndex: TVertexIndex;

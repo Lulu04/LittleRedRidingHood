@@ -156,7 +156,7 @@ end;
 
 TOGLCSpriteClouds = class(TSimpleSurfaceWithEffect)
 private
-  FModelArea: TQuadCoor;
+  FModelArea: TQuadF;
   FWidth, FHeight: integer;
   FCloudsRenderer: TOGLCCloudsRenderer;
   FParams: TCloudsParams;

@@ -57,7 +57,7 @@ private
 
   procedure ProcessButtonClick(Sender: TSimpleSurfaceWithEffect);
   //procedure ProcessCallbackPickUpSomethingWhenBendDown(aPickUpToTheRight: boolean);
-  procedure ProcessLayerLadderBeforeUpdateEvent;
+  procedure ProcessLayerLadderBeforeUpdateEvent(Sender: TLayer; const aLayerOpacity: single);
 public
   procedure DefineSubTextures(aAtlas: TAtlas); override;
   procedure CreateObjects; override;
@@ -1823,7 +1823,8 @@ begin
 
 end;
 
-procedure TScreenGameVolcanoInner.ProcessLayerLadderBeforeUpdateEvent;
+procedure TScreenGameVolcanoInner.ProcessLayerLadderBeforeUpdateEvent(
+  Sender: TLayer; const aLayerOpacity: single);
 begin
   // when LAYER_GROUND is updated, this property will be updated by ladder object.
   // we need to set it to NIL before.

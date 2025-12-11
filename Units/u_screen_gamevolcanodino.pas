@@ -36,7 +36,7 @@ private
   FDifficulty: integer;
   procedure CreateGround;
   procedure CreateLevel;
-  procedure ProcessLayerComputerBeforeUpdateEvent;
+  procedure ProcessLayerComputerBeforeUpdateEvent(Sender: TLayer; const aLayerOpacity: single);
   procedure SetGameState(AValue: TGameState);
   procedure CreateEndRaceMessage(const aMess: string; aAppearTime, aStayTime: single);
 public
@@ -1218,7 +1218,8 @@ begin
   FViewArea.Bottom := ScaleH(768) - FScene.Height*0.5;
 end;
 
-procedure TScreenGameVolcanoDino.ProcessLayerComputerBeforeUpdateEvent;
+procedure TScreenGameVolcanoDino.ProcessLayerComputerBeforeUpdateEvent(
+  Sender: TLayer; const aLayerOpacity: single);
 begin
   FLR.LadderInUse := NIL;
   FLR.ObjectToHandle := NIL;
