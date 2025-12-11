@@ -48,6 +48,8 @@ uses
   function PPIScale(AValue: integer): integer;
   function ScaleW(AValue: integer): integer;
   function ScaleH(AValue: integer): integer;
+  function ScaleWF(AValue: single): single;
+  function ScaleHF(AValue: single): single;
 
   procedure DeleteAtlasFiles;
 
@@ -426,13 +428,6 @@ TInSpace = class(TGameDescriptor)
 private
   function GetHelpText: string; override;
 private
-  //FHaveDockingBay: boolean;
-  {FHaveMiningShip,
-  FHaveShield,
-  FHaveOreForFighter,
-  FHaveFighter,
-  FHaveGigatronPropulsor,
-  FHaveRadiationAnnihilator}
  const
   InSpaceStepCount = 13;  // 1= briefing1 at main bridge + departure to the asteroid belt
                           // 2= game constructing docking bay and mining ship
@@ -453,16 +448,26 @@ public
   function SaveToString: string; override;
   procedure LoadFromString(const s: string); override;
   function GetStepInfo(aStepIndex: integer): string; override;
-public
-  //property HaveDockingBay: boolean read FHaveDockingBay write FHaveDockingBay;
-  //property HaveMiningShip: boolean read FHaveMiningShip write FHaveMiningShip;
-
-  //property HaveShield: boolean read FHaveShield write FHaveShield;
-  //property HaveOreForFighter: boolean read FHaveOreForFighter write FHaveOreForFighter;
-  //property HaveFighter: boolean read FHaveFighter write FHaveFighter;
-  //property HaveGigatronPropulsor: boolean read FHaveGigatronPropulsor write FHaveGigatronPropulsor;
-  //property HaveRadiationAnnihilator: boolean read FHaveRadiationAnnihilator write FHaveRadiationAnnihilator;
 end;
+
+
+
+{ TFinal }
+
+TFinal = class(TGameDescriptor)
+private
+  function GetHelpText: string; override;
+private
+ const
+  FinalStepCount = 2;  // 1= arrival in the new galaxy
+                       // 2= descent to the planet temple
+public
+  constructor Create;
+  function SaveToString: string; override;
+  procedure LoadFromString(const s: string); override;
+  function GetStepInfo(aStepIndex: integer): string; override;
+end;
+
 
 { TPlayerInfo }
 
@@ -479,6 +484,7 @@ private
   FSnakeFissure: TSnakeFissure;
   FWolfCastle: TWolfCastle;
   FInSpace: TInSpace;
+  FFinal: TFinal;
 public
   constructor Create;
   destructor Destroy; override;
@@ -497,6 +503,7 @@ public
   property SnakeFissure: TSnakeFissure read FSnakeFissure;
   property WolfCastle: TWolfCastle read FWolfCastle;
   property InSpace: TInSpace read FInSpace;
+  property Final: TFinal read FFinal;
 end;
 
 TPlayerList = class(specialize TFPGObjectList<TPlayerInfo>);
@@ -574,6 +581,16 @@ end;
 function ScaleH(AValue: integer): integer;
 begin
   Result := Round(FScene.Height*AValue/768*AdditionnalScale);
+end;
+
+function ScaleWF(AValue: single): single;
+begin
+  Result := FScene.Width*AValue/1024*AdditionnalScale;
+end;
+
+function ScaleHF(AValue: single): single;
+begin
+ Result := FScene.Height*AValue/768*AdditionnalScale;
 end;
 
 procedure DeleteAtlasFiles;
@@ -1469,13 +1486,6 @@ var prop: TProperties;
 begin
   prop.Init('!');
   SaveCommonProperties(prop);
-//  prop.Add('HaveDockingBay', FHaveDockingBay);
-{  prop.Add('HaveMiningShip', FHaveMiningShip);
-  prop.Add('HaveShield', FHaveShield);
-  prop.Add('HaveOreForFighter', FHaveOreForFighter);
-  prop.Add('HaveFighter', FHaveFighter);
-  prop.Add('HaveGigatronPropulsor', FHaveGigatronPropulsor);
-  prop.Add('HaveRadiationAnnihilator', FHaveRadiationAnnihilator); }
   Result := prop.PackedProperty;
 end;
 
@@ -1483,13 +1493,6 @@ procedure TInSpace.LoadFromString(const s: string);
 var prop: TProperties;
 begin
   prop.Split(s, '!');
-//  prop.BooleanValueOf('HaveDockingBay', FHaveDockingBay, False);
-{  prop.BooleanValueOf('HaveMiningShip', FHaveMiningShip, False);
-  prop.BooleanValueOf('HaveShield', FHaveShield, False);
-  prop.BooleanValueOf('HaveOreForFighter', FHaveOreForFighter, False);
-  prop.BooleanValueOf('HaveFighter', FHaveFighter, False);
-  prop.BooleanValueOf('HaveGigatronPropulsor', FHaveGigatronPropulsor, False);
-  prop.BooleanValueOf('HaveRadiationAnnihilator', FHaveRadiationAnnihilator, False); }
   LoadCommonProperties(prop);
 end;
 
@@ -1510,6 +1513,41 @@ begin
     12: Result := sInSpaceStepinfo12;
     13: Result := sInSpaceStepinfo13;
   end;
+end;
+
+{ TFinal }
+
+function TFinal.GetHelpText: string;
+begin
+
+end;
+
+constructor TFinal.Create;
+begin
+  inherited Create(FinalStepCount);
+end;
+
+function TFinal.SaveToString: string;
+var prop: TProperties;
+begin
+  prop.Init('!');
+  SaveCommonProperties(prop);
+  Result := prop.PackedProperty;
+end;
+
+procedure TFinal.LoadFromString(const s: string);
+var prop: TProperties;
+begin
+  prop.Split(s, '!');
+  LoadCommonProperties(prop);
+end;
+
+function TFinal.GetStepInfo(aStepIndex: integer): string;
+begin
+  //case aStepIndex of
+  //  else Result := aStepIndex.ToString;
+  //end;
+  Result := aStepIndex.ToString;
 end;
 
 { TMountainPeakDescriptor }
@@ -1743,6 +1781,7 @@ begin
   FSnakeFissure := TSnakeFissure.Create;
   FWolfCastle := TWolfCastle.Create;
   FInSpace := TInSpace.Create;
+  FFinal := TFinal.Create;
 end;
 
 destructor TPlayerInfo.Destroy;
@@ -1763,6 +1802,8 @@ begin
   FWolfCastle := NIL;
   FInSpace.Free;
   FInSpace := NIL;
+  FFinal.Free;
+  FFinal := NIL;
   inherited Destroy;
 end;
 
@@ -1781,6 +1822,7 @@ begin
   prop.Add('SnakeFissure', SnakeFissure.SaveToString);
   prop.Add('WolfCastle', FWolfCastle.SaveToString);
   prop.Add('InSpace', FInSpace.SaveToString);
+  prop.Add('Final', FFinal.SaveToString);
   Result := prop.PackedProperty;
 end;
 
@@ -1809,6 +1851,8 @@ begin
   WolfCastle.LoadFromString(st);
   prop.StringValueOf('InSpace', st, '');
   InSpace.LoadFromString(st);
+  prop.StringValueOf('Final', st, '');
+  Final.LoadFromString(st);
 end;
 
 { TSaveGame }

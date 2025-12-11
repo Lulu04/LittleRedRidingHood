@@ -36,7 +36,7 @@ private
   procedure ResetVariables;
   procedure StartRain(aDuration: single);
   procedure StopRain;
-  procedure ProcessLAYERGROUNDBeforeUpdate;
+  procedure ProcessLAYERGROUNDBeforeUpdate(Sender: TLayer; const aLayerOpacity: single);
   procedure CreateClouds; // LAYER_BG3
   procedure CreateGround; // LAYER_BG2
   procedure CreateFactory3; // LAYER_BG2
@@ -1553,10 +1553,10 @@ end;
 { TRoad }
 
 constructor TRoad.Create(aX: single);
-var quad: TQuadCoor;
+var quad: TQuadF;
 begin
   inherited Create(FScene);
-  quad := QuadCoor(PointF(ScaleW(165), 0), PointF(ScaleW(176), 0),
+  quad := QuadF(PointF(ScaleW(165), 0), PointF(ScaleW(176), 0),
               PointF(ScaleW(338), ScaleH(296)), PointF(0, ScaleH(296)));
   SetSize(quad);
   SetAllColorsTo(BGRA(24,31,28));
@@ -1656,7 +1656,8 @@ begin
   FsndRain := NIL;
 end;
 
-procedure TScreenMermaidsPort.ProcessLAYERGROUNDBeforeUpdate;
+procedure TScreenMermaidsPort.ProcessLAYERGROUNDBeforeUpdate(Sender: TLayer;
+  const aLayerOpacity: single);
 begin
   FLR.CanClimbOnLadder := False;
   FLR.IsAboveLadder := False;

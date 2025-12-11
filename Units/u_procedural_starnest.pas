@@ -395,7 +395,7 @@ begin
 end;
 
 procedure TStarNestRenderer.PushQuad(aFlipIndex: integer);
-var area, texCoords: TQuadCoor;
+var area, texCoords: TQuadF;
     tci: PQuadCornerIndexes;
     p: Pxyuv;
     pIndex: PVertexIndex;

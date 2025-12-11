@@ -5,7 +5,7 @@ unit form_main;
 interface
 
 uses
-  Classes, SysUtils, Forms, Controls, Dialogs, Buttons, ExtCtrls, StdCtrls,
+  Classes, SysUtils, Forms, Controls, Dialogs, Buttons, ExtCtrls,
   OpenGLContext, OGLCScene,
   u_common, LCLType;
 
@@ -43,7 +43,7 @@ uses u_screen_title, u_screen_gameforest, BGRABitmap, BGRABitmapTypes,
   u_screen_dartboard, u_screen_gamemermaidboss, u_screen_gamesnakefissureintro,
   u_screen_gamesnakefissure, u_screen_gamecastle, u_screen_msmainbridge,
   u_screen_msconstruction, u_screen_msharvesting, u_screen_msmeteorstorm,
-  DefaultTranslator, LCLTranslator, i18_utils;
+  u_screen_finaltemple, DefaultTranslator, LCLTranslator, i18_utils;
 {$R *.lfm}
 
 { TFormMain }
@@ -131,13 +131,14 @@ begin
   ScreenMotherShipConstruction := TScreenMotherShipConstruction.Create;
   ScreenHarvestingInSpace := TScreenHarvestingInSpace.Create;
   ScreenMeteorStorm := TScreenMeteorStorm.Create;
-  FScene.RunScreen(ScreenLogo);
+  ScreenFinalTemple := TScreenFinalTemple.Create;
+//  FScene.RunScreen(ScreenLogo);
 
-{
+
   FSaveGame.SetCurrentPlayerIndex(0);
-  FScene.RunScreen(ScreenMap);     //ScreenMap  ScreenIntro   ScreenPlainMoonInside
+  FScene.RunScreen(ScreenFinalTemple);     //ScreenMap  ScreenIntro
   Timer1.Enabled := True;
-}
+
 end;
 
 procedure TFormMain.FreeCommonData;
@@ -166,6 +167,7 @@ begin
   FreeAndNil(ScreenMotherShipConstruction);
   FreeAndNil(ScreenHarvestingInSpace);
   FreeAndNil(ScreenMeteorStorm);
+  FreeAndNil(ScreenFinalTemple);
   FreeAndNil(ScreenLogo);
   FreeAndNil(Audio);
 end;

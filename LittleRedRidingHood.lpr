@@ -22,9 +22,10 @@ uses
   u_transporterwk510, u_screen_strikeraccoon, u_screen_dartboard,
   u_screen_gamemermaidboss, u_screen_gamesnakefissureintro,
   u_screen_gamesnakefissure, u_screen_gamecastle, u_robotw7, u_wolfmothership,
-  u_airplaneromeoandjulia, u_screen_msmainbridge, u_procedural_interstellarjump,
-  u_procedural_starjump, u_screen_msconstruction, u_screen_msharvesting, 
-u_screen_msmeteorstorm;
+  u_airplaneromeoandjulia, u_screen_msmainbridge,
+  u_procedural_interstellarjump, u_procedural_starjump, u_screen_msconstruction,
+  u_screen_msharvesting, u_screen_msmeteorstorm, u_procedural_topdownsunray,
+  u_screen_finaltemple;
 
 {$R *.res}
 

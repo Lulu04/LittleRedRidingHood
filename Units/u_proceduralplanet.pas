@@ -569,7 +569,7 @@ begin
 end;
 
 procedure TOGLCPlanetRenderer.PushQuad(const aWidth, aHeight: integer; aFlipIndex: integer);
-var area, texCoords: TQuadCoor;
+var area, texCoords: TQuadF;
   tci: PQuadCornerIndexes;
     p: Pxyuv;
     pIndex: PVertexIndex;

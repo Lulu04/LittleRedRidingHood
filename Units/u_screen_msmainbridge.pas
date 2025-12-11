@@ -482,15 +482,7 @@ begin
   FsndMilitaryBriefing.SetLoopBounds(24.0, FsndMilitaryBriefing.TotalDuration);
   FsndMilitaryBriefing.Play;
 
-{  FAtlas := FScene.CreateAtlas;
-  FAtlas.Spacing := 2;    }
   CheckAtlas(FAtlas, 'spacemainbridge.atlas');
-{  FAtlas.TryToPack;
-  FAtlas.Build;
-  ima := FAtlas.GetPackedImage;
-  ima.SaveToFile(Application.Location+'Atlas.png');
-  ima.Free;   }
-
 
   CreateLevel;
 

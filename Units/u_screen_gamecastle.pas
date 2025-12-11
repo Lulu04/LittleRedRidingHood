@@ -311,6 +311,7 @@ begin
   FScene.Add(seaSide, LAYER_BG3);
   seaSide.BodyShape.SetCustomShape(path, 0.0);
   seaSide.BackGradient.CreateVertical([BGRA(186,163,66), BGRA(206,191,130), BGRA(179,153,60)], [0, 0.5, 1.0]);
+  seaSide.BackGradient.Visible := True;
   seaSide.SetCoordinate(ScaleW(416), ScaleH(473));
   seaSide.MouseInteractionEnabled := False;
 

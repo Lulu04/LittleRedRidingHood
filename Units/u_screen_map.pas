@@ -108,8 +108,7 @@ protected
 public
   // if aHint is empty, a default hint is displayed
   constructor Create(aTexIcon, aLRIcon: PTexture;
-                     aGame: TGameDescriptor; aMessageToRunScreen: TUserMessageValue;
-                     const aHint: string);
+                     aGame: TGameDescriptor; aMessageToRunScreen: TUserMessageValue);
   procedure RemoveStartButton;
   property Hint: string write SetHint;
 end;
@@ -193,8 +192,7 @@ begin
 end;
 
 constructor TPanelChooseGameStep.Create(aTexIcon, aLRIcon: PTexture;
-  aGame: TGameDescriptor; aMessageToRunScreen: TUserMessageValue;
-  const aHint: string);
+  aGame: TGameDescriptor; aMessageToRunScreen: TUserMessageValue);
 var i, w: integer;
   A: TUIButtonArray;
 begin
@@ -416,7 +414,7 @@ begin
 
   if Sender = BPineForest then begin
     UnableMouseInteractionOnMapObjects(False);
-    FPanelChooseGameStep := TPanelChooseGameStep.Create(texPineForest, texLRIcon, PlayerInfo.Forest, 100, '');
+    FPanelChooseGameStep := TPanelChooseGameStep.Create(texPineForest, texLRIcon, PlayerInfo.Forest, 100);
     _ShowPanelChooseGameStep;
     LastGameClicked := gomPineForest;
     exit;
@@ -428,7 +426,7 @@ begin
 
   if Sender = BMountainPeaks then begin
     UnableMouseInteractionOnMapObjects(False);
-    FPanelChooseGameStep := TPanelChooseGameStep.Create(texZipLinePeaks, texLRIcon, PlayerInfo.MountainPeak, 110, ' ');
+    FPanelChooseGameStep := TPanelChooseGameStep.Create(texZipLinePeaks, texLRIcon, PlayerInfo.MountainPeak, 110);
     _ShowPanelChooseGameStep;
     LastGameClicked := gomZipLine;
     exit;
@@ -444,7 +442,7 @@ begin
       FScene.RunScreen(ScreenGameVolcanoEntrance);
       LastGameClicked := gomUnknow;
     end else begin
-      FPanelChooseGameStep := TPanelChooseGameStep.Create(texVolcanoMountain, texLRIcon, PlayerInfo.Volcano, 120, ' ');
+      FPanelChooseGameStep := TPanelChooseGameStep.Create(texVolcanoMountain, texLRIcon, PlayerInfo.Volcano, 120);
       _ShowPanelChooseGameStep;
       LastGameClicked := gomVolcano;
       exit;
@@ -456,7 +454,7 @@ begin
 
   if Sender = BPlainMoon then begin
     UnableMouseInteractionOnMapObjects(False);
-    FPanelChooseGameStep := TPanelChooseGameStep.Create(texPlainOfSleepingMoon, texLRIcon, PlayerInfo.PlainMoon, 130, ' ');
+    FPanelChooseGameStep := TPanelChooseGameStep.Create(texPlainOfSleepingMoon, texLRIcon, PlayerInfo.PlainMoon, 130);
     _ShowPanelChooseGameStep;
     LastGameClicked := gomPlainOfSleepingMoon;
     exit;
@@ -467,7 +465,7 @@ begin
 
   if Sender = BMermaidPort then begin
     UnableMouseInteractionOnMapObjects(False);
-    FPanelChooseGameStep := TPanelChooseGameStep.Create(texFactory, texLRIcon, PlayerInfo.MermaidsPort, 140, ' ');
+    FPanelChooseGameStep := TPanelChooseGameStep.Create(texFactory, texLRIcon, PlayerInfo.MermaidsPort, 140);
     _ShowPanelChooseGameStep;
     LastGameClicked := gomMermaidPort;
     exit;
@@ -478,7 +476,7 @@ begin
 
   if Sender = BSnakeFissure then begin
     UnableMouseInteractionOnMapObjects(False);
-    FPanelChooseGameStep := TPanelChooseGameStep.Create(texSnakeFissure, texLRIcon, PlayerInfo.SnakeFissure, 150, ' ');
+    FPanelChooseGameStep := TPanelChooseGameStep.Create(texSnakeFissure, texLRIcon, PlayerInfo.SnakeFissure, 150);
     _ShowPanelChooseGameStep;
     LastGameClicked := gomSnakeFissure;
     exit;
@@ -499,7 +497,7 @@ begin
 
   if Sender = BInSpace then begin
     UnableMouseInteractionOnMapObjects(False);
-    FPanelChooseGameStep := TPanelChooseGameStep.Create(texInSpace, texLRIcon, PlayerInfo.InSpace, 160, ' ');
+    FPanelChooseGameStep := TPanelChooseGameStep.Create(texInSpace, texLRIcon, PlayerInfo.InSpace, 160);
     _ShowPanelChooseGameStep;
     LastGameClicked := gomInSpace;
     exit;

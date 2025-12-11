@@ -1074,6 +1074,7 @@ begin
     //FButtons[i].BodyShape.Fill.Color := BGRA(220,220,220);
     FButtons[i].BackGradient.CreateHorizontal([BGRA(100,50,255,100), BGRA(255,0,255,110), BGRA(50,0,255,100)],
                                               [0.0, 0.5, 1.0]);
+    FButtons[i].BackGradient.Visible := True;
     FButtons[i].SetCoordinate(ScaleW(568)+(i mod 7)*ScaleW(59), yy);
     FButtons[i].Tag1 := i;
     FButtons[i].OnAnimMouseEnter := @ProcessButtonMouseEnter;
